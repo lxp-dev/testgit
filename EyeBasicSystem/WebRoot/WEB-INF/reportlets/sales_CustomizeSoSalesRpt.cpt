@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgndate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select departmentID into #shopCode from sales_createShopCodeTab('${shopCode}')
+select id,personName,B_DP_DepartmentName,sum(SalesValue) as SalesValue,
+sum(PosValue) as PosValue,
+sum(ArrearsValue) as ArrearsValue,
+sum(customizeValue) as customizeValue,
+sum(arrearsValue1) as arrearsValue1
+from (
+select S_SE_SB_ShopCode,B_DP_DepartmentName,id,personName,sum(S_SE_SB_SalesValue) as SalesValue, 
+sum(S_SE_SB_SalesValue)-sum(S_SE_SB_ArrearsValue) as PosValue,
+sum(S_SE_SB_ArrearsValue) as ArrearsValue,
+sum(s_se_c_customizeValue) as customizeValue,
+sum(s_se_c_arrearsValue) as arrearsValue1
+from S_SE_SalesBasic 
+inner join SYS_PersonInfo on ID=S_SE_SalesBasic.S_SE_SB_SalerID
+inner join S_Se_Customize on s_se_c_salesid = S_SE_SB_SalesID
+inner join B_Departments on B_DP_DepartmentID = S_SE_SB_ShopCode
+where 1=1
+ and S_SE_SB_CheckoutFlag='1'
+ and S_SE_SB_ValueFlag='1'
+ and datediff(day, '${bgndate}', S_SE_SB_PosDatetime) >= 0  -- 开始时间
+ and datediff(day, '${enddate}', S_SE_SB_PosDatetime) <= 0    -- 结束时间
+and ((isnull('${shopCode}','')<>'' and S_SE_SalesBasic.S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${shopCode}','')=''))
+group by S_SE_SB_ShopCode,B_DP_DepartmentName,id,personName
+union all
+select S_SE_SB_ShopCode,B_DP_DepartmentName,id,personName,-sum(S_SE_SB_SalesValue) as SalesValue, 
+-(sum(S_SE_SB_SalesValue)-sum(S_SE_SB_ArrearsValue)) as PosValue,
+-sum(S_SE_SB_ArrearsValue) as ArrearsValue,
+-sum(s_se_c_customizeValue) as customizeValue,
+-sum(s_se_c_arrearsValue) as arrearsValue1
+from S_SE_SalesBasic 
+inner join SYS_PersonInfo on ID=S_SE_SalesBasic.S_SE_SB_SalerID
+inner join S_Se_Customize on s_se_c_salesid = S_SE_SB_SalesID
+inner join B_Departments on B_DP_DepartmentID = S_SE_SB_ShopCode
+where 1=1
+and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+and S_SE_SB_ValueFlag='1'
+ and S_SE_SB_CheckoutFlag='1'
+and datediff(day, '${bgndate}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+and datediff(day, '${enddate}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+and ((isnull('${shopCode}','')<>'' and S_SE_SalesBasic.S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${shopCode}','')=''))
+group by S_SE_SB_ShopCode,B_DP_DepartmentName,id,personName)temp
+group by id,personName,B_DP_DepartmentName
+drop table #shopCode]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters/>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="5"/>
+<FR/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1143000,190500,1143000,342900,914400,914400,914400,914400,914400,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[876300,4752000,4752000,4752000,4752000,4752000,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<Expand/>
+</C>
+<C c="1" r="0" cs="5" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="2" cs="5" s="2">
+<O>
+<![CDATA[定货未结账销售额统计报表]]></O>
+<Expand/>
+</C>
+<C c="0" r="4" s="3">
+<Expand/>
+</C>
+<C c="1" r="4" s="4">
+<O>
+<![CDATA[部门：]]></O>
+<Expand/>
+</C>
+<C c="2" r="4" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_DP_DepartmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="4" s="4">
+<O>
+<![CDATA[日期区间：]]></O>
+<Expand/>
+</C>
+<C c="4" r="4" cs="2" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$bgndate + "～" + enddate]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="5" s="3">
+<Expand/>
+</C>
+<C c="1" r="5" s="6">
+<O>
+<![CDATA[营业员号]]></O>
+<Expand/>
+</C>
+<C c="2" r="5" s="6">
+<O>
+<![CDATA[姓名]]></O>
+<Expand/>
+</C>
+<C c="3" r="5" s="6">
+<O>
+<![CDATA[销售额]]></O>
+<Expand/>
+</C>
+<C c="4" r="5" s="6">
+<O>
+<![CDATA[已收额]]></O>
+<Expand/>
+</C>
+<C c="5" r="5" s="6">
+<O>
+<![CDATA[欠款额]]></O>
+<Expand/>
+</C>
+<C c="0" r="6" s="3">
+<Expand/>
+</C>
+<C c="1" r="6" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="id"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="6" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="personName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="6" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="SalesValue"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="6" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="customizeValue"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="6" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="arrearsValue1"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="7" s="3">
+<Expand/>
+</C>
+<C c="1" r="7" cs="2" s="8">
+<O>
+<![CDATA[合计：]]></O>
+<Expand/>
+</C>
+<C c="3" r="7" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(D7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="7" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(E7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="7" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="8" s="3">
+<Expand/>
+</C>
+<C c="1" r="8" cs="2" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="打印日期：" + today()]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="8" s="3">
+<Expand/>
+</C>
+<C c="4" r="8" cs="2" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="页次:第 " + $$page_number + " 页/共 " + $$totalPage_number + " 页"]]></Attributes>
+</O>
+<Expand upParentDefault="false" up="A5"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting>
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="148"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="80" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="endtime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+select
+convert(varchar(10),C_ST_I_AuditDate,23) as C_ST_I_AuditDate,
+C_ST_PC_SupplierID,
+B_SP_SupplierName,
+C_ST_PC_BillSource,
+C_ST_PC_InStockId,
+B_WH_warehouseName,
+C_ST_POE_GoodsID,
+B_GI_GoodsName,
+C_ST_POE_OrderGoodsQuantity,
+C_ST_POE_GoodsQuantity,
+C_ST_POE_CoincidenceRate,
+C_ST_POE_Bluminosity,
+C_ST_POE_SLuminosity,
+C_ST_POE_Thickness,
+case 
+	when C_ST_POE_Pack = '1' then '√'
+	when C_ST_POE_Pack = '0' then '×'
+end as C_ST_POE_Pack,
+case 
+	when C_ST_POE_App = '1' then '√'
+	when C_ST_POE_App = '0' then '×'
+end as C_ST_POE_App,
+case 
+	when C_ST_PC_BillType = '1' and C_ST_POE_UnqualifiedQuantity = '0' then '1'
+	when C_ST_PC_BillType = '1' and C_ST_POE_UnqualifiedQuantity = '1' then '0'
+	when C_ST_PC_BillType = '0' then isnull(cast(C_ST_POE_GoodsQuantity as int),0) - isnull(cast(C_ST_POE_UnqualifiedQuantity as int),0)
+end as C_ST_POE_QualifiedQuantity,
+C_ST_POE_UnqualifiedQuantity,
+C_ST_POE_UnqualifiedRate,
+C_ST_PC_BillDate,
+C_ST_PC_OrderGoodsQuantity,
+C_ST_PC_GoodsQuantity
+from C_ST_ProcurementCheckEntry
+inner join C_ST_ProcurementCheck on C_ST_POE_BillID = C_ST_PC_BillID
+inner join dbo.C_ST_Inventory on C_ST_PC_BillSource = C_ST_I_BillID and C_ST_I_BillID like 'pin%'
+inner join dbo.B_Supplier on C_ST_PC_SupplierID = B_SP_ID
+inner join B_Warehouse on C_ST_PC_InStockId = B_WH_ID
+inner join B_GoodsInfo on C_ST_POE_GoodsID = B_GI_GoodsID
+where 1=1 
+ AND ( ( '${supplierID}' IS NOT NULL
+                             AND '${supplierID}' <> ''
+                             AND C_ST_PC_SupplierID = '${supplierID}' )
+                            OR ( '${supplierID}' IS NULL
+                                 OR '${supplierID}' = '' ) )
+ AND convert(varchar(10),C_ST_PC_BillDate,23) >= '${begintime}'
+ AND convert(varchar(10),C_ST_PC_BillDate,23) <= '${endtime}'
+ AND substring(C_ST_POE_GoodsID,1,1) = '3'
+
+
+order by C_ST_PC_BillDate,C_ST_PC_SupplierID desc]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="6"/>
+<FR F="9" T="13"/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1028700,1905000,723900,723900,723900,723900,723900,914400,914400,762000,723900,762000,800100,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[2400300,4495800,5181600,1333500,1371600,4495800,4305300,3048000,3048000,1257300,1219200,1181100,1181100,1181100,1562100,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="7" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" cs="15" s="1">
+<O>
+<![CDATA[镜片商品进货检验记录]]></O>
+<Expand/>
+</C>
+<C c="0" r="3" rs="4" s="2">
+<O>
+<![CDATA[入库日期]]></O>
+<Expand/>
+</C>
+<C c="1" r="3" rs="4" s="2">
+<O>
+<![CDATA[制造商]]></O>
+<Expand/>
+</C>
+<C c="2" r="3" rs="4" s="2">
+<O>
+<![CDATA[收货单号]]></O>
+<Expand/>
+</C>
+<C c="3" r="3" rs="4" s="2">
+<O>
+<![CDATA[订货数量]]></O>
+<Expand/>
+</C>
+<C c="4" r="3" rs="4" s="2">
+<O>
+<![CDATA[入库数量]]></O>
+<Expand/>
+</C>
+<C c="5" r="3" rs="4" s="2">
+<O>
+<![CDATA[商品代码]]></O>
+<Expand/>
+</C>
+<C c="6" r="3" rs="4" s="2">
+<O>
+<![CDATA[商品名称]]></O>
+<Expand/>
+</C>
+<C c="7" r="3" cs="5" s="2">
+<O>
+<![CDATA[产品质量]]></O>
+<Expand/>
+</C>
+<C c="12" r="3" rs="4" s="2">
+<O>
+<![CDATA[合格数量]]></O>
+<Expand/>
+</C>
+<C c="13" r="3" rs="4" s="2">
+<O>
+<![CDATA[不合格数量]]></O>
+<Expand/>
+</C>
+<C c="14" r="3" rs="4" s="2">
+<O>
+<![CDATA[不合格率]]></O>
+<Expand/>
+</C>
+<C c="7" r="4" cs="5" s="2">
+<O>
+<![CDATA[抽检记录5%]]></O>
+<Expand/>
+</C>
+<C c="7" r="5" cs="2" s="2">
+<O>
+<![CDATA[顶焦度]]></O>
+<Expand/>
+</C>
+<C c="9" r="5" rs="2" s="2">
+<O>
+<![CDATA[中心厚度]]></O>
+<Expand/>
+</C>
+<C c="10" r="5" rs="2" s="2">
+<O>
+<![CDATA[外包装]]></O>
+<Expand/>
+</C>
+<C c="11" r="5" rs="2" s="2">
+<O>
+<![CDATA[标识]]></O>
+<Expand/>
+</C>
+<C c="7" r="6" s="2">
+<O>
+<![CDATA[标称光度]]></O>
+<Expand/>
+</C>
+<C c="8" r="6" s="2">
+<O>
+<![CDATA[实测光度]]></O>
+<Expand/>
+</C>
+<C c="0" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_I_AuditDate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_SP_SupplierName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_PC_BillSource"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_PC_OrderGoodsQuantity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0" leftParentDefault="false" left="C8"/>
+</C>
+<C c="4" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_PC_GoodsQuantity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0" leftParentDefault="false" left="C8"/>
+</C>
+<C c="5" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_POE_GoodsID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_GI_GoodsName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_POE_Bluminosity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_POE_SLuminosity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_POE_Thickness"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_POE_Pack"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_POE_App"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_POE_QualifiedQuantity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_POE_UnqualifiedQuantity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_POE_UnqualifiedRate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="8" s="4">
+<Expand/>
+</C>
+<C c="1" r="8" s="4">
+<Expand/>
+</C>
+<C c="2" r="8" s="4">
+<Expand/>
+</C>
+<C c="3" r="8" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(D8)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="8" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(E8)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="8" s="4">
+<Expand/>
+</C>
+<C c="6" r="8" s="4">
+<O>
+<![CDATA[合计：]]></O>
+<Expand/>
+</C>
+<C c="7" r="8" s="4">
+<Expand/>
+</C>
+<C c="8" r="8" s="4">
+<Expand/>
+</C>
+<C c="9" r="8" s="4">
+<Expand/>
+</C>
+<C c="10" r="8" s="4">
+<Expand/>
+</C>
+<C c="11" r="8" s="4">
+<Expand/>
+</C>
+<C c="12" r="8" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_POE_QualifiedQuantity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="13" r="8" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_POE_UnqualifiedQuantity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="14" r="8" s="4">
+<Expand/>
+</C>
+<C c="0" r="9" s="5">
+<O>
+<![CDATA[ 注：]]></O>
+<Expand/>
+</C>
+<C c="1" r="9" cs="5">
+<O>
+<![CDATA[产品，服务质量合格的划√，不合格的用×表示。]]></O>
+<Expand/>
+</C>
+<C c="0" r="10" s="5">
+<O>
+<![CDATA[服务质量：]]></O>
+<Expand/>
+</C>
+<C c="1" r="10" cs="6">
+<O>
+<![CDATA[1、供方误期交付；2、交付产品与订单不符；3、断货未通知。]]></O>
+<Expand/>
+</C>
+<C c="0" r="11" s="5">
+<O>
+<![CDATA[产品质量：]]></O>
+<Expand/>
+</C>
+<C c="1" r="11" cs="6">
+<O>
+<![CDATA[1、质量问题（①色泽②膜色③顶焦度超标④直径⑤表面质量等）]]></O>
+<Expand/>
+</C>
+<C c="1" r="12" cs="8">
+<O>
+<![CDATA[2、挂签/合格证不合格（应标示内容：执行标准、类别、颜色、质量等级、厂名、商标、检验合格证等）；]]></O>
+<Expand/>
+</C>
+<C c="1" r="13">
+<O>
+<![CDATA[3、无标示。]]></O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1"/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

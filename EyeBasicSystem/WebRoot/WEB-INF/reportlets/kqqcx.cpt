@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="endtime"/>
+<O>
+<![CDATA[2014-06-30]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O>
+<![CDATA[2014-06-01]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource1]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[declare @begintime	varchar(50),
+	@endtime	varchar(50),
+	@departmentid	varchar(50)
+set @begintime	= '${begintime}'
+set @endtime	= '${endtime}'
+set @departmentid   = '${departmentid}'
+--set @begintime	= '2014-06-01'
+--set @endtime	= '2014-06-30'
+--set @departmentid   = ''
+
+select ph.P_Name,
+ph.PInfo_id,
+ph.P_Code,
+ph.Dept_Name,
+sum(bingjia) as bingjia,
+sum(shijia) as shijia,
+sum(hunjia) as hunjia,
+sum(sangjia) as sangjia,
+sum(chanjia) as chanjia,
+sum(tanqin) as tanqin,
+sum(gongjia) as gongjia,
+sum(chuchai) as chuchai,
+sum(waichuxuexi) as waichuxuexi
+from
+(
+select rp.P_Name,qcx.PInfo_id,rp.P_Code,dept.Dept_Name,qcx.Type_Main,qcx.Type_zi,qcx.Type_JS,qcx.Date_B,
+case when qcx.Type_Main=1 and qcx.Type_zi=11 then case when qcx.Type_JS=0 then 8.00 else case when qcx.Sum_XS>0 then CAST(qcx.Sum_XS as decimal(18,2)) else cast(DATEDIFF( Minute, qcx.Time_B, qcx.Time_E)/60.0 as decimal(18,2))  end end end as bingjia,
+case when qcx.Type_Main=1 and qcx.Type_zi=12 then case when qcx.Type_JS=0 then 8.00 else case when qcx.Sum_XS>0 then CAST(qcx.Sum_XS as decimal(18,2)) else cast(DATEDIFF( Minute, qcx.Time_B, qcx.Time_E)/60.0 as decimal(18,2))  end end end as shijia,
+case when qcx.Type_Main=1 and qcx.Type_zi=13 then case when qcx.Type_JS=0 then 8.00 else case when qcx.Sum_XS>0 then CAST(qcx.Sum_XS as decimal(18,2)) else cast(DATEDIFF( Minute, qcx.Time_B, qcx.Time_E)/60.0 as decimal(18,2))  end end end as hunjia,
+case when qcx.Type_Main=1 and qcx.Type_zi=14 then case when qcx.Type_JS=0 then 8.00 else case when qcx.Sum_XS>0 then CAST(qcx.Sum_XS as decimal(18,2)) else cast(DATEDIFF( Minute, qcx.Time_B, qcx.Time_E)/60.0 as decimal(18,2))  end end end as sangjia,
+case when qcx.Type_Main=1 and qcx.Type_zi=15 then case when qcx.Type_JS=0 then 8.00 else case when qcx.Sum_XS>0 then CAST(qcx.Sum_XS as decimal(18,2)) else cast(DATEDIFF( Minute, qcx.Time_B, qcx.Time_E)/60.0 as decimal(18,2))  end end end as chanjia,
+case when qcx.Type_Main=1 and qcx.Type_zi=16 then case when qcx.Type_JS=0 then 8.00 else case when qcx.Sum_XS>0 then CAST(qcx.Sum_XS as decimal(18,2)) else cast(DATEDIFF( Minute, qcx.Time_B, qcx.Time_E)/60.0 as decimal(18,2))  end end end as tanqin,
+case when qcx.Type_Main=1 and qcx.Type_zi=17 then case when qcx.Type_JS=0 then 8.00 else case when qcx.Sum_XS>0 then CAST(qcx.Sum_XS as decimal(18,2)) else cast(DATEDIFF( Minute, qcx.Time_B, qcx.Time_E)/60.0 as decimal(18,2))  end end end as gongjia,
+case when qcx.Type_Main=2 and qcx.Type_zi=21 then case when qcx.Type_JS=0 then 8.00 else case when qcx.Sum_XS>0 then CAST(qcx.Sum_XS as decimal(18,2)) else cast(DATEDIFF( Minute, qcx.Time_B, qcx.Time_E)/60.0 as decimal(18,2))  end end end as chuchai,
+case when qcx.Type_Main=2 and qcx.Type_zi=22 then case when qcx.Type_JS=0 then 8.00 else case when qcx.Sum_XS>0 then CAST(qcx.Sum_XS as decimal(18,2)) else cast(DATEDIFF( Minute, qcx.Time_B, qcx.Time_E)/60.0 as decimal(18,2))  end end end as waichuxuexi
+from EyeBasicSystem.dbo.KQ_Q_C_X qcx
+left join Ren_Per_Info rp on rp.p_code=qcx.PInfo_id 
+left join Ren_Dept_Info dept on rp.Dept_ID=dept.Dept_ID
+where   convert(varchar(10),qcx.Time_B,23) >= @begintime 
+     and convert(varchar(10),qcx.Time_e,23) <= @endtime 
+and rp.Dept_ID in (select dinfo.Dept_ID from Ren_Dept_Info dinfo  where 
+ case when @departmentid =''  then @departmentid else dinfo.Dept_Code end  = @departmentid )
+ ) ph  group by ph.P_Name,ph.PInfo_id,ph.Dept_Name,ph.P_Code order by ph.PInfo_id]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="departmentid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource1]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[declare @departmentid  varchar(50)
+
+set @departmentid='${departmentid}'
+
+
+select top 1 dept.Dept_Name from Ren_Dept_Info dept where case when @departmentid='' then @departmentid else dept.Dept_Code end  =@departmentid
+ order by dept.Dept_ID]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="6"/>
+<FR/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,914400,144000,914400,914400,914400,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,2819400,3238500,2971800,2743200,2857500,2016000,2016000,2016000,2016000,2016000,2016000,2016000,2016000,2160000,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<Expand/>
+</C>
+<C c="1" r="0" cs="14" s="1">
+<O>
+<![CDATA[休假 /出差统计表]]></O>
+<Expand/>
+</C>
+<C c="0" r="1" s="2">
+<Expand/>
+</C>
+<C c="1" r="1" s="2">
+<O>
+<![CDATA[部门:]]></O>
+<Expand/>
+</C>
+<C c="2" r="1" cs="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="Dept_Name"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="4" r="1" s="2">
+<Expand/>
+</C>
+<C c="5" r="1" s="2">
+<Expand/>
+</C>
+<C c="6" r="1" s="2">
+<Expand/>
+</C>
+<C c="13" r="1" s="2">
+<Expand/>
+</C>
+<C c="0" r="2" s="2">
+<Expand/>
+</C>
+<C c="1" r="2" s="2">
+<O>
+<![CDATA[开始日期:]]></O>
+<Expand/>
+</C>
+<C c="2" r="2" cs="2" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="2" s="2">
+<Expand/>
+</C>
+<C c="5" r="2" s="2">
+<Expand/>
+</C>
+<C c="6" r="2" s="2">
+<Expand/>
+</C>
+<C c="13" r="2" s="2">
+<Expand/>
+</C>
+<C c="0" r="3" s="2">
+<Expand/>
+</C>
+<C c="1" r="3" s="2">
+<O>
+<![CDATA[结束日期:]]></O>
+<Expand/>
+</C>
+<C c="2" r="3" cs="2" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="3" s="2">
+<Expand/>
+</C>
+<C c="5" r="3" s="2">
+<Expand/>
+</C>
+<C c="6" r="3" s="2">
+<Expand/>
+</C>
+<C c="13" r="3" s="2">
+<Expand/>
+</C>
+<C c="1" r="4">
+<Expand/>
+</C>
+<C c="0" r="5" s="3">
+<Expand/>
+</C>
+<C c="1" r="5" rs="2" s="4">
+<O>
+<![CDATA[姓名]]></O>
+<Expand/>
+</C>
+<C c="2" r="5" rs="2" s="4">
+<O>
+<![CDATA[ID号]]></O>
+<Expand/>
+</C>
+<C c="3" r="5" rs="2" s="4">
+<O>
+<![CDATA[部门]]></O>
+<Expand/>
+</C>
+<C c="4" r="5" rs="2" s="4">
+<O>
+<![CDATA[开始日期]]></O>
+<Expand/>
+</C>
+<C c="5" r="5" rs="2" s="4">
+<O>
+<![CDATA[结束日期]]></O>
+<Expand/>
+</C>
+<C c="6" r="5" cs="7" s="4">
+<O>
+<![CDATA[休假(小时)]]></O>
+<Expand/>
+</C>
+<C c="13" r="5" cs="2" s="4">
+<O>
+<![CDATA[出差(小时)]]></O>
+<Expand/>
+</C>
+<C c="6" r="6" s="4">
+<O>
+<![CDATA[病假]]></O>
+<Expand/>
+</C>
+<C c="7" r="6" s="4">
+<O>
+<![CDATA[事假]]></O>
+<Expand/>
+</C>
+<C c="8" r="6" s="4">
+<O>
+<![CDATA[婚假]]></O>
+<Expand/>
+</C>
+<C c="9" r="6" s="4">
+<O>
+<![CDATA[丧假]]></O>
+<Expand/>
+</C>
+<C c="10" r="6" s="4">
+<O>
+<![CDATA[产假]]></O>
+<Expand/>
+</C>
+<C c="11" r="6" s="4">
+<O>
+<![CDATA[探亲]]></O>
+<Expand/>
+</C>
+<C c="12" r="6" s="4">
+<O>
+<![CDATA[公假]]></O>
+<Expand/>
+</C>
+<C c="13" r="6" s="4">
+<O>
+<![CDATA[出差]]></O>
+<Expand/>
+</C>
+<C c="14" r="6" s="4">
+<O>
+<![CDATA[外出学习]]></O>
+<Expand/>
+</C>
+<C c="0" r="7" s="5">
+<Expand/>
+</C>
+<C c="1" r="7" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="P_Name"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="7" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="P_Code"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="7" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="Dept_Name"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="7" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="bingjia"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="7" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="shijia"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="7" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="hunjia"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="7" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="sangjia"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="7" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="chanjia"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="7" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="tanqin"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="7" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="gongjia"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="7" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="chuchai"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="7" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="waichuxuexi"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="true" delayPlaying="true" windowPosition="1" align="0"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="黑体" style="0" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

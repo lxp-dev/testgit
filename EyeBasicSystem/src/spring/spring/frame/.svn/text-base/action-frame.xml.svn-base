@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	
+	<bean id="loginAction" class="com.pengsheng.eims.frame.action.LoginAction" scope="prototype"/>
+	
+	<!-- 左侧模块视图 Start -->
+	<bean id="roleModuleTreeViewAction" class="com.pengsheng.eims.frame.action.RoleModuleTreeViewAction" scope="prototype"/>
+	<!-- 左侧模块视图 End -->
+</beans>

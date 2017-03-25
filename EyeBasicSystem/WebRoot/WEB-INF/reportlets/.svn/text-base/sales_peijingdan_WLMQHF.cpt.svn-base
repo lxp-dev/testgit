@@ -1,0 +1,1617 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[X1120120140320225946 ]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT S_SE_SB_SalesID           AS '销售单号',
+       S_SE_SB_ShopCode          AS '店号',
+       xsdd.B_DP_DepartmentName  AS '销售店名',
+       S_ME_CI_MemberId          AS '顾客号',
+       S_ME_CI_Name              AS '顾客姓名',
+                ( YEAR(Getdate()) - YEAR(S_ME_CI_Birthday) )              AS '年龄',
+                ( CASE S_ME_CI_Sex 
+                 WHEN '0' THEN '男' 
+                  WHEN '1' THEN '女' 
+                 ELSE '' 
+                 END ) AS '顾客性别',
+
+S_ME_CI_Address AS '会员地址',
+       S_ME_CI_Phone             AS '顾客电话',
+S_ME_CI_Integral                 AS '顾客积分' ,
+       S_ME_CI_CardType          AS '顾客卡类型',
+       S_SE_SB_OptID             AS '验光号-验光基表',
+       S_SE_SB_OptometryID       AS '验光病历号',
+S_OP_Optometry.S_OP_OY_PersonID AS '验光师ID',
+yg.personName AS '验光师姓名',
+       S_SE_SB_InspectionID      AS '检查结论ID',
+
+convert(varchar(16),S_SE_SB_TakeGlassData,23) AS '取镜日期',
+convert(varchar(16),S_SE_SB_SalesDatetime,23) AS '销售日期',
+ 
+       S_SE_SB_OrdersType        AS '订单类型',
+       ( CASE S_SE_SB_OrdersType
+           WHEN '1' THEN '镜架成品片'
+           WHEN '2' THEN '镜架订做片'
+           WHEN '3' THEN '隐形成品片'
+           WHEN '4' THEN '隐形订做片'
+           WHEN '5' THEN '辅料'
+           ELSE ''
+         END )                   AS '订单类型名称',
+       S_SE_SB_BallGlassOD       AS '右眼球镜',
+       S_SE_SB_BallGlassOS       AS '左眼球镜',
+       S_SE_SB_PostGlassOD       AS '右眼柱镜',
+       S_SE_SB_PostGlassOS       AS '左眼柱镜',
+       S_SE_SB_AxesOD            AS '右眼轴向',
+       S_SE_SB_AxesOS            AS '左眼轴向',
+       S_SE_SB_ADDOD             AS '右眼add',
+       S_SE_SB_ADDOS             AS '左眼add',
+       S_SE_SB_ArriseGlassOD1    AS '右眼三棱镜',
+       S_SE_SB_ArriseGlassOS1    AS '左眼三棱镜',
+       S_SE_SB_BasisOD1          AS '右眼基底1',
+       S_SE_SB_BasisOS1          AS '左眼基底1',
+       S_SE_SB_PrismOD           AS '右眼棱镜',
+       S_SE_SB_PrismOS           AS '左眼棱镜',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_InterHighOD
+when S_SE_SB_RecipeType = '2' then S_SE_SB_InterDistanceOD
+when S_SE_SB_RecipeType = '3' then S_SE_SB_InterHighOD
+when S_SE_SB_RecipeType = '5' then S_SE_SB_InterHighOD
+else ''
+end as '右眼瞳距',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_InterHighOs
+when S_SE_SB_RecipeType = '2' then S_SE_SB_InterDistanceOs
+when S_SE_SB_RecipeType = '3' then S_SE_SB_InterHighOs
+when S_SE_SB_RecipeType = '5' then S_SE_SB_InterHighOs
+else ''
+end as '左眼瞳距',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_FarVAOd
+when S_SE_SB_RecipeType = '2' then S_SE_SB_CloseVAOd
+when S_SE_SB_RecipeType = '3' then S_SE_SB_FarVAOd
+else ''
+end as '右眼矫视',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_FarVAOS
+when S_SE_SB_RecipeType = '2' then S_SE_SB_CloseVAOs
+when S_SE_SB_RecipeType = '3' then S_SE_SB_FarVAOS
+else ''
+end as '左眼矫视',
+       S_SE_SB_RecipeType        AS '处方形式',
+       ( CASE S_SE_SB_RecipeType
+           WHEN '1' THEN '远用'
+           WHEN '2' THEN '近用'
+           WHEN '3' THEN '渐进/双光'
+           WHEN '4' THEN '隐形'
+           ELSE ''
+         END )                   AS '处方形式名称',
+       S_SE_SB_DignosisRe        AS '备注',
+       S_SE_SB_DiameterOD        AS '隐形右眼直径',
+       S_SE_SB_DiameterOS        AS '隐形左眼直径',
+       S_SE_SB_ConRecipeType     AS '隐形处理方式',
+       S_SE_SB_SecCheckDate      AS '复诊时间',
+       S_SE_SB_SubVisitUnit      AS '复诊时间单位',
+       S_SE_SB_SalesType         AS '销售类型',
+       ( CASE S_SE_SB_SalesType
+           WHEN '1' THEN '内方'
+           WHEN '2' THEN '外方'
+           WHEN '3' THEN '辅料'
+           ELSE ''
+         END )                   AS '销售类型',
+       S_SE_SB_SalerID           AS '销售人员ID',
+       xs.personName             AS '销售员姓名',
+       S_SE_SB_Lryid             AS '录入员ID',
+       lr.personName             AS '录入员姓名',
+       S_SE_SB_PosDatetime       AS '收银日期',
+       S_SE_SB_PosID             AS '收银员ID',
+       sy.personName             AS '收银员姓名',
+       S_SE_SB_PriceSum          AS '原价合计',
+       S_SE_SB_SalesValue        AS '应收金额',
+       S_SE_SB_EyeCurvatureOD1   AS '隐形右眼曲率1',
+       S_SE_SB_EyeCurvatureOD2   AS '隐形右眼曲率2',
+       S_SE_SB_EyeCurvatureOS1   AS '隐形左眼曲率1',
+       S_SE_SB_EyeCurvatureOS2   AS '隐形左眼曲率2',
+       S_SE_SB_DiscountRate      AS '折扣率',
+       S_SE_SB_DiscountNum       AS '折扣金额',
+       S_SE_SB_Psalsvalue        AS '实缴金额',
+       S_SE_SB_ArrearsValue      AS '欠款金额',
+       S_SE_SB_Location          AS '取镜地点',
+       qjdd.B_DP_DepartmentName  AS '销售店名',
+       S_SE_SB_ArrivedDate       AS '到镜日期',
+       S_SE_SB_ValueFlag         AS '收费标志',
+       ( CASE S_SE_SB_ValueFlag
+           WHEN '0' THEN '未收费'
+           WHEN '1' THEN '已收费'
+           ELSE ''
+         END )                   AS '收费状态',
+       S_SE_SB_CheckoutFlag      AS '欠费标志',
+       ( CASE S_SE_SB_CheckoutFlag
+           WHEN '0' THEN '未欠费'
+           WHEN '1' THEN '欠费'
+           ELSE ''
+         END )                   AS '欠费状态',
+       S_SE_SB_InTransit         AS '配镜单当前在途状态',
+       S_SE_SB_WithdrawDate      AS '退费日期',
+       S_SE_SB_WithdrawFlag      AS '退费标示位',
+       S_SE_SB_WithdrawPersonID  AS '退费人员',
+       sy.personName             AS '退费人员姓名',
+       S_SE_SB_MovementType      AS '活动类型ID',
+       S_SE_SB_ArrearsAppendDate AS '补齐欠款日期',
+       S_SE_SB_ArrearsDate       AS '欠款日期',
+       S_SE_SB_PayCash           AS '缴费现金金额',
+       S_SE_SB_BankCard          AS '缴费银行卡金额',
+       S_SE_SB_StoredCard        AS '缴费储值卡金额',
+       S_SE_SB_Renums            AS '抹零金额',
+       S_SE_SB_DiscountType      AS '折扣类型',
+       S_SE_SB_DiscountPerson    AS '打折人',
+       dz.personName             AS '打折人员姓名',
+       S_SE_SB_DragsType         AS '委外类型',
+       S_SE_SB_PupilHeightOD     AS '右眼瞳高',
+       S_SE_SB_PupilHeightOS     AS '左眼瞳高',
+       S_SE_SB_FavorableAmount,
+                
+       ( CASE S_SE_SB_WorryType
+           WHEN '0' THEN '加急'
+           WHEN '1' THEN '正常'
+           ELSE ''
+         END )                   AS '加急状态',
+
+
+
+       S_SE_SB_Integral,
+       S_SE_SB_SetMealID         AS '套餐ID',
+       S_SM_SM_Title             AS '套餐名称',
+       S_SE_SB_ExecStandard,
+       S_SE_SB_SalesRemark       AS '销售备注',
+       S_SE_SB_SourceSalesID,
+       S_SE_SB_SwapGoodsFlag     AS '配镜单退款类型',
+       ( CASE S_SE_SB_CheckoutFlag
+           WHEN '1' THEN '整单退款'
+           WHEN '2' THEN '部分退款'
+           WHEN '3' THEN '部分换货'
+           WHEN '4' THEN '直接退款'
+           ELSE ''
+         END )                   AS '配镜单退款类型名称',
+       S_SE_SD_SalesItemID       AS '商品代码',
+       S_SE_SD_ItemID            AS '商品条码',
+       S_SE_SD_StockId           AS '仓储ID',
+       B_WH_warehouseName        AS '仓位名称',
+       S_SE_SD_SalesItemName     AS '商品名称',
+       S_SE_SD_Sprice            AS '商品单价',
+       S_SE_SD_Number            AS '数量',
+B_UT_unitName AS '单位',
+       S_SE_SD_UnitPrice         AS '单位成本(不含税价格)',
+       S_SE_SD_CostsPrive        AS '成本价格',
+       S_SE_SD_PriceSum          AS '原价合计',
+       S_SE_SD_SalesValue        AS '应收金额',
+B_GI_Spec AS '规格',
+B_GI_Color AS '色号',
+F_TT_Name AS '加工工艺',
+       S_SE_SD_DiscountRate      AS '折率',
+       S_SE_SD_DiscountNum       AS '折扣金额',
+       S_SE_SD_GoodDescribe      AS '商品描述',
+       S_SE_SD_GlassFlag         AS '右左眼标识',
+       S_SE_SD_CommoditiesFlag   AS '商品类别',
+(CASE S_SE_SD_CommoditiesFlag 
+	WHEN '1' THEN 1
+	WHEN '2' THEN 999
+	WHEN '3' THEN 2
+	WHEN '4' THEN 3
+	WHEN '5' THEN 4
+	WHEN '6' THEN 5
+	WHEN '7' THEN 99
+	WHEN '8' THEN 6
+	WHEN '9' THEN 7
+ELSE '101' END) AS '排序列',
+       S_SE_SD_Updatetime        AS '更新时间',
+       S_SE_SD_LargessFlag       AS '赠品标识',
+       S_SE_SD_Renums            AS '抹零金额',
+       S_SE_SD_IsCollect         AS '汇总销售出库单的标志',
+       S_SE_SD_DiscountType      AS '折扣类型',
+       S_SE_SD_DiscountSource    AS '关联打折工号、打折卡号、打折券',
+       S_SE_SD_InStockId         AS '退款仓位',
+       S_SE_SD_Favorable         AS '优惠金额',
+       S_SE_SB_Integral          AS '积分',
+       S_SE_SD_OutStorageFlag    AS '结款是否出库',
+       S_SE_SD_InStorageFlag     AS '退款是否入库',
+       S_SE_SD_Guaranteeperiod   AS '失效日期',
+       S_SE_SD_Batch             AS '批次',
+       S_SE_SD_WithdrawFlag,
+       S_SE_SD_WithdrawDate,
+       S_SE_SD_WithdrawPersonID,
+       S_SE_SD_ExchageFlag,S_OP_OY_CustomerID
+FROM   S_SE_SalesBasic
+       LEFT JOIN S_SE_SalesDetail
+         ON S_SE_SD_SalesID = S_SE_SB_SalesID
+       LEFT JOIN B_Departments xsdd
+         ON xsdd.B_DP_DepartmentID = S_SE_SB_ShopCode
+       LEFT JOIN B_Departments qjdd
+         ON qjdd.B_DP_DepartmentID = S_SE_SB_Location
+       LEFT JOIN B_Warehouse
+         ON B_WH_ID = S_SE_SD_StockId
+       LEFT JOIN S_ME_CustomerInfo
+         ON S_ME_CI_CustomerID = S_SE_SB_CustomerID
+       LEFT JOIN S_SM_SetMeal
+         ON S_SM_SM_ID = S_SE_SB_SetMealID
+       LEFT JOIN SYS_PersonInfo xs
+         ON xs.ID = S_SE_SB_SalerID
+       LEFT JOIN SYS_PersonInfo lr
+         ON lr.ID = S_SE_SB_Lryid
+       LEFT JOIN SYS_PersonInfo sy
+         ON sy.ID = S_SE_SB_PosID
+       LEFT JOIN SYS_PersonInfo tf
+         ON tf.ID = S_SE_SB_WithdrawPersonID
+       LEFT JOIN SYS_PersonInfo dz
+         ON dz.ID = S_SE_SB_DiscountPerson
+	INNER JOIN B_GoodsInfo ON B_GI_GoodsID = S_SE_SD_SalesItemID
+	LEFT JOIN F_TechnologyType ON F_TT_ID = B_GI_FinishedGlassesType
+	LEFT JOIN B_Unit ON B_UT_id = B_GI_UnitId
+	LEFT JOIN S_OP_Optometry ON S_OP_OY_OptometryID = S_SE_SB_OptometryID
+	LEFT JOIN SYS_PersonInfo yg ON yg.ID = S_OP_Optometry.S_OP_OY_PersonID
+WHERE  S_SE_SB_SalesID = '${salesid}' 
+
+--------
+union all 
+SELECT S_SE_SB_SalesID           AS '销售单号',
+       S_SE_SB_ShopCode          AS '店号',
+       xsdd.B_DP_DepartmentName  AS '销售店名',
+       S_ME_CI_MemberId          AS '顾客号',
+       S_ME_CI_Name              AS '顾客姓名',
+                ( YEAR(Getdate()) - YEAR(S_ME_CI_Birthday) )              AS '年龄',
+                ( CASE S_ME_CI_Sex 
+                 WHEN '0' THEN '男' 
+                  WHEN '1' THEN '女' 
+                 ELSE '' 
+                 END ) AS '顾客性别',
+
+S_ME_CI_Address AS '会员地址',
+       S_ME_CI_Phone             AS '顾客电话',
+S_ME_CI_Integral                 AS '顾客积分' ,
+       S_ME_CI_CardType          AS '顾客卡类型',
+       S_SE_SB_OptID             AS '验光号-验光基表',
+       S_SE_SB_OptometryID       AS '验光病历号',
+S_OP_Optometry.S_OP_OY_PersonID AS '验光师ID',
+yg.personName AS '验光师姓名',
+       S_SE_SB_InspectionID      AS '检查结论ID',
+convert(varchar(16),S_SE_SB_TakeGlassData,23) AS '取镜日期',
+convert(varchar(16),S_SE_SB_SalesDatetime,23) AS '销售日期',
+       S_SE_SB_OrdersType        AS '订单类型',
+       ( CASE S_SE_SB_OrdersType
+           WHEN '1' THEN '镜架成品片'
+           WHEN '2' THEN '镜架订做片'
+           WHEN '3' THEN '隐形成品片'
+           WHEN '4' THEN '隐形订做片'
+           WHEN '5' THEN '辅料'
+           ELSE ''
+         END )                   AS '订单类型名称',
+       S_SE_SB_BallGlassOD       AS '右眼球镜',
+       S_SE_SB_BallGlassOS       AS '左眼球镜',
+       S_SE_SB_PostGlassOD       AS '右眼柱镜',
+       S_SE_SB_PostGlassOS       AS '左眼柱镜',
+       S_SE_SB_AxesOD            AS '右眼轴向',
+       S_SE_SB_AxesOS            AS '左眼轴向',
+       S_SE_SB_ADDOD             AS '右眼add',
+       S_SE_SB_ADDOS             AS '左眼add',
+       S_SE_SB_ArriseGlassOD1    AS '右眼三棱镜',
+       S_SE_SB_ArriseGlassOS1    AS '左眼三棱镜',
+       S_SE_SB_BasisOD1          AS '右眼基底1',
+       S_SE_SB_BasisOS1          AS '左眼基底1',
+       S_SE_SB_PrismOD           AS '右眼棱镜',
+       S_SE_SB_PrismOS           AS '左眼棱镜',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_InterHighOD
+when S_SE_SB_RecipeType = '2' then S_SE_SB_InterDistanceOD
+when S_SE_SB_RecipeType = '3' then S_SE_SB_InterHighOD
+when S_SE_SB_RecipeType = '5' then S_SE_SB_InterHighOD
+else ''
+end as '右眼瞳距',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_InterHighOs
+when S_SE_SB_RecipeType = '2' then S_SE_SB_InterDistanceOs
+when S_SE_SB_RecipeType = '3' then S_SE_SB_InterHighOs
+when S_SE_SB_RecipeType = '5' then S_SE_SB_InterHighOs
+else ''
+end as '左眼瞳距',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_FarVAOd
+when S_SE_SB_RecipeType = '2' then S_SE_SB_CloseVAOd
+when S_SE_SB_RecipeType = '3' then S_SE_SB_FarVAOd
+else ''
+end as '右眼矫视',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_FarVAOS
+when S_SE_SB_RecipeType = '2' then S_SE_SB_CloseVAOs
+when S_SE_SB_RecipeType = '3' then S_SE_SB_FarVAOS
+else ''
+end as '左眼矫视',
+       S_SE_SB_RecipeType        AS '处方形式',
+       ( CASE S_SE_SB_RecipeType
+           WHEN '1' THEN '远用'
+           WHEN '2' THEN '近用'
+           WHEN '3' THEN '渐进/双光'
+           WHEN '4' THEN '隐形'
+           ELSE ''
+         END )                   AS '处方形式名称',
+       S_SE_SB_DignosisRe        AS '备注',
+       S_SE_SB_DiameterOD        AS '隐形右眼直径',
+       S_SE_SB_DiameterOS        AS '隐形左眼直径',
+       S_SE_SB_ConRecipeType     AS '隐形处理方式',
+       S_SE_SB_SecCheckDate      AS '复诊时间',
+       S_SE_SB_SubVisitUnit      AS '复诊时间单位',
+       S_SE_SB_SalesType         AS '销售类型',
+       ( CASE S_SE_SB_SalesType
+           WHEN '1' THEN '内方'
+           WHEN '2' THEN '外方'
+           WHEN '3' THEN '辅料'
+           ELSE ''
+         END )                   AS '销售类型',
+       S_SE_SB_SalerID           AS '销售人员ID',
+       xs.personName             AS '销售员姓名',
+       S_SE_SB_Lryid             AS '录入员ID',
+       lr.personName             AS '录入员姓名',
+       S_SE_SB_PosDatetime       AS '收银日期',
+       S_SE_SB_PosID             AS '收银员ID',
+       sy.personName             AS '收银员姓名',
+       S_SE_SB_PriceSum          AS '原价合计',
+       S_SE_SB_SalesValue        AS '应收金额',
+       S_SE_SB_EyeCurvatureOD1   AS '隐形右眼曲率1',
+       S_SE_SB_EyeCurvatureOD2   AS '隐形右眼曲率2',
+       S_SE_SB_EyeCurvatureOS1   AS '隐形左眼曲率1',
+       S_SE_SB_EyeCurvatureOS2   AS '隐形左眼曲率2',
+       S_SE_SB_DiscountRate      AS '折扣率',
+       S_SE_SB_DiscountNum       AS '折扣金额',
+       S_SE_SB_Psalsvalue        AS '实缴金额',
+       S_SE_SB_ArrearsValue      AS '欠款金额',
+       S_SE_SB_Location          AS '取镜地点',
+       qjdd.B_DP_DepartmentName  AS '销售店名',
+       S_SE_SB_ArrivedDate       AS '到镜日期',
+       S_SE_SB_ValueFlag         AS '收费标志',
+       ( CASE S_SE_SB_ValueFlag
+           WHEN '0' THEN '未收费'
+           WHEN '1' THEN '已收费'
+           ELSE ''
+         END )                   AS '收费状态',
+       S_SE_SB_CheckoutFlag      AS '欠费标志',
+       ( CASE S_SE_SB_CheckoutFlag
+           WHEN '0' THEN '未欠费'
+           WHEN '1' THEN '欠费'
+           ELSE ''
+         END )                   AS '欠费状态',
+       S_SE_SB_InTransit         AS '配镜单当前在途状态',
+       S_SE_SB_WithdrawDate      AS '退费日期',
+       S_SE_SB_WithdrawFlag      AS '退费标示位',
+       S_SE_SB_WithdrawPersonID  AS '退费人员',
+       sy.personName             AS '退费人员姓名',
+       S_SE_SB_MovementType      AS '活动类型ID',
+       S_SE_SB_ArrearsAppendDate AS '补齐欠款日期',
+       S_SE_SB_ArrearsDate       AS '欠款日期',
+       S_SE_SB_PayCash           AS '缴费现金金额',
+       S_SE_SB_BankCard          AS '缴费银行卡金额',
+       S_SE_SB_StoredCard        AS '缴费储值卡金额',
+       S_SE_SB_Renums            AS '抹零金额',
+       S_SE_SB_DiscountType      AS '折扣类型',
+       S_SE_SB_DiscountPerson    AS '打折人',
+       dz.personName             AS '打折人员姓名',
+       S_SE_SB_DragsType         AS '委外类型',
+       S_SE_SB_PupilHeightOD     AS '右眼瞳高',
+       S_SE_SB_PupilHeightOS     AS '左眼瞳高',
+       S_SE_SB_FavorableAmount,
+         ( CASE S_SE_SB_WorryType
+           WHEN '0' THEN '加急'
+           WHEN '1' THEN '正常'
+           ELSE ''
+         END )                   AS '加急状态',
+       S_SE_SB_Integral,
+       S_SE_SB_SetMealID         AS '套餐ID',
+       S_SM_SM_Title             AS '套餐名称',
+       S_SE_SB_ExecStandard,
+       S_SE_SB_SalesRemark       AS '销售备注',
+       S_SE_SB_SourceSalesID,
+       S_SE_SB_SwapGoodsFlag     AS '配镜单退款类型',
+       ( CASE S_SE_SB_CheckoutFlag
+           WHEN '1' THEN '整单退款'
+           WHEN '2' THEN '部分退款'
+           WHEN '3' THEN '部分换货'
+           WHEN '4' THEN '直接退款'
+           ELSE ''
+         END )                   AS '配镜单退款类型名称',
+       S_SE_SD_SalesItemID       AS '商品代码',
+       S_SE_SD_ItemID            AS '商品条码',
+       S_SE_SD_StockId           AS '仓储ID',
+       B_WH_warehouseName        AS '仓位名称',
+       S_SE_SD_SalesItemName     AS '商品名称',
+       S_SE_SD_Sprice            AS '商品单价',
+       S_SE_SD_Number            AS '数量',
+B_UT_unitName AS '单位',
+       S_SE_SD_UnitPrice         AS '单位成本(不含税价格)',
+       S_SE_SD_CostsPrive        AS '成本价格',
+       S_SE_SD_PriceSum          AS '原价合计',
+       S_SE_SD_SalesValue        AS '应收金额',
+B_GI_Spec AS '规格',
+B_GI_Color AS '色号',
+F_TT_Name AS '加工工艺',
+       S_SE_SD_DiscountRate      AS '折率',
+       S_SE_SD_DiscountNum       AS '折扣金额',
+       S_SE_SD_GoodDescribe      AS '商品描述',
+       S_SE_SD_GlassFlag         AS '右左眼标识',
+       S_SE_SD_CommoditiesFlag   AS '商品类别',
+(CASE S_SE_SD_CommoditiesFlag 
+	WHEN '1' THEN 1
+	WHEN '2' THEN 999
+	WHEN '3' THEN 2
+	WHEN '4' THEN 3
+	WHEN '5' THEN 4
+	WHEN '6' THEN 5
+	WHEN '7' THEN 99
+	WHEN '8' THEN 6
+	WHEN '9' THEN 7
+ELSE '101' END) AS '排序列',
+       S_SE_SD_Updatetime        AS '更新时间',
+       S_SE_SD_LargessFlag       AS '赠品标识',
+       S_SE_SD_Renums            AS '抹零金额',
+       S_SE_SD_IsCollect         AS '汇总销售出库单的标志',
+       S_SE_SD_DiscountType      AS '折扣类型',
+       S_SE_SD_DiscountSource    AS '关联打折工号、打折卡号、打折券',
+       S_SE_SD_InStockId         AS '退款仓位',
+       S_SE_SD_Favorable         AS '优惠金额',
+       S_SE_SB_Integral          AS '积分',
+       S_SE_SD_OutStorageFlag    AS '结款是否出库',
+       S_SE_SD_InStorageFlag     AS '退款是否入库',
+       S_SE_SD_Guaranteeperiod   AS '失效日期',
+       S_SE_SD_Batch             AS '批次',
+       S_SE_SD_WithdrawFlag,
+       S_SE_SD_WithdrawDate,
+       S_SE_SD_WithdrawPersonID,
+       S_SE_SD_ExchageFlag,S_OP_OY_CustomerID
+FROM   S_SE_SalesBasic_Finished
+       LEFT JOIN S_SE_SalesDetail_Finished
+         ON S_SE_SD_SalesID = S_SE_SB_SalesID
+       LEFT JOIN B_Departments xsdd
+         ON xsdd.B_DP_DepartmentID = S_SE_SB_ShopCode
+       LEFT JOIN B_Departments qjdd
+         ON qjdd.B_DP_DepartmentID = S_SE_SB_Location
+       LEFT JOIN B_Warehouse
+         ON B_WH_ID = S_SE_SD_StockId
+       LEFT JOIN S_ME_CustomerInfo
+         ON S_ME_CI_CustomerID = S_SE_SB_CustomerID
+       LEFT JOIN S_SM_SetMeal
+         ON S_SM_SM_ID = S_SE_SB_SetMealID
+       LEFT JOIN SYS_PersonInfo xs
+         ON xs.ID = S_SE_SB_SalerID
+       LEFT JOIN SYS_PersonInfo lr
+         ON lr.ID = S_SE_SB_Lryid
+       LEFT JOIN SYS_PersonInfo sy
+         ON sy.ID = S_SE_SB_PosID
+       LEFT JOIN SYS_PersonInfo tf
+         ON tf.ID = S_SE_SB_WithdrawPersonID
+       LEFT JOIN SYS_PersonInfo dz
+         ON dz.ID = S_SE_SB_DiscountPerson
+	INNER JOIN B_GoodsInfo ON B_GI_GoodsID = S_SE_SD_SalesItemID
+	LEFT JOIN F_TechnologyType ON F_TT_ID = B_GI_FinishedGlassesType
+	LEFT JOIN B_Unit ON B_UT_id = B_GI_UnitId
+	LEFT JOIN S_OP_Optometry ON S_OP_OY_OptometryID = S_SE_SB_OptometryID
+	LEFT JOIN SYS_PersonInfo yg ON yg.ID = S_OP_Optometry.S_OP_OY_PersonID
+WHERE  S_SE_SB_SalesID = '${salesid}' 
+ORDER BY [排序列]A]]></Query>
+</TableData>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select
+S_SE_CostsName AS '附加费名称',
+S_SE_Number AS '数量',
+cast(S_SE_Amount * S_SE_Number as numeric(18,2)) as '金额合计'
+from S_SE_AdditionalCDetail
+where S_SE_SalesID = '${salesid}']]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="wFlag"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[declare @wFlag varchar(2)
+
+set @wFlag = '${wFlag}' -- 1:结款; -- -1:退款；
+
+select 配镜单号,付款方式+'：'+CAST(付款金额 AS varchar(20)) as '付款方式金额'
+into #tmp_fukuanfangshijine
+ from (
+SELECT S_SE_SL_SalesID                            AS '配镜单号',
+        CASE @wFlag
+         WHEN '-1' THEN -CAST(S_SE_SL_Price AS DECIMAL(18, 2))
+		 WHEN '1' THEN CAST(S_SE_SL_Price AS DECIMAL(18, 2))
+	     else CAST(S_SE_SL_Price AS DECIMAL(18, 2))
+       END       AS '付款金额',
+       CONVERT(VARCHAR(16), S_SE_SL_DateTime, 20) AS '付款日期',
+       CASE S_SE_SL_ConsumptionID
+         WHEN '1' THEN '现金'
+         WHEN '2' THEN '积分'
+         WHEN '3' THEN B_B_Name
+         WHEN '4' THEN '储值卡'
+         WHEN '6' THEN B_B_Name
+         WHEN '7' THEN '代金券'
+       END                                        AS '付款方式'
+FROM   S_SE_SalesLog
+       LEFT JOIN B_Bank
+         ON B_B_Number = S_SE_SL_SourceID
+WHERE  S_SE_SL_SalesID = '${salesid}'
+       AND CAST(S_SE_SL_Price AS NUMERIC(18, 2)) <> 0
+	   AND ((@wFlag = '-1' AND S_SE_SL_PaymentType in ('4') ) OR (isnull(@wFlag,'1') = '1' AND S_SE_SL_PaymentType in ('1','2','3') ))
+)t
+
+SELECT DISTINCT 配镜单号,
+                Stuff((SELECT '　' + 付款方式金额
+                       FROM   #tmp_fukuanfangshijine
+                       WHERE  配镜单号 = A.配镜单号
+                       FOR XML PATH('')), 1, 1, '')AS 付款方式金额
+FROM   #tmp_fukuanfangshijine AS A 
+
+drop table #tmp_fukuanfangshijine
+]]></Query>
+</TableData>
+<TableData name="ds4" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select S_SE_SD_Requirement As '特殊加工要求' from S_SE_SpecialPDetail
+ where S_SE_SD_SalesID = '${salesid}']]></Query>
+</TableData>
+<TableData name="ds5" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT case when 
+convert(varchar(4),convert(Decimal(4,1),
+case S_OP_HI_InterHighOD when '' then 0 end)+ 
+convert(decimal(4,1),
+case S_OP_HI_InterHighOS when '' then 0 end)) = 0.0 then '' else 
+
+convert(varchar(4),convert(Decimal(4,1),
+case S_OP_HI_InterHighOD when '' then 0 else convert(decimal(4,1),S_OP_HI_InterHighOD)end)+ 
+convert(decimal(4,1),
+case S_OP_HI_InterHighOS when '' then 0 else convert(decimal(4,1),S_OP_HI_InterHighOS)end))
+end 
+AS '旧瞳距',
+isnull(S_OP_HI_BallOD,'') AS '旧右眼球镜',
+isnull(S_OP_HI_BallOS,'') AS '旧左眼球镜',
+isnull(S_OP_HI_PostOD,'') AS '旧右眼柱镜',
+isnull(S_OP_HI_PostOS,'') AS '旧左眼柱镜' ,
+S_OP_HI_AxesOD AS '旧右眼轴向',
+S_OP_HI_AxesOS AS '旧左眼轴向'
+  FROM dbo.S_SE_SalesBasic 
+left join S_OP_HisInfo
+on  S_SE_SB_CustomerID = S_OP_HI_FCustomerID  
+WHERE  S_SE_SB_SalesID = '${salesid}'
+union all 
+SELECT case when 
+convert(varchar(4),convert(Decimal(4,1),
+case S_OP_HI_InterHighOD when '' then 0 end)+ 
+convert(decimal(4,1),
+case S_OP_HI_InterHighOS when '' then 0 end)) = 0.0 then '' else 
+
+convert(varchar(4),convert(Decimal(4,1),
+case S_OP_HI_InterHighOD when '' then 0 else convert(decimal(4,1),S_OP_HI_InterHighOD)end)+ 
+convert(decimal(4,1),
+case S_OP_HI_InterHighOS when '' then 0 else convert(decimal(4,1),S_OP_HI_InterHighOS)end))
+end 
+AS '旧瞳距',
+isnull(S_OP_HI_BallOD,'') AS '旧右眼球镜',
+isnull(S_OP_HI_BallOS,'') AS '旧左眼球镜',
+isnull(S_OP_HI_PostOD,'') AS '旧右眼柱镜',
+isnull(S_OP_HI_PostOS,'') AS '旧左眼柱镜' ,
+S_OP_HI_AxesOD AS '旧右眼轴向',
+S_OP_HI_AxesOS AS '旧左眼轴向'
+  FROM dbo.S_SE_SalesBasic_Finished 
+left join S_OP_HisInfo
+on  S_SE_SB_CustomerID = S_OP_HI_FCustomerID  
+WHERE  S_SE_SB_SalesID = '${salesid}']]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[2133600,360000,360000,360000,360000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,432000,432000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,1257300,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,323850,323850,288000,288000,288000,288000,288000,288000,288000,288000,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[0,0,0,288000,288000,288000,288000,288000,457200,288000,0,288000,288000,288000,288000,288000,288000,288000,288000,288000,114300,288000,288000,288000,381000,288000,288000,228600,152400,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,190500,288000,288000,288000,495300,288000,288000,76200,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="3" r="1" cs="9" rs="2" s="0">
+<O>
+<![CDATA[销售单号:]]></O>
+<Expand/>
+</C>
+<C c="12" r="1" cs="22" rs="2" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="销售单号"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="34" r="1" cs="9" rs="2" s="0">
+<O>
+<![CDATA[配镜时间:]]></O>
+<Expand/>
+</C>
+<C c="43" r="1" cs="12" rs="2" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="销售日期"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="55" r="1" cs="8" rs="2" s="0">
+<O>
+<![CDATA[取镜时间:]]></O>
+<Expand/>
+</C>
+<C c="63" r="1" cs="12" rs="2" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="取镜日期"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="75" r="1" cs="10" rs="2" s="2">
+<O>
+<![CDATA[销售门店:]]></O>
+<Expand/>
+</C>
+<C c="85" r="1" cs="14" rs="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="销售店名"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="3" cs="9" rs="2" s="2">
+<O>
+<![CDATA[订单状态：]]></O>
+<Expand/>
+</C>
+<C c="12" r="3" cs="8" rs="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="加急状态"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="20" r="3" cs="10" rs="2" s="2">
+<O>
+<![CDATA[顾客卡号：]]></O>
+<Expand/>
+</C>
+<C c="30" r="3" cs="24" rs="2" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="顾客号"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="54" r="3" cs="6" rs="2" s="2">
+<O>
+<![CDATA[姓名：]]></O>
+<Expand/>
+</C>
+<C c="60" r="3" cs="7" rs="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="顾客姓名"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="67" r="3" cs="6" rs="2" s="2">
+<O>
+<![CDATA[性别：]]></O>
+<Expand/>
+</C>
+<C c="73" r="3" cs="2" rs="2" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="顾客性别"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="75" r="3" cs="10" rs="2" s="2">
+<O>
+<![CDATA[联系电话：]]></O>
+<Expand/>
+</C>
+<C c="85" r="3" cs="14" rs="2" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="顾客电话"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="5" cs="6" rs="9" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="处方形式名称"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="5" s="2">
+<Expand/>
+</C>
+<C c="10" r="5" s="2">
+<Expand/>
+</C>
+<C c="11" r="5" s="2">
+<Expand/>
+</C>
+<C c="12" r="5" cs="6" rs="3" s="2">
+<O>
+<![CDATA[球镜]]></O>
+<Expand/>
+</C>
+<C c="18" r="5" cs="6" rs="3" s="2">
+<O>
+<![CDATA[柱镜]]></O>
+<Expand/>
+</C>
+<C c="24" r="5" cs="6" rs="3" s="2">
+<O>
+<![CDATA[轴位]]></O>
+<Expand/>
+</C>
+<C c="30" r="5" cs="6" rs="3" s="2">
+<O>
+<![CDATA[曲率]]></O>
+<Expand/>
+</C>
+<C c="36" r="5" cs="6" rs="3" s="2">
+<O>
+<![CDATA[棱镜]]></O>
+<Expand/>
+</C>
+<C c="42" r="5" cs="6" rs="3" s="2">
+<O>
+<![CDATA[ADD]]></O>
+<Expand/>
+</C>
+<C c="48" r="5" cs="8" rs="3" s="2">
+<O>
+<![CDATA[矫正视力]]></O>
+<Expand/>
+</C>
+<C c="56" r="5" cs="6" rs="3" s="2">
+<O>
+<![CDATA[PD]]></O>
+<Expand/>
+</C>
+<C c="62" r="5" cs="6" rs="3" s="2">
+<O>
+<![CDATA[H]]></O>
+<Expand/>
+</C>
+<C c="68" r="5" cs="6" rs="3" s="2">
+<O>
+<![CDATA[B.C]]></O>
+<Expand/>
+</C>
+<C c="74" r="5" cs="7" rs="3" s="2">
+<O>
+<![CDATA[原镜：]]></O>
+<Expand/>
+</C>
+<C c="81" r="5" cs="6" rs="3" s="2">
+<O>
+<![CDATA[S]]></O>
+<Expand/>
+</C>
+<C c="87" r="5" cs="6" rs="3" s="2">
+<O>
+<![CDATA[C]]></O>
+<Expand/>
+</C>
+<C c="93" r="5" cs="6" rs="3" s="2">
+<O>
+<![CDATA[A]]></O>
+<Expand/>
+</C>
+<C c="9" r="6" s="2">
+<Expand/>
+</C>
+<C c="10" r="6" s="2">
+<Expand/>
+</C>
+<C c="11" r="6" s="2">
+<Expand/>
+</C>
+<C c="9" r="7" s="2">
+<Expand/>
+</C>
+<C c="10" r="7" s="2">
+<Expand/>
+</C>
+<C c="11" r="7" s="2">
+<Expand/>
+</C>
+<C c="9" r="8" cs="3" rs="3" s="2">
+<O>
+<![CDATA[R]]></O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="8" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼球镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="18" r="8" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼柱镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="24" r="8" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼轴向"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="30" r="8" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="隐形右眼曲率1"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="36" r="8" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼三棱镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="42" r="8" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼add"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="48" r="8" cs="8" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼矫视"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="56" r="8" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼瞳距"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="62" r="8" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼瞳高"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="68" r="8" cs="6" rs="3" s="5">
+<Expand/>
+</C>
+<C c="74" r="8" cs="7" rs="3" s="5">
+<Expand/>
+</C>
+<C c="81" r="8" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="旧右眼球镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="87" r="8" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="旧右眼柱镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="93" r="8" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="旧右眼轴向"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="11" cs="3" rs="3" s="2">
+<O>
+<![CDATA[L]]></O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="11" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼球镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="18" r="11" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼柱镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="24" r="11" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼轴向"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="30" r="11" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="隐形左眼曲率1"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="36" r="11" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼三棱镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="42" r="11" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼add"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="48" r="11" cs="8" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼矫视"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="56" r="11" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼瞳距"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="62" r="11" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼瞳高"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="68" r="11" cs="6" rs="3" s="5">
+<Expand/>
+</C>
+<C c="74" r="11" cs="7" rs="3" s="5">
+<Expand/>
+</C>
+<C c="81" r="11" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="旧左眼球镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="87" r="11" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="旧左眼柱镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="93" r="11" cs="6" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="旧左眼轴向"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="14" cs="9" rs="3" s="2">
+<O>
+<![CDATA[验光师：]]></O>
+<Expand/>
+</C>
+<C c="12" r="14" cs="12" rs="3" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="验光师姓名"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="24" r="14" cs="6" rs="3" s="2">
+<O>
+<![CDATA[备注：]]></O>
+<Expand/>
+</C>
+<C c="30" r="14" cs="69" rs="3" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="备注"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="17" cs="96" rs="2" s="6">
+<O>
+<![CDATA[商品信息]]></O>
+<Expand/>
+</C>
+<C c="3" r="19" cs="96" rs="12" s="2">
+<O t="SubReport">
+<SubReportAttr extendOwnerParameter="true"/>
+<packee class="com.fr.main.impl.LinkWorkBookTemplate">
+<Path>
+<![CDATA[print_saleschild1_WLMQHF.cpt]]></Path>
+</packee>
+<KVS/>
+</O>
+<Expand/>
+</C>
+<C c="3" r="31" cs="9" rs="3" s="2">
+<O>
+<![CDATA[备注：]]></O>
+<Expand/>
+</C>
+<C c="12" r="31" cs="87" rs="3" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="销售备注"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="34" cs="9" rs="3" s="2">
+<O>
+<![CDATA[附加费：]]></O>
+<Expand/>
+</C>
+<C c="12" r="34" cs="10" rs="3" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="金额合计"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="22" r="34" cs="9" rs="3" s="4">
+<O>
+<![CDATA[加工要求：]]></O>
+<Expand/>
+</C>
+<C c="31" r="34" cs="68" rs="3" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="特殊加工要求"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="37" cs="9" rs="3" s="2">
+<O>
+<![CDATA[实收金额：]]></O>
+<Expand/>
+</C>
+<C c="12" r="37" cs="10" rs="3" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="实缴金额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[IF($wFlag==1, $$$, IF($wFlag==-1, ($$$ * -1), $$$))]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="22" r="37" cs="9" rs="3" s="2">
+<O>
+<![CDATA[欠款：]]></O>
+<Expand/>
+</C>
+<C c="31" r="37" cs="10" rs="3" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="欠款金额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[IF($wFlag==1, $$$, IF($wFlag==-1, ($$$ * -1), $$$))]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="41" r="37" cs="9" rs="3" s="2">
+<O>
+<![CDATA[付款方式：]]></O>
+<Expand/>
+</C>
+<C c="50" r="37" cs="49" rs="3" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="付款方式金额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[IF($wFlag==1, $$$, IF($wFlag==-1, ($$$ * -1), $$$))]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="40" cs="9" rs="2" s="2">
+<O>
+<![CDATA[本次积分：]]></O>
+<Expand/>
+</C>
+<C c="12" r="40" cs="10" rs="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="积分"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[IF($wFlag==1, $$$, IF($wFlag==-1, ($$$ * -1), $$$))]]></Result>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="22" r="40" cs="9" rs="2" s="2">
+<O>
+<![CDATA[积分余额：]]></O>
+<Expand/>
+</C>
+<C c="31" r="40" cs="10" rs="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="顾客积分"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="41" r="40" cs="8" rs="2" s="7">
+<O>
+<![CDATA[收银员：]]></O>
+<Expand/>
+</C>
+<C c="49" r="40" cs="8" rs="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="收银员姓名"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="57" r="40" cs="9" rs="2" s="2">
+<O>
+<![CDATA[配镜顾问：]]></O>
+<Expand/>
+</C>
+<C c="66" r="40" cs="8" rs="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="销售员姓名"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="74" r="40" cs="10" rs="2" s="2">
+<O>
+<![CDATA[顾客签名：]]></O>
+<Expand/>
+</C>
+<C c="84" r="40" cs="15" rs="2" s="8">
+<Expand/>
+</C>
+<C c="3" r="42" cs="9" rs="2" s="2">
+<O>
+<![CDATA[加工师：]]></O>
+<Expand/>
+</C>
+<C c="13" r="42">
+<Expand/>
+</C>
+<C c="14" r="42">
+<Expand/>
+</C>
+<C c="16" r="42">
+<Expand/>
+</C>
+<C c="17" r="42">
+<Expand/>
+</C>
+<C c="18" r="42">
+<Expand/>
+</C>
+<C c="19" r="42">
+<Expand/>
+</C>
+<C c="20" r="42">
+<Expand/>
+</C>
+<C c="21" r="42">
+<Expand/>
+</C>
+<C c="22" r="42" cs="9" rs="2" s="2">
+<O>
+<![CDATA[质检员：]]></O>
+<Expand/>
+</C>
+<C c="31" r="42">
+<Expand/>
+</C>
+<C c="32" r="42">
+<Expand/>
+</C>
+<C c="33" r="42">
+<Expand/>
+</C>
+<C c="34" r="42">
+<Expand/>
+</C>
+<C c="35" r="42">
+<Expand/>
+</C>
+<C c="36" r="42">
+<Expand/>
+</C>
+<C c="37" r="42">
+<Expand/>
+</C>
+<C c="38" r="42">
+<Expand/>
+</C>
+<C c="39" r="42">
+<Expand/>
+</C>
+<C c="40" r="42">
+<Expand/>
+</C>
+<C c="41" r="42">
+<Expand/>
+</C>
+<C c="42" r="42">
+<Expand/>
+</C>
+<C c="43" r="42">
+<Expand/>
+</C>
+<C c="44" r="42">
+<Expand/>
+</C>
+<C c="45" r="42">
+<Expand/>
+</C>
+<C c="46" r="42">
+<Expand/>
+</C>
+<C c="47" r="42">
+<Expand/>
+</C>
+<C c="48" r="42">
+<Expand/>
+</C>
+<C c="49" r="42">
+<Expand/>
+</C>
+<C c="50" r="42">
+<Expand/>
+</C>
+<C c="51" r="42">
+<Expand/>
+</C>
+<C c="52" r="42">
+<Expand/>
+</C>
+<C c="53" r="42">
+<Expand/>
+</C>
+<C c="54" r="42">
+<Expand/>
+</C>
+<C c="55" r="42">
+<Expand/>
+</C>
+<C c="56" r="42">
+<Expand/>
+</C>
+<C c="57" r="42">
+<Expand/>
+</C>
+<C c="58" r="42">
+<Expand/>
+</C>
+<C c="59" r="42">
+<Expand/>
+</C>
+<C c="60" r="42">
+<Expand/>
+</C>
+<C c="61" r="42">
+<Expand/>
+</C>
+<C c="62" r="42">
+<Expand/>
+</C>
+<C c="63" r="42">
+<Expand/>
+</C>
+<C c="64" r="42">
+<Expand/>
+</C>
+<C c="65" r="42">
+<Expand/>
+</C>
+<C c="66" r="42">
+<Expand/>
+</C>
+<C c="67" r="42">
+<Expand/>
+</C>
+<C c="68" r="42">
+<Expand/>
+</C>
+<C c="69" r="42">
+<Expand/>
+</C>
+<C c="70" r="42">
+<Expand/>
+</C>
+<C c="71" r="42">
+<Expand/>
+</C>
+<C c="72" r="42">
+<Expand/>
+</C>
+<C c="73" r="42">
+<Expand/>
+</C>
+<C c="74" r="42">
+<Expand/>
+</C>
+<C c="75" r="42">
+<Expand/>
+</C>
+<C c="76" r="42">
+<Expand/>
+</C>
+<C c="77" r="42">
+<Expand/>
+</C>
+<C c="78" r="42">
+<Expand/>
+</C>
+<C c="79" r="42">
+<Expand/>
+</C>
+<C c="80" r="42">
+<Expand/>
+</C>
+<C c="81" r="42">
+<Expand/>
+</C>
+<C c="82" r="42">
+<Expand/>
+</C>
+<C c="83" r="42">
+<Expand/>
+</C>
+<C c="84" r="42">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting>
+<Margin top="122400" left="7200" bottom="122400" right="7200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="64"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="96"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="9"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

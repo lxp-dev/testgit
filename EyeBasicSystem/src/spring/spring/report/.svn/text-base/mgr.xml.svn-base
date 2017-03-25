@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	<!-- 门店销售指南 Liuqian begin-->
+	<bean id="qmshtMgr" class="com.pengsheng.eims.report.mgr.impl.QmshtMgrImpl" />
+	<!-- 门店销售指南 Liuqian end-->
+	
+	<!-- 商品销售分析表  begin-->
+	<bean id="goodsSalesAnalysisMgr" class="com.pengsheng.eims.report.mgr.impl.GoodsSalesAnalysisMgrImpl" />
+	<!-- 商品销售分析表  end-->
+	
+	<!-- 门店镜片加工数量 liujing begin-->
+	<bean id="qmshPersonWorkingGlassMgr" class="com.pengsheng.eims.report.mgr.impl.QmshPersonWorkingGlassMgrImpl" />
+	<!-- 门店镜片加工数量 liujing end-->	
+		
+	<!-- 对账表szk  begin-->
+	<bean id="contrastAccountMgr" class="com.pengsheng.eims.report.mgr.impl.ContrastAccountMgrImpl" />
+	<!-- 对账表szk  end-->
+	
+	<!-- 领导看板 szk  begin-->
+	<bean id="leaderBoardMgr" class="com.pengsheng.eims.report.mgr.impl.LeaderBoardMgrImpl" />
+	<!-- 领导看板 szk  end-->
+	
+	<!-- 报表石英维护 szk  begin-->
+    <bean id="reportQuartzMgr" class="com.pengsheng.eims.report.mgr.impl.ReportQuartzMgrImpl" />
+	<!-- 报表石英维护 szk  end-->
+
+</beans>

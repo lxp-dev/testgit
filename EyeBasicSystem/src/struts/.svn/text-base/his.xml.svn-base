@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+    
+<struts>	
+	<package name="his" namespace="/" extends="struts-default">
+
+		<action name="getCustomerInfoByHis" class="hisAction" method="getCustomerInfoByHis">
+		  <result name="target">${targetpage}</result>
+		  <result name="success">/readEdzM1.jsp</result>
+		  <result name="error">/readEdzM1.jsp</result>
+		</action>
+		
+		<action name="getCustomerOptometryStateByHis" class="hisAction" method="getCustomerOptometryStateByHis"></action>
+		
+		<action name="updateNotChargeStateByHis" class="hisAction" method="updateNotChargeStateByHis"></action>
+		
+		<action name="updateCustOptStaOKByHis" class="hisAction" method="updateCustOptStaOKByHis"></action>
+		
+		<action name="updateSalesBillStateByHis" class="hisAction" method="updateSalesBillStateByHis">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="insertNotChargeStateByHis" class="hisAction" method="insertNotChargeStateByHis"></action>
+				
+		<action name="updateNotChargeStateByXtHis" class="hisAction" method="updateNotChargeStateByXtHis"></action>
+		
+		<!-- 收费确认  begin --> 
+		
+		<action name="inithisParam" class="hisParamAction" method="inithisParam">
+		  <result name="success">/WEB-INF/pages/aierhis/hisParam/hisParam_select.jsp</result>
+
+		  <result name="queryHisParam" type="redirectAction">queryHisParam?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>	
+
+		</action>
+		<action name="queryHisParam" class="hisParamAction" method="queryHisParam">
+		  <result name="success">/WEB-INF/pages/aierhis/hisParam/hisParam_select.jsp</result>
+		</action>
+		<action name="submitHisParamPoAgain" class="hisParamAction" method="submitHisParamPoAgain">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="hisParamPoDetails" class="hisParamAction" method="hisParamPoDetails">
+		  <result name="success">/WEB-INF/pages/aierhis/hisParam/hisParam_details.jsp</result>
+		</action>
+		<action name="initsubmitHisParamPoAgain" class="hisParamAction" method="initsubmitHisParamPoAgain">
+		  <result name="success">/WEB-INF/pages/aierhis/hisParam/hisParam_again.jsp</result>
+		</action>
+		<action name="initsubmitHisParamPoCancel" class="hisParamAction" method="initsubmitHisParamPoCancel">
+		  <result name="success">/WEB-INF/pages/aierhis/hisParam/hisParam_cancel.jsp</result>
+		</action>
+		<action name="submitHisParamPoCancel" class="hisParamAction" method="submitHisParamPoCancel">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="initHisParamNot" class="hisParamAction" method="initHisParamNot">
+		  <result name="success">/WEB-INF/pages/sales/DoorStoreDelivery/doorStoreYetDelivery_select.jsp</result>
+		  <result name="queryHisParamNot" type="redirectAction">queryHisParamNot?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+		</action>
+		<action name="queryHisParamNot" class="hisParamAction" method="queryHisParamNot">
+		  <result name="success">/WEB-INF/pages/aierhis/hisParam/hisParam_selectnot.jsp</result>
+		</action>
+	<!-- 收费确认  end --> 
+	
+	<!-- HIS日志查询  begin --> 
+		<action name="initHisLogPo" class="hisLogPoAction" method="initHisLogPo">
+		  <result name="success">/WEB-INF/pages/aierhis/hislog/hisLog_select.jsp</result>
+		  <result name="queryHisLog" type="redirectAction">queryHisLog?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+		</action>
+		<action name="queryHisLog" class="hisLogPoAction" method="queryHisLog">
+		  <result name="success">/WEB-INF/pages/aierhis/hislog/hisLog_select.jsp</result>
+		</action>
+		
+		<action name="initHisLogDetails" class="hisLogPoAction" method="initHisLogDetails">
+		  <result name="success">/WEB-INF/pages/aierhis/hislog/hisLog_Details.jsp</result>
+		</action>
+	<!--HIS日志查询  end-->
+			
+	</package>
+</struts>

@@ -1,0 +1,4202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="startTime"/>
+<O>
+<![CDATA[2014-12-16]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O>
+<![CDATA[01]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O>
+<![CDATA[2014-12-16]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+declare @select varchar(8000)
+declare @from varchar(8000)
+declare @where varchar(1000)
+declare @groupby varchar(1000)
+declare @sql varchar(8000)
+
+select departmentID into #salesDepartments from sales_createShopCodeTab('${departmentid}')
+
+----------------*********************************************------------------------------------
+
+if ('${startTime}'<convert(varchar(10),getdate(),120))
+begin
+
+if ('${endTime}'<convert(varchar(10),getdate(),120))
+begin
+
+select ('${startTime}'+'--'+'${endTime}') as queryDate,
+        departmentId as departmentId, 
+        departmentName as departmentName,
+        glassesAmount as glassesAmount,
+		frameAmount as frameAmount,
+        eyeglassesAmount as eyeglassesAmount,
+        frameAssistAmount as frameAssistAmount,
+        yxAssistAmount as yxAssistAmount,
+		contactAmount as contactAmount,
+        contactAssistAmount as contactAssistAmount,
+        othersAmount as othersAmount,
+		discountAmount as discountAmount,
+        amount as amount,
+        inspectionNum as inspectionNum,
+		inspectionAmount as inspectionAmount,
+        glassesBillNum as glassesBillNum,
+		oldAmount as oldAmount,
+		shineAmount as shineAmount,
+        wxAmount AS wxAmount
+  from (
+select ('${startTime}'+'--'+'${endTime}') as queryDate,
+        R_CQT_OS_DepartmentId as departmentId, 
+        B_DP_DepartmentName as departmentName,
+        sum(R_CQT_OS_glassesAmount) as glassesAmount,
+		sum(R_CQT_OS_frameAmount) as frameAmount,
+        sum(R_CQT_OS_eyeglassesAmount) as eyeglassesAmount,
+        sum(R_CQT_OS_frameAssistAmount) as frameAssistAmount,
+        sum(R_CQT_OS_yxAssistAmount) as yxAssistAmount,
+		sum(R_CQT_OS_contactAmount) as contactAmount,
+        sum(R_CQT_OS_contactAssistAmount) as contactAssistAmount,
+        sum(R_CQT_OS_otherAmount) as othersAmount,
+		sum(R_CQT_OS_discountAmount) as discountAmount,
+        sum(R_CQT_OS_amount) as amount,
+        sum(R_CQT_OS_inspectionNum) as inspectionNum,
+		sum(R_CQT_OS_inspectionAmount) as inspectionAmount,
+        sum(R_CQT_OS_glassesBillNum) as glassesBillNum,
+		sum(R_CQT_OS_oldAmount) as oldAmount,
+		sum(R_CQT_OS_shineAmount) as shineAmount,
+	    sum(R_CQT_OS_WxAmount) as wxAmount
+from R_casher_AppendArrears inner join B_Departments on R_CQT_OS_DepartmentId=B_DP_DepartmentID
+ where R_CQT_OS_Date>='${startTime}' and R_CQT_OS_Date<='${endTime}' 
+and ((ISNULL('${departmentid}','')<>'' AND R_CQT_OS_DepartmentId in (select departmentID from #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+group by B_DP_DepartmentName,R_CQT_OS_DepartmentId
+
+)temp
+   where 	glassesAmount<>0 or 
+			frameAmount<>0 or 
+			eyeglassesAmount<>0 or 
+			frameAssistAmount<>0 or 
+            yxAssistAmount <>0 or 
+			contactAmount<>0 or 
+			contactAssistAmount<>0 or 
+			discountAmount<>0 or  
+			inspectionNum<>0 or 
+			inspectionAmount<>0 or 
+			glassesBillNum<>0 or 
+            othersAmount<>0 or 
+			amount<>0 or 
+            wxAmount<>0
+
+end
+else
+begin
+
+--
+----------------------------------------------------------------------
+---- 镜片金额 #jp_03 ----------------------------------------------------
+select sum(temp.glassesAmount1)+sum(temp.glassesAmount2) as glassesAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #jp_02
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_CpjpPrice,'0.0') as decimal(18, 2)) as glassesAmount1,
+cast(isnull(S_SE_SCR_DzjpPrice,'0.0') as decimal(18, 2)) as glassesAmount2
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_CpjpPrice,'0.0') as decimal(18, 2)) as glassesAmount1,
+-cast(isnull(S_SE_SCR_DzjpPrice,'0.0') as decimal(18, 2)) as glassesAmount2
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+---- 镜架金额 #jj_03 -------------------------------------------------------
+select sum(temp.frameAmount) as frameAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #jj_02
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_JjPrice,'0.0') as decimal(18, 2)) as frameAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_JjPrice,'0.0') as decimal(18, 2)) as frameAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+---- 成镜金额 #cj_03 -------------------------------------------------------
+select sum(temp.eyeglassesAmount) as eyeglassesAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #cj_01
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_TyjPrice,'0.0') as decimal(18, 2)) as eyeglassesAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_TyjPrice,'0.0') as decimal(18, 2)) as eyeglassesAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+
+-------------------------------------------------------------------------
+---- 老花金额 #cj_03 -------------------------------------------------------
+select sum(temp.eyeglassesAmount) as eyeglassesAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #cj_02
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_LhjPrice,'0.0') as decimal(18, 2)) as eyeglassesAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_LhjPrice,'0.0') as decimal(18, 2)) as eyeglassesAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+
+--
+---- 镜架辅料金额 #jzfl_02 --------------------------------------------------
+select sum(temp.frameAssistAmount) as frameAssistAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #jzfl_02
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_PjPrice,'0.0') as decimal(18, 2)) as frameAssistAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_PjPrice,'0.0') as decimal(18, 2)) as frameAssistAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+--
+---- 隐形辅料金额 #yxfl_02 --------------------------------------------------
+select sum(temp.yxAssistAmount) as yxAssistAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #yxfl_02
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_PjyxPrice,'0.0') as decimal(18, 2)) as yxAssistAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_PjyxPrice,'0.0') as decimal(18, 2)) as yxAssistAmount
+from S_SE_SalerCashierRecord
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+--
+---- 隐形金额 #yx_03 -------------------------------------------------------
+select sum(temp.glassesAmount1)+sum(temp.glassesAmount2) as contactAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #yx_02
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_YxcpjpPrice,'0.0') as decimal(18, 2)) as glassesAmount1,
+cast(isnull(S_SE_SCR_YxdzjpPrice,'0.0') as decimal(18, 2)) as glassesAmount2
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_YxcpjpPrice,'0.0') as decimal(18, 2)) as glassesAmount1,
+-cast(isnull(S_SE_SCR_YxdzjpPrice,'0.0') as decimal(18, 2)) as glassesAmount2
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+
+---- 护理液金额 #hly_03 -------------------------------------------------------
+select sum(temp.contactAssistAmount) as contactAssistAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #hly_02
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_HlyPrice,'0.0') as decimal(18, 2)) as contactAssistAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_HlyPrice,'0.0') as decimal(18, 2)) as contactAssistAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+
+--
+---- 折扣金额 #zk_03 -------------------------------------------------------
+select sum(temp.discountAmount) as discountAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #zk_02
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_DiscountPrice,'0.0') as decimal(18, 2)) as discountAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_DiscountPrice,'0.0') as decimal(18, 2)) as discountAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+
+-------------------------------------------------------------------------
+--
+---- 检查数量，检查金额 #jcsj_03 -------------------------------------------
+select * into #jcsj_02 from (
+
+	select count(*) as inspectionNum, 
+		   sum(isnull(S_CR_RD_Money,0.0)) as inspectionAmount, 
+		   S_CR_RD_ShopCode as S_SE_SB_ShopCode    
+	from S_CR_RegisteredDetails 
+	 where convert(varchar(10), S_CR_RD_CasherDate , 23) >= CONVERT(varchar(10), getdate(), 23)
+	   and convert(varchar(10), S_CR_RD_CasherDate , 23) <= '${endTime}'
+       and S_CR_RD_Flag='1'
+	   and ((ISNULL('${departmentid}', '')<>'' AND ((ISNULL('${departmentid}', '')<>'' AND S_CR_RD_ShopCode in (select departmentID from #salesDepartments)) OR (ISNULL('${departmentid}', '')=''))) OR (ISNULL('${departmentid}', '')=''))
+ group by S_CR_RD_ShopCode
+
+) jcsj
+
+
+---- 验光人次 #ygrc_03 -----------------------------------------------------
+select * into #ygrc_02 from (
+
+	select (sum(optometry) - sum(unoptometry)) as optometryPersonTime, 
+S_CR_RD_ShopCode as S_SE_SB_ShopCode
+	from (
+
+		select count(*) as optometry, 0 as unoptometry, 
+			   S_CR_RD_Casher    as s_se_sb_PosID, 
+			   S_CR_RD_ShopCode 
+		 from S_CR_RegisteredDetails t1 inner join F_RegisteredCategory t2 
+		   on t1.S_CR_RD_RegisteredID = t2.F_RC_ID 
+		and t2.F_RC_ID in ('8', '9', '21', '23', '24', '25', '26', '27', '28') 
+	    where convert(varchar(10), S_CR_RD_OptDate , 23) >= CONVERT(varchar(10), getdate(), 23) 
+		  and convert(varchar(10), S_CR_RD_OptDate , 23) <= '${endTime}'
+	 group by S_CR_RD_Casher   , S_CR_RD_ShopCode
+    union all
+	   select 0 as optometry, 
+			  count(*) as unoptometry, 
+			  S_CR_RD_Casher    as s_se_sb_PosID, 
+			  S_CR_RD_ShopCode 
+		from S_CR_RegisteredDetails t1 inner join F_RegisteredCategory t2 
+		  on t1.S_CR_RD_RegisteredID = t2.F_RC_ID
+	 and t2.F_RC_ID in ('10', '11', '29', '30', '31', '32', '33', '34', '35') 
+	   where convert(varchar(10), S_CR_RD_OptDate , 23) >= CONVERT(varchar(10), getdate(), 23) 
+		 and convert(varchar(10), S_CR_RD_OptDate , 23) <= '${endTime}'
+    group by S_CR_RD_Casher   , S_CR_RD_ShopCode
+
+	) t 
+	   where ((ISNULL('${departmentid}', '')<>'' AND S_CR_RD_ShopCode in (select departmentID from #salesDepartments)) OR (ISNULL('${departmentid}', '')=''))
+	group by S_CR_RD_ShopCode
+
+) ygrc
+-----------------------------------------------------------------------
+
+-- 配镜单数 #pjds_03 -----------------------------------------------------
+select count(*) as glassesBillNum,temp.ShopCode as S_SE_SB_ShopCode
+into #pjds_02
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_DiscountPrice,'0.0') as decimal(18, 2)) as discountAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_DiscountPrice,'0.0') as decimal(18, 2)) as discountAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-----------------------------------------------------------------------
+
+-- 附加费用 #fjfy_03 -----------------------------------------------------
+select sum(temp.amount) as amount,temp.ShopCode as S_SE_SB_ShopCode
+into #fjfy_02
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_AdditionPrice,'0.0') as decimal(18, 2)) as amount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_AdditionPrice,'0.0') as decimal(18, 2)) as amount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-----------------------------------------------------------------------
+---- 其他商品金额 #jp_03 ----------------------------------------------------
+select sum(temp.othersAmount) as othersAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #qt_02
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_HcPrice,'0.0') as decimal(18, 2)) as othersAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_HcPrice,'0.0') as decimal(18, 2)) as glassesAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+
+---- 视光金额 #sg_03 ----------------------------------------------------
+select sum(temp.othersAmount) as othersAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #sg_02
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_SgPrice,'0.0') as decimal(18, 2)) as othersAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_SgPrice,'0.0') as decimal(18, 2)) as othersAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= convert(varchar(10), getdate(), 23)
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+---- 维修费 #wx_02 ----------------------------------------------------
+select temp.wxfy as wxfy,temp.S_SE_SB_ShopCode
+into #wx_02
+from
+(       select isnull(sum(S_CR_RD_Money),0.00) as wxfy,
+        S_CR_RD_ShopCode as S_SE_SB_ShopCode
+        from S_CR_RepairsCostDetails
+        where convert(varchar(10), S_CR_RD_CasherDate, 23) >=CONVERT(varchar(10), getdate(), 23)
+        and convert(varchar(10), S_CR_RD_CasherDate, 23) <='${endTime}'
+        and S_CR_RD_Casher    is not null
+        and ((ISNULL('${departmentid}','')<>'' AND S_CR_RD_ShopCode in (select departmentID from #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+        group by S_CR_RD_ShopCode
+) temp 
+
+-------------------------------------------------------------------------
+
+select      departmentId as departmentId,
+			departmentName as departmentName,
+			glassesAmount as glassesAmount,
+			frameAmount as frameAmount,
+			eyeglassesAmount as eyeglassesAmount,
+			frameAssistAmount as frameAssistAmount, 
+            yxAssistAmount as yxAssistAmount, 
+			contactAmount as contactAmount,
+			contactAssistAmount as contactAssistAmount, 
+			discountAmount as discountAmount, 
+			inspectionNum as inspectionNum,
+			inspectionAmount as inspectionAmount,
+			glassesBillNum as glassesBillNum,
+            othersAmount as othersAmount,
+			amount as amount, 
+			oldAmount as oldAmount,
+			shineAmount as shineAmount,
+            wxAmount as wxAmount,
+			('${startTime}'+'--'+'${endTime}') as queryDate
+			from (
+
+select 
+		departmentId as departmentId,
+        departmentName as departmentName,
+        sum(glassesAmount) as glassesAmount,
+		sum(frameAmount) as frameAmount,
+        sum(eyeglassesAmount) as eyeglassesAmount,
+        sum(frameAssistAmount) as frameAssistAmount,
+        sum(yxAssistAmount) as yxAssistAmount,
+		sum(contactAmount) as contactAmount,
+        sum(contactAssistAmount) as contactAssistAmount,
+        sum(othersAmount) as othersAmount,
+		sum(discountAmount) as discountAmount,
+        sum(amount) as amount,
+        sum(inspectionNum) as inspectionNum,
+		sum(inspectionAmount) as inspectionAmount,
+        sum(glassesBillNum) as glassesBillNum,
+		sum(oldAmount) as oldAmount,
+		sum(shineAmount) as shineAmount,
+        sum(wxAmount) as wxAmount
+ from (
+
+select 
+('${startTime}'+'--'+'${endTime}') as queryDate,
+        R_CQT_OS_DepartmentId as departmentId,
+        B_DP_DepartmentName as departmentName,
+        sum(R_CQT_OS_glassesAmount) as glassesAmount,
+		sum(R_CQT_OS_frameAmount) as frameAmount,
+        sum(R_CQT_OS_eyeglassesAmount) as eyeglassesAmount,
+        sum(R_CQT_OS_frameAssistAmount) as frameAssistAmount,
+        sum(R_CQT_OS_yxAssistAmount) as yxAssistAmount,
+		sum(R_CQT_OS_contactAmount) as contactAmount,
+        sum(R_CQT_OS_contactAssistAmount) as contactAssistAmount,        
+		sum(R_CQT_OS_discountAmount) as discountAmount,
+        sum(R_CQT_OS_inspectionNum) as inspectionNum,
+		sum(R_CQT_OS_inspectionAmount) as inspectionAmount,
+        sum(R_CQT_OS_glassesBillNum) as glassesBillNum,
+        sum(R_CQT_OS_otherAmount) as othersAmount,
+        sum(R_CQT_OS_amount) as amount,
+		sum(R_CQT_OS_oldAmount) as oldAmount,
+		sum(R_CQT_OS_shineAmount) as shineAmount,
+        sum(R_CQT_OS_WxAmount) as wxAmount
+ from R_casher_AppendArrears inner join B_Departments on R_CQT_OS_DepartmentId=B_DP_DepartmentID
+     where R_CQT_OS_Date>='${startTime}' 
+      and R_CQT_OS_Date<=convert(char(10), dateadd(day,-1, '${endTime}'),120) 
+      and ((ISNULL('${departmentid}','')<>'' AND R_CQT_OS_DepartmentId in (select departmentID from #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+group by B_DP_DepartmentName,R_CQT_OS_DepartmentId
+
+union all
+
+   select  
+('${startTime}'+'--'+'${endTime}') as queryDate,
+            shopCode as departmentId,
+            departmentName as departmentName,
+			sum(glassesAmount) as glassesAmount,
+			sum(frameAmount) as frameAmount,
+			sum(eyeglassesAmount) as eyeglassesAmount,
+			sum(frameAssistAmount) as frameAssistAmount, 
+            sum(yxAssistAmount) as yxAssistAmount,
+			sum(contactAmount) as contactAmount,
+			sum(contactAssistAmount) as contactAssistAmount, 
+			sum(discountAmount) as discountAmount, 
+			sum(inspectionNum) as inspectionNum,
+			sum(inspectionAmount) as inspectionAmount,
+			sum(glassesBillNum) as glassesBillNum,
+            sum(othersAmount) as othersAmount,
+			sum(amount) as amount,
+			sum(oldAmount) as oldAmount,
+			sum(shineAmount) as shineAmount,
+            sum(wxAmount) as wxAmount
+ from (
+
+select      
+('${startTime}'+'--'+'${endTime}') as queryDate,
+            temp1.S_SE_SB_ShopCode as shopCode,
+			temp1.B_DP_DepartmentName as departmentName,
+			isnull(#jp_02.glassesAmount,0.0) as glassesAmount,
+			isnull(#jj_02.frameAmount,0.0) as frameAmount,
+			isnull(#cj_01.eyeglassesAmount,0.0) as eyeglassesAmount,
+			isnull(#jzfl_02.frameAssistAmount,0.0) as frameAssistAmount, 
+			isnull(#yxfl_02.yxAssistAmount,0.0) as yxAssistAmount, 
+			isnull(#yx_02.contactAmount,0.0) as contactAmount,
+			isnull(#hly_02.contactAssistAmount,0.0) as contactAssistAmount, 
+			isnull(#zk_02.discountAmount,0.0) as discountAmount, 
+			isnull(#jcsj_02.inspectionNum,0.0) as inspectionNum,
+			isnull(#jcsj_02.inspectionAmount,0.0) as inspectionAmount,
+			isnull(glassesBillNum,0.0) as glassesBillNum,
+            isnull(#qt_02.othersAmount,0.0) as othersAmount,
+			isnull(#fjfy_02.amount,0.0) as amount,
+			isnull(#cj_02.eyeglassesAmount,0.0) as oldAmount,
+			isnull(#sg_02.othersAmount,0.0) as shineAmount,
+            isnull(#wx_02.wxfy,0.0) as wxAmount
+ from (
+SELECT distinct S_SE_SB_ShopCode as S_SE_SB_ShopCode,B_DP_DepartmentName as B_DP_DepartmentName
+              FROM   uview_SalesBasic left join B_Departments on S_SE_SB_ShopCode=B_DP_DepartmentID
+              WHERE  S_SE_SB_ValueFlag = 1
+                     AND ((ISNULL('${departmentid}', '')<>'' AND S_SE_SB_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union
+	select distinct S_CR_RD_ShopCode as S_SE_SB_ShopCode,B_DP_DepartmentName as B_DP_DepartmentName		       
+	from S_CR_RegisteredDetails left join B_Departments on S_CR_RD_ShopCode=B_DP_DepartmentID
+	 where convert(varchar(10), S_CR_RD_CasherDate , 23) >= CONVERT(varchar(10), getdate(), 23)
+	   and convert(varchar(10), S_CR_RD_CasherDate , 23) <= '${endTime}'
+       and S_CR_RD_Flag='1'
+       AND ((ISNULL('${departmentid}', '')<>'' AND S_CR_RD_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union 
+        select distinct S_CR_RD_ShopCode as S_SE_SB_ShopCode,B_DP_DepartmentName as B_DP_DepartmentName
+        from S_CR_RepairsCostDetails left join B_Departments on S_CR_RD_ShopCode=B_DP_DepartmentID
+        where convert(varchar(10), S_CR_RD_CasherDate, 23) >=CONVERT(varchar(10), getdate(), 23)
+        and convert(varchar(10), S_CR_RD_CasherDate, 23) <='${endTime}'
+        and S_CR_RD_Casher    is not null
+        and ((ISNULL('${departmentid}','')<>'' AND S_CR_RD_ShopCode in (select departmentID from #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+
+ )temp1   
+
+ left join #jp_02 on temp1.S_SE_SB_ShopCode = #jp_02.S_SE_SB_ShopCode 
+ left join #jj_02 on temp1.S_SE_SB_ShopCode = #jj_02.S_SE_SB_ShopCode
+ left join #cj_01 on temp1.S_SE_SB_ShopCode = #cj_01.S_SE_SB_ShopCode
+ left join #cj_02 on temp1.S_SE_SB_ShopCode = #cj_02.S_SE_SB_ShopCode
+ left join #jzfl_02 on temp1.S_SE_SB_ShopCode = #jzfl_02.S_SE_SB_ShopCode 
+ left join #yxfl_02 on temp1.S_SE_SB_ShopCode = #yxfl_02.S_SE_SB_ShopCode
+ left join #yx_02 on temp1.S_SE_SB_ShopCode = #yx_02.S_SE_SB_ShopCode 
+ left join #hly_02 on temp1.S_SE_SB_ShopCode = #hly_02.S_SE_SB_ShopCode
+ left join #zk_02 on temp1.S_SE_SB_ShopCode = #zk_02.S_SE_SB_ShopCode 
+ left join #jcsj_02 on temp1.S_SE_SB_ShopCode = #jcsj_02.S_SE_SB_ShopCode
+ left join #ygrc_02 on temp1.S_SE_SB_ShopCode = #ygrc_02.S_SE_SB_ShopCode
+ left join #pjds_02 on temp1.S_SE_SB_ShopCode = #pjds_02.S_SE_SB_ShopCode
+ left join #fjfy_02 on temp1.S_SE_SB_ShopCode = #fjfy_02.S_SE_SB_ShopCode
+ left join #qt_02 on temp1.S_SE_SB_ShopCode = #qt_02.S_SE_SB_ShopCode
+ left join #sg_02 on temp1.S_SE_SB_ShopCode = #sg_02.S_SE_SB_ShopCode
+ left join #wx_02 on temp1.S_SE_SB_ShopCode = #wx_02.S_SE_SB_ShopCode
+
+where 1=1 and ((ISNULL('${departmentid}','')<>'' AND temp1.S_SE_SB_ShopCode in  (select departmentID from #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+
+  )temp
+group by shopCode,departmentName
+)temp4 
+group by departmentName,departmentId
+)temp
+
+   where 	glassesAmount<>0 or 
+			frameAmount<>0 or 
+			eyeglassesAmount<>0 or 
+			frameAssistAmount<>0 or 
+			yxAssistAmount<>0 or  
+			contactAmount<>0 or 
+			contactAssistAmount<>0 or 
+			discountAmount<>0 or  
+			inspectionNum<>0 or 
+			inspectionAmount<>0 or  
+			glassesBillNum<>0 or 
+            othersAmount<>0 or 
+			amount<>0 or 
+			oldAmount <>0 or
+			shineAmount<>0 or
+            wxAmount<>0
+
+drop table #jp_02
+drop table #jj_02
+drop table #cj_01
+drop table #cj_02
+drop table #jzfl_02
+drop table #yxfl_02
+drop table #yx_02
+drop table #hly_02
+drop table #zk_02
+drop table #jcsj_02
+drop table #ygrc_02
+drop table #pjds_02
+drop table #fjfy_02
+drop table #qt_02
+drop table #sg_02
+drop table #wx_02
+
+end
+
+end
+else
+begin
+
+----------------*********************************************--------------------------------------    
+---- 镜片金额 #jp_03 ----------------------------------------------------
+select sum(temp.glassesAmount1)+sum(temp.glassesAmount2) as glassesAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #jp_03
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_CpjpPrice,'0.0') as decimal(18, 2)) as glassesAmount1,
+cast(isnull(S_SE_SCR_DzjpPrice,'0.0') as decimal(18, 2)) as glassesAmount2
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_CpjpPrice,'0.0') as decimal(18, 2)) as glassesAmount1,
+-cast(isnull(S_SE_SCR_DzjpPrice,'0.0') as decimal(18, 2)) as glassesAmount2
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+---- 镜架金额 #jj_03 -------------------------------------------------------
+select sum(temp.frameAmount) as frameAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #jj_03
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_JjPrice,'0.0') as decimal(18, 2)) as frameAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_JjPrice,'0.0') as decimal(18, 2)) as frameAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+---- 成镜金额 #cj_03 -------------------------------------------------------
+select sum(temp.eyeglassesAmount) as eyeglassesAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #cj_03
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_TyjPrice,'0.0') as decimal(18, 2)) as eyeglassesAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_TyjPrice,'0.0') as decimal(18, 2)) as eyeglassesAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+
+-------------------------------------------------------------------------
+---- 老花金额 #cj_03 -------------------------------------------------------
+select sum(temp.eyeglassesAmount) as eyeglassesAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #cj_04
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_LhjPrice,'0.0') as decimal(18, 2)) as eyeglassesAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_LhjPrice,'0.0') as decimal(18, 2)) as eyeglassesAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+
+--
+---- 辅料金额 #jzfl_03 --------------------------------------------------
+select sum(temp.frameAssistAmount) as frameAssistAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #jzfl_03
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_PjPrice,'0.0') as decimal(18, 2)) as frameAssistAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_PjPrice,'0.0') as decimal(18, 2)) as frameAssistAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+--
+---- 隐形辅料金额 #yxfl_03 --------------------------------------------------
+select sum(temp.yxAssistAmount) as yxAssistAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #yxfl_03
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_PjyxPrice,'0.0') as decimal(18, 2)) as yxAssistAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_PjyxPrice,'0.0') as decimal(18, 2)) as yxAssistAmount
+from S_SE_SalerCashierRecord
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+--
+---- 隐形金额 #yx_03 -------------------------------------------------------
+select sum(temp.glassesAmount1)+sum(temp.glassesAmount2) as contactAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #yx_03
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_YxcpjpPrice,'0.0') as decimal(18, 2)) as glassesAmount1,
+cast(isnull(S_SE_SCR_YxdzjpPrice,'0.0') as decimal(18, 2)) as glassesAmount2
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_YxcpjpPrice,'0.0') as decimal(18, 2)) as glassesAmount1,
+-cast(isnull(S_SE_SCR_YxdzjpPrice,'0.0') as decimal(18, 2)) as glassesAmount2
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+
+---- 护理液金额 #hly_03 -------------------------------------------------------
+select sum(temp.contactAssistAmount) as contactAssistAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #hly_03
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_HlyPrice,'0.0') as decimal(18, 2)) as contactAssistAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_HlyPrice,'0.0') as decimal(18, 2)) as contactAssistAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+
+--
+---- 折扣金额 #zk_03 -------------------------------------------------------
+select sum(temp.discountAmount) as discountAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #zk_03
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_DiscountPrice,'0.0') as decimal(18, 2)) as discountAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_DiscountPrice,'0.0') as decimal(18, 2)) as discountAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+--
+---- 检查数量，检查金额 #jcsj_03 -------------------------------------------
+select * into #jcsj_03 from (
+
+	select count(*) as inspectionNum, 
+		   sum(isnull(S_CR_RD_Money,0.0)) as inspectionAmount, 
+		   S_CR_RD_ShopCode as S_SE_SB_ShopCode    
+	from S_CR_RegisteredDetails 
+	 where convert(varchar(10), S_CR_RD_CasherDate , 23) >= '${startTime}'
+	   and convert(varchar(10), S_CR_RD_CasherDate , 23) <= '${endTime}'
+       and S_CR_RD_Flag='1'
+	   and ((ISNULL('${departmentid}', '')<>'' AND S_CR_RD_ShopCode in (select departmentID from #salesDepartments)) OR (ISNULL('${departmentid}', '')=''))
+ group by S_CR_RD_ShopCode
+
+) jcsj
+
+
+---- 验光人次 #ygrc_03 -----------------------------------------------------
+select * into #ygrc_03 from (
+
+	select (sum(optometry) - sum(unoptometry)) as optometryPersonTime, 
+S_CR_RD_ShopCode as S_SE_SB_ShopCode
+	from (
+
+		select count(*) as optometry, 0 as unoptometry, 
+			   S_CR_RD_Casher    as s_se_sb_PosID, 
+			   S_CR_RD_ShopCode 
+		 from S_CR_RegisteredDetails t1 inner join F_RegisteredCategory t2 
+		   on t1.S_CR_RD_RegisteredID = t2.F_RC_ID 
+		and t2.F_RC_ID in ('8', '9', '21', '23', '24', '25', '26', '27', '28') 
+	    where convert(varchar(10), S_CR_RD_OptDate , 23) >= '${startTime}'
+		  and convert(varchar(10), S_CR_RD_OptDate , 23) <= '${endTime}'
+	 group by S_CR_RD_Casher   , S_CR_RD_ShopCode
+    union all
+	   select 0 as optometry, 
+			  count(*) as unoptometry, 
+			  S_CR_RD_Casher    as s_se_sb_PosID, 
+			  S_CR_RD_ShopCode 
+		from S_CR_RegisteredDetails t1 inner join F_RegisteredCategory t2 
+		  on t1.S_CR_RD_RegisteredID = t2.F_RC_ID
+	 and t2.F_RC_ID in ('10', '11', '29', '30', '31', '32', '33', '34', '35') 
+	   where convert(varchar(10), S_CR_RD_OptDate , 23) >= '${startTime}'
+		 and convert(varchar(10), S_CR_RD_OptDate , 23) <= '${endTime}'
+    group by S_CR_RD_Casher   , S_CR_RD_ShopCode
+
+	) t 
+	   where ((ISNULL('${departmentid}', '')<>'' AND S_CR_RD_ShopCode in (select departmentID from #salesDepartments)) OR (ISNULL('${departmentid}', '')=''))
+	group by S_CR_RD_ShopCode
+
+) ygrc
+-----------------------------------------------------------------------
+
+-- 配镜单数 #pjds_03 -----------------------------------------------------
+select count(*) as glassesBillNum,temp.ShopCode as S_SE_SB_ShopCode
+into #pjds_03
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_DiscountPrice,'0.0') as decimal(18, 2)) as discountAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_DiscountPrice,'0.0') as decimal(18, 2)) as discountAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-----------------------------------------------------------------------
+
+-- 附加费用 #fjfy_03 -----------------------------------------------------
+select sum(temp.amount) as amount,temp.ShopCode as S_SE_SB_ShopCode
+into #fjfy_03
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_AdditionPrice,'0.0') as decimal(18, 2)) as amount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_AdditionPrice,'0.0') as decimal(18, 2)) as amount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-----------------------------------------------------------------------
+---- 其他商品金额 #jp_03 ----------------------------------------------------
+select sum(temp.othersAmount) as othersAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #qt_03
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_HcPrice,'0.0') as decimal(18, 2)) as othersAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_HcPrice,'0.0') as decimal(18, 2)) as glassesAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+
+---- 视光金额 #sg_03 ----------------------------------------------------
+select sum(temp.othersAmount) as othersAmount,temp.ShopCode as S_SE_SB_ShopCode
+into #sg_03
+from
+(select S_SE_SCR_ShopCode as ShopCode,
+cast(isnull(S_SE_SCR_SgPrice,'0.0') as decimal(18, 2)) as othersAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='0'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union all
+select S_SE_SCR_ShopCode as ShopCode,
+-cast(isnull(S_SE_SCR_SgPrice,'0.0') as decimal(18, 2)) as othersAmount
+from S_SE_SalerCashierRecord_AppendArrears
+where S_SE_SCR_WithdrawFlag='1'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) >= '${startTime}'
+and convert(varchar(10), S_SE_SCR_PosDate, 23) <= '${endTime}'
+and ((ISNULL('${departmentid}', '')<>'' AND S_SE_SCR_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+) temp 
+group by ShopCode
+-------------------------------------------------------------------------
+---- 维修费 #wx_03 ----------------------------------------------------
+select temp.wxfy as wxfy,temp.S_SE_SB_ShopCode
+into #wx_03
+from
+(       select isnull(sum(S_CR_RD_Money),0.00) as wxfy,
+        S_CR_RD_ShopCode as S_SE_SB_ShopCode
+        from S_CR_RepairsCostDetails
+        where convert(varchar(10), S_CR_RD_CasherDate, 23) >='${startTime}'
+        and convert(varchar(10), S_CR_RD_CasherDate, 23) <='${endTime}'
+        and S_CR_RD_Casher    is not null
+        and ((ISNULL('${departmentid}','')<>'' AND S_CR_RD_ShopCode in (select departmentID from #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+        group by S_CR_RD_ShopCode
+) temp 
+
+-------------------------------------------------------------------------
+
+
+select      shopCode as departmentId,
+			departmentName as departmentName,
+			glassesAmount as glassesAmount,
+			frameAmount as frameAmount,
+			eyeglassesAmount as eyeglassesAmount,
+			frameAssistAmount as frameAssistAmount, 
+            yxAssistAmount as yxAssistAmount, 
+			contactAmount as contactAmount,
+			contactAssistAmount as contactAssistAmount, 
+			discountAmount as discountAmount, 
+			inspectionNum as inspectionNum,
+			inspectionAmount as inspectionAmount,
+			optometryPersonTime as optometryPersonTime, 
+			glassesBillNum as glassesBillNum,
+            othersAmount as othersAmount,
+			amount as amount, 
+			oldAmount as oldAmount,
+			shineAmount as shineAmount,
+            wxAmount as wxAmount,
+			('${startTime}'+'--'+'${endTime}') as queryDate
+			from (
+
+select      temp1.S_SE_SB_ShopCode as shopCode,
+			temp1.B_DP_DepartmentName as departmentName,
+			isnull(#jp_03.glassesAmount,0.0) as glassesAmount,
+			isnull(#jj_03.frameAmount,0.0) as frameAmount,
+			isnull(#cj_03.eyeglassesAmount,0.0) as eyeglassesAmount,
+			isnull(#jzfl_03.frameAssistAmount,0.0) as frameAssistAmount, 
+			isnull(#yxfl_03.yxAssistAmount,0.0) as yxAssistAmount,
+			isnull(#yx_03.contactAmount,0.0) as contactAmount,
+			isnull(#hly_03.contactAssistAmount,0.0) as contactAssistAmount, 
+			isnull(#zk_03.discountAmount,0.0) as discountAmount, 
+			isnull(#jcsj_03.inspectionNum,0.0) as inspectionNum,
+			isnull(#jcsj_03.inspectionAmount,0.0) as inspectionAmount,
+			isnull(#ygrc_03.optometryPersonTime,0.0) as optometryPersonTime, 
+			isnull(glassesBillNum,0.0) as glassesBillNum,
+            isnull(#qt_03.othersAmount,0.0) as othersAmount,
+			isnull(#fjfy_03.amount,0.0) as amount,
+			isnull(#cj_04.eyeglassesAmount,0.0) as oldAmount,
+			isnull(#sg_03.othersAmount,0.0) as shineAmount,
+            isnull(#wx_03.wxfy,0.0) as wxAmount
+ from (
+SELECT distinct S_SE_SB_ShopCode as S_SE_SB_ShopCode,B_DP_DepartmentName as B_DP_DepartmentName
+              FROM   uview_SalesBasic left join B_Departments on S_SE_SB_ShopCode=B_DP_DepartmentID
+              WHERE  S_SE_SB_ValueFlag = 1
+                     AND ((ISNULL('${departmentid}', '')<>'' AND S_SE_SB_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union
+	select distinct S_CR_RD_ShopCode as S_SE_SB_ShopCode,B_DP_DepartmentName as B_DP_DepartmentName		       
+	from S_CR_RegisteredDetails left join B_Departments on S_CR_RD_ShopCode=B_DP_DepartmentID
+	 where convert(varchar(10), S_CR_RD_CasherDate , 23) >= '${startTime}'
+	   and convert(varchar(10), S_CR_RD_CasherDate , 23) <= '${endTime}'
+       and S_CR_RD_Flag='1'
+       AND ((ISNULL('${departmentid}', '')<>'' AND S_CR_RD_ShopCode IN (SELECT departmentID FROM   #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+union 
+        select distinct S_CR_RD_ShopCode as S_SE_SB_ShopCode,B_DP_DepartmentName as B_DP_DepartmentName
+        from S_CR_RepairsCostDetails left join B_Departments on S_CR_RD_ShopCode=B_DP_DepartmentID
+        where convert(varchar(10), S_CR_RD_CasherDate, 23) >='${startTime}'
+        and convert(varchar(10), S_CR_RD_CasherDate, 23) <='${endTime}'
+        and S_CR_RD_Casher    is not null
+        and ((ISNULL('${departmentid}','')<>'' AND S_CR_RD_ShopCode in (select departmentID from #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+
+ )temp1   
+
+ left join #jp_03 on temp1.S_SE_SB_ShopCode = #jp_03.S_SE_SB_ShopCode 
+ left join #jj_03 on temp1.S_SE_SB_ShopCode = #jj_03.S_SE_SB_ShopCode
+ left join #cj_03 on temp1.S_SE_SB_ShopCode = #cj_03.S_SE_SB_ShopCode
+ left join #cj_04 on temp1.S_SE_SB_ShopCode = #cj_04.S_SE_SB_ShopCode
+ left join #jzfl_03 on temp1.S_SE_SB_ShopCode = #jzfl_03.S_SE_SB_ShopCode 
+ left join #yxfl_03 on temp1.S_SE_SB_ShopCode = #yxfl_03.S_SE_SB_ShopCode
+ left join #yx_03 on temp1.S_SE_SB_ShopCode = #yx_03.S_SE_SB_ShopCode 
+ left join #hly_03 on temp1.S_SE_SB_ShopCode = #hly_03.S_SE_SB_ShopCode
+ left join #zk_03 on temp1.S_SE_SB_ShopCode = #zk_03.S_SE_SB_ShopCode 
+ left join #jcsj_03 on temp1.S_SE_SB_ShopCode = #jcsj_03.S_SE_SB_ShopCode
+ left join #ygrc_03 on temp1.S_SE_SB_ShopCode = #ygrc_03.S_SE_SB_ShopCode
+ left join #pjds_03 on temp1.S_SE_SB_ShopCode = #pjds_03.S_SE_SB_ShopCode
+ left join #fjfy_03 on temp1.S_SE_SB_ShopCode = #fjfy_03.S_SE_SB_ShopCode
+ left join #qt_03 on temp1.S_SE_SB_ShopCode = #qt_03.S_SE_SB_ShopCode
+ left join #sg_03 on temp1.S_SE_SB_ShopCode = #sg_03.S_SE_SB_ShopCode
+ left join #wx_03 on temp1.S_SE_SB_ShopCode = #wx_03.S_SE_SB_ShopCode
+
+where 1=1 and ((ISNULL('${departmentid}','')<>'' AND temp1.S_SE_SB_ShopCode in  (select departmentID from #salesDepartments)) OR (ISNULL('${departmentid}','')=''))
+
+
+)temp
+
+   where 	glassesAmount<>0 or 
+			frameAmount<>0 or 
+			eyeglassesAmount<>0 or 
+			frameAssistAmount<>0 or 
+            yxAssistAmount <>0 or  
+			contactAmount<>0 or 
+			contactAssistAmount<>0 or 
+			discountAmount<>0 or  
+			inspectionNum<>0 or 
+			inspectionAmount<>0 or  
+			glassesBillNum<>0 or 
+            othersAmount<>0 or 
+			amount<>0 or
+			oldAmount<>0 or
+			shineAmount<>0 or 
+            wxAmount<>0
+
+drop table #jp_03
+drop table #jj_03
+drop table #cj_03
+drop table #cj_04
+drop table #jzfl_03
+drop table #yxfl_03
+drop table #yx_03
+drop table #hly_03
+drop table #zk_03
+drop table #jcsj_03
+drop table #ygrc_03
+drop table #pjds_03
+drop table #fjfy_03
+drop table #qt_03
+drop table #sg_03
+drop table #wx_03
+end
+
+drop table #salesDepartments
+
+]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 '${customAmountName}' as customAmountName,'${ShopCodeName}' as ShopCodeName,'${queryWay}'  as queryWay,'${lookWay}' as lookWay]]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.page.First">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-First')}]]></Text>
+<IconName>
+<![CDATA[first]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Previous">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Previous')}]]></Text>
+<IconName>
+<![CDATA[previous]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.PageNavi">
+<WidgetAttr/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Next">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Next')}]]></Text>
+<IconName>
+<![CDATA[next]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Last">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Last')}]]></Text>
+<IconName>
+<![CDATA[last]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.FlashPrint">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Utils-Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.Export">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Export')}]]></Text>
+<IconName>
+<![CDATA[export]]></IconName>
+<Buttons pdf="true" excelP="true" excelO="true" excelS="true" word="true" image="true" html="true"/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.SetPrinterOffset">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('SetPrinterOffset')}]]></Text>
+<IconName>
+<![CDATA[setprinteroffset]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="false" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="数据页签">
+<ReportPageAttr>
+<HR F="0" T="7"/>
+<FR F="10" T="10"/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,1872000,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,0,2667000,0,0,495300,2160000,2160000,2160000,2160000,2160000,2160000,2160000,2160000,2160000,2160000,2437920,2160000,2437920,1866240,1942560,1903680,2743200,2437920,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="2" r="0" cs="20" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="1" cs="22" s="1">
+<O>
+<![CDATA[收银员工作量统计]]></O>
+<Expand/>
+</C>
+<C c="2" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="6" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="7" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="8" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="9" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="10" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="11" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="12" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="13" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="14" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="15" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="16" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="17" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="18" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="19" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="20" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="21" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="23" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="3" s="2">
+<O>
+<![CDATA[部门名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="3" cs="14" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="ShopCodeName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="19" r="3" cs="5" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="查询日期：" + $startTime + " 至 " + $endTime]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="4" s="2">
+<O>
+<![CDATA[订金方式：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="4" cs="14" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="customAmountName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="19" r="4" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="20" r="4" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="21" r="4" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="23" r="4" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="5" s="2">
+<O>
+<![CDATA[查询方式：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="5" cs="14" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="queryWay"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="19" r="5" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="20" r="5" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="21" r="5" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="23" r="5" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="6" s="2">
+<O>
+<![CDATA[查看分类：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="6" cs="14" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="lookWay"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="19" r="6" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="20" r="6" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="21" r="6" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="23" r="6" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="7" cs="4" s="5">
+<O>
+<![CDATA[销售门店]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand extendable="1"/>
+</C>
+<C c="6" r="7" s="6">
+<O>
+<![CDATA[镜片]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[1]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[2]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="7" r="7" s="6">
+<O>
+<![CDATA[镜架]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[3]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[4]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="8" r="7" s="6">
+<O>
+<![CDATA[太阳镜]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[5]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[6]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="9" r="7" s="6">
+<O>
+<![CDATA[镜架配件]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[7]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[8]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="10" r="7" s="6">
+<O>
+<![CDATA[隐形配件]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[33]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[34]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="11" r="7" s="6">
+<O>
+<![CDATA[隐形]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[9]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[10]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="12" r="7" s="6">
+<O>
+<![CDATA[护理液]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[11]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[12]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="13" r="7" s="6">
+<O>
+<![CDATA[老花镜]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[13]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[14]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="14" r="7" s="6">
+<O>
+<![CDATA[视光]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[15]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[16]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="15" r="7" s="6">
+<O>
+<![CDATA[耗材]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[17]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[18]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="16" r="7" s="6">
+<O>
+<![CDATA[商品应收]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[19]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[20]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="17" r="7" s="6">
+<O>
+<![CDATA[附加费]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[21]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[22]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="18" r="7" s="6">
+<O>
+<![CDATA[配镜应收]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[23]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[24]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="19" r="7" s="6">
+<O>
+<![CDATA[检查数]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[25]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[26]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="20" r="7" s="6">
+<O>
+<![CDATA[检查费]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[27]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[28]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="21" r="7" s="6">
+<O>
+<![CDATA[配镜数]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[29]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[30]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="22" r="7" s="6">
+<O>
+<![CDATA[维修费]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[21]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[22]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="23" r="7" s="6">
+<O>
+<![CDATA[实收合计]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[31]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[32]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="1" r="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="departmentId"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0" order="2">
+<SortFormula>
+<![CDATA[SWITCH($order, "1", -TODOUBLE(G9), "2", TODOUBLE(G9), "3", -TODOUBLE(H9), "4", TODOUBLE(H9), "5", -TODOUBLE(I9), "6", TODOUBLE(I9), "7", -TODOUBLE(J9), "8", TODOUBLE(J9), "9", -TODOUBLE(L9), "10", TODOUBLE(L9), "11", -TODOUBLE(M9), "12", TODOUBLE(M9), "13", -TODOUBLE(N9), "14", TODOUBLE(N9), "15", -TODOUBLE(O9), "16", TODOUBLE(O9), "17", -TODOUBLE(P9), "18", TODOUBLE(P9), "19", -TODOUBLE(Q9), "20", TODOUBLE(Q9), "21", -TODOUBLE(R9), "22", TODOUBLE(R9), "23", -TODOUBLE(S9), "24", TODOUBLE(S9), "25", -TODOUBLE(T9), "26", TODOUBLE(T9), "27", -TODOUBLE(U9), "28", TODOUBLE(U9), "29", -TODOUBLE(V9), "30", TODOUBLE(V9), "31", -TODOUBLE(X9), "32", TODOUBLE(X9), "33", -TODOUBLE(K9), "34", TODOUBLE(K9))]]></SortFormula>
+</Expand>
+</C>
+<C c="2" r="8" cs="4" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="departmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="startTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$startTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=G5]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=G6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=G7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="showCompanyName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$showCompanyName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="iscustomize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_CashierOnlyStoreRpt2.cpt&__bypagesize__=false&categoryid="+categoryid+"&startTime="+startTime+"&endTime="+endTime+"&departmentid="+departmentid+"&customAmountName="+EncodeUtf8(customAmountName)+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&queryWay="+EncodeUtf8(queryWay)+"&lookWay="+EncodeUtf8(lookWay)+"&showCompanyName="+EncodeUtf8(showCompanyName)+"&isShow="+isShow+"&iscustomize="+iscustomize"+&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="6" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="glassesAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O>
+<![CDATA[3]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="startTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$startTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F5]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="showCompanyName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$showCompanyName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="iscustomize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="viewname"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="accessoriesType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_CashierManyStore_brandRpt2.cpt&__bypagesize__=false&categoryid="+categoryid+"&startTime="+startTime+"&endTime="+endTime+"&departmentid="+departmentid+"&customAmountName="+EncodeUtf8(customAmountName)+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&queryWay="+EncodeUtf8(queryWay)+"&lookWay="+EncodeUtf8(lookWay)+"&showCompanyName="+EncodeUtf8(showCompanyName)+"&isShow="+isShow+"&iscustomize="+iscustomize+"&viewname="+EncodeUtf8(viewname)+"&logincompanyid="+logincompanyid+"&accessoriesType="+accessoriesType;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="7" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="frameAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O>
+<![CDATA[1]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="startTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$startTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F5]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="showCompanyName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$showCompanyName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="iscustomize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="viewname"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="accessoriesType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_CashierManyStore_brandRpt2.cpt&__bypagesize__=false&categoryid="+categoryid+"&startTime="+startTime+"&endTime="+endTime+"&departmentid="+departmentid+"&customAmountName="+EncodeUtf8(customAmountName)+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&queryWay="+EncodeUtf8(queryWay)+"&lookWay="+EncodeUtf8(lookWay)+"&showCompanyName="+EncodeUtf8(showCompanyName)+"&isShow="+isShow+"&iscustomize="+iscustomize+"&viewname="+EncodeUtf8(viewname)+"&logincompanyid="+logincompanyid+"&accessoriesType="+accessoriesType;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="8" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="eyeglassesAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O>
+<![CDATA[6]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="startTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$startTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F5]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="showCompanyName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$showCompanyName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="iscustomize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="viewname"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="accessoriesType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_CashierManyStore_brandRpt2.cpt&__bypagesize__=false&categoryid="+categoryid+"&startTime="+startTime+"&endTime="+endTime+"&departmentid="+departmentid+"&customAmountName="+EncodeUtf8(customAmountName)+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&queryWay="+EncodeUtf8(queryWay)+"&lookWay="+EncodeUtf8(lookWay)+"&showCompanyName="+EncodeUtf8(showCompanyName)+"&isShow="+isShow+"&iscustomize="+iscustomize+"&viewname="+EncodeUtf8(viewname)+"&logincompanyid="+logincompanyid+"&accessoriesType="+accessoriesType;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="9" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="frameAssistAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O>
+<![CDATA[2]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="startTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$startTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F5]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="showCompanyName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$showCompanyName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="iscustomize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="viewname"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="accessoriesType"/>
+<O>
+<![CDATA[1]]></O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_CashierManyStore_brandRpt2.cpt&__bypagesize__=false&categoryid="+categoryid+"&startTime="+startTime+"&endTime="+endTime+"&departmentid="+departmentid+"&customAmountName="+EncodeUtf8(customAmountName)+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&queryWay="+EncodeUtf8(queryWay)+"&lookWay="+EncodeUtf8(lookWay)+"&showCompanyName="+EncodeUtf8(showCompanyName)+"&isShow="+isShow+"&iscustomize="+iscustomize+"&viewname="+EncodeUtf8(viewname)+"&logincompanyid="+logincompanyid+"&accessoriesType="+accessoriesType;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="10" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="yxAssistAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O>
+<![CDATA[2]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="startTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$startTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=E5]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C10]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=E6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=E7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="showCompanyName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$showCompanyName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="iscustomize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="viewname"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="accessoriesType"/>
+<O>
+<![CDATA[2]]></O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_CashierManyStore_brandRpt.cpt&__bypagesize__=false&categoryid="+categoryid+"&startTime="+startTime+"&endTime="+endTime+"&departmentid="+departmentid+"&customAmountName="+EncodeUtf8(customAmountName)+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&queryWay="+EncodeUtf8(queryWay)+"&lookWay="+EncodeUtf8(lookWay)+"&showCompanyName="+EncodeUtf8(showCompanyName)+"&isShow="+isShow+"&iscustomize="+iscustomize+"&viewname="+EncodeUtf8(viewname)+"&logincompanyid="+logincompanyid+"&accessoriesType="+accessoriesType;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="11" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="contactAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O>
+<![CDATA[4]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="startTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$startTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F5]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="showCompanyName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$showCompanyName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="iscustomize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="viewname"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="accessoriesType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_CashierManyStore_brandRpt2.cpt&__bypagesize__=false&categoryid="+categoryid+"&startTime="+startTime+"&endTime="+endTime+"&departmentid="+departmentid+"&customAmountName="+EncodeUtf8(customAmountName)+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&queryWay="+EncodeUtf8(queryWay)+"&lookWay="+EncodeUtf8(lookWay)+"&showCompanyName="+EncodeUtf8(showCompanyName)+"&isShow="+isShow+"&iscustomize="+iscustomize+"&viewname="+EncodeUtf8(viewname)+"&logincompanyid="+logincompanyid+"&accessoriesType="+accessoriesType;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="12" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="contactAssistAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O>
+<![CDATA[5]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="startTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$startTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F5]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="showCompanyName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$showCompanyName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="iscustomize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="viewname"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="accessoriesType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_CashierManyStore_brandRpt2.cpt&__bypagesize__=false&categoryid="+categoryid+"&startTime="+startTime+"&endTime="+endTime+"&departmentid="+departmentid+"&customAmountName="+EncodeUtf8(customAmountName)+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&queryWay="+EncodeUtf8(queryWay)+"&lookWay="+EncodeUtf8(lookWay)+"&showCompanyName="+EncodeUtf8(showCompanyName)+"&isShow="+isShow+"&iscustomize="+iscustomize+"&viewname="+EncodeUtf8(viewname)+"&logincompanyid="+logincompanyid+"&accessoriesType="+accessoriesType;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="13" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oldAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O>
+<![CDATA[8]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="startTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$startTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F5]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="showCompanyName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$showCompanyName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="iscustomize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="viewname"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="accessoriesType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_CashierManyStore_brandRpt2.cpt&__bypagesize__=false&categoryid="+categoryid+"&startTime="+startTime+"&endTime="+endTime+"&departmentid="+departmentid+"&customAmountName="+EncodeUtf8(customAmountName)+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&queryWay="+EncodeUtf8(queryWay)+"&lookWay="+EncodeUtf8(lookWay)+"&showCompanyName="+EncodeUtf8(showCompanyName)+"&isShow="+isShow+"&iscustomize="+iscustomize+"&viewname="+EncodeUtf8(viewname)+"&logincompanyid="+logincompanyid+"&accessoriesType="+accessoriesType;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="14" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="shineAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O>
+<![CDATA[9]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="startTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$startTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F5]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="showCompanyName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$showCompanyName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="iscustomize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="viewname"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="accessoriesType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_CashierManyStore_brandRpt2.cpt&__bypagesize__=false&categoryid="+categoryid+"&startTime="+startTime+"&endTime="+endTime+"&departmentid="+departmentid+"&customAmountName="+EncodeUtf8(customAmountName)+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&queryWay="+EncodeUtf8(queryWay)+"&lookWay="+EncodeUtf8(lookWay)+"&showCompanyName="+EncodeUtf8(showCompanyName)+"&isShow="+isShow+"&iscustomize="+iscustomize+"&viewname="+EncodeUtf8(viewname)+"&logincompanyid="+logincompanyid+"&accessoriesType="+accessoriesType;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="15" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="othersAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O>
+<![CDATA[7]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="startTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$startTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endTime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F5]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C9]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="showCompanyName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$showCompanyName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="iscustomize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="viewname"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="accessoriesType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_CashierManyStore_brandRpt2.cpt&__bypagesize__=false&categoryid="+categoryid+"&startTime="+startTime+"&endTime="+endTime+"&departmentid="+departmentid+"&customAmountName="+EncodeUtf8(customAmountName)+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&queryWay="+EncodeUtf8(queryWay)+"&lookWay="+EncodeUtf8(lookWay)+"&showCompanyName="+EncodeUtf8(showCompanyName)+"&isShow="+isShow+"&iscustomize="+iscustomize+"&viewname="+EncodeUtf8(viewname)+"&logincompanyid="+logincompanyid+"&accessoriesType="+accessoriesType;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="16" r="8" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(G9 + H9 + I9 + J9 + K9 + L9 + M9 + N9 + O9 + P9))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="17" r="8" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="amount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="18" r="8" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(Q9, R9))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="19" r="8" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="inspectionNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="20" r="8" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="inspectionAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="21" r="8" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="glassesBillNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="22" r="8" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="wxAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="23" r="8" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(S9, U9, W9))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="9" cs="4" s="10">
+<O>
+<![CDATA[合计：]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="6" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(G9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="7" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(H9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="8" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(I9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="9" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(J9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="10" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(K9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="11" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(L9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="12" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(M9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="13" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(N9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="14" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(O9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="15" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(P9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="16" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(Q9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="17" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(R9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="18" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(S9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="19" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(T9)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="20" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(U9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="21" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(V9)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="22" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(W9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="23" r="9" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(X9))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="2" r="10" cs="8" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="打印日期:" + TODAY()]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="10">
+<CellPageAttr pageAfterRow="true"/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="12" r="10">
+<CellPageAttr pageAfterRow="true"/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="15" r="10">
+<CellPageAttr pageAfterRow="true"/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="16" r="10">
+<CellPageAttr pageAfterRow="true"/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="17" r="10">
+<CellPageAttr pageAfterRow="true"/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="18" r="10" s="11">
+<CellPageAttr pageAfterRow="true"/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="20" r="10" cs="4" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="页次:第 " + $$page_number + " 页/共 " + $$totalPage_number + " 页"]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="0" bottom="986400" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72" foreground="-16776961" underline="1"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72" foreground="-16776961" underline="1"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

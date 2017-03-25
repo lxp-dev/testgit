@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="cstddeliverbillid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select sum(C_ST_DE_Num) as cstcpodnum from C_ST_DeliverEntry where C_ST_DE_DeliverBillId = '${cstddeliverbillid}'
+]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="cstddeliverbillid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select C_ST_DE_DeliverBillId as cstddeliverbillid , 
+	convert(varchar(10), C_ST_D_DeliverDate , 23) as cstddeliverdate , 
+	C_ST_DE_GlassesBillId as cstcpodglassesbillid , 
+	C_ST_CPOD_GlassFlag as cstcpodglassflag , 
+	B_GI_GoodsName as cstcpodgoodsname , 
+	C_ST_CPOD_BallGlass as cstcpodballglass , 
+	C_ST_CPOD_PostGlass as cstcpodpostglass , 
+	C_ST_CPOD_Axes as cstcpodaxes , 
+	C_ST_CPOD_Add as cstcpodadd , 
+	C_ST_CPOD_ArriseGlass as cstcpodarriseglass , 
+	C_ST_CPOD_Basis as cstcpodbasis , 
+	C_ST_CPOD_EyeCurvature as cstcpodeyecurvature , 
+	C_ST_CPOD_Diameter as cstcpoddiameter , 
+	B_DP_DepartmentName as cstddeliverdept 
+from C_ST_DeliverEntry 
+inner join C_ST_ConsignProcessOrderDetails 
+	on C_ST_DeliverEntry.C_ST_DE_OrderDetailsID = C_ST_ConsignProcessOrderDetails.C_ST_CPOD_Id 
+inner join B_GoodsInfo on C_ST_DeliverEntry.C_ST_DE_GoodsID = B_GI_GoodsID 
+inner join C_ST_Deliver on C_ST_Deliver.C_ST_D_DeliverBillId = C_ST_DeliverEntry.C_ST_DE_DeliverBillId 
+inner join B_Departments on C_ST_D_DeliverDept=B_DP_DepartmentID  
+where C_ST_DE_DeliverBillId = '${cstddeliverbillid}']]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}' ]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="1" T="3"/>
+<FR F="6" T="6"/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[952500,1143000,762000,762000,762000,723900,723900,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[3314700,3543300,3581400,2743200,2171700,2171700,2247900,1943100,2019300,1866900,2019300,1866900,1905000,3124200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="14" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" cs="14" s="1">
+<O>
+<![CDATA[委外送货表]]></O>
+<Expand/>
+</C>
+<C c="0" r="2" s="2">
+<O>
+<![CDATA[订单编号：]]></O>
+<Expand/>
+</C>
+<C c="1" r="2" cs="3">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstddeliverbillid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="2" cs="2" s="2">
+<O>
+<![CDATA[订单日期：]]></O>
+<Expand/>
+</C>
+<C c="6" r="2" cs="4">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstddeliverdate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="2" cs="2" s="2">
+<O>
+<![CDATA[]]></O>
+<Expand/>
+</C>
+<C c="12" r="2">
+<Expand dir="0"/>
+</C>
+<C c="13" r="2">
+<Expand/>
+</C>
+<C c="0" r="3" cs="2" s="3">
+<O>
+<![CDATA[配镜单号]]></O>
+<Expand/>
+</C>
+<C c="2" r="3" cs="2" s="3">
+<O>
+<![CDATA[商品名称]]></O>
+<Expand/>
+</C>
+<C c="4" r="3" s="3">
+<O>
+<![CDATA[R/L]]></O>
+<Expand/>
+</C>
+<C c="5" r="3" s="3">
+<O>
+<![CDATA[球镜]]></O>
+<Expand/>
+</C>
+<C c="6" r="3" s="3">
+<O>
+<![CDATA[柱镜]]></O>
+<Expand/>
+</C>
+<C c="7" r="3" s="4">
+<O>
+<![CDATA[轴向]]></O>
+<Expand/>
+</C>
+<C c="8" r="3" s="4">
+<O>
+<![CDATA[下加]]></O>
+<Expand/>
+</C>
+<C c="9" r="3" s="3">
+<O>
+<![CDATA[棱镜]]></O>
+<Expand/>
+</C>
+<C c="10" r="3" s="3">
+<O>
+<![CDATA[曲率]]></O>
+<Expand/>
+</C>
+<C c="11" r="3" s="4">
+<O>
+<![CDATA[直径]]></O>
+<Expand/>
+</C>
+<C c="12" r="3" s="4">
+<O>
+<![CDATA[基底]]></O>
+<Expand/>
+</C>
+<C c="13" r="3" s="4">
+<O>
+<![CDATA[送货部门]]></O>
+<Expand/>
+</C>
+<C c="0" r="4" cs="2" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstcpodglassesbillid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="4" cs="2" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstcpodgoodsname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstcpodglassflag"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstcpodballglass"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstcpodpostglass"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstcpodaxes"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstcpodadd"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstcpodarriseglass"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="4" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstcpodeyecurvature"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstcpoddiameter"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstcpodbasis"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="4" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cstddeliverdept"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="5" cs="2" s="4">
+<O>
+<![CDATA[合    计:]]></O>
+<Expand/>
+</C>
+<C c="2" r="5" cs="12" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cstcpodnum"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="0" r="6" s="9">
+<O>
+<![CDATA[打印日期：]]></O>
+<Expand/>
+</C>
+<C c="1" r="6" cs="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=TODAY()]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="6" cs="6" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="页次:第 " + $$page_number + " 页/共 " + $$totalPage_number + " 页"]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="0" left="0" bottom="0" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="108"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="96"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="84"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="84"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

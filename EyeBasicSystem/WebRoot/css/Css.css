@@ -1,0 +1,386 @@
+BODY {
+	FONT-SIZE: 12px;
+	FONT-FAMILY: "Verdana", "Arial", "Helvetica", "sans-serif";
+	margin-top: 5px;
+}
+
+TABLE {
+	FONT-SIZE: 12px;
+	FONT-FAMILY: "Verdana", "Arial", "Helvetica", "sans-serif"
+}
+
+A:hover {
+	TEXT-DECORATION: none
+}
+
+A{
+	COLOR: #000000
+}
+
+textarea{
+	HEIGHT: 80px;
+	WIDTH: 100%;
+	border: 1px solid #B3B3B3;
+}
+
+select{
+	position:relative;
+	font-size:12px;
+	line-height:14px;
+}
+
+.myClosePic{
+        cursor: pointer;
+}
+
+.text_input20 {	
+	
+	WIDTH: 20px;
+	border: 1px solid #B3B3B3;
+}
+
+.text_input40 {	
+	
+	WIDTH: 30px;
+	border: 1px solid #B3B3B3;
+}
+
+.text_input60 {	
+	
+	WIDTH: 60px;
+	border: 1px solid #B3B3B3;
+}
+
+.text_input80 {
+	
+	WIDTH: 80px;
+	border: 1px solid #B3B3B3;
+}
+
+.text_input100 {
+	
+	WIDTH: 100px;
+	border: 1px solid #B3B3B3;
+}
+
+.text_input120 {
+	
+	WIDTH: 120px;
+	border: 1px solid #B3B3B3;
+}
+
+.text_input140 {
+	
+	WIDTH: 140px;
+	border: 1px solid #B3B3B3;
+}
+
+.text_input160 {
+	WIDTH: 160px;
+	border: 1px solid #B3B3B3;
+}
+
+.text_input200 {
+	
+	WIDTH: 200px;
+	border: 1px solid #B3B3B3;
+}
+
+.text_input220 {
+	
+	WIDTH: 220px;
+	border: 1px solid #B3B3B3;
+}
+
+.text_input240 {
+	
+	WIDTH: 240px;
+	border: 1px solid #B3B3B3;
+}
+.text_input300 {
+	
+	WIDTH: 300px;
+	border: 1px solid #B3B3B3;
+}
+.text_input400 {
+	
+	WIDTH: 400px;
+	border: 1px solid #B3B3B3;
+}
+.text_input500 {
+	
+	WIDTH: 500px;
+	border: 1px solid #B3B3B3;
+}
+.text_input600 {
+	
+	WIDTH: 600px;
+	border: 1px solid #B3B3B3;
+}
+.text_input800 {
+	
+	WIDTH: 800px;
+	border: 1px solid #B3B3B3;
+}
+.menubar_button {
+	BORDER-RIGHT: #ffffff 1pt solid;
+	PADDING-RIGHT: 2px; 
+	BORDER-TOP: #ffffff 1pt solid; 
+	PADDING-LEFT: 2px; 
+	FONT-SIZE: 9pt; 
+	PADDING-BOTTOM: 0px; 
+	BORDER-LEFT: #ffffff 1pt solid; 
+	CURSOR: pointer; 
+	LINE-HEIGHT: 7px; 
+	PADDING-TOP: 0px; 
+	BORDER-BOTTOM: #ffffff 1pt solid; 
+	FONT-FAMILY: "Arial"; 
+	LETTER-SPACING: 1px; 
+	POSITION: relative; 
+	TOP: -1px; 
+	 
+	BACKGROUND-COLOR: #ffffff; 
+	PADDDING-LEFT: 0px;
+}
+
+.menubar_button_on {
+	BORDER-RIGHT: #000000 1pt outset; 
+	PADDING-RIGHT: 2px; 
+	BORDER-TOP: #000000 1pt outset; 
+	PADDING-LEFT: 2px; 
+	FONT-SIZE: 9pt; 
+	PADDING-BOTTOM: 0px; 
+	BORDER-LEFT: #000000 1pt solid; 
+	CURSOR: pointer; 
+	LINE-HEIGHT: 7px; 
+	PADDING-TOP: 0px; 
+	BORDER-BOTTOM: #000000 1pt outset; 
+	FONT-FAMILY: "Arial"; 
+	LETTER-SPACING: 1px; 
+	POSITION: relative; 
+	TOP: -1px; 
+	 
+	BACKGROUND-COLOR: #ffcc00; 
+	PADDDING-LEFT: 0px
+}
+
+/*--  查询页表头 --*/
+.table_Title {
+	PADDING-RIGHT: 5px;
+	PADDING-LEFT: 5px;
+	FONT: bold 14px Tahoma, Verdana;
+	COLOR: #ffffff;
+	font-size:12px;
+	BACKGROUND-COLOR: #7898a8
+}
+
+
+/*--  查询条件Table样式  Start --*/
+/*--  带边框  --*/
+.table_body {
+	PADDING-RIGHT: 5px;
+	PADDING-LEFT: 5px;
+	FONT-SIZE: 9pt;
+	FONT-FAMILY: "Verdana", "Arial", "Helvetica", "sans-serif";
+	BACKGROUND-COLOR: #cadee8;
+	border: 1px solid #CADEE8;
+}
+.table_none {
+	PADDING-RIGHT: 5px;
+	PADDING-LEFT: 5px;
+	FONT-SIZE: 9pt;
+	FONT-FAMILY: "Verdana", "Arial", "Helvetica", "sans-serif";
+	BACKGROUND-COLOR: #e9f2f7;
+	border: 1px solid #CADEE8;
+}
+
+/*--  不带边框  --*/
+.table_body-noBorder {
+	PADDING-RIGHT: 5px;
+	PADDING-LEFT: 5px;
+	FONT-SIZE: 9pt;
+	FONT-FAMILY: "Verdana", "Arial", "Helvetica", "sans-serif";
+	BACKGROUND-COLOR: #cadee8
+}
+.table_none-noBorder {
+	PADDING-RIGHT: 5px;
+	PADDING-LEFT: 5px;
+	FONT-SIZE: 9pt;
+	FONT-FAMILY: "Verdana", "Arial", "Helvetica", "sans-serif";
+	BACKGROUND-COLOR: #e9f2f7
+}
+
+/*-- 行样式 --*/
+.row {
+	PADDING-RIGHT: 5px;
+	PADDING-LEFT: 5px;
+	FONT-SIZE: 12px;
+	text-align:center;
+	BACKGROUND-COLOR: #cadee8
+}
+/*--  查询条件Table样式  End --*/
+
+/*-- 边框 --*/
+.Privateborder {
+	border: 1px solid #CADEE8;
+}
+
+/*-- 表格 --*/
+.privateTable{
+	margin:3px;
+}
+
+/*-- li样式 --*/
+.horizontal{
+    float:left;
+    list-style:none;
+	margin:5px;
+}
+
+.horizontal_onlyRight{
+	float:left;
+	list-style:none;
+	margin-right:2px;
+}
+
+/*--    Bottom样式  --*/
+.down_text {
+	FONT-SIZE: 8pt;
+	COLOR: #ffffff;
+	FONT-FAMILY: Arial;
+	BACKGROUND-COLOR: #000000
+}
+
+/*--    页面上方标题样式  Start --*/
+.menubar_title {
+	FONT-WEIGHT: bold;
+	FONT-SIZE: 14px;
+	FONT-FAMILY: "Verdana", "Arial", "Helvetica", "sans-serif"
+}
+
+
+.menubar_function_text {
+	BORDER-TOP: #000000 3px solid;
+	BORDER-LEFT-WIDTH: 1px;
+	FONT-SIZE: 9pt;
+	BORDER-BOTTOM-WIDTH: 1px;
+	COLOR: #808080;
+	PADDING-TOP: 3px;
+	FONT-FAMILY: "Arial";
+	POSITION: relative;
+	BORDER-RIGHT-WIDTH: 1px
+}
+/*--    页面上方标题样式  End --*/
+
+
+/*--    选项卡   --*/
+.tab {
+	PADDING-RIGHT: 15px;
+	PADDING-LEFT: 10px;
+	FONT-SIZE: 12px;
+	PADDING-BOTTOM: 1px;
+	CURSOR: pointer;
+	PADDING-TOP: 5px;
+	LETTER-SPACING: 1px
+}
+
+
+
+
+#popupMask {
+	DISPLAY: none; Z-INDEX: 200; FILTER: alpha(opacity=40); LEFT: 0px; BACKGROUND-IMAGE: url(../images/maskBG.png)! important; WIDTH: 100%; BACKGROUND-REPEAT: repeat; POSITION: absolute; TOP: 0px; HEIGHT: 100%; BACKGROUND-COLOR: #333333; opacity: .4; For: none
+}
+
+
+.x-window {
+	ZOOM: 1
+}
+.x-window-bwrap {
+	Z-INDEX: 1; ZOOM: 1; POSITION: relative
+}
+.x-window-bwrap {
+	OVERFLOW: hidden
+}
+.x-window-bl {
+	PADDING-LEFT: 6px; BACKGROUND: url(../images/left-corners.png) no-repeat 0px bottom; ZOOM: 1
+}
+.x-window-br {
+	PADDING-RIGHT: 6px; BACKGROUND: url(../images/right-corners.png) no-repeat right bottom; ZOOM: 1
+}
+.x-window-bc {
+	BACKGROUND: url(../images/top-bottom.png) repeat-x 0px bottom; ZOOM: 1
+}
+.x-window-bc .x-window-footer {
+	FONT-SIZE: 0px; PADDING-BOTTOM: 6px; LINE-HEIGHT: 0; ZOOM: 1
+}
+.x-window-ml {
+	PADDING-LEFT: 6px; BACKGROUND: url(../images/left-right.png) repeat-y 0px 0px; ZOOM: 1
+}
+.x-window-mr {
+	PADDING-RIGHT: 6px; BACKGROUND: url(../images/left-right.png) repeat-y right 0px; ZOOM: 1
+}
+.x-window-mc {
+	BORDER-RIGHT: #99bbe8 1px solid; PADDING-RIGHT: 0px; BORDER-TOP: #99bbe8 1px solid; PADDING-LEFT: 0px; BACKGROUND: #dfe8f6; PADDING-BOTTOM: 0px; MARGIN: 0px; FONT: 11px tahoma, arial, helvetica, sans-serif; BORDER-LEFT: #99bbe8 1px solid; PADDING-TOP: 0px; BORDER-BOTTOM: #99bbe8 1px solid
+}
+.x-window-plain .x-window-mc {
+	BORDER-RIGHT: #dfe8f6 1px solid; BORDER-TOP: #a3bae9 1px solid; BACKGROUND: #cad9ec; BORDER-LEFT: #a3bae9 1px solid; BORDER-BOTTOM: #dfe8f6 1px solid
+}
+.x-window-dlg .x-window-mc {
+	BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+.x-window-tl {
+	PADDING-LEFT: 6px; Z-INDEX: 1; BACKGROUND: url(../images/left-corners.png) no-repeat 0px 0px; ZOOM: 1; POSITION: relative
+}
+.x-window-tr {
+	PADDING-RIGHT: 6px; BACKGROUND: url(../images/right-corners.png) no-repeat right 0px
+}
+.x-window-tc {
+	BACKGROUND: url(../images/top-bottom.png) repeat-x 0px 0px; OVERFLOW: hidden; ZOOM: 1
+}
+.x-unselectable {
+	moz-user-select: none; khtml-user-select: none
+}
+.x-window-header {
+	OVERFLOW: hidden; ZOOM: 1
+}
+.x-window-tl .x-window-header {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 4px; FONT: bold 11px tahoma, arial, verdana, sans-serif; COLOR: #15428b; PADDING-TOP: 5px
+}
+.x-window-draggable {
+	CURSOR: default
+}
+.x-unselectable  {
+	moz-user-select: none; khtml-user-select: none
+}
+.x-window-header-text {
+	CURSOR: pointer
+}
+.x-window-draggable .x-window-header-text {
+	CURSOR: default
+}
+.x-window-dlg .x-window-header-text {
+	FONT-SIZE: 12px
+}
+.x-tool {
+	BACKGROUND: url(../images/tool-sprites.gif) no-repeat; FLOAT: right; MARGIN-LEFT: 2px; OVERFLOW: hidden; WIDTH: 15px; CURSOR: pointer; HEIGHT: 15px
+}
+.x-tool-close {
+	BACKGROUND-POSITION: 0px 0px
+}
+
+.table-box {
+	WIDTH: 100%
+}
+
+ #closediv{
+ width:300px;
+ height:100px;
+ background:red;
+ }
+ 
+.nottextarea{ background-color:transparent;border:0px; width:100%; height:100%; line-height:20px; padding:0 2px; vertical-align:middle; overflow:auto; } 
+
+.reportHelp{ font-family: 微软雅黑;font-size: 15px;} 
+
+
+

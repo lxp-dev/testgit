@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters/>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 ('查询日期:' + '${bgnDate}'+' 至 '+'${endDate}') as queryDate]]></Query>
+</TableData>
+<TableData name="ds4" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="reportID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="priceArea"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select departmentID into #shopCode from sales_createShopCodeTab('${departmentsID}')
+select salesArea into #salesarea from sales_createSalesAreaTab('${priceArea}','${reportID}')
+
+select areaID as areaID,shopName as shopName,isnull(sum(salesNum),0) as salesNum,isnull(sum(salesAmount),0) as salesAmount from (
+select R_SD_DCAE_AreaID as areaID,R_SD_DCAE_ShopName as shopName,isnull(sum(R_SD_DCAE_SalesNum),0) as salesNum,
+       isnull(sum(R_SD_DCAE_SalesAmount),0) as salesAmount 
+   from R_SD_DayCollectAreaEntry
+   where R_SD_DCAE_SalesType in ('1','2')
+   and ((isnull('${bgnDate}','')<>'' and convert(varchar(10),R_SD_DCAE_Date,120)>='${bgnDate}') or (isnull('${bgnDate}','')=''))
+   and ((isnull('${endDate}','')<>'' and convert(varchar(10),R_SD_DCAE_Date,120)<='${endDate}') or (isnull('${endDate}','')=''))
+   and ((isnull('${departmentsID}','')<>'' and R_SD_DCAE_ShopCode in (select departmentID from #shopCode )) or (isnull('${departmentsID}','')=''))
+   and ((isnull('${priceArea}','')<>'' and R_SD_DCAE_AreaID in (select salesarea from #salesarea )) or (isnull('${priceArea}','')=''))
+   and ((isnull('${salesType}','')<>'' and R_SD_DCAE_SalesType='${salesType}') or (isnull('${salesType}','')=''))
+   group by R_SD_DCAE_AreaID,R_SD_DCAE_ShopName
+union all
+select R_SD_DCAE_AreaID as areaID,R_SD_DCAE_ShopName as shopName,isnull(sum(R_SD_DCAE_GlassesFrameNum),0) as salesNum,
+       isnull(sum(R_SD_DCAE_GlassesFrameRateAmount),0) as salesAmount 
+   from R_SD_DayCollectAreaEntry
+   where R_SD_DCAE_SalesType='5'
+   and ((isnull('${bgnDate}','')<>'' and convert(varchar(10),R_SD_DCAE_Date,120)>='${bgnDate}') or (isnull('${bgnDate}','')=''))
+   and ((isnull('${endDate}','')<>'' and convert(varchar(10),R_SD_DCAE_Date,120)<='${endDate}') or (isnull('${endDate}','')=''))
+   and ((isnull('${departmentsID}','')<>'' and R_SD_DCAE_ShopCode in (select departmentID from #shopCode )) or (isnull('${departmentsID}','')=''))
+   and ((isnull('${priceArea}','')<>'' and R_SD_DCAE_AreaID in (select salesarea from #salesarea )) or (isnull('${priceArea}','')=''))
+   and ((isnull('${salesType}','')<>'' and R_SD_DCAE_SalesType='${salesType}') or (isnull('${salesType}','')=''))
+   group by R_SD_DCAE_AreaID,R_SD_DCAE_ShopName
+)temp
+   group by areaID,shopName
+   order by cast(substring(areaID,1,CHARINDEX('-',areaID)-1) as float)
+
+drop table #shopCode
+drop table #salesarea]]></Query>
+</TableData>
+</TableDataMap>
+<ReportExportAttr>
+<ExcelExportAttr hideColumn="false" hideRow="false"/>
+<PDFExportAttr/>
+<HTMLExportAttr/>
+</ReportExportAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="4"/>
+<FR F="7" T="7"/>
+<HC F="0" T="0"/>
+<FC/>
+<UPFCR COLUMN="true" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1143000,1143000,914400,914400,914400,914400,914400,914400,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[7429500,4191000,4191000,4191000,4191000,4191000,4191000,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="7" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" cs="7" s="1">
+<O>
+<![CDATA[框镜销售区间分析表(多店)]]></O>
+<Expand/>
+</C>
+<C c="0" r="2" cs="3" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="queryDate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="3" r="2" s="3">
+<Expand/>
+</C>
+<C c="4" r="2" s="3">
+<Expand/>
+</C>
+<C c="5" r="2" s="3">
+<Expand/>
+</C>
+<C c="6" r="2" s="3">
+<Expand/>
+</C>
+<C c="0" r="3" rs="2" s="4">
+<O>
+<![CDATA[销售门店]]></O>
+<Expand/>
+</C>
+<C c="1" r="3" rs="2" s="4">
+<O>
+<![CDATA[框镜配镜单数]]></O>
+<Expand/>
+</C>
+<C c="2" r="3" rs="2" s="4">
+<O>
+<![CDATA[框镜销售金额]]></O>
+<Expand/>
+</C>
+<C c="3" r="3" cs="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="areaID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="1"/>
+</C>
+<C c="3" r="4" s="4">
+<O>
+<![CDATA[框镜配镜单数]]></O>
+<Expand upParentDefault="false" up="D4"/>
+</C>
+<C c="4" r="4" s="4">
+<O>
+<![CDATA[框镜销售金额]]></O>
+<Expand upParentDefault="false" up="D4"/>
+</C>
+<C c="5" r="4" s="4">
+<O>
+<![CDATA[数量占比]]></O>
+<Expand upParentDefault="false" up="D4"/>
+</C>
+<C c="6" r="4" s="4">
+<O>
+<![CDATA[金额占比]]></O>
+<Expand upParentDefault="false" up="D4"/>
+</C>
+<C c="0" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="shopName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="salesNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="2" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="salesAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="3" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="salesNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="4" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="salesAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="5" r="5" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(B6=0,'0.00%',CONCATENATE(FuncOne(D6 / B6 *100),'%'))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="5" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(C6=0,'0.00%',CONCATENATE(FuncOne(E6 / C6 *100),'%'))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="6" s="6">
+<O>
+<![CDATA[合计：]]></O>
+<Expand/>
+</C>
+<C c="1" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(B6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(C6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(D6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(E6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(B7=0,'0.00%',CONCATENATE(FuncOne(D7 / B7 *100),'%'))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(C7=0,'0.00%',CONCATENATE(FuncOne(E7 / C7 *100),'%'))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="7" cs="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="打印日期：" + today()]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="7" cs="4" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="页次:第 " + $$page_number + " 页/共 " + $$totalPage_number + " 页"]]></Attributes>
+</O>
+<Expand upParentDefault="false" up="A3"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

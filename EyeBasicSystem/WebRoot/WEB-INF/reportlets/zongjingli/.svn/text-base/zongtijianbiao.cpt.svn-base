@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.FlashPrint">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Utils-Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.Export">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Export')}]]></Text>
+<IconName>
+<![CDATA[export]]></IconName>
+<Buttons pdf="true" excelP="true" excelO="true" excelS="true" word="true" image="true" html="true"/>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="false" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[2160000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[4320000,4320000,4320000,4320000,2743200,2743200,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="4" s="0">
+<O>
+<![CDATA[总览月体检表]]></O>
+<Expand/>
+</C>
+<C c="0" r="1" s="1">
+<O>
+<![CDATA[指标]]></O>
+<Expand/>
+</C>
+<C c="1" r="1" s="1">
+<O>
+<![CDATA[本月]]></O>
+<Expand/>
+</C>
+<C c="2" r="1" s="1">
+<O>
+<![CDATA[去年同期]]></O>
+<Expand/>
+</C>
+<C c="3" r="1" s="1">
+<O>
+<![CDATA[同比]]></O>
+<Expand/>
+</C>
+<C c="0" r="2" s="2">
+<O>
+<![CDATA[营业额]]></O>
+<Expand/>
+</C>
+<C c="1" r="2" s="2">
+<O t="BigDecimal">
+<![CDATA[5392348.80]]></O>
+<Expand/>
+</C>
+<C c="2" r="2" s="2">
+<O t="BigDecimal">
+<![CDATA[6312348.80]]></O>
+<Expand/>
+</C>
+<C c="3" r="2" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((B3/C3)*100)+'%']]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="3" s="2">
+<O>
+<![CDATA[毛利额]]></O>
+<Expand/>
+</C>
+<C c="1" r="3" s="2">
+<O t="D">
+<![CDATA[3286303.74]]></O>
+<Expand/>
+</C>
+<C c="2" r="3" s="2">
+<O t="D">
+<![CDATA[4285303.74]]></O>
+<Expand/>
+</C>
+<C c="3" r="3" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((B4/C4)*100)+'%']]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="4" s="2">
+<O>
+<![CDATA[毛利率]]></O>
+<Expand/>
+</C>
+<C c="1" r="4" s="2">
+<O>
+<![CDATA[60.94%]]></O>
+<Expand/>
+</C>
+<C c="2" r="4" s="2">
+<O>
+<![CDATA[64.00%]]></O>
+<Expand/>
+</C>
+<C c="3" r="4" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((B5/C5)*100)+'%']]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="5" s="2">
+<O>
+<![CDATA[客单价]]></O>
+<Expand/>
+</C>
+<C c="1" r="5" s="2">
+<O t="D">
+<![CDATA[1043.01]]></O>
+<Expand/>
+</C>
+<C c="2" r="5" s="2">
+<O t="BigDecimal">
+<![CDATA[1159.00]]></O>
+<Expand/>
+</C>
+<C c="3" r="5" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((B6/C6)*100)+'%']]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="6" s="2">
+<O>
+<![CDATA[成交笔数]]></O>
+<Expand/>
+</C>
+<C c="1" r="6" s="2">
+<O t="I">
+<![CDATA[5181]]></O>
+<Expand/>
+</C>
+<C c="2" r="6" s="2">
+<O t="I">
+<![CDATA[5211]]></O>
+<Expand/>
+</C>
+<C c="3" r="6" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((B7/C7)*100)+'%']]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="7" s="2">
+<O>
+<![CDATA[周转率]]></O>
+<Expand/>
+</C>
+<C c="1" r="7" s="2">
+<O>
+<![CDATA[13.16%]]></O>
+<Expand/>
+</C>
+<C c="2" r="7" s="2">
+<O>
+<![CDATA[12.95%]]></O>
+<Expand/>
+</C>
+<C c="3" r="7" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((B8/C8)*100)+'%']]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="8" s="2">
+<O>
+<![CDATA[人效]]></O>
+<Expand/>
+</C>
+<C c="1" r="8" s="2">
+<O t="I">
+<![CDATA[50000]]></O>
+<Expand/>
+</C>
+<C c="2" r="8" s="2">
+<O t="I">
+<![CDATA[51800]]></O>
+<Expand/>
+</C>
+<C c="3" r="8" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((B9/C9)*100)+'%']]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="9" s="2">
+<O>
+<![CDATA[VIP占比]]></O>
+<Expand/>
+</C>
+<C c="1" r="9" s="2">
+<O>
+<![CDATA[10%]]></O>
+<Expand/>
+</C>
+<C c="2" r="9" s="2">
+<O>
+<![CDATA[9%]]></O>
+<Expand/>
+</C>
+<C c="3" r="9" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((B10/C10)*100)+'%']]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="10" s="2">
+<O>
+<![CDATA[退货金额]]></O>
+<Expand/>
+</C>
+<C c="1" r="10" s="2">
+<O t="BigDecimal">
+<![CDATA[-212550.90]]></O>
+<Expand/>
+</C>
+<C c="2" r="10" s="2">
+<O t="BigDecimal">
+<![CDATA[-185474.00]]></O>
+<Expand/>
+</C>
+<C c="3" r="10" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((B11/C11)*100)+'%']]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="11" s="2">
+<O>
+<![CDATA[退货数量]]></O>
+<Expand/>
+</C>
+<C c="1" r="11" s="2">
+<O t="I">
+<![CDATA[-152]]></O>
+<Expand/>
+</C>
+<C c="2" r="11" s="2">
+<O t="I">
+<![CDATA[-143]]></O>
+<Expand/>
+</C>
+<C c="3" r="11" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((B12/C12)*100)+'%']]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting>
+<PaperSize width="17280000" height="15840000"/>
+<Margin top="0" left="0" bottom="0" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="true" delayPlaying="false" windowPosition="1" align="0"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+<ParameterUI class="com.fr.main.parameter.FormParameterUI">
+<Layout class="com.fr.form.ui.container.WAbsoluteLayout">
+<WidgetName name="para"/>
+<WidgetAttr/>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.FreeButton">
+<Listener event="click">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="isshow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$__showtoolbar__]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<Content>
+<![CDATA[window.location = "${servletURL}?reportlet=zongjingli/zongtijianbiao.cpt&__bypagesize__=false&__showtoolbar__="+isshow]]></Content>
+</JavaScript>
+</Listener>
+<WidgetName name="button0_c_c"/>
+<WidgetAttr/>
+<Text>
+<![CDATA[总体概况]]></Text>
+</InnerWidget>
+<BoundsAttr x="20" y="10" width="90" height="20"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.FreeButton">
+<WidgetName name="button0_c_c_c_c"/>
+<WidgetAttr/>
+<Text>
+<![CDATA[毛利率]]></Text>
+</InnerWidget>
+<BoundsAttr x="200" y="10" width="90" height="20"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.FreeButton">
+<Listener event="click">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="isshow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$__showtoolbar__]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<Content>
+<![CDATA[window.location = "${servletURL}?reportlet=zongjingli/yingyee2.cpt&__bypagesize__=false&__showtoolbar__="+isshow]]></Content>
+</JavaScript>
+</Listener>
+<WidgetName name="button0_c_c_c"/>
+<WidgetAttr/>
+<Text>
+<![CDATA[营业额]]></Text>
+</InnerWidget>
+<BoundsAttr x="110" y="10" width="90" height="20"/>
+</Widget>
+<LCAttr vgap="0" hgap="0"/>
+</Layout>
+<DesignAttr width="800" height="39"/>
+</ParameterUI>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="176"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="宋体" style="0" size="88" foreground="-1"/>
+<Background name="ColorBackground" color="-13421773"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="宋体" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

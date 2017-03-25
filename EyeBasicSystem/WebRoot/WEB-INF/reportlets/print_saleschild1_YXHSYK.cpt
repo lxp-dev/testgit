@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds5" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT [S_SE_SD_SalesItemID]A AS '商品代码',
+CASE
+  WHEN B_GI_GoodsCategoryID = '1' THEN Isnull(B_GI_GoodsName, '') + Isnull('  —' + Rtrim(B_GI_Spec), '') + Isnull('—' + Rtrim(B_GI_Color), '')
+  WHEN B_GI_GoodsCategoryID = '6' THEN Isnull(B_GI_GoodsName, '') + Isnull('  —' + Rtrim(B_GI_Spec), '') + Isnull('—' + Rtrim(B_GI_Color), '')
+  WHEN B_GI_GoodsCategoryID = '8' THEN Isnull(B_GI_GoodsName, '') + Isnull('  —' + Rtrim(B_GI_Spec), '') + Isnull('—' + Rtrim(B_GI_SupplierColor), '') 
+ ELSE Isnull(B_GI_GoodsName, '')
+END                                         AS '商品名称'
+
+
+      ,[S_SE_SD_SPrice]A AS '商品单价'
+      ,[S_SE_SD_Number]A AS '数量'
+      ,[S_SE_SD_DiscountRate]A AS '折率'
+      ,[S_SE_SD_DiscountNum]A AS '折扣金额'
+      ,B_GC_GoodsCategoryName  AS '商品类别'
+      ,S_SE_SD_SalesValue AS '应收金额'
+      ,B_UT_unitName AS '单位名称'
+from  S_SE_SalesDetail 
+left join B_GoodsInfo on S_SE_SD_SalesItemID = B_GI_GoodsID left join B_GoodsCategory 
+on B_GI_GoodsCategoryID = B_GC_Order left join B_Unit on B_GI_UnitId = B_UT_id
+where [S_SE_SD_SalesID]A ='${salesid}' and S_SE_SD_LargessFlag <> '1'
+union all 
+SELECT [S_SE_SD_SalesItemID]A AS '商品代码',
+CASE
+  WHEN B_GI_GoodsCategoryID = '1' THEN Isnull(B_GI_GoodsName, '') + Isnull('  —' + Rtrim(B_GI_Spec), '') + Isnull('—' + Rtrim(B_GI_Color), '')
+  WHEN B_GI_GoodsCategoryID = '6' THEN Isnull(B_GI_GoodsName, '') + Isnull('  —' + Rtrim(B_GI_Spec), '') + Isnull('—' + Rtrim(B_GI_Color), '')
+  WHEN B_GI_GoodsCategoryID = '8' THEN Isnull(B_GI_GoodsName, '') + Isnull('  —' + Rtrim(B_GI_Spec), '') + Isnull('—' + Rtrim(B_GI_SupplierColor), '') 
+ ELSE Isnull(B_GI_GoodsName, '')
+END                                         AS '商品名称'
+
+
+      ,[S_SE_SD_SPrice]A AS '商品单价'
+      ,[S_SE_SD_Number]A AS '数量'
+      ,[S_SE_SD_DiscountRate]A AS '折率'
+      ,[S_SE_SD_DiscountNum]A AS '折扣金额'
+      ,B_GC_GoodsCategoryName  AS '商品类别'
+      ,S_SE_SD_SalesValue AS '应收金额'
+      ,B_UT_unitName AS '单位名称'
+from  S_SE_SalesDetail_Finished 
+left join B_GoodsInfo on S_SE_SD_SalesItemID = B_GI_GoodsID left join B_GoodsCategory 
+on B_GI_GoodsCategoryID = B_GC_Order left join B_Unit on B_GI_UnitId = B_UT_id
+where [S_SE_SD_SalesID]A ='${salesid}' and S_SE_SD_LargessFlag <> '1']]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[647700,864000,723900,723900,723900,723900,723900,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[0,0,0,342900,288000,288000,288000,288000,876300,288000,228600,288000,288000,288000,419100,288000,571500,288000,288000,288000,288000,288000,288000,288000,495300,288000,685800,457200,419100,419100,114300,288000,288000,288000,381000,457200,288000,228600,152400,419100,288000,288000,288000,288000,288000,288000,288000,533400,288000,288000,288000,288000,288000,288000,288000,419100,571500,288000,288000,288000,288000,288000,723900,288000,288000,288000,288000,288000,609600,288000,288000,609600,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="3" r="0" cs="38" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="商品名称"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="41" r="0" cs="6" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="单位名称"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="47" r="0" cs="5" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="数量"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Result>
+<![CDATA[IF($wFlag==1, $$$, IF($wFlag==-1, ($$$ * -1), $$$))]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="52" r="0" cs="5" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="折率"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="57" r="0" cs="8" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="商品单价"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="65" r="0" cs="8" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="应收金额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[IF($wFlag==1, $$$, IF($wFlag==-1, ($$$ * -1), $$$))]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="1" cs="38" s="0">
+<Expand dir="0"/>
+</C>
+<C c="41" r="1" cs="6" s="1">
+<Expand dir="0"/>
+</C>
+<C c="47" r="1" cs="5" s="1">
+<Expand dir="0"/>
+</C>
+<C c="52" r="1" cs="5" s="1">
+<Expand dir="0"/>
+</C>
+<C c="57" r="1" cs="8" s="2">
+<Expand dir="0"/>
+</C>
+<C c="65" r="1" cs="8" s="3">
+<Expand dir="0"/>
+</C>
+<C c="3" r="2" cs="38" s="4">
+<Expand dir="0"/>
+</C>
+<C c="41" r="2" cs="6" s="5">
+<Expand dir="0"/>
+</C>
+<C c="47" r="2" cs="5" s="5">
+<Expand dir="0"/>
+</C>
+<C c="52" r="2" cs="5" s="5">
+<Expand dir="0"/>
+</C>
+<C c="57" r="2" cs="8" s="6">
+<Expand dir="0"/>
+</C>
+<C c="65" r="2" cs="8" s="7">
+<Expand dir="0"/>
+</C>
+<C c="3" r="3" cs="38" s="0">
+<Expand dir="0"/>
+</C>
+<C c="41" r="3" cs="6" s="1">
+<Expand dir="0"/>
+</C>
+<C c="47" r="3" cs="5" s="1">
+<Expand dir="0"/>
+</C>
+<C c="52" r="3" cs="5" s="1">
+<Expand dir="0"/>
+</C>
+<C c="57" r="3" cs="8" s="2">
+<Expand dir="0"/>
+</C>
+<C c="65" r="3" cs="8" s="3">
+<Expand dir="0"/>
+</C>
+<C c="3" r="4" cs="38" s="4">
+<Expand dir="0"/>
+</C>
+<C c="41" r="4" cs="6" s="5">
+<Expand dir="0"/>
+</C>
+<C c="47" r="4" cs="5" s="5">
+<Expand dir="0"/>
+</C>
+<C c="52" r="4" cs="5" s="5">
+<Expand dir="0"/>
+</C>
+<C c="57" r="4" cs="8" s="6">
+<Expand dir="0"/>
+</C>
+<C c="65" r="4" cs="8" s="7">
+<Expand dir="0"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting>
+<PaperSize width="30240000" height="5760000"/>
+<Margin top="0" left="0" bottom="0" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+<Left style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Left style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

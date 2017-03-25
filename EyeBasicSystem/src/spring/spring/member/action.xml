@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false" default-dependency-check="none">
+	<!-- 会员人群分类维护 moyongsheng  begin-->
+		<bean id="crowdCategoriesAction" class="com.pengsheng.eims.member.action.CrowdCategoriesAction" scope="prototype"/>
+	<!-- 会员人群分类维护 moyongsheng  end-->
+	
+	<!-- 顾客满意度表 moyongsheng  begin-->
+		<bean id="customerSatisfactionAction" class="com.pengsheng.eims.member.action.CustomerSatisfactionAction" scope="prototype"/>
+	<!-- 顾客满意度表 moyongsheng  end-->	
+	
+	<!-- 顾客基本资料 moyongsheng  begin-->
+		<bean id="customerInfoAction" class="com.pengsheng.eims.member.action.CustomerInfoAction" scope="prototype"/>
+	<!-- 顾客基本资料 moyongsheng  end-->
+	
+	<!-- 会员卡升级 wanglei  begin-->
+		<bean id="memberUpGradeAction" class="com.pengsheng.eims.member.action.MemberUpGradeAction" scope="prototype"/>
+	<!-- 会员卡升级 wanglei  end-->
+	
+	<!-- 顾客回访 wanglei  begin-->
+		<bean id="customerReturnVisitAction" class="com.pengsheng.eims.member.action.CustomerReturnVisitAction" scope="prototype"/>
+	<!-- 顾客回访 wanglei  end-->
+	
+	<!-- 短息维护 qiyue  begin-->
+		<bean id="smsSetAction" class="com.pengsheng.eims.member.action.SmsSetAction" scope="prototype"/>
+	<!-- 短息维护 qiyue  end-->
+</beans>

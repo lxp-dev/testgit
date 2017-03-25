@@ -1,0 +1,4851 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="refractive" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="optometryid"/>
+<O>
+<![CDATA[Y023C20140429162347]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+S_OP_R_CustomerSay			as '主诉',
+S_OP_R_LeadingEye			as '主导眼',
+S_OP_R_DBalBallGlassOD		as '右球镜',
+S_OP_R_DBalBallGlassOS		as '左球镜',
+S_OP_R_DBalPostGlassOD		as '右柱镜',
+S_OP_R_DBalPostGlassOS		as '左柱镜',
+S_OP_R_DBalAxesOD			as '右轴向',
+S_OP_R_DBalAxesOS			as '左轴向',
+S_OP_R_DBalInterHighOD+'/'+S_OP_R_DBalInterDistanceOD		as '右瞳距',
+S_OP_R_DBalInterHighOS+'/'+S_OP_R_DBalInterDistanceOS		as '左瞳距',
+S_OP_R_DBalVAOD				as '右VA',
+S_OP_R_DBalVAOS				as '左VA',
+S_OP_R_AddOD				as '右ADD',
+S_OP_R_AddOS				as '左ADD',
+S_OP_R_NakedOD	as '右裸眼视力',
+S_OP_R_NakedOS	as '左裸眼视力',
+personname 	as '视光师：'
+from dbo.S_OP_Refractive
+inner join S_OP_Optometry on S_OP_R_OptometryID = S_OP_OY_OptometryID
+inner join SYS_PersonInfo on id = S_OP_OY_PersonID
+where S_OP_R_OptometryID = '${optometryid}'
+]]></Query>
+</TableData>
+<TableData name="hisInfo" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="optometryid"/>
+<O>
+<![CDATA[Y023C20140429162347]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+S_OP_HI_FGlassesType as glassestype,
+case 
+	when isnull(S_OP_HI_FGlassesType,'') <> '无' and isnull(S_OP_HI_FGlassesType,'') <> '' 
+		then S_OP_HI_BallOD+'/'+S_OP_HI_PostOD+'/'+S_OP_HI_AxesOD
+	else '' end as refractiveod,
+case 
+	when isnull(S_OP_HI_FGlassesType,'') <> '无' and isnull(S_OP_HI_FGlassesType,'') <> ''
+		then S_OP_HI_BallOS+'/'+S_OP_HI_PostOS+'/'+S_OP_HI_AxesOS
+	else '' end as refractiveos,
+case 
+	when isnull(S_OP_HI_FGlassesType,'') <> '无' and isnull(S_OP_HI_FGlassesType,'') <> ''
+		then S_OP_HI_VAOD
+	else '' end as vaod,
+
+case 
+	when isnull(S_OP_HI_FGlassesType,'') <> '无' and isnull(S_OP_HI_FGlassesType,'') <> ''
+		then S_OP_HI_VAOS
+	else '' end as vaos,
+
+case 
+	when isnull(S_OP_HI_FGlassesType,'') = '框架'
+		then S_OP_HI_InterHighOD
+	else '' end as interhighod,
+
+case 
+	when isnull(S_OP_HI_FGlassesType,'') = '框架'
+		then S_OP_HI_InterHighOS
+	else '' end as interhighos,
+
+case 
+	when isnull(S_OP_HI_FGlassesType,'') <> '无' and isnull(S_OP_HI_FGlassesType,'') <> '' 
+		then S_OP_HI_BallODA+'/'+S_OP_HI_PostODA+'/'+S_OP_HI_AxesODA
+	else '' end as refractiveoda,
+case 
+	when isnull(S_OP_HI_FGlassesType,'') <> '无' and isnull(S_OP_HI_FGlassesType,'') <> ''
+		then S_OP_HI_BallOSA+'/'+S_OP_HI_PostOSA+'/'+S_OP_HI_AxesOSA
+	else '' end as refractiveosa,
+case 
+	when isnull(S_OP_HI_FGlassesType,'') <> '无' and isnull(S_OP_HI_FGlassesType,'') <> ''
+		then S_OP_HI_VAODA
+	else '' end as vaodaa,
+
+case 
+	when isnull(S_OP_HI_FGlassesType,'') <> '无' and isnull(S_OP_HI_FGlassesType,'') <> ''
+		then S_OP_HI_VAOSA
+	else '' end as vaosa
+
+from S_OP_HisInfo
+inner join dbo.S_OP_Optometry on S_OP_OY_CustomerID = S_OP_HI_FCustomerID
+where S_OP_OY_OptometryID = '${optometryid}']]></Query>
+</TableData>
+<TableData name="eyescheck" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="optometryid"/>
+<O>
+<![CDATA[Y023C20140429162347]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT TOP 1 dbo.ufn_getOptionParamByID(S_OP_EC_TearosOD,'')                            AS '右泪液',
+             dbo.ufn_getOptionParamByID(S_OP_EC_TearosOS,'')                            AS '左泪液',
+             dbo.ufn_getOptionParamByID(S_OP_EC_NippleOD,'')                            AS '右结膜',
+             dbo.ufn_getOptionParamByID(S_OP_EC_NippleOS,'')                            AS '左结膜',
+             dbo.ufn_getOptionParamByID(S_OP_EC_CornealOD,'')                           AS '右角膜',
+             dbo.ufn_getOptionParamByID(S_OP_EC_CornealOS,'')                           AS '左角膜',
+             dbo.ufn_getOptionParamByID(S_OP_EC_HyphemaOD,'') + dbo.ufn_getOptionParamByID(S_OP_EC_CrystalOD,'/') AS '右前房/晶体',
+             dbo.ufn_getOptionParamByID(S_OP_EC_HyphemaOS,'') + dbo.ufn_getOptionParamByID(S_OP_EC_CrystalOS,'/') AS '左前房/晶体',
+             dbo.ufn_getOptionParamByID(S_OP_EC_FundusOD,'')                            AS '右眼底',
+             dbo.ufn_getOptionParamByID(S_OP_EC_FundusOS,'')                            AS '左眼底',
+             dbo.ufn_getOptionParamByID(S_OP_EC_IOPSELOD,'')                            AS '右眼压',
+             dbo.ufn_getOptionParamByID(S_OP_EC_IOPSELOS,'')                            AS '左眼压',
+             dbo.ufn_getOptionParamByID(S_OP_EC_ColorOD,'')                             AS '右★色觉检查：',
+             dbo.ufn_getOptionParamByID(S_OP_EC_ColorOD,'')                             AS '左★色觉检查：'
+FROM   dbo.S_OP_EyesCheck
+       INNER JOIN dbo.S_OP_Optometry
+         ON S_OP_OY_CustomerID = S_OP_EC_CustomerID
+WHERE  S_OP_OY_OptometryID = '${optometryid}'
+ORDER  BY S_OP_EC_VisionTime DESC ]]></Query>
+</TableData>
+<TableData name="doubleeyefun" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="optometryid"/>
+<O>
+<![CDATA[Y023C20140429162347]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT dbo.ufn_getOptionParamByID(S_OP_DE_CoverOD,'') + dbo.ufn_getOptionParamByID(S_OP_DE_CoverOS,'、')                                                                                                AS '交替遮盖试验:近',
+       dbo.ufn_getOptionParamByID(S_OP_DE_FarWorth,'')                                                                                                                       AS 'Worth 4 dots',
+       CASE
+         WHEN S_OP_DE_SolidWatch = '0' THEN '无'
+         WHEN S_OP_DE_SolidWatch = '1' THEN '有'
+         ELSE ''
+       END                                                                                                                                    AS '立体视',
+       dbo.ufn_getOptionParamByID(S_OP_DE_FarHeteLevelIO,'') + S_OP_DE_FarHeteLevel + 'Δ'                                                                                    AS '远隐斜',
+       dbo.ufn_getOptionParamByID(S_OP_DE_CloseHeteLevelIO,'') + S_OP_DE_CloseHeteLevel + 'Δ'                                                                                AS '近隐斜',
+       S_OP_DE_ACA + 'Δ/D'                                                                                                                    AS 'AC/A',
+       S_OP_DE_BCC + 'D'                                                                                                                      AS 'BCC',
+       S_OP_DE_NegativeAccNRA + 'D'                                                                                                           AS 'NRA',
+       S_OP_DE_PositiveAccPRA + 'D'                                                                                                           AS 'PRA',
+       '(' + dbo.ufn_getOptionParamByID(S_OP_DE_TwoSideSpec,'') + dbo.ufn_getOptionParamByID(S_OP_DE_TwoSideTest,'、') + ')' + dbo.ufn_getOptionParamByID(S_OP_DE_FacilityOD,'、') + dbo.ufn_getOptionParamByID(S_OP_DE_FacilityOS,'、') + dbo.ufn_getOptionParamByID(S_OP_DE_FacilityOU,'、') AS '调节灵敏度(±2.00、20/30)OD、OS、OU',
+       S_OP_DE_SumDot                                                                                                                         AS '☆ 集合近点(笔灯) ',
+       S_OP_DE_CloseAmaLevelN + '/' + S_OP_DE_CloseAmaLevelNO + '/' + S_OP_DE_CloseAmaLevelNT                                                 AS '近负融像范围BI',
+       S_OP_DE_CloseAmaLevelP + '/' + S_OP_DE_CloseAmaLevelPO + '/' + S_OP_DE_CloseAmaLevelPT                                                 AS '近正融像范围BO',
+       S_OP_DE_FarAmaLevelN + '/' + S_OP_DE_FarAmaLevelNO + '/' + S_OP_DE_FarAmaLevelNT                                                       AS '远负融像范围BI',
+       S_OP_DE_FarAmaLevelP + '/' + S_OP_DE_FarAmaLevelPO + '/' + S_OP_DE_FarAmaLevelPT                                                       AS '远正融像范围BO'
+FROM   S_OP_DoubleEyeFunction
+WHERE  S_OP_DE_OptometryID = '${optometryid}']]></Query>
+</TableData>
+<TableData name="healthcheck" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="optometryid"/>
+<O>
+<![CDATA[Y023C20140429162347]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+'SK'+S_OP_HC_CorneaCurvatureODS1+'-'+S_OP_HC_CorneaCurvatureODS2+'D FK'+S_OP_HC_CorneaCurvatureODF1+'-'+S_OP_HC_CorneaCurvatureODF2+'D' AS '右☆角膜曲率：',
+'SK'+S_OP_HC_CorneaCurvatureOSS1+'-'+S_OP_HC_CorneaCurvatureOSS2+'D FK'+S_OP_HC_CorneaCurvatureOSF1+'-'+S_OP_HC_CorneaCurvatureOSF2+'D' AS '左☆角膜曲率：',
+S_OP_HC_EyeAxisOD+'mm' as '右眼轴',
+S_OP_HC_EyeAxisOS+'mm' as '左眼轴',
+'SK'+S_OP_HC_TopographyFKOD+'D FK'+S_OP_HC_TopographySKOD+'D' AS '右★角膜地形图:',
+'SK'+S_OP_HC_TopographyFKOD+'D FK'+S_OP_HC_TopographySKOD+'D' AS '左★角膜地形图:',
+S_OP_HC_DynamicAdjustmentOD as '右眼视功能检查',
+S_OP_HC_DynamicAdjustmentOS as '左眼视功能检查'
+from S_OP_HealthCheck
+where S_OP_HC_OptometryID = '${optometryid}']]></Query>
+</TableData>
+<TableData name="inspection" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="optometryid"/>
+<O>
+<![CDATA[Y023C20140429162347]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT TOP 1 dbo.ufn_getOptionParamByID(S_OP_IP_NearEye,'')      AS '近视眼:',
+             dbo.ufn_getOptionParamByID(S_OP_IP_FarEye,'')       AS '远视眼:',
+             dbo.ufn_getOptionParamByID(S_OP_IP_Astigmia,'')     AS '散光：',
+             dbo.ufn_getOptionParamByID(S_OP_IP_Estimate,'')     AS '双眼视功能评估：',
+             S_OP_IP_BallGlassOD  AS '右球镜',
+             S_OP_IP_BallGlassOS  AS '左球镜',
+             S_OP_IP_PostGlassOD  AS '右柱镜',
+             S_OP_IP_PostGlassOS  AS '左柱镜',
+             S_OP_IP_AxesOD       AS '右轴向',
+             S_OP_IP_AxesOS       AS '左轴向',
+             S_OP_IP_FarVAOD      AS '右VA',
+             S_OP_IP_FarVAOS      AS '左VA',
+             S_OP_IP_ADDOD        AS '右ADD',
+             S_OP_IP_ADDOS        AS '左ADD',
+             S_OP_IP_InterHighOD  AS '右单眼瞳距',
+             S_OP_IP_InterHighOS  AS '左单眼瞳距',
+             dbo.ufn_getOptionParamByID(S_OP_IP_GlassTypes,'')   AS '框架眼镜：',
+             dbo.ufn_getOptionParamByID(S_OP_IP_TouchGlass,'')   AS '角膜接触镜：',
+             dbo.ufn_getOptionParamByID(S_OP_IP_TrainTypes,'')   AS '视觉训练：',
+             dbo.ufn_getOptionParamByID(S_OP_IP_TakeType,'')     AS '戴镜方式：',
+             S_OP_IP_SecCheckDate AS '复诊时间：'
+FROM   S_OP_Inspection
+WHERE  S_OP_IP_OptometryID = '${optometryid}']]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet2">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[609600,1008000,723900,1008000,495300,1008000,1008000,1008000,1008000,495300,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[1066800,571500,2209800,1828800,1828800,1066800,2705100,1562100,723900,647700,1562100,3162300,38100,0,1257300,2095500,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<Expand/>
+</C>
+<C c="1" r="0" s="0">
+<Expand/>
+</C>
+<C c="2" r="0" s="0">
+<Expand/>
+</C>
+<C c="3" r="0" s="0">
+<Expand/>
+</C>
+<C c="4" r="0" s="1">
+<Expand/>
+</C>
+<C c="5" r="0" s="0">
+<Expand/>
+</C>
+<C c="6" r="0" s="0">
+<Expand/>
+</C>
+<C c="7" r="0" s="1">
+<Expand/>
+</C>
+<C c="8" r="0" s="0">
+<Expand/>
+</C>
+<C c="9" r="0" s="0">
+<Expand/>
+</C>
+<C c="10" r="0" s="0">
+<Expand/>
+</C>
+<C c="11" r="0" s="0">
+<Expand/>
+</C>
+<C c="12" r="0" s="0">
+<Expand/>
+</C>
+<C c="13" r="0" s="0">
+<Expand/>
+</C>
+<C c="14" r="0" s="1">
+<Expand/>
+</C>
+<C c="15" r="0" s="0">
+<Expand/>
+</C>
+<C c="0" r="1" cs="16" s="2">
+<O>
+<![CDATA[视光复诊记录（    ）]]></O>
+<Expand/>
+</C>
+<C c="0" r="3" s="0">
+<Expand/>
+</C>
+<C c="1" r="3" cs="3" s="3">
+<O>
+<![CDATA[一、戴镜时间：]]></O>
+<Expand/>
+</C>
+<C c="4" r="3" cs="7" s="4">
+<Expand/>
+</C>
+<C c="11" r="3" s="0">
+<Expand/>
+</C>
+<C c="12" r="3" s="0">
+<Expand/>
+</C>
+<C c="13" r="3" s="0">
+<Expand/>
+</C>
+<C c="14" r="3" s="1">
+<Expand/>
+</C>
+<C c="15" r="3" s="0">
+<Expand/>
+</C>
+<C c="0" r="4" s="0">
+<Expand/>
+</C>
+<C c="1" r="4" s="0">
+<Expand/>
+</C>
+<C c="2" r="4" s="0">
+<Expand/>
+</C>
+<C c="3" r="4" s="0">
+<Expand/>
+</C>
+<C c="4" r="4" s="1">
+<Expand/>
+</C>
+<C c="5" r="4" s="0">
+<Expand/>
+</C>
+<C c="6" r="4" s="0">
+<Expand/>
+</C>
+<C c="7" r="4" s="1">
+<Expand/>
+</C>
+<C c="8" r="4" s="0">
+<Expand/>
+</C>
+<C c="9" r="4" s="0">
+<Expand/>
+</C>
+<C c="10" r="4" s="0">
+<Expand/>
+</C>
+<C c="11" r="4" s="0">
+<Expand/>
+</C>
+<C c="12" r="4" s="0">
+<Expand/>
+</C>
+<C c="13" r="4" s="0">
+<Expand/>
+</C>
+<C c="14" r="4" s="1">
+<Expand/>
+</C>
+<C c="15" r="4" s="0">
+<Expand/>
+</C>
+<C c="0" r="5" s="0">
+<Expand/>
+</C>
+<C c="1" r="5" cs="3" s="3">
+<O>
+<![CDATA[二、旧镜视力：]]></O>
+<Expand/>
+</C>
+<C c="4" r="5" s="1">
+<O>
+<![CDATA[OD]]></O>
+<Expand/>
+</C>
+<C c="5" r="5" cs="5" s="4">
+<O t="DSColumn">
+<Attributes dsName="hisInfo" columnName="refractiveod"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="5" s="1">
+<O>
+<![CDATA[VA]]></O>
+<Expand/>
+</C>
+<C c="11" r="5" cs="2" s="4">
+<O t="DSColumn">
+<Attributes dsName="hisInfo" columnName="vaod"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="6" s="0">
+<Expand/>
+</C>
+<C c="1" r="6" s="0">
+<Expand/>
+</C>
+<C c="2" r="6" s="0">
+<Expand/>
+</C>
+<C c="3" r="6" s="0">
+<Expand/>
+</C>
+<C c="4" r="6" s="1">
+<O>
+<![CDATA[OS]]></O>
+<Expand/>
+</C>
+<C c="5" r="6" cs="5" s="4">
+<O t="DSColumn">
+<Attributes dsName="hisInfo" columnName="refractiveos"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="6" s="1">
+<O>
+<![CDATA[VA]]></O>
+<Expand/>
+</C>
+<C c="11" r="6" cs="2" s="4">
+<O t="DSColumn">
+<Attributes dsName="hisInfo" columnName="vaos"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="7" s="0">
+<Expand/>
+</C>
+<C c="1" r="7" s="0">
+<Expand/>
+</C>
+<C c="2" r="7" cs="2" s="3">
+<O>
+<![CDATA[追加度数：]]></O>
+<Expand/>
+</C>
+<C c="4" r="7" s="1">
+<O>
+<![CDATA[OD]]></O>
+<Expand/>
+</C>
+<C c="5" r="7" cs="5" s="4">
+<O t="DSColumn">
+<Attributes dsName="hisInfo" columnName="refractiveoda"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="7" s="1">
+<O>
+<![CDATA[VA]]></O>
+<Expand/>
+</C>
+<C c="11" r="7" cs="2" s="4">
+<O t="DSColumn">
+<Attributes dsName="hisInfo" columnName="vaodaa"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="7" s="0">
+<Expand/>
+</C>
+<C c="14" r="7" s="1">
+<Expand/>
+</C>
+<C c="15" r="7" s="0">
+<Expand/>
+</C>
+<C c="0" r="8" s="0">
+<Expand/>
+</C>
+<C c="1" r="8" s="0">
+<Expand/>
+</C>
+<C c="2" r="8" s="0">
+<Expand/>
+</C>
+<C c="3" r="8" s="0">
+<Expand/>
+</C>
+<C c="4" r="8" s="1">
+<O>
+<![CDATA[OS]]></O>
+<Expand/>
+</C>
+<C c="5" r="8" cs="5" s="4">
+<O t="DSColumn">
+<Attributes dsName="hisInfo" columnName="refractiveosa"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="8" s="1">
+<O>
+<![CDATA[VA]]></O>
+<Expand/>
+</C>
+<C c="11" r="8" cs="2" s="4">
+<O t="DSColumn">
+<Attributes dsName="hisInfo" columnName="vaosa"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="8" s="0">
+<Expand/>
+</C>
+<C c="14" r="8" s="1">
+<Expand/>
+</C>
+<C c="15" r="8" s="0">
+<Expand/>
+</C>
+<C c="0" r="9" s="0">
+<Expand/>
+</C>
+<C c="1" r="9" s="0">
+<Expand/>
+</C>
+<C c="2" r="9" s="0">
+<Expand/>
+</C>
+<C c="3" r="9" s="0">
+<Expand/>
+</C>
+<C c="4" r="9" s="1">
+<Expand/>
+</C>
+<C c="5" r="9" s="0">
+<Expand/>
+</C>
+<C c="6" r="9" s="0">
+<Expand/>
+</C>
+<C c="7" r="9" s="1">
+<Expand/>
+</C>
+<C c="8" r="9" s="0">
+<Expand/>
+</C>
+<C c="9" r="9" s="0">
+<Expand/>
+</C>
+<C c="10" r="9" s="0">
+<Expand/>
+</C>
+<C c="11" r="9" s="0">
+<Expand/>
+</C>
+<C c="12" r="9" s="0">
+<Expand/>
+</C>
+<C c="13" r="9" s="0">
+<Expand/>
+</C>
+<C c="14" r="9" s="1">
+<Expand/>
+</C>
+<C c="15" r="9" s="0">
+<Expand/>
+</C>
+<C c="0" r="10" s="0">
+<Expand/>
+</C>
+<C c="1" r="10" cs="3" s="5">
+<O>
+<![CDATA[三、视功能]]></O>
+<Expand/>
+</C>
+<C c="4" r="10" s="1">
+<Expand/>
+</C>
+<C c="5" r="10" s="0">
+<Expand/>
+</C>
+<C c="6" r="10" s="0">
+<Expand/>
+</C>
+<C c="7" r="10" s="1">
+<Expand/>
+</C>
+<C c="8" r="10" s="0">
+<Expand/>
+</C>
+<C c="9" r="10" s="0">
+<Expand/>
+</C>
+<C c="10" r="10" s="0">
+<Expand/>
+</C>
+<C c="11" r="10" s="0">
+<Expand/>
+</C>
+<C c="12" r="10" s="0">
+<Expand/>
+</C>
+<C c="13" r="10" s="0">
+<Expand/>
+</C>
+<C c="14" r="10" s="1">
+<Expand/>
+</C>
+<C c="15" r="10" s="0">
+<Expand/>
+</C>
+<C c="0" r="11" s="0">
+<Expand/>
+</C>
+<C c="1" r="11" cs="3" s="6">
+<O>
+<![CDATA[检查项目]]></O>
+<Expand/>
+</C>
+<C c="4" r="11" s="1">
+<Expand/>
+</C>
+<C c="5" r="11" s="1">
+<Expand/>
+</C>
+<C c="6" r="11" s="1">
+<Expand/>
+</C>
+<C c="7" r="11" s="1">
+<Expand/>
+</C>
+<C c="8" r="11" cs="4" s="6">
+<O>
+<![CDATA[参考值]]></O>
+<Expand/>
+</C>
+<C c="12" r="11" s="0">
+<Expand/>
+</C>
+<C c="13" r="11" s="0">
+<Expand/>
+</C>
+<C c="14" r="11" s="1">
+<Expand/>
+</C>
+<C c="15" r="11" s="0">
+<Expand/>
+</C>
+<C c="0" r="12" s="0">
+<Expand/>
+</C>
+<C c="1" r="12" cs="2" s="0">
+<O>
+<![CDATA[☆远隐斜]]></O>
+<Expand/>
+</C>
+<C c="3" r="12" cs="3" s="4">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="远隐斜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="12" s="0">
+<Expand/>
+</C>
+<C c="7" r="12" s="1">
+<Expand/>
+</C>
+<C c="8" r="12" cs="6" s="1">
+<O>
+<![CDATA[外隐斜-1（±2）]]></O>
+<Expand/>
+</C>
+<C c="14" r="12" s="1">
+<Expand/>
+</C>
+<C c="15" r="12" s="1">
+<Expand/>
+</C>
+<C c="0" r="13" s="0">
+<Expand/>
+</C>
+<C c="1" r="13" cs="2" s="0">
+<O>
+<![CDATA[☆近隐斜]]></O>
+<Expand/>
+</C>
+<C c="3" r="13" cs="3" s="4">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="近隐斜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="13" s="0">
+<Expand/>
+</C>
+<C c="7" r="13" s="1">
+<Expand/>
+</C>
+<C c="8" r="13" cs="6" s="1">
+<O>
+<![CDATA[外隐斜-3Δ（±3）]]></O>
+<Expand/>
+</C>
+<C c="14" r="13" s="1">
+<Expand/>
+</C>
+<C c="15" r="13" s="1">
+<Expand/>
+</C>
+<C c="0" r="14" s="0">
+<Expand/>
+</C>
+<C c="1" r="14" cs="2" s="0">
+<O>
+<![CDATA[☆AC/A]]></O>
+<Expand/>
+</C>
+<C c="3" r="14" cs="3" s="4">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="AC/A"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="14" s="0">
+<Expand/>
+</C>
+<C c="7" r="14" s="1">
+<Expand/>
+</C>
+<C c="8" r="14" cs="6" s="1">
+<O>
+<![CDATA[3～5Δ/D]]></O>
+<Expand/>
+</C>
+<C c="14" r="14" s="1">
+<Expand/>
+</C>
+<C c="15" r="14" s="1">
+<Expand/>
+</C>
+<C c="0" r="15" s="0">
+<Expand/>
+</C>
+<C c="1" r="15" cs="2" s="0">
+<O>
+<![CDATA[☆BCC]]></O>
+<Expand/>
+</C>
+<C c="3" r="15" cs="3" s="4">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="BCC"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="15" s="0">
+<Expand/>
+</C>
+<C c="7" r="15" s="1">
+<Expand/>
+</C>
+<C c="8" r="15" cs="6" s="1">
+<O>
+<![CDATA[0.25D～+0.75D]]></O>
+<Expand/>
+</C>
+<C c="14" r="15" s="1">
+<Expand/>
+</C>
+<C c="15" r="15" s="1">
+<Expand/>
+</C>
+<C c="0" r="16" s="0">
+<Expand/>
+</C>
+<C c="1" r="16" cs="2" s="0">
+<O>
+<![CDATA[☆NRA]]></O>
+<Expand/>
+</C>
+<C c="3" r="16" cs="3" s="4">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="NRA"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="16" s="0">
+<Expand/>
+</C>
+<C c="7" r="16" s="1">
+<Expand/>
+</C>
+<C c="8" r="16" cs="6" s="1">
+<O>
+<![CDATA[0.25D～+0.75D]]></O>
+<Expand/>
+</C>
+<C c="14" r="16" s="1">
+<Expand/>
+</C>
+<C c="15" r="16" s="0">
+<Expand/>
+</C>
+<C c="0" r="17" s="0">
+<Expand/>
+</C>
+<C c="1" r="17" cs="2" s="0">
+<O>
+<![CDATA[☆PRA]]></O>
+<Expand/>
+</C>
+<C c="3" r="17" cs="3" s="4">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="PRA"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="17" s="0">
+<Expand/>
+</C>
+<C c="7" r="17" s="1">
+<Expand/>
+</C>
+<C c="8" r="17" cs="6" s="1">
+<O>
+<![CDATA[-2.50D（±1.00D）]]></O>
+<Expand/>
+</C>
+<C c="14" r="17" s="1">
+<Expand/>
+</C>
+<C c="15" r="17" s="0">
+<Expand/>
+</C>
+<C c="0" r="18" s="0">
+<Expand/>
+</C>
+<C c="1" r="18" s="0">
+<Expand/>
+</C>
+<C c="2" r="18" s="0">
+<Expand/>
+</C>
+<C c="3" r="18" s="0">
+<Expand/>
+</C>
+<C c="4" r="18" s="1">
+<Expand/>
+</C>
+<C c="5" r="18" s="0">
+<Expand/>
+</C>
+<C c="6" r="18" s="0">
+<Expand/>
+</C>
+<C c="7" r="18" s="1">
+<Expand/>
+</C>
+<C c="8" r="18" s="0">
+<Expand/>
+</C>
+<C c="9" r="18" s="0">
+<Expand/>
+</C>
+<C c="10" r="18" s="0">
+<Expand/>
+</C>
+<C c="11" r="18" s="0">
+<Expand/>
+</C>
+<C c="12" r="18" s="0">
+<Expand/>
+</C>
+<C c="13" r="18" s="0">
+<Expand/>
+</C>
+<C c="14" r="18" s="1">
+<Expand/>
+</C>
+<C c="15" r="18" s="0">
+<Expand/>
+</C>
+<C c="0" r="19" s="0">
+<Expand/>
+</C>
+<C c="1" r="19" s="0">
+<Expand/>
+</C>
+<C c="2" r="19" s="0">
+<Expand/>
+</C>
+<C c="3" r="19" s="0">
+<Expand/>
+</C>
+<C c="4" r="19" s="1">
+<Expand/>
+</C>
+<C c="5" r="19" s="0">
+<Expand/>
+</C>
+<C c="6" r="19" s="0">
+<Expand/>
+</C>
+<C c="7" r="19" s="1">
+<Expand/>
+</C>
+<C c="8" r="19" s="0">
+<Expand/>
+</C>
+<C c="9" r="19" s="0">
+<Expand/>
+</C>
+<C c="10" r="19" s="0">
+<Expand/>
+</C>
+<C c="11" r="19" s="0">
+<Expand/>
+</C>
+<C c="12" r="19" s="0">
+<Expand/>
+</C>
+<C c="13" r="19" s="0">
+<Expand/>
+</C>
+<C c="14" r="19" s="1">
+<Expand/>
+</C>
+<C c="15" r="19" s="0">
+<Expand/>
+</C>
+<C c="0" r="20" s="0">
+<Expand/>
+</C>
+<C c="1" r="20" s="0">
+<Expand/>
+</C>
+<C c="2" r="20" s="0">
+<Expand/>
+</C>
+<C c="3" r="20" s="0">
+<Expand/>
+</C>
+<C c="4" r="20" s="1">
+<Expand/>
+</C>
+<C c="5" r="20" s="0">
+<Expand/>
+</C>
+<C c="6" r="20" s="0">
+<Expand/>
+</C>
+<C c="7" r="20" s="1">
+<Expand/>
+</C>
+<C c="8" r="20" s="0">
+<Expand/>
+</C>
+<C c="9" r="20" s="0">
+<Expand/>
+</C>
+<C c="10" r="20" s="0">
+<Expand/>
+</C>
+<C c="11" r="20" s="0">
+<Expand/>
+</C>
+<C c="12" r="20" s="0">
+<Expand/>
+</C>
+<C c="13" r="20" s="0">
+<Expand/>
+</C>
+<C c="14" r="20" s="1">
+<Expand/>
+</C>
+<C c="15" r="20" s="0">
+<Expand/>
+</C>
+<C c="0" r="21" s="0">
+<Expand/>
+</C>
+<C c="1" r="21" cs="3" s="7">
+<O>
+<![CDATA[四、建议：]]></O>
+<Expand/>
+</C>
+<C c="4" r="21" cs="11" s="8">
+<O>
+<![CDATA[□继戴     □换镜]]></O>
+<Expand/>
+</C>
+<C c="15" r="21" s="0">
+<Expand/>
+</C>
+<C c="0" r="22" s="0">
+<Expand/>
+</C>
+<C c="1" r="22" s="0">
+<Expand/>
+</C>
+<C c="2" r="22" s="0">
+<Expand/>
+</C>
+<C c="3" r="22" s="0">
+<Expand/>
+</C>
+<C c="4" r="22" cs="2" s="8">
+<O>
+<![CDATA[□其他]]></O>
+<Expand/>
+</C>
+<C c="6" r="22" cs="6" s="9">
+<Expand/>
+</C>
+<C c="12" r="22">
+<Expand/>
+</C>
+<C c="13" r="22">
+<Expand/>
+</C>
+<C c="14" r="22">
+<Expand/>
+</C>
+<C c="15" r="22">
+<Expand/>
+</C>
+<C c="10" r="34" cs="3" s="10">
+<O>
+<![CDATA[ 视光师：]]></O>
+<Expand/>
+</C>
+<C c="13" r="34" cs="3" s="4">
+<O t="DSColumn">
+<Attributes dsName="refractive" columnName="视光师："/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<Report class="com.fr.report.WorkSheet" name="sheet3">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,571500,1008000,1008000,1008000,723900,1008000,571500,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1143000,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[720000,720000,1828800,720000,720000,1028700,720000,720000,800100,720000,720000,720000,1409700,720000,720000,914400,876300,720000,720000,952500,720000,914400,720000,720000,720000,1562100,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="1" r="1" cs="25" s="11">
+<O>
+<![CDATA[双眼视复诊记录（    ）]]></O>
+<Expand/>
+</C>
+<C c="1" r="3" cs="2" s="12">
+<O>
+<![CDATA[主诉：]]></O>
+<Expand/>
+</C>
+<C c="3" r="3" cs="21" s="13">
+<O t="DSColumn">
+<Attributes dsName="refractive" columnName="主诉"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="24" r="3" s="14">
+<Expand/>
+</C>
+<C c="25" r="3" s="14">
+<Expand/>
+</C>
+<C c="1" r="4" s="14">
+<Expand/>
+</C>
+<C c="2" r="4" s="14">
+<Expand/>
+</C>
+<C c="3" r="4" s="14">
+<Expand/>
+</C>
+<C c="4" r="4" s="14">
+<Expand/>
+</C>
+<C c="5" r="4" s="14">
+<Expand/>
+</C>
+<C c="6" r="4" s="14">
+<Expand/>
+</C>
+<C c="7" r="4" s="14">
+<Expand/>
+</C>
+<C c="8" r="4" s="14">
+<Expand/>
+</C>
+<C c="9" r="4" s="14">
+<Expand/>
+</C>
+<C c="10" r="4" s="14">
+<Expand/>
+</C>
+<C c="11" r="4" s="14">
+<Expand/>
+</C>
+<C c="12" r="4" s="14">
+<Expand/>
+</C>
+<C c="13" r="4" s="14">
+<Expand/>
+</C>
+<C c="14" r="4" s="14">
+<Expand/>
+</C>
+<C c="15" r="4" s="14">
+<Expand/>
+</C>
+<C c="16" r="4" s="14">
+<Expand/>
+</C>
+<C c="17" r="4" s="14">
+<Expand/>
+</C>
+<C c="18" r="4" s="14">
+<Expand/>
+</C>
+<C c="19" r="4" s="14">
+<Expand/>
+</C>
+<C c="20" r="4" s="14">
+<Expand/>
+</C>
+<C c="21" r="4" s="14">
+<Expand/>
+</C>
+<C c="22" r="4" s="14">
+<Expand/>
+</C>
+<C c="23" r="4" s="14">
+<Expand/>
+</C>
+<C c="24" r="4" s="14">
+<Expand/>
+</C>
+<C c="25" r="4" s="14">
+<Expand/>
+</C>
+<C c="1" r="5" cs="5" s="15">
+<O>
+<![CDATA[视疲劳问卷调查：]]></O>
+<Expand/>
+</C>
+<C c="6" r="5" s="16">
+<Expand/>
+</C>
+<C c="7" r="5" s="16">
+<Expand/>
+</C>
+<C c="8" r="5" s="16">
+<Expand/>
+</C>
+<C c="9" r="5" s="16">
+<Expand/>
+</C>
+<C c="10" r="5" s="16">
+<Expand/>
+</C>
+<C c="11" r="5" s="16">
+<Expand/>
+</C>
+<C c="12" r="5" s="16">
+<Expand/>
+</C>
+<C c="13" r="5" s="16">
+<Expand/>
+</C>
+<C c="14" r="5" s="16">
+<Expand/>
+</C>
+<C c="15" r="5" s="16">
+<Expand/>
+</C>
+<C c="16" r="5" s="16">
+<Expand/>
+</C>
+<C c="17" r="5" s="16">
+<Expand/>
+</C>
+<C c="18" r="5" s="16">
+<Expand/>
+</C>
+<C c="19" r="5" s="16">
+<Expand/>
+</C>
+<C c="20" r="5" s="16">
+<Expand/>
+</C>
+<C c="21" r="5" s="16">
+<Expand/>
+</C>
+<C c="22" r="5" s="16">
+<Expand/>
+</C>
+<C c="23" r="5" s="16">
+<Expand/>
+</C>
+<C c="24" r="5" s="14">
+<Expand/>
+</C>
+<C c="25" r="5" s="14">
+<Expand/>
+</C>
+<C c="1" r="6" s="14">
+<Expand/>
+</C>
+<C c="2" r="6" s="14">
+<Expand/>
+</C>
+<C c="3" r="6" s="14">
+<Expand/>
+</C>
+<C c="4" r="6" s="14">
+<Expand/>
+</C>
+<C c="5" r="6" s="14">
+<Expand/>
+</C>
+<C c="6" r="6" s="16">
+<Expand/>
+</C>
+<C c="7" r="6" s="16">
+<Expand/>
+</C>
+<C c="8" r="6" s="16">
+<Expand/>
+</C>
+<C c="9" r="6" s="16">
+<Expand/>
+</C>
+<C c="10" r="6" s="16">
+<Expand/>
+</C>
+<C c="11" r="6" s="16">
+<Expand/>
+</C>
+<C c="12" r="6" s="16">
+<Expand/>
+</C>
+<C c="13" r="6" s="16">
+<Expand/>
+</C>
+<C c="14" r="6" s="16">
+<Expand/>
+</C>
+<C c="15" r="6" s="16">
+<Expand/>
+</C>
+<C c="16" r="6" s="16">
+<Expand/>
+</C>
+<C c="17" r="6" s="16">
+<Expand/>
+</C>
+<C c="18" r="6" s="16">
+<Expand/>
+</C>
+<C c="19" r="6" s="16">
+<Expand/>
+</C>
+<C c="20" r="6" s="16">
+<Expand/>
+</C>
+<C c="21" r="6" s="16">
+<Expand/>
+</C>
+<C c="22" r="6" s="16">
+<Expand/>
+</C>
+<C c="23" r="6" s="16">
+<Expand/>
+</C>
+<C c="24" r="6" s="14">
+<Expand/>
+</C>
+<C c="25" r="6" s="14">
+<Expand/>
+</C>
+<C c="1" r="7" s="14">
+<Expand/>
+</C>
+<C c="2" r="7" s="14">
+<Expand/>
+</C>
+<C c="3" r="7" s="14">
+<Expand/>
+</C>
+<C c="4" r="7" s="14">
+<Expand/>
+</C>
+<C c="5" r="7" s="14">
+<Expand/>
+</C>
+<C c="6" r="7" s="14">
+<Expand/>
+</C>
+<C c="7" r="7" s="14">
+<Expand/>
+</C>
+<C c="8" r="7" s="14">
+<Expand/>
+</C>
+<C c="9" r="7" s="14">
+<Expand/>
+</C>
+<C c="10" r="7" s="14">
+<Expand/>
+</C>
+<C c="11" r="7" s="14">
+<Expand/>
+</C>
+<C c="12" r="7" s="14">
+<Expand/>
+</C>
+<C c="13" r="7" s="14">
+<Expand/>
+</C>
+<C c="14" r="7" s="14">
+<Expand/>
+</C>
+<C c="15" r="7" s="14">
+<Expand/>
+</C>
+<C c="16" r="7" s="14">
+<Expand/>
+</C>
+<C c="17" r="7" s="14">
+<Expand/>
+</C>
+<C c="18" r="7" s="14">
+<Expand/>
+</C>
+<C c="19" r="7" s="14">
+<Expand/>
+</C>
+<C c="20" r="7" s="14">
+<Expand/>
+</C>
+<C c="21" r="7" s="14">
+<Expand/>
+</C>
+<C c="22" r="7" s="14">
+<Expand/>
+</C>
+<C c="23" r="7" s="14">
+<Expand/>
+</C>
+<C c="24" r="7" s="14">
+<Expand/>
+</C>
+<C c="25" r="7" s="14">
+<Expand/>
+</C>
+<C c="1" r="8" cs="3" s="15">
+<O>
+<![CDATA[戴镜视力：]]></O>
+<Expand/>
+</C>
+<C c="4" r="8" cs="2" s="14">
+<O>
+<![CDATA[远：]]></O>
+<Expand/>
+</C>
+<C c="6" r="8" s="14">
+<O>
+<![CDATA[OD]]></O>
+<Expand/>
+</C>
+<C c="7" r="8" cs="7" s="16">
+<Expand/>
+</C>
+<C c="14" r="8" s="14">
+<Expand/>
+</C>
+<C c="15" r="8" s="14">
+<O>
+<![CDATA[OS]]></O>
+<Expand/>
+</C>
+<C c="16" r="8" cs="7" s="16">
+<Expand/>
+</C>
+<C c="23" r="8" s="14">
+<Expand/>
+</C>
+<C c="24" r="8" s="14">
+<Expand/>
+</C>
+<C c="25" r="8" s="14">
+<Expand/>
+</C>
+<C c="1" r="9" s="15">
+<Expand/>
+</C>
+<C c="2" r="9" s="14">
+<Expand/>
+</C>
+<C c="3" r="9" s="14">
+<Expand/>
+</C>
+<C c="4" r="9" s="14">
+<Expand/>
+</C>
+<C c="5" r="9" s="14">
+<Expand/>
+</C>
+<C c="6" r="9" s="14">
+<Expand/>
+</C>
+<C c="7" r="9" s="14">
+<Expand/>
+</C>
+<C c="8" r="9" s="14">
+<Expand/>
+</C>
+<C c="9" r="9" s="14">
+<Expand/>
+</C>
+<C c="10" r="9" s="14">
+<Expand/>
+</C>
+<C c="11" r="9" s="14">
+<Expand/>
+</C>
+<C c="12" r="9" s="14">
+<Expand/>
+</C>
+<C c="13" r="9" s="14">
+<Expand/>
+</C>
+<C c="14" r="9" s="14">
+<Expand/>
+</C>
+<C c="15" r="9" s="14">
+<Expand/>
+</C>
+<C c="16" r="9" s="14">
+<Expand/>
+</C>
+<C c="17" r="9" s="14">
+<Expand/>
+</C>
+<C c="18" r="9" s="14">
+<Expand/>
+</C>
+<C c="19" r="9" s="14">
+<Expand/>
+</C>
+<C c="20" r="9" s="14">
+<Expand/>
+</C>
+<C c="21" r="9" s="14">
+<Expand/>
+</C>
+<C c="22" r="9" s="14">
+<Expand/>
+</C>
+<C c="23" r="9" s="14">
+<Expand/>
+</C>
+<C c="24" r="9" s="14">
+<Expand/>
+</C>
+<C c="25" r="9" s="14">
+<Expand/>
+</C>
+<C c="1" r="10" s="14">
+<Expand/>
+</C>
+<C c="2" r="10" s="14">
+<Expand/>
+</C>
+<C c="3" r="10" s="14">
+<Expand/>
+</C>
+<C c="4" r="10" cs="2" s="14">
+<O>
+<![CDATA[近：]]></O>
+<Expand/>
+</C>
+<C c="6" r="10" s="14">
+<O>
+<![CDATA[OD]]></O>
+<Expand/>
+</C>
+<C c="7" r="10" cs="7" s="16">
+<Expand/>
+</C>
+<C c="14" r="10" s="14">
+<Expand/>
+</C>
+<C c="15" r="10" s="14">
+<O>
+<![CDATA[OS]]></O>
+<Expand/>
+</C>
+<C c="16" r="10" cs="7" s="16">
+<Expand/>
+</C>
+<C c="23" r="10" s="14">
+<Expand/>
+</C>
+<C c="24" r="10" s="14">
+<Expand/>
+</C>
+<C c="25" r="10" s="14">
+<Expand/>
+</C>
+<C c="1" r="11" s="14">
+<Expand/>
+</C>
+<C c="2" r="11" s="14">
+<Expand/>
+</C>
+<C c="3" r="11" s="14">
+<Expand/>
+</C>
+<C c="4" r="11" s="14">
+<Expand/>
+</C>
+<C c="5" r="11" s="14">
+<Expand/>
+</C>
+<C c="6" r="11" s="14">
+<Expand/>
+</C>
+<C c="7" r="11" s="14">
+<Expand/>
+</C>
+<C c="8" r="11" s="14">
+<Expand/>
+</C>
+<C c="9" r="11" s="14">
+<Expand/>
+</C>
+<C c="10" r="11" s="14">
+<Expand/>
+</C>
+<C c="11" r="11" s="14">
+<Expand/>
+</C>
+<C c="12" r="11" s="14">
+<Expand/>
+</C>
+<C c="13" r="11" s="14">
+<Expand/>
+</C>
+<C c="14" r="11" s="14">
+<Expand/>
+</C>
+<C c="15" r="11" s="14">
+<Expand/>
+</C>
+<C c="16" r="11" s="14">
+<Expand/>
+</C>
+<C c="17" r="11" s="14">
+<Expand/>
+</C>
+<C c="18" r="11" s="14">
+<Expand/>
+</C>
+<C c="19" r="11" s="14">
+<Expand/>
+</C>
+<C c="20" r="11" s="14">
+<Expand/>
+</C>
+<C c="21" r="11" s="14">
+<Expand/>
+</C>
+<C c="22" r="11" s="14">
+<Expand/>
+</C>
+<C c="23" r="11" s="14">
+<Expand/>
+</C>
+<C c="24" r="11" s="14">
+<Expand/>
+</C>
+<C c="25" r="11" s="14">
+<Expand/>
+</C>
+<C c="1" r="12" cs="4" s="15">
+<O>
+<![CDATA[视功能检查：]]></O>
+<Expand/>
+</C>
+<C c="5" r="12" s="14">
+<Expand/>
+</C>
+<C c="6" r="12" s="14">
+<Expand/>
+</C>
+<C c="7" r="12" s="14">
+<Expand/>
+</C>
+<C c="8" r="12" s="14">
+<Expand/>
+</C>
+<C c="9" r="12" s="14">
+<Expand/>
+</C>
+<C c="10" r="12" s="14">
+<Expand/>
+</C>
+<C c="11" r="12" s="14">
+<Expand/>
+</C>
+<C c="12" r="12" s="14">
+<Expand/>
+</C>
+<C c="13" r="12" s="14">
+<Expand/>
+</C>
+<C c="14" r="12" s="14">
+<Expand/>
+</C>
+<C c="15" r="12" s="14">
+<Expand/>
+</C>
+<C c="16" r="12" s="14">
+<Expand/>
+</C>
+<C c="17" r="12" s="14">
+<Expand/>
+</C>
+<C c="18" r="12" s="14">
+<Expand/>
+</C>
+<C c="19" r="12" s="14">
+<Expand/>
+</C>
+<C c="20" r="12" s="14">
+<Expand/>
+</C>
+<C c="21" r="12" s="14">
+<Expand/>
+</C>
+<C c="22" r="12" s="14">
+<Expand/>
+</C>
+<C c="23" r="12" s="14">
+<Expand/>
+</C>
+<C c="24" r="12" s="14">
+<Expand/>
+</C>
+<C c="25" r="12" s="14">
+<Expand/>
+</C>
+<C c="1" r="13" s="14">
+<Expand/>
+</C>
+<C c="2" r="13" s="14">
+<Expand/>
+</C>
+<C c="3" r="13" s="14">
+<Expand/>
+</C>
+<C c="4" r="13" cs="2" s="14">
+<O>
+<![CDATA[MEM:]]></O>
+<Expand/>
+</C>
+<C c="6" r="13" s="14">
+<O>
+<![CDATA[OD]]></O>
+<Expand/>
+</C>
+<C c="7" r="13" cs="7" s="17">
+<O t="DSColumn">
+<Attributes dsName="healthcheck" columnName="右眼视功能检查"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="13" s="14">
+<Expand/>
+</C>
+<C c="15" r="13" s="14">
+<O>
+<![CDATA[OS]]></O>
+<Expand/>
+</C>
+<C c="16" r="13" cs="7" s="17">
+<O t="DSColumn">
+<Attributes dsName="healthcheck" columnName="左眼视功能检查"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="23" r="13" s="14">
+<Expand/>
+</C>
+<C c="24" r="13" s="14">
+<Expand/>
+</C>
+<C c="25" r="13" s="14">
+<Expand/>
+</C>
+<C c="1" r="14" s="14">
+<Expand/>
+</C>
+<C c="2" r="14" s="14">
+<Expand/>
+</C>
+<C c="3" r="14" s="14">
+<Expand/>
+</C>
+<C c="4" r="14" s="14">
+<Expand/>
+</C>
+<C c="5" r="14" s="14">
+<Expand/>
+</C>
+<C c="6" r="14" s="14">
+<Expand/>
+</C>
+<C c="7" r="14" s="14">
+<Expand/>
+</C>
+<C c="8" r="14" s="14">
+<Expand/>
+</C>
+<C c="9" r="14" s="14">
+<Expand/>
+</C>
+<C c="10" r="14" s="14">
+<Expand/>
+</C>
+<C c="11" r="14" s="14">
+<Expand/>
+</C>
+<C c="12" r="14" s="14">
+<Expand/>
+</C>
+<C c="13" r="14" s="14">
+<Expand/>
+</C>
+<C c="14" r="14" s="14">
+<Expand/>
+</C>
+<C c="15" r="14" s="14">
+<Expand/>
+</C>
+<C c="16" r="14" s="14">
+<Expand/>
+</C>
+<C c="17" r="14" s="14">
+<Expand/>
+</C>
+<C c="18" r="14" s="14">
+<Expand/>
+</C>
+<C c="19" r="14" s="14">
+<Expand/>
+</C>
+<C c="20" r="14" s="14">
+<Expand/>
+</C>
+<C c="21" r="14" s="14">
+<Expand/>
+</C>
+<C c="22" r="14" s="14">
+<Expand/>
+</C>
+<C c="23" r="14" s="14">
+<Expand/>
+</C>
+<C c="24" r="14" s="14">
+<Expand/>
+</C>
+<C c="25" r="14" s="14">
+<Expand/>
+</C>
+<C c="1" r="15" cs="5" s="15">
+<O>
+<![CDATA[随机点近立体视：]]></O>
+<Expand/>
+</C>
+<C c="6" r="15" s="16">
+<Expand/>
+</C>
+<C c="7" r="15" s="16">
+<Expand/>
+</C>
+<C c="8" r="15" s="16">
+<Expand/>
+</C>
+<C c="9" r="15" s="16">
+<Expand/>
+</C>
+<C c="10" r="15" s="16">
+<Expand/>
+</C>
+<C c="11" r="15" s="16">
+<Expand/>
+</C>
+<C c="12" r="15" s="16">
+<Expand/>
+</C>
+<C c="13" r="15" s="16">
+<Expand/>
+</C>
+<C c="14" r="15" s="16">
+<Expand/>
+</C>
+<C c="15" r="15" s="16">
+<Expand/>
+</C>
+<C c="16" r="15" s="16">
+<Expand/>
+</C>
+<C c="17" r="15" s="16">
+<Expand/>
+</C>
+<C c="18" r="15" s="16">
+<Expand/>
+</C>
+<C c="19" r="15" s="16">
+<Expand/>
+</C>
+<C c="20" r="15" s="16">
+<Expand/>
+</C>
+<C c="21" r="15" s="16">
+<Expand/>
+</C>
+<C c="22" r="15" s="16">
+<Expand/>
+</C>
+<C c="23" r="15" s="14">
+<Expand/>
+</C>
+<C c="24" r="15" s="14">
+<Expand/>
+</C>
+<C c="25" r="15" s="14">
+<Expand/>
+</C>
+<C c="1" r="16" s="14">
+<Expand/>
+</C>
+<C c="2" r="16" s="14">
+<Expand/>
+</C>
+<C c="3" r="16" s="14">
+<Expand/>
+</C>
+<C c="4" r="16" s="14">
+<Expand/>
+</C>
+<C c="5" r="16" s="14">
+<Expand/>
+</C>
+<C c="6" r="16" s="14">
+<Expand/>
+</C>
+<C c="7" r="16" s="14">
+<Expand/>
+</C>
+<C c="8" r="16" s="14">
+<Expand/>
+</C>
+<C c="9" r="16" s="14">
+<Expand/>
+</C>
+<C c="10" r="16" s="14">
+<Expand/>
+</C>
+<C c="11" r="16" s="14">
+<Expand/>
+</C>
+<C c="12" r="16" s="14">
+<Expand/>
+</C>
+<C c="13" r="16" s="14">
+<Expand/>
+</C>
+<C c="14" r="16" s="14">
+<Expand/>
+</C>
+<C c="15" r="16" s="14">
+<Expand/>
+</C>
+<C c="16" r="16" s="14">
+<Expand/>
+</C>
+<C c="17" r="16" s="14">
+<Expand/>
+</C>
+<C c="18" r="16" s="14">
+<Expand/>
+</C>
+<C c="19" r="16" s="14">
+<Expand/>
+</C>
+<C c="20" r="16" s="14">
+<Expand/>
+</C>
+<C c="21" r="16" s="14">
+<Expand/>
+</C>
+<C c="22" r="16" s="14">
+<Expand/>
+</C>
+<C c="23" r="16" s="14">
+<Expand/>
+</C>
+<C c="24" r="16" s="14">
+<Expand/>
+</C>
+<C c="25" r="16" s="14">
+<Expand/>
+</C>
+<C c="1" r="17" cs="2" s="15">
+<O>
+<![CDATA[隐斜：]]></O>
+<Expand/>
+</C>
+<C c="3" r="17" cs="2" s="18">
+<O>
+<![CDATA[远]]></O>
+<Expand/>
+</C>
+<C c="5" r="17" cs="4" s="17">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="远隐斜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="17" cs="2" s="18">
+<O>
+<![CDATA[近]]></O>
+<Expand/>
+</C>
+<C c="11" r="17" cs="4" s="17">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="近隐斜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="15" r="17" cs="2" s="14">
+<O>
+<![CDATA[AC/A:]]></O>
+<Expand/>
+</C>
+<C c="17" r="17" cs="4" s="17">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="AC/A"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="21" r="17" cs="5" s="14">
+<O>
+<![CDATA[（梯度法/计算法）]]></O>
+<Expand/>
+</C>
+<C c="1" r="18" s="14">
+<Expand/>
+</C>
+<C c="2" r="18" s="14">
+<Expand/>
+</C>
+<C c="3" r="18" s="14">
+<Expand/>
+</C>
+<C c="4" r="18" s="14">
+<Expand/>
+</C>
+<C c="5" r="18" s="14">
+<Expand/>
+</C>
+<C c="6" r="18" s="14">
+<Expand/>
+</C>
+<C c="7" r="18" s="14">
+<Expand/>
+</C>
+<C c="8" r="18" s="14">
+<Expand/>
+</C>
+<C c="9" r="18" s="14">
+<Expand/>
+</C>
+<C c="10" r="18" s="14">
+<Expand/>
+</C>
+<C c="11" r="18" s="14">
+<Expand/>
+</C>
+<C c="12" r="18" s="14">
+<Expand/>
+</C>
+<C c="13" r="18" s="14">
+<Expand/>
+</C>
+<C c="14" r="18" s="14">
+<Expand/>
+</C>
+<C c="15" r="18" s="14">
+<Expand/>
+</C>
+<C c="16" r="18" s="14">
+<Expand/>
+</C>
+<C c="17" r="18" s="14">
+<Expand/>
+</C>
+<C c="18" r="18" s="14">
+<Expand/>
+</C>
+<C c="19" r="18" s="14">
+<Expand/>
+</C>
+<C c="20" r="18" s="14">
+<Expand/>
+</C>
+<C c="21" r="18" s="14">
+<Expand/>
+</C>
+<C c="22" r="18" s="14">
+<Expand/>
+</C>
+<C c="23" r="18" s="14">
+<Expand/>
+</C>
+<C c="24" r="18" s="14">
+<Expand/>
+</C>
+<C c="25" r="18" s="14">
+<Expand/>
+</C>
+<C c="1" r="19" cs="5" s="15">
+<O>
+<![CDATA[Worth 4-dots：]]></O>
+<Expand/>
+</C>
+<C c="6" r="19" cs="7" s="17">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="Worth 4 dots"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="19" cs="3" s="19">
+<O>
+<![CDATA[立体视：]]></O>
+<Expand/>
+</C>
+<C c="16" r="19" cs="7" s="17">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="立体视"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="24" r="19" s="14">
+<Expand/>
+</C>
+<C c="25" r="19" s="14">
+<Expand/>
+</C>
+<C c="1" r="20" s="14">
+<Expand/>
+</C>
+<C c="2" r="20" s="14">
+<Expand/>
+</C>
+<C c="3" r="20" s="14">
+<Expand/>
+</C>
+<C c="4" r="20" s="14">
+<Expand/>
+</C>
+<C c="5" r="20" s="14">
+<Expand/>
+</C>
+<C c="6" r="20" s="14">
+<Expand/>
+</C>
+<C c="7" r="20" s="14">
+<Expand/>
+</C>
+<C c="8" r="20" s="14">
+<Expand/>
+</C>
+<C c="9" r="20" s="14">
+<Expand/>
+</C>
+<C c="10" r="20" s="14">
+<Expand/>
+</C>
+<C c="11" r="20" s="14">
+<Expand/>
+</C>
+<C c="12" r="20" s="14">
+<Expand/>
+</C>
+<C c="13" r="20" s="14">
+<Expand/>
+</C>
+<C c="14" r="20" s="14">
+<Expand/>
+</C>
+<C c="15" r="20" s="14">
+<Expand/>
+</C>
+<C c="16" r="20" s="14">
+<Expand/>
+</C>
+<C c="17" r="20" s="14">
+<Expand/>
+</C>
+<C c="18" r="20" s="14">
+<Expand/>
+</C>
+<C c="19" r="20" s="14">
+<Expand/>
+</C>
+<C c="20" r="20" s="14">
+<Expand/>
+</C>
+<C c="21" r="20" s="14">
+<Expand/>
+</C>
+<C c="22" r="20" s="14">
+<Expand/>
+</C>
+<C c="23" r="20" s="14">
+<Expand/>
+</C>
+<C c="24" r="20" s="14">
+<Expand/>
+</C>
+<C c="25" r="20" s="14">
+<Expand/>
+</C>
+<C c="1" r="21" s="14">
+<Expand/>
+</C>
+<C c="2" r="21" s="14">
+<Expand/>
+</C>
+<C c="3" r="21" cs="2" s="19">
+<O>
+<![CDATA[BCC:]]></O>
+<Expand/>
+</C>
+<C c="5" r="21" cs="4" s="17">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="BCC"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="21" s="14">
+<Expand/>
+</C>
+<C c="10" r="21" cs="2" s="19">
+<O>
+<![CDATA[NRA:]]></O>
+<Expand/>
+</C>
+<C c="12" r="21" cs="4" s="17">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="NRA"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="21" s="14">
+<Expand/>
+</C>
+<C c="17" r="21" cs="2" s="19">
+<O>
+<![CDATA[PRA:]]></O>
+<Expand/>
+</C>
+<C c="19" r="21" cs="4" s="17">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="PRA"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="23" r="21" s="14">
+<Expand/>
+</C>
+<C c="24" r="21" s="14">
+<Expand/>
+</C>
+<C c="25" r="21" s="14">
+<Expand/>
+</C>
+<C c="1" r="22" s="14">
+<Expand/>
+</C>
+<C c="2" r="22" s="14">
+<Expand/>
+</C>
+<C c="3" r="22" s="14">
+<Expand/>
+</C>
+<C c="4" r="22" s="14">
+<Expand/>
+</C>
+<C c="5" r="22" s="14">
+<Expand/>
+</C>
+<C c="6" r="22" s="14">
+<Expand/>
+</C>
+<C c="7" r="22" s="14">
+<Expand/>
+</C>
+<C c="8" r="22" s="14">
+<Expand/>
+</C>
+<C c="9" r="22" s="14">
+<Expand/>
+</C>
+<C c="10" r="22" s="14">
+<Expand/>
+</C>
+<C c="11" r="22" s="14">
+<Expand/>
+</C>
+<C c="12" r="22" s="14">
+<Expand/>
+</C>
+<C c="13" r="22" s="14">
+<Expand/>
+</C>
+<C c="14" r="22" s="14">
+<Expand/>
+</C>
+<C c="15" r="22" s="14">
+<Expand/>
+</C>
+<C c="16" r="22" s="14">
+<Expand/>
+</C>
+<C c="17" r="22" s="14">
+<Expand/>
+</C>
+<C c="18" r="22" s="14">
+<Expand/>
+</C>
+<C c="19" r="22" s="14">
+<Expand/>
+</C>
+<C c="20" r="22" s="14">
+<Expand/>
+</C>
+<C c="21" r="22" s="14">
+<Expand/>
+</C>
+<C c="22" r="22" s="14">
+<Expand/>
+</C>
+<C c="23" r="22" s="14">
+<Expand/>
+</C>
+<C c="24" r="22" s="14">
+<Expand/>
+</C>
+<C c="25" r="22" s="14">
+<Expand/>
+</C>
+<C c="1" r="23" cs="4" s="15">
+<O>
+<![CDATA[融合范围：]]></O>
+<Expand/>
+</C>
+<C c="5" r="23" s="14">
+<Expand/>
+</C>
+<C c="6" r="23" s="14">
+<Expand/>
+</C>
+<C c="7" r="23" s="14">
+<Expand/>
+</C>
+<C c="8" r="23" s="14">
+<Expand/>
+</C>
+<C c="9" r="23" s="14">
+<Expand/>
+</C>
+<C c="10" r="23" s="14">
+<Expand/>
+</C>
+<C c="11" r="23" s="14">
+<Expand/>
+</C>
+<C c="12" r="23" s="14">
+<Expand/>
+</C>
+<C c="13" r="23" s="14">
+<Expand/>
+</C>
+<C c="14" r="23" s="14">
+<Expand/>
+</C>
+<C c="15" r="23" s="14">
+<Expand/>
+</C>
+<C c="16" r="23" s="14">
+<Expand/>
+</C>
+<C c="17" r="23" s="14">
+<Expand/>
+</C>
+<C c="18" r="23" s="14">
+<Expand/>
+</C>
+<C c="19" r="23" s="14">
+<Expand/>
+</C>
+<C c="20" r="23" s="14">
+<Expand/>
+</C>
+<C c="21" r="23" s="14">
+<Expand/>
+</C>
+<C c="22" r="23" s="14">
+<Expand/>
+</C>
+<C c="23" r="23" s="14">
+<Expand/>
+</C>
+<C c="24" r="23" s="14">
+<Expand/>
+</C>
+<C c="25" r="23" s="14">
+<Expand/>
+</C>
+<C c="1" r="24" s="14">
+<Expand/>
+</C>
+<C c="2" r="24" s="14">
+<Expand/>
+</C>
+<C c="3" r="24" cs="2" s="14">
+<O>
+<![CDATA[远：]]></O>
+<Expand/>
+</C>
+<C c="5" r="24" cs="4" s="14">
+<O>
+<![CDATA[负融像范围BI]]></O>
+<Expand/>
+</C>
+<C c="9" r="24" cs="4" s="17">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="远负融像范围BI"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="24" s="14">
+<Expand/>
+</C>
+<C c="14" r="24" cs="2" s="18">
+<O>
+<![CDATA[近：]]></O>
+<Expand/>
+</C>
+<C c="16" r="24" cs="4" s="14">
+<O>
+<![CDATA[负融像范围BI]]></O>
+<Expand/>
+</C>
+<C c="20" r="24" cs="4" s="17">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="近负融像范围BI"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="24" r="24" s="14">
+<Expand/>
+</C>
+<C c="25" r="24" s="14">
+<Expand/>
+</C>
+<C c="1" r="25" s="14">
+<Expand/>
+</C>
+<C c="2" r="25" s="14">
+<Expand/>
+</C>
+<C c="3" r="25" s="14">
+<Expand/>
+</C>
+<C c="4" r="25" s="14">
+<Expand/>
+</C>
+<C c="5" r="25" cs="4" s="14">
+<O>
+<![CDATA[负融像范围BO]]></O>
+<Expand/>
+</C>
+<C c="9" r="25" cs="4" s="17">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="远正融像范围BO"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="25" s="14">
+<Expand/>
+</C>
+<C c="14" r="25" cs="2" s="18">
+<O>
+<![CDATA[]]></O>
+<Expand/>
+</C>
+<C c="16" r="25" cs="4" s="14">
+<O>
+<![CDATA[负融像范围BO]]></O>
+<Expand/>
+</C>
+<C c="20" r="25" cs="4" s="17">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="近正融像范围BO"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="24" r="25" s="14">
+<Expand/>
+</C>
+<C c="25" r="25" s="14">
+<Expand/>
+</C>
+<C c="1" r="27" cs="4" s="15">
+<O>
+<![CDATA[调节灵敏度：]]></O>
+<Expand/>
+</C>
+<C c="5" r="27" s="19">
+<O>
+<![CDATA[（]]></O>
+<Expand/>
+</C>
+<C c="6" r="27" cs="12" s="18">
+<O t="DSColumn">
+<Attributes dsName="doubleeyefun" columnName="调节灵敏度(±2.00、20/30)OD、OS、OU"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="18" r="27" s="19">
+<O>
+<![CDATA[）]]></O>
+<Expand/>
+</C>
+<C c="19" r="27" s="14">
+<Expand/>
+</C>
+<C c="20" r="27" s="14">
+<Expand/>
+</C>
+<C c="21" r="27" s="14">
+<Expand/>
+</C>
+<C c="22" r="27" s="14">
+<Expand/>
+</C>
+<C c="23" r="27" s="14">
+<Expand/>
+</C>
+<C c="24" r="27" s="14">
+<Expand/>
+</C>
+<C c="25" r="27" s="14">
+<Expand/>
+</C>
+<C c="1" r="28" s="14">
+<Expand/>
+</C>
+<C c="5" r="28" s="14">
+<Expand/>
+</C>
+<C c="6" r="28" s="14">
+<Expand/>
+</C>
+<C c="7" r="28" s="14">
+<Expand/>
+</C>
+<C c="8" r="28" s="14">
+<Expand/>
+</C>
+<C c="9" r="28" s="14">
+<Expand/>
+</C>
+<C c="10" r="28" s="14">
+<Expand/>
+</C>
+<C c="11" r="28" s="14">
+<Expand/>
+</C>
+<C c="12" r="28" s="14">
+<Expand/>
+</C>
+<C c="13" r="28" s="14">
+<Expand/>
+</C>
+<C c="14" r="28" s="14">
+<Expand/>
+</C>
+<C c="15" r="28" s="14">
+<Expand/>
+</C>
+<C c="16" r="28" s="14">
+<Expand/>
+</C>
+<C c="17" r="28" s="14">
+<Expand/>
+</C>
+<C c="18" r="28" s="14">
+<Expand/>
+</C>
+<C c="19" r="28" s="14">
+<Expand/>
+</C>
+<C c="20" r="28" s="14">
+<Expand/>
+</C>
+<C c="21" r="28" s="14">
+<Expand/>
+</C>
+<C c="22" r="28" s="14">
+<Expand/>
+</C>
+<C c="23" r="28" s="14">
+<Expand/>
+</C>
+<C c="24" r="28" s="14">
+<Expand/>
+</C>
+<C c="25" r="28" s="14">
+<Expand/>
+</C>
+<C c="1" r="29" s="14">
+<Expand/>
+</C>
+<C c="2" r="29" cs="3" s="20">
+<O>
+<![CDATA[其他：]]></O>
+<Expand/>
+</C>
+<C c="5" r="29" s="16">
+<Expand/>
+</C>
+<C c="6" r="29" s="16">
+<Expand/>
+</C>
+<C c="7" r="29" s="16">
+<Expand/>
+</C>
+<C c="8" r="29" s="16">
+<Expand/>
+</C>
+<C c="9" r="29" s="16">
+<Expand/>
+</C>
+<C c="10" r="29" s="16">
+<Expand/>
+</C>
+<C c="11" r="29" s="16">
+<Expand/>
+</C>
+<C c="12" r="29" s="16">
+<Expand/>
+</C>
+<C c="13" r="29" s="16">
+<Expand/>
+</C>
+<C c="14" r="29" s="16">
+<Expand/>
+</C>
+<C c="15" r="29" s="16">
+<Expand/>
+</C>
+<C c="16" r="29" s="16">
+<Expand/>
+</C>
+<C c="17" r="29" s="16">
+<Expand/>
+</C>
+<C c="18" r="29" s="16">
+<Expand/>
+</C>
+<C c="19" r="29" s="16">
+<Expand/>
+</C>
+<C c="20" r="29" s="16">
+<Expand/>
+</C>
+<C c="21" r="29" s="16">
+<Expand/>
+</C>
+<C c="22" r="29" s="16">
+<Expand/>
+</C>
+<C c="23" r="29" s="16">
+<Expand/>
+</C>
+<C c="24" r="29" s="16">
+<Expand/>
+</C>
+<C c="25" r="29" s="14">
+<Expand/>
+</C>
+<C c="1" r="30" s="14">
+<Expand/>
+</C>
+<C c="2" r="30" s="14">
+<Expand/>
+</C>
+<C c="3" r="30" s="14">
+<Expand/>
+</C>
+<C c="4" r="30" s="14">
+<Expand/>
+</C>
+<C c="5" r="30" s="14">
+<Expand/>
+</C>
+<C c="6" r="30" s="14">
+<Expand/>
+</C>
+<C c="7" r="30" s="14">
+<Expand/>
+</C>
+<C c="8" r="30" s="14">
+<Expand/>
+</C>
+<C c="9" r="30" s="14">
+<Expand/>
+</C>
+<C c="10" r="30" s="14">
+<Expand/>
+</C>
+<C c="11" r="30" s="14">
+<Expand/>
+</C>
+<C c="12" r="30" s="14">
+<Expand/>
+</C>
+<C c="13" r="30" s="14">
+<Expand/>
+</C>
+<C c="14" r="30" s="14">
+<Expand/>
+</C>
+<C c="15" r="30" s="14">
+<Expand/>
+</C>
+<C c="16" r="30" s="14">
+<Expand/>
+</C>
+<C c="17" r="30" s="14">
+<Expand/>
+</C>
+<C c="18" r="30" s="14">
+<Expand/>
+</C>
+<C c="19" r="30" s="14">
+<Expand/>
+</C>
+<C c="20" r="30" s="14">
+<Expand/>
+</C>
+<C c="21" r="30" s="14">
+<Expand/>
+</C>
+<C c="22" r="30" s="14">
+<Expand/>
+</C>
+<C c="23" r="30" s="14">
+<Expand/>
+</C>
+<C c="24" r="30" s="14">
+<Expand/>
+</C>
+<C c="25" r="30" s="14">
+<Expand/>
+</C>
+<C c="1" r="31" cs="4" s="15">
+<O>
+<![CDATA[处理建议：]]></O>
+<Expand/>
+</C>
+<C c="5" r="31" s="16">
+<Expand/>
+</C>
+<C c="6" r="31" s="16">
+<Expand/>
+</C>
+<C c="7" r="31" s="16">
+<Expand/>
+</C>
+<C c="8" r="31" s="16">
+<Expand/>
+</C>
+<C c="9" r="31" s="16">
+<Expand/>
+</C>
+<C c="10" r="31" s="16">
+<Expand/>
+</C>
+<C c="11" r="31" s="16">
+<Expand/>
+</C>
+<C c="12" r="31" s="16">
+<Expand/>
+</C>
+<C c="13" r="31" s="16">
+<Expand/>
+</C>
+<C c="14" r="31" s="9">
+<Expand/>
+</C>
+<C c="15" r="31" s="9">
+<Expand/>
+</C>
+<C c="16" r="31" s="16">
+<Expand/>
+</C>
+<C c="17" r="31" s="16">
+<Expand/>
+</C>
+<C c="18" r="31" s="9">
+<Expand/>
+</C>
+<C c="19" r="31" s="9">
+<Expand/>
+</C>
+<C c="20" r="31" s="16">
+<Expand/>
+</C>
+<C c="21" r="31" s="16">
+<Expand/>
+</C>
+<C c="22" r="31" s="9">
+<Expand/>
+</C>
+<C c="23" r="31" s="9">
+<Expand/>
+</C>
+<C c="24" r="31" s="16">
+<Expand/>
+</C>
+<C c="25" r="31" s="14">
+<Expand/>
+</C>
+<C c="1" r="32" s="14">
+<Expand/>
+</C>
+<C c="2" r="32" s="14">
+<Expand/>
+</C>
+<C c="3" r="32" s="14">
+<Expand/>
+</C>
+<C c="4" r="32" s="14">
+<Expand/>
+</C>
+<C c="5" r="32" s="16">
+<Expand/>
+</C>
+<C c="6" r="32" s="16">
+<Expand/>
+</C>
+<C c="7" r="32" s="16">
+<Expand/>
+</C>
+<C c="8" r="32" s="16">
+<Expand/>
+</C>
+<C c="9" r="32" s="16">
+<Expand/>
+</C>
+<C c="10" r="32" s="16">
+<Expand/>
+</C>
+<C c="11" r="32" s="16">
+<Expand/>
+</C>
+<C c="12" r="32" s="16">
+<Expand/>
+</C>
+<C c="13" r="32" s="16">
+<Expand/>
+</C>
+<C c="14" r="32" s="16">
+<Expand/>
+</C>
+<C c="15" r="32" s="16">
+<Expand/>
+</C>
+<C c="16" r="32" s="16">
+<Expand/>
+</C>
+<C c="17" r="32" s="16">
+<Expand/>
+</C>
+<C c="18" r="32" s="16">
+<Expand/>
+</C>
+<C c="19" r="32" s="16">
+<Expand/>
+</C>
+<C c="20" r="32" s="16">
+<Expand/>
+</C>
+<C c="21" r="32" s="16">
+<Expand/>
+</C>
+<C c="22" r="32" s="16">
+<Expand/>
+</C>
+<C c="23" r="32" s="16">
+<Expand/>
+</C>
+<C c="24" r="32" s="16">
+<Expand/>
+</C>
+<C c="25" r="32" s="14">
+<Expand/>
+</C>
+<C c="1" r="33" s="14">
+<Expand/>
+</C>
+<C c="2" r="33" s="14">
+<Expand/>
+</C>
+<C c="3" r="33" s="14">
+<Expand/>
+</C>
+<C c="4" r="33" s="14">
+<Expand/>
+</C>
+<C c="5" r="33" s="14">
+<Expand/>
+</C>
+<C c="6" r="33" s="14">
+<Expand/>
+</C>
+<C c="7" r="33" s="14">
+<Expand/>
+</C>
+<C c="8" r="33" s="14">
+<Expand/>
+</C>
+<C c="9" r="33" s="14">
+<Expand/>
+</C>
+<C c="10" r="33" s="14">
+<Expand/>
+</C>
+<C c="11" r="33" s="14">
+<Expand/>
+</C>
+<C c="12" r="33" s="14">
+<Expand/>
+</C>
+<C c="13" r="33" s="14">
+<Expand/>
+</C>
+<C c="14" r="33" s="14">
+<Expand/>
+</C>
+<C c="15" r="33" s="14">
+<Expand/>
+</C>
+<C c="16" r="33" s="14">
+<Expand/>
+</C>
+<C c="17" r="33" s="14">
+<Expand/>
+</C>
+<C c="18" r="33" s="14">
+<Expand/>
+</C>
+<C c="19" r="33" s="14">
+<Expand/>
+</C>
+<C c="20" r="33" s="14">
+<Expand/>
+</C>
+<C c="21" r="33" s="14">
+<Expand/>
+</C>
+<C c="22" r="33" s="14">
+<Expand/>
+</C>
+<C c="23" r="33" s="14">
+<Expand/>
+</C>
+<C c="24" r="33" s="14">
+<Expand/>
+</C>
+<C c="25" r="33" s="14">
+<Expand/>
+</C>
+<C c="1" r="34" s="14">
+<Expand/>
+</C>
+<C c="2" r="34" s="14">
+<Expand/>
+</C>
+<C c="3" r="34" s="14">
+<Expand/>
+</C>
+<C c="4" r="34" s="14">
+<Expand/>
+</C>
+<C c="5" r="34" s="14">
+<Expand/>
+</C>
+<C c="6" r="34" s="14">
+<Expand/>
+</C>
+<C c="7" r="34" s="14">
+<Expand/>
+</C>
+<C c="8" r="34" s="14">
+<Expand/>
+</C>
+<C c="9" r="34" s="14">
+<Expand/>
+</C>
+<C c="10" r="34" s="14">
+<Expand/>
+</C>
+<C c="11" r="34" s="14">
+<Expand/>
+</C>
+<C c="12" r="34" s="14">
+<Expand/>
+</C>
+<C c="13" r="34" s="14">
+<Expand/>
+</C>
+<C c="14" r="34" s="14">
+<Expand/>
+</C>
+<C c="15" r="34" s="14">
+<Expand/>
+</C>
+<C c="16" r="34" s="14">
+<Expand/>
+</C>
+<C c="17" r="34" s="14">
+<Expand/>
+</C>
+<C c="18" r="34" s="14">
+<Expand/>
+</C>
+<C c="19" r="34" s="14">
+<Expand/>
+</C>
+<C c="20" r="34" s="14">
+<Expand/>
+</C>
+<C c="21" r="34" s="14">
+<Expand/>
+</C>
+<C c="22" r="34" s="14">
+<Expand/>
+</C>
+<C c="23" r="34" s="14">
+<Expand/>
+</C>
+<C c="24" r="34" s="14">
+<Expand/>
+</C>
+<C c="25" r="34" s="14">
+<Expand/>
+</C>
+<C c="1" r="35" s="14">
+<Expand/>
+</C>
+<C c="2" r="35" s="14">
+<Expand/>
+</C>
+<C c="3" r="35" s="14">
+<Expand/>
+</C>
+<C c="4" r="35" s="14">
+<Expand/>
+</C>
+<C c="5" r="35" s="14">
+<Expand/>
+</C>
+<C c="6" r="35" s="14">
+<Expand/>
+</C>
+<C c="7" r="35" s="14">
+<Expand/>
+</C>
+<C c="8" r="35" s="14">
+<Expand/>
+</C>
+<C c="9" r="35" s="14">
+<Expand/>
+</C>
+<C c="10" r="35" s="14">
+<Expand/>
+</C>
+<C c="11" r="35" s="14">
+<Expand/>
+</C>
+<C c="12" r="35" s="14">
+<Expand/>
+</C>
+<C c="13" r="35" s="14">
+<Expand/>
+</C>
+<C c="14" r="35" s="14">
+<Expand/>
+</C>
+<C c="15" r="35" s="14">
+<Expand/>
+</C>
+<C c="16" r="35" s="14">
+<Expand/>
+</C>
+<C c="17" r="35" s="14">
+<Expand/>
+</C>
+<C c="18" r="35" s="14">
+<Expand/>
+</C>
+<C c="19" r="35" s="14">
+<Expand/>
+</C>
+<C c="20" r="35" s="14">
+<Expand/>
+</C>
+<C c="21" r="35" s="14">
+<Expand/>
+</C>
+<C c="22" r="35" s="14">
+<Expand/>
+</C>
+<C c="23" r="35" s="14">
+<Expand/>
+</C>
+<C c="24" r="35" s="14">
+<Expand/>
+</C>
+<C c="25" r="35" s="14">
+<Expand/>
+</C>
+<C c="1" r="36" s="14">
+<Expand/>
+</C>
+<C c="2" r="36" s="14">
+<Expand/>
+</C>
+<C c="3" r="36" s="14">
+<Expand/>
+</C>
+<C c="4" r="36" s="14">
+<Expand/>
+</C>
+<C c="5" r="36" s="14">
+<Expand/>
+</C>
+<C c="6" r="36" s="14">
+<Expand/>
+</C>
+<C c="7" r="36" s="14">
+<Expand/>
+</C>
+<C c="8" r="36" s="14">
+<Expand/>
+</C>
+<C c="9" r="36" s="14">
+<Expand/>
+</C>
+<C c="10" r="36" s="14">
+<Expand/>
+</C>
+<C c="11" r="36" s="14">
+<Expand/>
+</C>
+<C c="12" r="36" s="14">
+<Expand/>
+</C>
+<C c="13" r="36" s="14">
+<Expand/>
+</C>
+<C c="14" r="36" s="14">
+<Expand/>
+</C>
+<C c="15" r="36" s="14">
+<Expand/>
+</C>
+<C c="16" r="36" s="14">
+<Expand/>
+</C>
+<C c="17" r="36" s="14">
+<Expand/>
+</C>
+<C c="18" r="36" s="14">
+<Expand/>
+</C>
+<C c="19" r="36" s="14">
+<Expand/>
+</C>
+<C c="20" r="36" cs="3" s="15">
+<O>
+<![CDATA[视光师：]]></O>
+<Expand/>
+</C>
+<C c="23" r="36" cs="3" s="17">
+<O t="DSColumn">
+<Attributes dsName="refractive" columnName="视光师："/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<Report class="com.fr.report.WorkSheet" name="sheet4">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[533400,1008000,647700,1008000,533400,1008000,571500,1008000,647700,1008000,1008000,1008000,609600,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,800100,1008000,1008000,1008000,1008000,1008000,1008000,647700,1008000,1008000,571500,1008000,1008000,1008000,342900,1008000,1008000,1008000,1008000,1008000,1008000,1008000,1008000,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[720000,720000,1409700,1409700,1333500,720000,720000,720000,720000,720000,876300,720000,720000,720000,720000,720000,720000,1028700,720000,720000,720000,720000,720000,720000,720000,720000,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="1" cs="26" s="21">
+<O>
+<![CDATA[角膜接触镜复诊记录（    ）]]></O>
+<Expand/>
+</C>
+<C c="1" r="3" cs="2" s="22">
+<O>
+<![CDATA[主诉：]]></O>
+<Expand/>
+</C>
+<C c="3" r="3" cs="16" s="23">
+<O t="DSColumn">
+<Attributes dsName="refractive" columnName="主诉"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="5" cs="3" s="22">
+<O>
+<![CDATA[配镜时间：]]></O>
+<Expand/>
+</C>
+<C c="4" r="5" s="24">
+<Expand/>
+</C>
+<C c="5" r="5" s="24">
+<Expand/>
+</C>
+<C c="6" r="5" s="24">
+<Expand/>
+</C>
+<C c="7" r="5" s="24">
+<Expand/>
+</C>
+<C c="8" r="5" s="24">
+<Expand/>
+</C>
+<C c="9" r="5" s="24">
+<Expand/>
+</C>
+<C c="10" r="5" s="24">
+<Expand/>
+</C>
+<C c="11" r="5" s="24">
+<Expand/>
+</C>
+<C c="12" r="5" s="24">
+<Expand/>
+</C>
+<C c="13" r="5" s="24">
+<Expand/>
+</C>
+<C c="14" r="5" s="24">
+<Expand/>
+</C>
+<C c="15" r="5" s="24">
+<Expand/>
+</C>
+<C c="16" r="5" s="24">
+<Expand/>
+</C>
+<C c="17" r="5" s="24">
+<Expand/>
+</C>
+<C c="18" r="5" s="24">
+<Expand/>
+</C>
+<C c="1" r="7" cs="3" s="22">
+<O>
+<![CDATA[眼部检查：]]></O>
+<Expand/>
+</C>
+<C c="4" r="7" s="24">
+<Expand/>
+</C>
+<C c="5" r="7" s="24">
+<Expand/>
+</C>
+<C c="6" r="7" s="24">
+<Expand/>
+</C>
+<C c="7" r="7" s="24">
+<Expand/>
+</C>
+<C c="8" r="7" s="24">
+<Expand/>
+</C>
+<C c="9" r="7" s="24">
+<Expand/>
+</C>
+<C c="10" r="7" s="24">
+<Expand/>
+</C>
+<C c="11" r="7" s="24">
+<Expand/>
+</C>
+<C c="12" r="7" s="24">
+<Expand/>
+</C>
+<C c="13" r="7" s="24">
+<Expand/>
+</C>
+<C c="14" r="7" s="24">
+<Expand/>
+</C>
+<C c="15" r="7" s="24">
+<Expand/>
+</C>
+<C c="16" r="7" s="24">
+<Expand/>
+</C>
+<C c="17" r="7" s="24">
+<Expand/>
+</C>
+<C c="18" r="7" s="24">
+<Expand/>
+</C>
+<C c="0" r="9" s="15">
+<Expand/>
+</C>
+<C c="1" r="9" cs="3" s="22">
+<O>
+<![CDATA[戴镜视力：]]></O>
+<Expand/>
+</C>
+<C c="4" r="9" s="25">
+<O>
+<![CDATA[远]]></O>
+<Expand/>
+</C>
+<C c="5" r="9">
+<O>
+<![CDATA[OD]]></O>
+<Expand/>
+</C>
+<C c="6" r="9" s="24">
+<Expand/>
+</C>
+<C c="7" r="9" s="24">
+<Expand/>
+</C>
+<C c="8" r="9" s="24">
+<Expand/>
+</C>
+<C c="9" r="9" s="24">
+<Expand/>
+</C>
+<C c="10" r="9" s="24">
+<Expand/>
+</C>
+<C c="11" r="9">
+<Expand/>
+</C>
+<C c="12" r="9">
+<O>
+<![CDATA[OS]]></O>
+<Expand/>
+</C>
+<C c="13" r="9" s="24">
+<Expand/>
+</C>
+<C c="14" r="9" s="24">
+<Expand/>
+</C>
+<C c="15" r="9" s="24">
+<Expand/>
+</C>
+<C c="16" r="9" s="24">
+<Expand/>
+</C>
+<C c="17" r="9" s="24">
+<Expand/>
+</C>
+<C c="18" r="9" s="24">
+<Expand/>
+</C>
+<C c="19" r="9">
+<Expand/>
+</C>
+<C c="20" r="9">
+<Expand/>
+</C>
+<C c="21" r="9">
+<Expand/>
+</C>
+<C c="0" r="10">
+<Expand/>
+</C>
+<C c="1" r="10">
+<Expand/>
+</C>
+<C c="2" r="10">
+<Expand/>
+</C>
+<C c="3" r="10">
+<Expand/>
+</C>
+<C c="4" r="10">
+<Expand/>
+</C>
+<C c="5" r="10">
+<Expand/>
+</C>
+<C c="6" r="10">
+<Expand/>
+</C>
+<C c="7" r="10">
+<Expand/>
+</C>
+<C c="8" r="10">
+<Expand/>
+</C>
+<C c="9" r="10">
+<Expand/>
+</C>
+<C c="10" r="10">
+<Expand/>
+</C>
+<C c="11" r="10">
+<Expand/>
+</C>
+<C c="12" r="10">
+<Expand/>
+</C>
+<C c="13" r="10">
+<Expand/>
+</C>
+<C c="14" r="10">
+<Expand/>
+</C>
+<C c="15" r="10">
+<Expand/>
+</C>
+<C c="16" r="10">
+<Expand/>
+</C>
+<C c="17" r="10">
+<Expand/>
+</C>
+<C c="18" r="10">
+<Expand/>
+</C>
+<C c="19" r="10">
+<Expand/>
+</C>
+<C c="20" r="10">
+<Expand/>
+</C>
+<C c="21" r="10">
+<Expand/>
+</C>
+<C c="0" r="11">
+<Expand/>
+</C>
+<C c="1" r="11">
+<Expand/>
+</C>
+<C c="2" r="11">
+<Expand/>
+</C>
+<C c="3" r="11">
+<Expand/>
+</C>
+<C c="4" r="11" s="25">
+<O>
+<![CDATA[近]]></O>
+<Expand/>
+</C>
+<C c="5" r="11">
+<O>
+<![CDATA[OD]]></O>
+<Expand/>
+</C>
+<C c="6" r="11" s="24">
+<Expand/>
+</C>
+<C c="7" r="11" s="24">
+<Expand/>
+</C>
+<C c="8" r="11" s="24">
+<Expand/>
+</C>
+<C c="9" r="11" s="24">
+<Expand/>
+</C>
+<C c="10" r="11" s="24">
+<Expand/>
+</C>
+<C c="11" r="11">
+<Expand/>
+</C>
+<C c="12" r="11">
+<O>
+<![CDATA[OS]]></O>
+<Expand/>
+</C>
+<C c="13" r="11" s="24">
+<Expand/>
+</C>
+<C c="14" r="11" s="24">
+<Expand/>
+</C>
+<C c="15" r="11" s="24">
+<Expand/>
+</C>
+<C c="16" r="11" s="24">
+<Expand/>
+</C>
+<C c="17" r="11" s="24">
+<Expand/>
+</C>
+<C c="18" r="11" s="24">
+<Expand/>
+</C>
+<C c="19" r="11">
+<Expand/>
+</C>
+<C c="20" r="11">
+<Expand/>
+</C>
+<C c="21" r="11">
+<Expand/>
+</C>
+<C c="0" r="12">
+<Expand/>
+</C>
+<C c="1" r="12">
+<Expand/>
+</C>
+<C c="2" r="12">
+<Expand/>
+</C>
+<C c="3" r="12">
+<Expand/>
+</C>
+<C c="4" r="12">
+<Expand/>
+</C>
+<C c="5" r="12">
+<Expand/>
+</C>
+<C c="6" r="12">
+<Expand/>
+</C>
+<C c="7" r="12">
+<Expand/>
+</C>
+<C c="8" r="12">
+<Expand/>
+</C>
+<C c="9" r="12">
+<Expand/>
+</C>
+<C c="10" r="12">
+<Expand/>
+</C>
+<C c="11" r="12">
+<Expand/>
+</C>
+<C c="12" r="12">
+<Expand/>
+</C>
+<C c="13" r="12">
+<Expand/>
+</C>
+<C c="14" r="12">
+<Expand/>
+</C>
+<C c="15" r="12">
+<Expand/>
+</C>
+<C c="16" r="12">
+<Expand/>
+</C>
+<C c="17" r="12">
+<Expand/>
+</C>
+<C c="18" r="12">
+<Expand/>
+</C>
+<C c="19" r="12">
+<Expand/>
+</C>
+<C c="20" r="12">
+<Expand/>
+</C>
+<C c="21" r="12">
+<Expand/>
+</C>
+<C c="0" r="13">
+<Expand/>
+</C>
+<C c="1" r="13" cs="4" s="22">
+<O>
+<![CDATA[眼前节检查：]]></O>
+<Expand/>
+</C>
+<C c="5" r="13">
+<Expand/>
+</C>
+<C c="6" r="13">
+<Expand/>
+</C>
+<C c="7" r="13">
+<Expand/>
+</C>
+<C c="8" r="13">
+<Expand/>
+</C>
+<C c="9" r="13">
+<Expand/>
+</C>
+<C c="10" r="13">
+<Expand/>
+</C>
+<C c="11" r="13">
+<Expand/>
+</C>
+<C c="12" r="13">
+<Expand/>
+</C>
+<C c="13" r="13">
+<Expand/>
+</C>
+<C c="14" r="13">
+<Expand/>
+</C>
+<C c="15" r="13">
+<Expand/>
+</C>
+<C c="16" r="13">
+<Expand/>
+</C>
+<C c="17" r="13">
+<Expand/>
+</C>
+<C c="18" r="13">
+<Expand/>
+</C>
+<C c="19" r="13">
+<Expand/>
+</C>
+<C c="20" r="13">
+<Expand/>
+</C>
+<C c="21" r="13">
+<Expand/>
+</C>
+<C c="0" r="14">
+<Expand/>
+</C>
+<C c="1" r="14">
+<Expand/>
+</C>
+<C c="2" r="14" cs="3" s="26">
+<O>
+<![CDATA[]]></O>
+<Expand/>
+</C>
+<C c="5" r="14" cs="11" s="27">
+<O>
+<![CDATA[OD]]></O>
+<Expand/>
+</C>
+<C c="16" r="14" cs="9" s="27">
+<O>
+<![CDATA[OS]]></O>
+<Expand/>
+</C>
+<C c="2" r="15" cs="3" s="27">
+<O>
+<![CDATA[泪液]]></O>
+<Expand/>
+</C>
+<C c="5" r="15" cs="11" s="27">
+<O t="DSColumn">
+<Attributes dsName="eyescheck" columnName="右泪液"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="15" cs="9" s="27">
+<O t="DSColumn">
+<Attributes dsName="eyescheck" columnName="左泪液"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="16" cs="3" s="27">
+<O>
+<![CDATA[结膜]]></O>
+<Expand/>
+</C>
+<C c="5" r="16" cs="11" s="27">
+<O t="DSColumn">
+<Attributes dsName="eyescheck" columnName="右结膜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="16" cs="9" s="27">
+<O t="DSColumn">
+<Attributes dsName="eyescheck" columnName="左结膜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="17">
+<Expand/>
+</C>
+<C c="1" r="17">
+<Expand/>
+</C>
+<C c="2" r="17" cs="3" s="27">
+<O>
+<![CDATA[角膜]]></O>
+<Expand/>
+</C>
+<C c="5" r="17" cs="11" s="27">
+<O t="DSColumn">
+<Attributes dsName="eyescheck" columnName="右角膜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="17" cs="9" s="27">
+<O t="DSColumn">
+<Attributes dsName="eyescheck" columnName="左角膜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="18" cs="3" s="27">
+<O>
+<![CDATA[前房、晶体]]></O>
+<Expand/>
+</C>
+<C c="5" r="18" cs="11" s="27">
+<O t="DSColumn">
+<Attributes dsName="eyescheck" columnName="右前房/晶体"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="18" cs="9" s="27">
+<O t="DSColumn">
+<Attributes dsName="eyescheck" columnName="左前房/晶体"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="19" cs="3" s="27">
+<O>
+<![CDATA[眼底]]></O>
+<Expand/>
+</C>
+<C c="5" r="19" cs="11" s="27">
+<O t="DSColumn">
+<Attributes dsName="eyescheck" columnName="右眼底"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="19" cs="9" s="27">
+<O t="DSColumn">
+<Attributes dsName="eyescheck" columnName="左眼底"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="20">
+<Expand/>
+</C>
+<C c="1" r="20">
+<Expand/>
+</C>
+<C c="2" r="20" cs="3" s="27">
+<O>
+<![CDATA[眼压]]></O>
+<Expand/>
+</C>
+<C c="5" r="20" cs="11" s="27">
+<O t="DSColumn">
+<Attributes dsName="eyescheck" columnName="右眼压"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="20" cs="9" s="27">
+<O t="DSColumn">
+<Attributes dsName="eyescheck" columnName="左眼压"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="21">
+<Expand/>
+</C>
+<C c="1" r="21">
+<Expand/>
+</C>
+<C c="2" r="21">
+<Expand/>
+</C>
+<C c="3" r="21">
+<Expand/>
+</C>
+<C c="4" r="21">
+<Expand/>
+</C>
+<C c="5" r="21">
+<Expand/>
+</C>
+<C c="6" r="21">
+<Expand/>
+</C>
+<C c="7" r="21">
+<Expand/>
+</C>
+<C c="8" r="21">
+<Expand/>
+</C>
+<C c="9" r="21">
+<Expand/>
+</C>
+<C c="10" r="21">
+<Expand/>
+</C>
+<C c="11" r="21">
+<Expand/>
+</C>
+<C c="12" r="21">
+<Expand/>
+</C>
+<C c="13" r="21">
+<Expand/>
+</C>
+<C c="14" r="21">
+<Expand/>
+</C>
+<C c="15" r="21">
+<Expand/>
+</C>
+<C c="16" r="21">
+<Expand/>
+</C>
+<C c="17" r="21">
+<Expand/>
+</C>
+<C c="18" r="21">
+<Expand/>
+</C>
+<C c="19" r="21">
+<Expand/>
+</C>
+<C c="20" r="21">
+<Expand/>
+</C>
+<C c="21" r="21">
+<Expand/>
+</C>
+<C c="0" r="22">
+<Expand/>
+</C>
+<C c="1" r="22" cs="4" s="22">
+<O>
+<![CDATA[配适检查：]]></O>
+<Expand/>
+</C>
+<C c="5" r="22">
+<Expand/>
+</C>
+<C c="6" r="22">
+<Expand/>
+</C>
+<C c="7" r="22">
+<Expand/>
+</C>
+<C c="8" r="22">
+<Expand/>
+</C>
+<C c="9" r="22">
+<Expand/>
+</C>
+<C c="10" r="22">
+<Expand/>
+</C>
+<C c="11" r="22">
+<Expand/>
+</C>
+<C c="12" r="22">
+<Expand/>
+</C>
+<C c="13" r="22">
+<Expand/>
+</C>
+<C c="14" r="22">
+<Expand/>
+</C>
+<C c="15" r="22">
+<Expand/>
+</C>
+<C c="16" r="22">
+<Expand/>
+</C>
+<C c="17" r="22">
+<Expand/>
+</C>
+<C c="18" r="22">
+<Expand/>
+</C>
+<C c="19" r="22">
+<Expand/>
+</C>
+<C c="20" r="22">
+<Expand/>
+</C>
+<C c="21" r="22">
+<Expand/>
+</C>
+<C c="0" r="23" s="22">
+<Expand/>
+</C>
+<C c="1" r="23">
+<Expand/>
+</C>
+<C c="2" r="23">
+<Expand/>
+</C>
+<C c="3" r="23">
+<Expand/>
+</C>
+<C c="5" r="23" cs="12" rs="5">
+<O t="Image">
+<IM>
+<![CDATA[!>Gh*pPD^A7h#eD$31&+%7s)Y;?-[sb5_MB:^@+&!!"u<(?>Gq#MVg<5u`*_m@F,M;K!PqrD
+WP'qPdj!TcZlW^:(D,e'K"NU(E'78;$I7`\K5\RVq>p2?GB\b:Ur\E$[<8McOZ%P0jQBAZ:n
+4b4d\3Y.S_Vi&T,/hETQ\gcdAtkM^^33Ll9K`PG,XdP(_BC`!X?$jR"VL4]ArQ_1pq,@)Hrf@
+5umn*#rc3%Q4_##9/DM%E$#:OiM(?[Ju^XGOAl8@Xst:_^lR]A.NZj'&-T9/f8bk$lj'PP\MS
+,BERF7L(DRZr`mWYtm"jcsmG$sPmtdmEY&8NIMM_aC"82pFaIF.1F?42QCF'UMbN8R3$S?,:
+Ma4<QCM7O#I/<IaQ3e#A*#Ri.GYXkpSY)Nm[9>TD-_o';PKEHC4`8RWJBZ0?g"G&KS=JTuih
+iS"DKcK>%-oGm-n$MnM*rOsG"_%\R2\%=0`h6nRl>6i!eDWa*&QnsD/CXrSt)4:&Z8q@5\=\
+3-kq9YAq,;[$7OZrG-tL:5<geZ^!M;R`3>]A!RR;i?4b!;gAZU6)HEsi^\E\YO,03$HD4'!mL
+>hRin8O8A5C2r-\dLEc9al?A"IYiicn1>OV/Ebh;n.$oFX\#^hnOXchtKGD1(D-uVP]ASMARA
+g%-IR\;Jki4J>$=6m0D$Ac2/I/J:8?2rS^'t0%'EjG@PAW7()G9G$VAE=%6JRh"H7&?nk&'<
+qYL&7oF+)"1*sh-7n8JqMr2:!c]Ad>n#7"6YQ-\V\8M=$d;_m^p\T9HLk1/X7m+ASgc;'T46P
+VA5@F3hO\Qi=?G&hVd=2bCG!VfF[HG'ToKf8!Kd_;VI,2lbfbOKg>g"G%lFRTls9O_*L&kPk
+pT:VY:@I[i;A!raQ#T/:SA.le[X/g(q)aEe/#`$;Of\uagK@C-Ca<ZLOAS"#Mnq=KENR_ctn
+W(s*6Q:%i_q]A,g5nKYPIH#!KY?noBNT]A<?MsOO?il-h]AZ82E<n/2@SaGC>+WiG(>S6IBUb0.
+t\,Lp<[Xo&U)TqNV[Q?VfSZ!$nmj2\?/]A-^e#OGB@IYe!rhm+KV,bg=^5BkchLLC[b,I_G#E
+(JG\a),[HbI=6O&7oI]Aa$i7dYnrOM&B!GI2'?[3ImdBKp>IM1mq_l8Q_-h6Jeu`oP1#%@T-5
+6#I09M%&Tj_92(ClANd8@oK#6Fq&;YfJ")q$aea2\o%"dM+"mDm!C.T!gs!-prL*^"ZIhs5+
+J_;`e44ek!Ccfa&tJ,c]AZ^DLc8,9oRKL5>s%L5$-G%-6U71ToNnn]A9g4>/e:=MV3t>qtBCjW
+*s.cS1MQuF*$:?V7"CbO!",_fn0`$%!&W^.kE7<mHpaXaOo,^ZV+]A#2,"RCP@`D*_hV[i9P]A
+d:T0K6OVdmUUK=mmdrVc\23h`+8SOTB:edi*??bY=Ngrs/1]A6E]AZW*s.c]AV/btPEU=+I\S:%
+:s#kG]A3p:cETVt/KcN6ubg+M^h+CmUS(VTnW*s.c9QJ.<c!?[R_o$5sqWH1sUiXi-cg,\aHh
+Zq_\A&%?,&BH:9b6fV',bumr-=SE1osaD[Vad5J,c*J*[hk/@'*JQC_J:`b2I:Ff.c8/-Sin
+V10qD/JPGZ`^E8J5JfoZ]Ai7^O'VEc5tWi?C9@`IT=Tm43*/mQ;ULRcF>f]A/^#U61QMQ4VkiG
+@kILhS"8Sh7>HZ%h+%t8k):ih7IkKY8NYVBJbPV?_.LJaD%G[<9b8G''.fVDh.EFfsBB%.$[
+Dl&dj?FXL=n!USO\2.e')?RD^d=+DP\-q>$rp!*<K5SskEV,rK@'-NCd?p?gW1=hNAPh77T>
+'T!q@3K8-:/!J)H5C^trik)h7KmV^;GT`3Z@:-`r;(*-XJ!O*o5e@K]A:M)P[n1Y,8VY!i=f%
+*mAVc&\?V5:#YS/f,,jEM_F+]AC.4C2-?jPn"64nYCDb_a+h:K<$)A%]AYVi52E37V8Zgrn=al
+9ZqF%b@Jgj//kA=+nI3@U`^Z8,T/gVs.k3#dgpdqb2!@6&pDd6_*Y?Q?c#$)7iGc<(VFJqIN
+YEYt1qIknjlP=5It(CSDea%H<F7_29aF@QBg;!t\$u+qdA%-[%4SIXbaC8@KnU^rUD?I`RCo
+f@l#`LXFXgtq7j8P?d9'[[c*u.j8I[G:)8:4t>&ohKA?f67:q9?!CMdpJMD&X.B(^&MqYGN7
+;OP15ce#@-QcnLXmHml2M.P4e=%sB6GRg,U2-]A]A,l;=V4\[f77T5S^hOcu76r;#sTj\+h)QC
+!q:+4RCA[S!j5'8:Z<6P,@2jidc"+$Y2_$k,ZP&qV6.hFRtI?k!8C"\4RmEOf?(mjMOC(b#a
+,74=6Xrg*IDe'lc/4Zs#\*]A0A2/[8-%Q/'<r`:>)VK)sQ]AG.YZN0YK,de.(FojGhem<`V]A#I
+?XSL/mZ&aMZnD;nlX&Wb1>GI'FY3-nYfEej[C$$'hfm-nItK)rNjXKP%*'9"pYCF@^4\T#7_
+aKn)$[4d]ARh$]Am@Y@^`kPOGQiB[`6,iX,3XKjJ,J2OrVDf&+gG,Yire@b-`3UI95tLa9*tjn
+WdgdU(olc:GRg.+1IdFhA0Wf1*,HH%2@Kfq)hrtS_a-!V"%W`;.3jc5(]AXO9!(fUS7'8jaJc
+~
+]]></IM>
+</O>
+<Expand/>
+</C>
+<C c="5" r="28" cs="6">
+<O>
+<![CDATA[ ]]></O>
+<Expand/>
+</C>
+<C c="11" r="28" cs="6">
+<Expand/>
+</C>
+<C c="1" r="29" cs="4" s="22">
+<O>
+<![CDATA[镜片检查：]]></O>
+<Expand/>
+</C>
+<C c="0" r="30" s="22">
+<Expand/>
+</C>
+<C c="1" r="30" cs="3" s="28">
+<O>
+<![CDATA[沉淀物：]]></O>
+<Expand/>
+</C>
+<C c="4" r="30" s="24">
+<Expand/>
+</C>
+<C c="5" r="30" s="24">
+<Expand/>
+</C>
+<C c="6" r="30" s="24">
+<Expand/>
+</C>
+<C c="7" r="30" s="24">
+<Expand/>
+</C>
+<C c="8" r="30">
+<Expand/>
+</C>
+<C c="9" r="30" cs="2">
+<O>
+<![CDATA[划痕：]]></O>
+<Expand/>
+</C>
+<C c="11" r="30" s="24">
+<Expand/>
+</C>
+<C c="12" r="30" s="24">
+<Expand/>
+</C>
+<C c="13" r="30" s="24">
+<Expand/>
+</C>
+<C c="14" r="30" s="24">
+<Expand/>
+</C>
+<C c="15" r="30">
+<Expand/>
+</C>
+<C c="16" r="30" cs="2">
+<O>
+<![CDATA[破损：]]></O>
+<Expand/>
+</C>
+<C c="18" r="30" s="24">
+<Expand/>
+</C>
+<C c="19" r="30" s="24">
+<Expand/>
+</C>
+<C c="20" r="30" s="24">
+<Expand/>
+</C>
+<C c="21" r="30" s="24">
+<Expand/>
+</C>
+<C c="22" r="30" s="24">
+<Expand/>
+</C>
+<C c="2" r="31">
+<Expand/>
+</C>
+<C c="3" r="31">
+<Expand/>
+</C>
+<C c="4" r="31">
+<Expand/>
+</C>
+<C c="5" r="31">
+<Expand/>
+</C>
+<C c="6" r="31">
+<Expand/>
+</C>
+<C c="7" r="31">
+<Expand/>
+</C>
+<C c="8" r="31">
+<Expand/>
+</C>
+<C c="9" r="31">
+<Expand/>
+</C>
+<C c="10" r="31">
+<Expand/>
+</C>
+<C c="11" r="31">
+<Expand/>
+</C>
+<C c="12" r="31">
+<Expand/>
+</C>
+<C c="13" r="31">
+<Expand/>
+</C>
+<C c="14" r="31">
+<Expand/>
+</C>
+<C c="15" r="31">
+<Expand/>
+</C>
+<C c="16" r="31">
+<Expand/>
+</C>
+<C c="17" r="31">
+<Expand/>
+</C>
+<C c="18" r="31">
+<Expand/>
+</C>
+<C c="19" r="31">
+<Expand/>
+</C>
+<C c="20" r="31">
+<Expand/>
+</C>
+<C c="1" r="32" cs="4" s="22">
+<O>
+<![CDATA[重新试戴：]]></O>
+<Expand/>
+</C>
+<C c="5" r="32">
+<Expand/>
+</C>
+<C c="6" r="32">
+<Expand/>
+</C>
+<C c="7" r="32">
+<Expand/>
+</C>
+<C c="8" r="32">
+<Expand/>
+</C>
+<C c="9" r="32">
+<Expand/>
+</C>
+<C c="10" r="32">
+<Expand/>
+</C>
+<C c="11" r="32">
+<Expand/>
+</C>
+<C c="12" r="32">
+<Expand/>
+</C>
+<C c="13" r="32">
+<Expand/>
+</C>
+<C c="14" r="32">
+<Expand/>
+</C>
+<C c="15" r="32">
+<Expand/>
+</C>
+<C c="16" r="32">
+<Expand/>
+</C>
+<C c="17" r="32">
+<Expand/>
+</C>
+<C c="18" r="32">
+<Expand/>
+</C>
+<C c="19" r="32">
+<Expand/>
+</C>
+<C c="20" r="32">
+<Expand/>
+</C>
+<C c="2" r="33">
+<O>
+<![CDATA[OD:]]></O>
+<Expand/>
+</C>
+<C c="3" r="33" cs="7" s="24">
+<Expand/>
+</C>
+<C c="10" r="33">
+<Expand/>
+</C>
+<C c="11" r="33">
+<Expand/>
+</C>
+<C c="12" r="33">
+<Expand/>
+</C>
+<C c="13" r="33">
+<Expand/>
+</C>
+<C c="14" r="33">
+<Expand/>
+</C>
+<C c="15" r="33">
+<Expand/>
+</C>
+<C c="16" r="33">
+<Expand/>
+</C>
+<C c="17" r="33">
+<Expand/>
+</C>
+<C c="18" r="33">
+<Expand/>
+</C>
+<C c="19" r="33">
+<Expand/>
+</C>
+<C c="20" r="33">
+<Expand/>
+</C>
+<C c="2" r="34">
+<O>
+<![CDATA[OS:]]></O>
+<Expand/>
+</C>
+<C c="3" r="34" cs="7" s="24">
+<Expand/>
+</C>
+<C c="10" r="34">
+<Expand/>
+</C>
+<C c="11" r="34">
+<Expand/>
+</C>
+<C c="12" r="34">
+<Expand/>
+</C>
+<C c="13" r="34">
+<Expand/>
+</C>
+<C c="14" r="34">
+<Expand/>
+</C>
+<C c="15" r="34">
+<Expand/>
+</C>
+<C c="16" r="34">
+<Expand/>
+</C>
+<C c="17" r="34">
+<Expand/>
+</C>
+<C c="18" r="34">
+<Expand/>
+</C>
+<C c="19" r="34">
+<Expand/>
+</C>
+<C c="20" r="34">
+<Expand/>
+</C>
+<C c="2" r="35">
+<Expand/>
+</C>
+<C c="3" r="35">
+<Expand/>
+</C>
+<C c="4" r="35">
+<Expand/>
+</C>
+<C c="5" r="35">
+<Expand/>
+</C>
+<C c="6" r="35">
+<Expand/>
+</C>
+<C c="7" r="35">
+<Expand/>
+</C>
+<C c="8" r="35">
+<Expand/>
+</C>
+<C c="9" r="35">
+<Expand/>
+</C>
+<C c="10" r="35">
+<Expand/>
+</C>
+<C c="11" r="35">
+<Expand/>
+</C>
+<C c="12" r="35">
+<Expand/>
+</C>
+<C c="13" r="35">
+<Expand/>
+</C>
+<C c="14" r="35">
+<Expand/>
+</C>
+<C c="15" r="35">
+<Expand/>
+</C>
+<C c="16" r="35">
+<Expand/>
+</C>
+<C c="17" r="35">
+<Expand/>
+</C>
+<C c="18" r="35">
+<Expand/>
+</C>
+<C c="19" r="35">
+<Expand/>
+</C>
+<C c="20" r="35">
+<Expand/>
+</C>
+<C c="1" r="36" cs="2" s="22">
+<O>
+<![CDATA[诊断：]]></O>
+<Expand/>
+</C>
+<C c="3" r="36" s="24">
+<Expand/>
+</C>
+<C c="4" r="36" s="24">
+<Expand/>
+</C>
+<C c="5" r="36" s="24">
+<Expand/>
+</C>
+<C c="6" r="36" s="24">
+<Expand/>
+</C>
+<C c="7" r="36" s="24">
+<Expand/>
+</C>
+<C c="8" r="36" s="24">
+<Expand/>
+</C>
+<C c="9" r="36" s="24">
+<Expand/>
+</C>
+<C c="10" r="36" s="24">
+<Expand/>
+</C>
+<C c="11" r="36" s="24">
+<Expand/>
+</C>
+<C c="12" r="36" s="24">
+<Expand/>
+</C>
+<C c="13" r="36" s="24">
+<Expand/>
+</C>
+<C c="14" r="36" s="24">
+<Expand/>
+</C>
+<C c="15" r="36" s="24">
+<Expand/>
+</C>
+<C c="16" r="36" s="24">
+<Expand/>
+</C>
+<C c="17" r="36" s="24">
+<Expand/>
+</C>
+<C c="18" r="36" s="24">
+<Expand/>
+</C>
+<C c="19" r="36" s="24">
+<Expand/>
+</C>
+<C c="20" r="36" s="24">
+<Expand/>
+</C>
+<C c="21" r="36" s="24">
+<Expand/>
+</C>
+<C c="22" r="36" s="24">
+<Expand/>
+</C>
+<C c="2" r="37">
+<Expand/>
+</C>
+<C c="3" r="37">
+<Expand/>
+</C>
+<C c="4" r="37">
+<Expand/>
+</C>
+<C c="5" r="37">
+<Expand/>
+</C>
+<C c="6" r="37">
+<Expand/>
+</C>
+<C c="7" r="37">
+<Expand/>
+</C>
+<C c="8" r="37">
+<Expand/>
+</C>
+<C c="9" r="37">
+<Expand/>
+</C>
+<C c="10" r="37">
+<Expand/>
+</C>
+<C c="11" r="37">
+<Expand/>
+</C>
+<C c="12" r="37">
+<Expand/>
+</C>
+<C c="13" r="37">
+<Expand/>
+</C>
+<C c="14" r="37">
+<Expand/>
+</C>
+<C c="15" r="37">
+<Expand/>
+</C>
+<C c="16" r="37">
+<Expand/>
+</C>
+<C c="17" r="37">
+<Expand/>
+</C>
+<C c="18" r="37">
+<Expand/>
+</C>
+<C c="19" r="37">
+<Expand/>
+</C>
+<C c="20" r="37">
+<Expand/>
+</C>
+<C c="1" r="38" cs="2" s="22">
+<O>
+<![CDATA[处理：]]></O>
+<Expand/>
+</C>
+<C c="3" r="38" s="24">
+<Expand/>
+</C>
+<C c="4" r="38" s="24">
+<Expand/>
+</C>
+<C c="5" r="38" s="24">
+<Expand/>
+</C>
+<C c="6" r="38" s="24">
+<Expand/>
+</C>
+<C c="7" r="38" s="24">
+<Expand/>
+</C>
+<C c="8" r="38" s="24">
+<Expand/>
+</C>
+<C c="9" r="38" s="24">
+<Expand/>
+</C>
+<C c="10" r="38" s="24">
+<Expand/>
+</C>
+<C c="11" r="38" s="24">
+<Expand/>
+</C>
+<C c="12" r="38" s="24">
+<Expand/>
+</C>
+<C c="13" r="38" s="24">
+<Expand/>
+</C>
+<C c="14" r="38" s="24">
+<Expand/>
+</C>
+<C c="15" r="38" s="24">
+<Expand/>
+</C>
+<C c="16" r="38" s="24">
+<Expand/>
+</C>
+<C c="17" r="38" s="24">
+<Expand/>
+</C>
+<C c="18" r="38" s="24">
+<Expand/>
+</C>
+<C c="19" r="38" s="24">
+<Expand/>
+</C>
+<C c="20" r="38" s="24">
+<Expand/>
+</C>
+<C c="21" r="38" s="24">
+<Expand/>
+</C>
+<C c="22" r="38" s="24">
+<Expand/>
+</C>
+<C c="1" r="40" cs="5" s="28">
+<O>
+<![CDATA[复诊时间及建议：]]></O>
+<Expand/>
+</C>
+<C c="6" r="40" s="24">
+<O>
+<![CDATA[(]]></O>
+<Expand/>
+</C>
+<C c="7" r="40" cs="5" s="29">
+<O t="DSColumn">
+<Attributes dsName="inspection" columnName="复诊时间："/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="40" s="24">
+<O>
+<![CDATA[)]]></O>
+<Expand/>
+</C>
+<C c="13" r="40" cs="12" s="23">
+<O t="DSColumn">
+<Attributes dsName="inspection" columnName="戴镜方式："/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="18" r="42" cs="3" s="30">
+<O>
+<![CDATA[视光师：]]></O>
+<Expand/>
+</C>
+<C c="21" r="42" cs="5" s="29">
+<O t="DSColumn">
+<Attributes dsName="refractive" columnName="视光师："/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="true" delayPlaying="true" windowPosition="1" align="0"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="宋体" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="宋体" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="宋体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="宋体" style="1" size="88"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="宋体" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="宋体" style="1" size="88"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="宋体" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="宋体" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="宋体" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="宋体" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="宋体" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="120"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="宋体" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="宋体" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

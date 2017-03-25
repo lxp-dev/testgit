@@ -1,0 +1,2388 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+    
+<struts>
+	<package name="storage" namespace="/" extends="struts-default">
+	<!-- 
+		<global-results>	        
+		   <result name="error">/error.jsp</result>
+		</global-results>	
+	    <global-exception-mappings>   
+	       <exception-mapping exception="java.lang.Exception" result="error"></exception-mapping>   
+	    </global-exception-mappings> 
+	 -->
+	     
+	<!-- 采购退货管理  moyongsheng  begin-->
+		<action name="initProcurementReturnSel" class="procurementReturnAction" method="initProcurementReturnSel">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturn_select.jsp</result>
+			<result name="selProcurementReturn" type="redirectAction">selProcurementReturn?moduleID=${#request.moduleID}&amp;makeinvoiceflag=${#request.makeinvoiceflag}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selProcurementReturn" class="procurementReturnAction" method="selProcurementReturn">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturn_select.jsp</result>
+	    </action>
+	    <!--  -->
+	    <action name="initProcurementReturnStorageSel" class="procurementReturnAction" method="initProcurementReturnStorageSel">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturnStorage_select.jsp</result>
+			<result name="selprocurementReturnStorages" type="redirectAction">selProcurementReturnStorage?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    
+	    <action name="selProcurementReturnStorage" class="procurementReturnAction" method="selProcurementReturnStorage">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturnStorage_select.jsp</result>
+	    </action>
+	    <action name="initProcurementReturnStorageInsert" class="procurementReturnAction" method="initProcurementReturnStorageInsert">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturnStorage_insert.jsp</result>
+	    </action>
+	    <action name="insertProcurementReturnStorage" class="procurementReturnAction" method="insertProcurementReturnStorage">
+	    	<result name="error">/WEB-INF/pages/storage/procurementReturn/procurementReturnStorage_insert.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initProcurementReturnStorageUpdate" class="procurementReturnAction" method="initProcurementReturnStorageUpdate">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturnStorage_update.jsp</result>
+	    </action>
+	    <action name="updateProcurementReturnStorage" class="procurementReturnAction" method="updateProcurementReturnStorage">
+	    	<result name="error">/WEB-INF/pages/storage/procurementReturn/procurementReturnStorage_update.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initProcurementReturnStorageDetails" class="procurementReturnAction" method="initProcurementReturnStorageDetails">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturnStorage_details.jsp</result>
+	    </action>
+	    <action name="initProcurementReturnInsert" class="procurementReturnAction" method="initProcurementReturnInsert">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturn_insert.jsp</result>
+	    </action>
+	    <action name="insertProcurementReturn" class="procurementReturnAction" method="insertProcurementReturn">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initProcurementReturnUpdate" class="procurementReturnAction" method="initProcurementReturnUpdate">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturn_update.jsp</result>
+	    </action>    
+	    <action name="updateProcurementReturn" class="procurementReturnAction" method="updateProcurementReturn">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initProcurementReturnDelete" class="procurementReturnAction" method="initProcurementReturnDelete">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturn_delete.jsp</result>
+	    </action>    
+	    <action name="deleteProcurementReturn" class="procurementReturnAction" method="deleteProcurementReturn">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initProcurementReturnDetails" class="procurementReturnAction" method="initProcurementReturnDetails">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturn_details.jsp</result>
+	    </action>
+	    
+	    <action name="selReAllocationBillsTui" class="procurementReturnAction" method="selReAllocationBillsTui">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturnStorage_insert.jsp</result>
+    	</action>
+    	<action name="selStockGoodsForBrandInsert" class="procurementReturnAction" method="selStockGoodsForBrandInsert">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturnStorage_insert.jsp</result>
+    	</action>
+    	<action name="selStockGoodsForBrandUpdate" class="procurementReturnAction" method="selStockGoodsForBrandUpdate">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturnStorage_update.jsp</result>
+    	</action>
+   		 <action name="selReAllocationBillsUpdateTui" class="procurementReturnAction" method="selReAllocationBillsUpdateTui">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturnStorage_update.jsp</result>
+    	</action>
+	<!-- 采购退货管理 moyongsheng end-->
+	
+	<!-- 采购商品退货管理 qiyue begin -->
+	    <action name="initReturnMerchandiseManagementSel" class="returnMerchandiseManagementAction" method="initReturnMerchandiseManagementSel">
+			<result name="success">/WEB-INF/pages/storage/returnMerchandiseManagement/returnMerchandiseManagement_select.jsp</result>
+	    </action>
+	    <action name="selReturnMerchandiseManagement" class="returnMerchandiseManagementAction" method="selReturnMerchandiseManagement">
+			<result name="success">/WEB-INF/pages/storage/returnMerchandiseManagement/returnMerchandiseManagement_select.jsp</result>
+	    </action>
+	    
+<!--	    <action name="initReturnMerchandiseManagementInsert" class="returnMerchandiseManagementAction" method="initReturnMerchandiseManagementInsert">-->
+<!--			<result name="success">/WEB-INF/pages/storage/returnMerchandiseManagement/returnMerchandiseManagement_insert.jsp</result>-->
+<!--	    </action>-->
+<!--	    <action name="insertReturnMerchandiseManagement" class="returnMerchandiseManagementAction" method="insertReturnMerchandiseManagement">-->
+<!--			<result name="success">/WEB-INF/pages/storage/returnMerchandiseManagement/returnMerchandiseManagement_insert.jsp</result>-->
+<!--			<result name="success">/WEB-INF/pages/refresh.jsp</result>-->
+<!--	    </action>-->
+	    
+	    <action name="initReturnMerchandiseManagementInsert" class="returnMerchandiseManagementAction" method="initReturnMerchandiseManagementInsert">
+			<result name="success">/WEB-INF/pages/storage/returnMerchandiseManagement/returnManagement_insert.jsp</result>
+	    </action>
+	    <action name="insertReturnMerchandiseManagement" class="returnMerchandiseManagementAction" method="insertReturnMerchandiseManagement">
+<!--			<result name="success">/WEB-INF/pages/storage/returnMerchandiseManagement/returnManagement_insert.jsp</result>-->
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="returnMerchandiseManagementDetails" class="returnMerchandiseManagementAction" method="returnMerchandiseManagementDetails">
+			<result name="success">/WEB-INF/pages/storage/returnMerchandiseManagement/returnMerchandiseManagement_details.jsp</result>
+	    </action>
+	    
+	    <action name="initReturnMerchandiseManagementUpdate" class="returnMerchandiseManagementAction" method="initReturnMerchandiseManagementUpdate">
+			<result name="success">/WEB-INF/pages/storage/returnMerchandiseManagement/returnMerchandiseManagement_update.jsp</result>
+	    </action>
+	    <action name="updateReturnMerchandiseManagement" class="returnMerchandiseManagementAction" method="updateReturnMerchandiseManagement">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initReturnMerchandiseManagementDelete" class="returnMerchandiseManagementAction" method="initReturnMerchandiseManagementDelete">
+			<result name="success">/WEB-INF/pages/storage/returnMerchandiseManagement/returnMerchandiseManagement_delete.jsp</result>
+	    </action>
+	    <action name="deleteReturnMerchandiseManagement" class="returnMerchandiseManagementAction" method="deleteReturnMerchandiseManagement">
+	   		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="reQueryGoodsAllocationBills" class="salesOutAction" method="queryGoodsAllocationBills">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturnStorage_insert.jsp</result>
+	    </action>
+	    <action name="reQueryGoodsAllocationBillsUpdate" class="salesOutAction" method="queryGoodsAllocationBills">
+			<result name="success">/WEB-INF/pages/storage/procurementReturn/procurementReturnStorage_update.jsp</result>
+	    </action>
+	    
+	<!-- 采购商品退货管理 qiyue  end -->
+	
+	<!-- 其他出库 qiyue begin -->
+		<action name="initOtherDatabaseManagementSel" class="otherDatabaseManagementAction" method="initOtherDatabaseManagementSel">
+			<result name="success">/WEB-INF/pages/storage/otherDatabaseManagement/otherDatabaseManagement_select.jsp</result>
+			<result name="otherDatabaseManagements" type="redirectAction">selOtherDatabaseManagement?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	     <action name="selOtherDatabaseManagement" class="otherDatabaseManagementAction" method="selOtherDatabaseManagement">
+			<result name="success">/WEB-INF/pages/storage/otherDatabaseManagement/otherDatabaseManagement_select.jsp</result>
+	    </action>
+	    <action name="initOtherDatabaseManagementInsert" class="otherDatabaseManagementAction" method="initOtherDatabaseManagementInsert">
+			<result name="success">/WEB-INF/pages/storage/otherDatabaseManagement/otherDatabase_insert.jsp</result>
+	    </action>
+	    <action name="insertOtherDatabaseManagement" class="otherDatabaseManagementAction" method="insertOtherDatabaseManagement">
+			<result name="error">/WEB-INF/pages/storage/otherDatabaseManagement/otherDatabase_insert.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="returnOtherDatabaseManagementDetails" class="otherDatabaseManagementAction" method="returnOtherDatabaseManagementDetails">
+			<result name="success">/WEB-INF/pages/storage/otherDatabaseManagement/otherDatabaseManagement_details.jsp</result>
+	    </action>
+	    
+	    <action name="initOtherDatabaseManagementUpdate" class="otherDatabaseManagementAction" method="initOtherDatabaseManagementUpdate">
+			<result name="success">/WEB-INF/pages/storage/otherDatabaseManagement/otherDatabaseManagement_update.jsp</result>
+	    </action>
+	    <action name="updateOtherDatabaseManagement" class="otherDatabaseManagementAction" method="updateOtherDatabaseManagement">
+			<result name="error">/WEB-INF/pages/storage/otherDatabaseManagement/otherDatabaseManagement_update.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initOtherDatabaseManagementDelete" class="otherDatabaseManagementAction" method="initOtherDatabaseManagementDelete">
+			<result name="success">/WEB-INF/pages/storage/otherDatabaseManagement/otherDatabaseManagement_delete.jsp</result>
+	    </action>
+	    <action name="deleteOtherDatabaseManagement" class="otherDatabaseManagementAction" method="deleteOtherDatabaseManagement">
+			<result name="success">/WEB-INF/pages/storage/otherDatabaseManagement/otherDatabaseManagement_delete.jsp</result>
+	   		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 其他出库 qiyue end -->
+	
+	<!-- 采购商品退货结算 qiyue begin -->
+		<action name="initReturnMerchandiseSettlementSel" class="returnMerchandiseSettlementAction" method="initReturnMerchandiseSettlementSel">
+			<result name="success">/WEB-INF/pages/storage/returnMerchandiseSettlement/returnMerchandiseSettlement_select.jsp</result>
+	    </action>
+	    <action name="selReturnMerchandiseSettlement" class="returnMerchandiseSettlementAction" method="selReturnMerchandiseSettlement">
+			<result name="success">/WEB-INF/pages/storage/returnMerchandiseSettlement/returnMerchandiseSettlement_select.jsp</result>
+	    </action>
+	    
+	     <action name="initReturnMerchandiseSettlementDetails" class="returnMerchandiseSettlementAction" method="initReturnMerchandiseSettlementDetails">
+			<result name="success">/WEB-INF/pages/storage/returnMerchandiseSettlement/returnMerchandiseSettlement_details.jsp</result>
+	    </action>
+	    
+	    <action name="initReturnMerchandiseSettlementUpdate" class="returnMerchandiseSettlementAction" method="initReturnMerchandiseSettlementUpdate">
+			<result name="success">/WEB-INF/pages/storage/returnMerchandiseSettlement/returnMerchandiseSettlement_update.jsp</result>
+	    </action>
+	    <action name="updateReturnMerchandiseSettlement" class="returnMerchandiseSettlementAction" method="updateReturnMerchandiseSettlement">
+			<result name="success">/WEB-INF/pages/storage/returnMerchandiseSettlement/returnMerchandiseSettlement_update.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 采购商品退货结算 qiyue end -->
+	
+	<!-- 其它出库结算 qiyue begin -->
+		<action name="initOtherDatabaseSettlementSel" class="otherDatabaseSettlementAction" method="initOtherDatabaseSettlementSel">
+			<result name="success">/WEB-INF/pages/storage/otherDatabaseSettlement/otherDatabaseSettlement_select.jsp</result>
+			<result name="selOtherDatabaseSettlement" type="redirectAction">selOtherDatabaseSettlement?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    <action name="selOtherDatabaseSettlement" class="otherDatabaseSettlementAction" method="selOtherDatabaseSettlement">
+			<result name="success">/WEB-INF/pages/storage/otherDatabaseSettlement/otherDatabaseSettlement_select.jsp</result>
+	    </action>
+	    
+	     <action name="initOtherDatabaseSettlementDetails" class="otherDatabaseSettlementAction" method="initOtherDatabaseSettlementDetails">
+			<result name="success">/WEB-INF/pages/storage/otherDatabaseSettlement/otherDatabaseSettlement_detals.jsp</result>
+	    </action>
+	    
+	    <action name="initOtherDatabaseSettlementUpdate" class="otherDatabaseSettlementAction" method="initOtherDatabaseSettlementUpdate">
+			<result name="success">/WEB-INF/pages/storage/otherDatabaseSettlement/otherDatabaseSettlement_update.jsp</result>
+	    </action>
+	    <action name="updateReturnMerchandiseSettlements" class="otherDatabaseSettlementAction" method="updateOtherDatabaseSettlements">
+			<!--  <result name="success">/WEB-INF/pages/storage/otherDatabaseSettlement/otherDatabaseSettlement_update.jsp</result>-->
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	   
+	<!-- 其它出库结算 qiyue end -->
+	
+	
+	<!-- 销售出库管理  moyongsheng  begin-->
+		<action name="initSalesOutSel" class="salesOutAction" method="initSalesOutSel">
+			<result name="success">/WEB-INF/pages/storage/salesOut/salesOut_select.jsp</result>
+			<result name="selSalesOut" type="redirectAction">selSalesOut?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    <action name="selSalesOut" class="salesOutAction" method="selSalesOut">
+			<result name="success">/WEB-INF/pages/storage/salesOut/salesOut_select.jsp</result>
+	    </action>
+	    <action name="initSalesOutInsert" class="salesOutAction" method="initSalesOutInsert">
+			<result name="success">/WEB-INF/pages/storage/salesOut/salesOut_insert.jsp</result>
+	    </action>
+	    <action name="insertSalesOut" class="salesOutAction" method="insertSalesOut">
+	    	<result name="error">/WEB-INF/pages/storage/salesOut/salesOut_insert.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initSalesOutUpdate" class="salesOutAction" method="initSalesOutUpdate">
+			<result name="success">/WEB-INF/pages/storage/salesOut/salesOut_update.jsp</result>
+	    </action>    
+	    <action name="updateSalesOut" class="salesOutAction" method="updateSalesOut">
+	    	<result name="error">/WEB-INF/pages/storage/salesOut/salesOut_update.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initSalesOutDelete" class="salesOutAction" method="initSalesOutDelete">
+			<result name="success">/WEB-INF/pages/storage/salesOut/salesOut_delete.jsp</result>
+	    </action>    
+	    <action name="deleteSalesOut" class="salesOutAction" method="deleteSalesOut">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initSalesOutDetails" class="salesOutAction" method="initSalesOutDetails">
+			<result name="success">/WEB-INF/pages/storage/salesOut/salesOut_details.jsp</result>
+	    </action>
+	    <action name="selReAllocationBillsOut" class="salesOutAction" method="selReAllocationBillsOut">
+			<result name="success">/WEB-INF/pages/storage/salesOut/salesOut_insert.jsp</result>
+    	</action>
+   		<action name="selReAllocationBillsUpdateOut" class="salesOutAction" method="selReAllocationBillsUpdateOut">
+			<result name="success">/WEB-INF/pages/storage/salesOut/salesOut_update.jsp</result>
+    	</action>
+    	<action name="addSalesOutDimension" class="salesOutAction" method="addSalesOutDimension">
+			<result name="i">/WEB-INF/pages/storage/salesOut/salesOut_insert.jsp</result>
+			<result name="u">/WEB-INF/pages/storage/salesOut/salesOut_update.jsp</result>
+    	</action>
+	    <action name="queryGoodsAllocationBills" class="salesOutAction" method="queryGoodsAllocationBills">
+			<result name="success">/WEB-INF/pages/storage/salesOut/salesOut_insert.jsp</result>
+	    </action>
+	    <action name="queryGoodsAllocationBillsUpdate" class="salesOutAction" method="queryGoodsAllocationBills">
+			<result name="success">/WEB-INF/pages/storage/salesOut/salesOut_update.jsp</result>
+	    </action>
+	<!-- 销售出库管理 moyongsheng end-->	
+	
+	<!-- 领用出库管理  moyongsheng  begin-->
+		<action name="initTakeOutSel" class="takeOutAction" method="initTakeOutSel">
+			<result name="success">/WEB-INF/pages/storage/takeOut/takeOut_select.jsp</result>
+			<result name="selTakeOut" type="redirectAction">selTakeOut?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    <action name="selTakeOut" class="takeOutAction" method="selTakeOut">
+			<result name="success">/WEB-INF/pages/storage/takeOut/takeOut_select.jsp</result>
+	    </action>
+	    <action name="initTakeOutInsert" class="takeOutAction" method="initTakeOutInsert">
+			<result name="success">/WEB-INF/pages/storage/takeOut/takeOut_insert.jsp</result>
+	    </action>
+	    <action name="insertTakeOut" class="takeOutAction" method="insertTakeOut">
+	    	<result name="error">/WEB-INF/pages/storage/takeOut/takeOut_insert.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initTakeOutUpdate" class="takeOutAction" method="initTakeOutUpdate">
+			<result name="success">/WEB-INF/pages/storage/takeOut/takeOut_update.jsp</result>
+	    </action>    
+	    <action name="updateTakeOut" class="takeOutAction" method="updateTakeOut">
+	    	<result name="error">/WEB-INF/pages/storage/takeOut/takeOut_update.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initTakeOutDelete" class="takeOutAction" method="initTakeOutDelete">
+			<result name="success">/WEB-INF/pages/storage/takeOut/takeOut_delete.jsp</result>
+	    </action>    
+	    <action name="deleteTakeOut" class="takeOutAction" method="deleteTakeOut">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initTakeOutDetails" class="takeOutAction" method="initTakeOutDetails">
+			<result name="success">/WEB-INF/pages/storage/takeOut/takeOut_details.jsp</result>
+	    </action>
+	<!-- 领用出库管理 moyongsheng end-->
+	
+	<!-- 收货财务结算  moyongsheng  begin-->
+	    <action name="initFinancialSettlementSel" class="financialSettlementAction" method="initFinancialSettlementSel">
+			<result name="success">/WEB-INF/pages/storage/financialSettlement/financialSettlement_select.jsp</result>
+			<result name="selFinancialSettlement" type="redirectAction">selFinancialSettlement?moduleID=${#request.moduleID}&amp;makeinvoiceflag=${#request.makeinvoiceflag}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    <action name="selFinancialSettlement" class="financialSettlementAction" method="selFinancialSettlement">
+			<result name="success">/WEB-INF/pages/storage/financialSettlement/financialSettlement_select.jsp</result>
+	    </action>
+	    <action name="initFinancialSettlementUpdate" class="financialSettlementAction" method="initFinancialSettlementUpdate">
+			<result name="success">/WEB-INF/pages/storage/financialSettlement/financialSettlement_update.jsp</result>
+	    </action>    
+	    <action name="updateFinancialSettlement" class="financialSettlementAction" method="updateFinancialSettlement">
+			<result name="success">/WEB-INF/pages/storage/financialSettlement/financialSettlement_details.jsp</result>
+			<result name="input">/WEB-INF/pages/storage/financialSettlement/financialSettlement_update.jsp</result>
+	    </action>	    
+	    <action name="initFinancialSettlementDetails" class="financialSettlementAction" method="initFinancialSettlementDetails">
+			<result name="success">/WEB-INF/pages/storage/financialSettlement/financialSettlement_details.jsp</result>
+	    </action>
+	 
+	<!-- 收货财务结算 moyongsheng end-->	
+	
+	<!-- 采购订单   begin-->
+	<action name="initProcurementOrdersSel" class="procurementOrdersAction" method="initProcurementOrdersSel">
+		<result name="success">/WEB-INF/pages/storage/procurementOrders/procurementOrders_select.jsp</result>
+		<result name="selprocurementorders" type="redirectAction">selProcurementOrders?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+    </action>
+	<action name="selProcurementOrders" class="procurementOrdersAction" method="selProcurementOrders">
+		<result name="success">/WEB-INF/pages/storage/procurementOrders/procurementOrders_select.jsp</result>
+    </action>
+    <action name="initProcurementOrdersInsert" class="procurementOrdersAction" method="initProcurementOrdersInsert">
+		<result name="success">/WEB-INF/pages/storage/procurementOrders/procurementOrders_insert.jsp</result>
+    </action>
+    <action name="insertProcurementOrders" class="procurementOrdersAction" method="insertProcurementOrders">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initProcurementOrdersUpdate" class="procurementOrdersAction" method="initProcurementOrdersUpdate">
+		<result name="success">/WEB-INF/pages/storage/procurementOrders/procurementOrders_update.jsp</result>
+    </action>
+    <action name="updateProcurementOrders" class="procurementOrdersAction" method="updateProcurementOrders">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initProcurementOrdersView" class="procurementOrdersAction" method="initProcurementOrdersView">
+		<result name="success">/WEB-INF/pages/storage/procurementOrders/procurementOrders_details.jsp</result>
+    </action>
+    <action name="initProcurementOrdersDelete" class="procurementOrdersAction" method="initProcurementOrdersDelete">
+		<result name="success">/WEB-INF/pages/storage/procurementOrders/procurementOrders_delete.jsp</result>
+    </action>
+    <action name="deleteProcurementOrders" class="procurementOrdersAction" method="deleteProcurementOrders">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+     <action name="selApplyBills" class="procurementOrdersAction" method="selApplyBills">
+		<result name="success">/WEB-INF/pages/storage/procurementOrders/procurementOrders_insert.jsp</result>
+    </action>
+    <action name="selApplyBillsUpdate" class="procurementOrdersAction" method="selApplyBillsUpdate">
+		<result name="success">/WEB-INF/pages/storage/procurementOrders/procurementOrders_update.jsp</result>
+    </action>
+    <action name="addProcurementOrderDimension" class="procurementOrdersAction" method="addProcurementOrderDimension">
+    	<result name="i">/WEB-INF/pages/storage/procurementOrders/procurementOrders_insert.jsp</result>
+		<result name="u">/WEB-INF/pages/storage/procurementOrders/procurementOrders_update.jsp</result>
+    </action>
+    
+    <action name="initSelProcurementOrdersForApp" class="procurementOrdersAction" method="initSelProcurementOrdersForApp">
+		<result name="success">/WEB-INF/pages/storage/procurementOrders/procurementOrdersForApp_select.jsp</result>
+		<result name="selApply" type="redirectAction">selProcurementOrdersForApp?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<result name="isuccess">/WEB-INF/pages/storage/procurementOrders/procurementOrders_select.jsp</result>
+		<result name="iselApply" type="redirectAction">selProcurementOrders?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+    </action>
+    
+    <action name="selProcurementOrdersForApp" class="procurementOrdersAction" method="selProcurementOrdersForApp">
+		<result name="success">/WEB-INF/pages/storage/procurementOrders/procurementOrdersForApp_select.jsp</result>
+    </action>
+	<!-- 采购订单   end-->
+	
+	<!-- 采购收货 Add by du -->
+		<action name="initProcurementReceiptSel" class="procurementReceiptAction" method="initProcurementReceiptSel">
+			<result name="success">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_select.jsp</result>
+			<result name="selProcurementReceipt" type="redirectAction">selProcurementReceipt?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selProcurementReceipt" class="procurementReceiptAction" method="selProcurementReceipt">
+			<result name="success">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_select.jsp</result>
+	    </action>
+	    <action name="initProcurementReceiptInsert" class="procurementReceiptAction" method="initProcurementReceiptInsert">
+			<result name="success">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_insert.jsp</result>
+	    </action>
+	    <action name="initProcurementReceiptyxInsert" class="procurementReceiptAction" method="initProcurementReceiptyxInsert">
+			<result name="success">/WEB-INF/pages/storage/procurementReceipt/procurementReceiptyx_insert.jsp</result>
+	    </action>
+	    <action name="insertProcurementReceipt" class="procurementReceiptAction" method="insertProcurementReceipt">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="input">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_update.jsp</result>
+	    </action>
+	    <action name="initProcurementReceiptUpdate" class="procurementReceiptAction" method="initProcurementReceiptUpdate">
+			<result name="success">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_update.jsp</result>
+	    </action>
+	    <action name="getAjaxSimpleBatch" class="procurementReceiptAction" method="getAjaxSimpleBatch">
+	    </action>
+	    <action name="updateProcurementReceipt" class="procurementReceiptAction" method="updateProcurementReceipt">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="input">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_update.jsp</result>
+	    </action>
+	    
+	      <action name="insertProcurementReceiptyx" class="procurementReceiptAction" method="insertProcurementReceiptyx">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="input">/WEB-INF/pages/storage/procurementReceipt/procurementReceiptyx_update.jsp</result>
+	    </action>
+	    <action name="initProcurementReceiptUpdateyx" class="procurementReceiptAction" method="initProcurementReceiptUpdateyx">
+			<result name="success">/WEB-INF/pages/storage/procurementReceipt/procurementReceiptyx_update.jsp</result>
+	    </action>
+	      <action name="updateProcurementReceiptyx" class="procurementReceiptAction" method="updateProcurementReceiptyx">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="input">/WEB-INF/pages/storage/procurementReceipt/procurementReceiptyx_update.jsp</result>
+	    </action>
+	    
+	    <action name="initProcurementReceiptDelete" class="procurementReceiptAction" method="initProcurementReceiptDelete">
+			<result name="success">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_delete.jsp</result>
+	    </action>
+	    <action name="deleteProcurementReceipt" class="procurementReceiptAction" method="deleteProcurementReceipt">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="procurementReceiptDetails" class="procurementReceiptAction" method="procurementReceiptDetails">
+			<result name="success">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_details.jsp</result>
+	    </action>
+	    <action name="initInsertProcurementReceipt" class="procurementReceiptAction" method="initInsertProcurementReceipt">
+			<result name="success">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_insert.jsp</result>
+			<result name="update">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_update.jsp</result>
+	    </action>
+	     <action name="initInsertProcurementReceipts" class="procurementReceiptAction" method="initInsertProcurementReceipts">
+			<result name="success">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_insert.jsp</result>
+			<result name="update">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_update.jsp</result>
+	    </action>
+	      <action name="initInsertProcurementReceiptyx" class="procurementReceiptAction" method="initInsertProcurementReceiptyx">
+			<result name="success">/WEB-INF/pages/storage/procurementReceipt/procurementReceiptyx_insert.jsp</result>
+			<result name="update">/WEB-INF/pages/storage/procurementReceipt/procurementReceiptyx_update.jsp</result>
+	    </action>
+	     <action name="initInsertProcurementReceiptsyx" class="procurementReceiptAction" method="initInsertProcurementReceiptsyx">
+			<result name="success">/WEB-INF/pages/storage/procurementReceipt/procurementReceiptyx_insert.jsp</result>
+			<result name="update">/WEB-INF/pages/storage/procurementReceipt/procurementReceiptyx_update.jsp</result>
+	    </action>
+	    <action name="addProcurementReceiptDimension" class="procurementReceiptAction" method="addProcurementReceiptDimension">
+			<result name="i">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_insert.jsp</result>
+			<result name="u">/WEB-INF/pages/storage/procurementReceipt/procurementReceipt_update.jsp</result>
+	    </action>
+	    <action name="addProcurementReceiptDimensionyx" class="procurementReceiptAction" method="addProcurementReceiptDimensionyx">
+			<result name="i">/WEB-INF/pages/storage/procurementReceipt/procurementReceiptyx_insert.jsp</result>
+			<result name="u">/WEB-INF/pages/storage/procurementReceipt/procurementReceiptyx_update.jsp</result>
+	    </action>
+	     <action name="insertProcurementReceiptDeliveryid" class="procurementReceiptAction" method="insertProcurementReceiptDeliveryid">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 采购收货 End by du -->
+
+	<!-- 其他入库 Add by Moyongsheng -->
+		<action name="initOtherReceiptSel" class="otherReceiptAction" method="initOtherReceiptSel">
+			<result name="success">/WEB-INF/pages/storage/otherReceipt/otherReceipt_select.jsp</result>
+			<result name="selOtherReceipt" type="redirectAction">selOtherReceipt?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    <action name="selOtherReceipt" class="otherReceiptAction" method="selOtherReceipt">
+			<result name="success">/WEB-INF/pages/storage/otherReceipt/otherReceipt_select.jsp</result>
+	    </action>
+	    <action name="initOtherReceiptInsert" class="otherReceiptAction" method="initOtherReceiptInsert">
+			<result name="success">/WEB-INF/pages/storage/otherReceipt/otherReceipt_insert.jsp</result>
+	    </action>	    
+	    <action name="insertOtherReceipt" class="otherReceiptAction" method="insertOtherReceipt">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="input">/WEB-INF/pages/storage/otherReceipt/otherReceipt_update.jsp</result>
+	    </action>
+	    <action name="initOtherReceiptUpdate" class="otherReceiptAction" method="initOtherReceiptUpdate">
+			<result name="success">/WEB-INF/pages/storage/otherReceipt/otherReceipt_update.jsp</result>
+	    </action>
+	    <action name="updateOtherReceipt" class="otherReceiptAction" method="updateOtherReceipt">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="input">/WEB-INF/pages/storage/otherReceipt/otherReceipt_update.jsp</result>
+	    </action>
+	    <action name="initOtherReceiptDelete" class="otherReceiptAction" method="initOtherReceiptDelete">
+			<result name="success">/WEB-INF/pages/storage/otherReceipt/otherReceipt_delete.jsp</result>
+	    </action>
+	    <action name="deleteOtherReceipt" class="otherReceiptAction" method="deleteOtherReceipt">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="otherReceiptDetails" class="otherReceiptAction" method="otherReceiptDetails">
+			<result name="success">/WEB-INF/pages/storage/otherReceipt/otherReceipt_details.jsp</result>
+	    </action>
+	    
+	    <!-- 其他入库管理结算 qiyue begin --> 
+	    <action name="initOtherReceiptSettlementSel" class="otherReceiptSettlementAction" method="initOtherReceiptSettlementSel">
+			<result name="success">/WEB-INF/pages/storage/otherReceiptSettlement/otherReceiptSettlement_select.jsp</result>
+			<result name="selOtherReceiptSettlement" type="redirectAction">selOtherReceiptSettlement?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+    	</action>
+    	<action name="selOtherReceiptSettlement" class="otherReceiptSettlementAction" method="selOtherReceiptSettlement">
+			<result name="success">/WEB-INF/pages/storage/otherReceiptSettlement/otherReceiptSettlement_select.jsp</result>
+    	</action>
+    	<action name="initOtherReceiptSettlementUpdate" class="otherReceiptSettlementAction" method="initOtherReceiptSettlementUpdate">
+			<result name="success">/WEB-INF/pages/storage/otherReceiptSettlement/otherReceiptSettlement_update.jsp</result>
+    	</action>
+    	<action name="updateOtherReceiptSettlement" class="otherReceiptSettlementAction" method="updateOtherReceiptSettlement">
+			<result name="success">/WEB-INF/pages/storage/otherReceiptSettlement/otherReceiptSettlement_details.jsp</result>
+		    <result name="input">/WEB-INF/pages/storage/otherReceiptSettlement/otherReceiptSettlement_update.jsp</result>
+    	</action>
+    	<action name="initOtherReceiptSettlementDetails" class="otherReceiptSettlementAction" method="initOtherReceiptSettlementDetails">
+			<result name="success">/WEB-INF/pages/storage/otherReceiptSettlement/otherReceiptSettlement_details.jsp</result>
+    	</action>
+	    <!-- 其他入库管理结算 end--> 
+	    
+	    
+	<!-- 其他入库 End by Moyongsheng -->
+	
+	<!-- 库存查询 Add by du -->
+		<action name="initStockSearchSel" class="stockSearchAction" method="initStockSearchSel">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearch_select.jsp</result>
+	    </action>
+	    
+	    <action name="initSelectStockSearchAnyTimeSel" class="stockSearchAction" method="initSelectStockSearchAnyTimeSel">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchAnyTime_select.jsp</result>
+	    </action>
+	    <action name="selStockSearchAnyTime" class="stockSearchAction" method="selStockSearchAnyTime">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchAnyTime_select.jsp</result>
+	    </action>
+	    
+	    <action name="initStockSearchDetailsSel" class="stockSearchAction" method="initStockSearchDetailsSel">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchDetails_select.jsp</result>
+	    </action>
+	    
+	    <action name="selStockSearchDtails" class="stockSearchAction" method="selStockSearchDtails">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchDetails_select.jsp</result>
+	    </action>
+	    
+	    <action name="selStockSearch" class="stockSearchAction" method="selStockSearch">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearch_select.jsp</result>
+	    </action>
+	    
+	    <action name="initStockAgeSearchSel" class="stockSearchAction" method="initStockAgeSearchSel">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockAgeSearch_select.jsp</result>
+	    </action>
+	    
+	    <action name="stockAgeSearchSel" class="stockSearchAction" method="stockAgeSearchSel">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockAgeSearch_select.jsp</result>
+	    </action>
+	    
+	    <action name="initStockSearchBrandSel" class="stockSearchAction" method="initStockSearchBrandSel">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchBrand_select.jsp</result>
+			<result name="selecttype" type="redirectAction">selStockSearchBrand?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    <action name="selStockSearchBrand" class="stockSearchAction" method="selStockSearchBrand">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchBrand_select.jsp</result>
+	    </action>
+	    
+	    <action name="initStockAlertSel" class="stockSearchAction" method="initStockAlertSel">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockAlert_select.jsp</result>
+			<result name="selStockAlert" type="redirectAction">selStockAlert?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    <action name="selStockAlert" class="stockSearchAction" method="selStockAlert">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockAlert_select.jsp</result>
+	    </action>
+	    
+	    <!-- 初始化隐形效期查询 sxh 2012-08-30 begin-->
+	    <action name="selStockSearchInvisible" class="stockSearchAction" method="selStockSearchInvisible">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchInvisible_select.jsp</result>
+	    </action>
+	    <action name="initStockSearchInvisibleSel" class="stockSearchAction" method="initStockSearchInvisibleSel">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchInvisible_select.jsp</result>
+			<result name="invisibleSel" type="redirectAction">selStockSearchInvisible?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;viewType=${#request.viewType}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    <!-- 初始化隐形效期查询 sxh 2012-08-30 end -->
+	    
+	    <!-- 初始化库存综合查询二维表开窗 Add by szk -->
+	    <action name="initStockSearch_2D" class="stockSearchAction" method="initStockSearch_2D">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearch_2D.jsp</result>
+			<result name="selecttype" type="redirectAction">selStockSearch_2D?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    
+	    <!-- 库存综合查询二维表开窗 Add by szk -->
+	    <action name="selStockSearch_2D" class="windowGoodsAction" method="goodsOpen_dimensional">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearch_2D.jsp</result>
+	    </action>
+	    
+	    <action name="initSelectStockSearchWarehouse" class="stockSearchAction" method="initSelectStockSearchWarehouse">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchWarehouse_select.jsp</result>
+	    </action>
+	    
+	    <action name="selectStockSearchWarehouse" class="stockSearchAction" method="selectStockSearchWarehouse">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchWarehouse_report.jsp</result>
+	    </action>
+	    
+	    <action name="selectStockSearch2D" class="stockSearchAction" method="selectStockSearch2D">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearch_report.jsp</result>
+	    </action>
+	    
+	    <action name="selectStockGoodsinfoPo" class="stockSearchAction" method="selectStockGoodsinfoPo">
+			<result name="t1">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockGlassesFrame1_details.jsp</result>
+			<result name="t2">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockGlassesAccessories2_details.jsp</result>
+	    	<result name="t3c">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockLensFinished3C_details.jsp</result>
+	    	<result name="t3d">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockLensCustom3D_details.jsp</result>
+	    	<result name="t4c">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockStealthFinished4C_details.jsp</result>
+	    	<result name="t4d">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockStealthCustomLenses4D_details.jsp</result>
+	    	<result name="t5">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockStealthAccessories5_details.jsp</result>
+	    	<result name="t6">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockGlassesFinish6_details.jsp</result>
+	    	<result name="t7">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockOtherGoods7_details.jsp</result>
+	    	<result name="t8">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockPresbyopicGlasses8_details.jsp</result>
+	    	<result name="t9">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockVisualOptics9_details.jsp</result>
+	    </action>
+	    <action name="selectStockGoodsinfoPo2" class="stockSearchAction" method="selectStockGoodsinfoPo2">
+			<result name="t1">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockGlassesFrame1_details2.jsp</result>
+			<result name="t2">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockGlassesAccessories2_details2.jsp</result>
+	    	<result name="t3c">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockLensFinished3C_details2.jsp</result>
+	    	<result name="t3d">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockLensCustom3D_details2.jsp</result>
+	    	<result name="t4c">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockStealthFinished4C_details2.jsp</result>
+	    	<result name="t4d">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockStealthCustomLenses4D_details2.jsp</result>
+	    	<result name="t5">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockStealthAccessories5_details2.jsp</result>
+	    	<result name="t6">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockGlassesFinish6_details2.jsp</result>
+	    	<result name="t7">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockOtherGoods7_details2.jsp</result>
+	    	<result name="t8">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockPresbyopicGlasses8_details2.jsp</result>
+	    	<result name="t9">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockVisualOptics9_details2.jsp</result>
+	    </action>
+	    
+	    <action name="selStockSearchLs" class="stockSearchAction" method="selStockSearchLs">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockSearchLs_select.jsp</result>
+	    </action>
+	    <action name="selStockSearchLs2" class="stockSearchAction" method="selStockSearchLs2">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockSearchLs_select2.jsp</result>
+	    </action>
+	    <action name="selSalseSearchLs" class="stockSearchAction" method="selSalseSearchLs">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/salseSearchLs_select.jsp</result>
+	    </action>
+	    <action name="selectStockEntry" class="stockSearchAction" method="selectStockEntry">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchOpen/stockGoods_detail.jsp</result>
+	    </action>
+	    
+	<!-- 库存查询 End by du -->	
+	
+	<!-- 委外订做 Add by Liuqian -->
+	<action name="initConsignProcessOrderSel" class="consignProcessOrderAction" method="initConsignProcessOrderSel">
+		<result name="success">/WEB-INF/pages/storage/consignProcessOrder/consignProcessOrder_select.jsp</result>
+		<result name="selConsignProcessOrder" type="redirectAction">selConsignProcessOrder?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+    </action>
+    <action name="selConsignProcessOrder" class="consignProcessOrderAction" method="selConsignProcessOrder">
+		<result name="success">/WEB-INF/pages/storage/consignProcessOrder/consignProcessOrder_select.jsp</result>
+    </action>
+    <action name="initConsignProcessOrderInsert" class="consignProcessOrderAction" method="initConsignProcessOrderInsert">
+		<result name="success">/WEB-INF/pages/storage/consignProcessOrder/consignProcessOrder_insert.jsp</result>
+    </action>
+    <action name="insertConsignProcessOrder" class="consignProcessOrderAction" method="insertConsignProcessOrder">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initConsignProcessOrderUpdate" class="consignProcessOrderAction" method="initConsignProcessOrderUpdate">
+		<result name="success">/WEB-INF/pages/storage/consignProcessOrder/consignProcessOrder_update.jsp</result>
+    </action>
+    <action name="updateConsignProcessOrder" class="consignProcessOrderAction" method="updateConsignProcessOrder">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>	    
+    <action name="initConsignProcessOrderDelete" class="consignProcessOrderAction" method="initConsignProcessOrderDelete">
+		<result name="success">/WEB-INF/pages/storage/consignProcessOrder/consignProcessOrder_delete.jsp</result>
+    </action>    
+    <action name="deleteConsignProcessOrder" class="consignProcessOrderAction" method="deleteConsignProcessOrder">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initConsignProcessOrderView" class="consignProcessOrderAction" method="initConsignProcessOrderView">
+		<result name="success">/WEB-INF/pages/storage/consignProcessOrder/consignProcessOrder_details.jsp</result>
+    </action>
+    		<!-- 未生成委外订单 -->
+    <action name="initUnConsignProcessOrderSel" class="consignProcessOrderAction" method="initUnConsignProcessOrderSel">
+		<result name="success">/WEB-INF/pages/storage/consignProcessOrder/salesUnConsignProcess_select.jsp</result>
+		<result name="selUnConsignProcessOrder" type="redirectAction">selUnConsignProcessOrder?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+    </action>
+    <action name="selUnConsignProcessOrder" class="consignProcessOrderAction" method="selUnConsignProcessOrder">
+		<result name="success">/WEB-INF/pages/storage/consignProcessOrder/salesUnConsignProcess_select.jsp</result>
+    </action>
+     <action name="initConsignProcessOrderBatchInserts" class="consignProcessOrderAction" method="initConsignProcessOrderBatchInserts">
+		<result name="success">/WEB-INF/pages/storage/consignProcessOrder/consignProcessOrders_insert.jsp</result>
+    </action>
+     <action name="initConsignProcessOrderInserts" class="consignProcessOrderAction" method="initConsignProcessOrderInserts">
+		<result name="success">/WEB-INF/pages/storage/consignProcessOrder/consignProcessOrders_insert.jsp</result>
+    </action>
+      <action name="insertConsignProcessOrders" class="consignProcessOrderAction" method="insertConsignProcessOrders">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    		<!-- 未生成委外订单 -->
+	<!-- 委外订做 End by Liuqian -->
+    
+    <!-- 委外收货结算 qiyue begin -->
+    <action name="initConsignProcessSettlementSel" class="consignProcessSettlementAction" method="initConsignProcessSettlementSel">
+		<result name="success">/WEB-INF/pages/storage/consignProcessSettlement/consignProcessSettlement_select.jsp</result>
+			<result name="selConsignProcessSettlement" type="redirectAction">selConsignProcessSettlement?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+    </action>
+    <action name="selConsignProcessSettlement" class="consignProcessSettlementAction" method="selConsignProcessSettlement">
+		<result name="success">/WEB-INF/pages/storage/consignProcessSettlement/consignProcessSettlement_select.jsp</result>
+    </action>
+    
+    <action name="initConsignProcessSettlementUpdate" class="consignProcessSettlementAction" method="initConsignProcessSettlementUpdate">
+		<result name="success">/WEB-INF/pages/storage/consignProcessSettlement/consignProcessSettlement_update.jsp</result>
+    </action>
+    <action name="updateConsignProcessSettlement" class="consignProcessSettlementAction" method="updateConsignProcessSettlement">
+		<result name="success">/WEB-INF/pages/storage/consignProcessSettlement/consignProcessSettlement_details.jsp</result>
+		<result name="input">/WEB-INF/pages/storage/consignProcessSettlement/consignProcessSettlement_update.jsp</result>
+    </action>
+    <action name="initConsignProcessSettlementDetails" class="consignProcessSettlementAction" method="initConsignProcessSettlementDetails">
+		<result name="success">/WEB-INF/pages/storage/consignProcessSettlement/consignProcessSettlement_details.jsp</result>
+	</action>
+	
+    <!--委外收货结算  end-->
+	
+	<!-- 商品调拨申请管理 Add by liujing -->
+    <action name="initApplyAllocationSel" class="allocationApplyAction" method="initApplyAllocationSel">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocationApply_select.jsp</result>
+		<result name="selApply" type="redirectAction">selApplyAllocation?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+    </action>
+    <action name="selApplyAllocation" class="allocationApplyAction" method="selApplyAllocation">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocationApply_select.jsp</result>
+    </action>
+    <action name="initApplyAllocationInsert" class="allocationApplyAction" method="initApplyAllocationInsert">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocationApply_insert.jsp</result>
+    </action>
+    <action name="insertApplyAllocation" class="allocationApplyAction" method="insertApplyAllocation">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initApplyAllocationUpdate" class="allocationApplyAction" method="initApplyAllocationUpdate">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocationApply_update.jsp</result>
+    </action>
+    <action name="updateApplyAllocation" class="allocationApplyAction" method="updateApplyAllocation">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initApplyAllocationDelete" class="allocationApplyAction" method="initApplyAllocationDelete">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocationApply_delete.jsp</result>
+    </action>
+    <action name="deleteApplyAllocation" class="allocationApplyAction" method="deleteApplyAllocation">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="allocationApplyDetails" class="allocationApplyAction" method="allocationApplyDetails">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocationApply_details.jsp</result>
+    </action>
+    <action name="receiveApplyAllocation" class="allocationApplyAction" method="receiveApplyAllocation">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="returnApplyAudit" class="allocationApplyAction" method="returnApplyAudit">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    
+    <action name="addApplyAllocationDimension" class="allocationApplyAction" method="addApplyAllocationDimension">
+		<result name="i">/WEB-INF/pages/storage/allocation/allocationApply_insert.jsp</result>
+		<result name="u">/WEB-INF/pages/storage/allocation/allocationApply_update.jsp</result>
+    </action>
+	<action name="getApplyAjaxStock" class="allocationApplyAction" method="getApplyAjaxStock">
+	</action>
+	<!-- 商品调拨申请管理 End by liujing -->
+	
+	<!-- 商品调拨申请管理 Add by liujing 2013-07-30 -->
+    <action name="initApplyAllocationForAppSel" class="allocationApplyForAppAction" method="initApplyAllocationForAppSel">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocationApplyForApp_select.jsp</result>
+		<result name="selApply" type="redirectAction">selApplyAllocationForApp?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+    </action>
+    <action name="selApplyAllocationForApp" class="allocationApplyForAppAction" method="selApplyAllocationForApp">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocationApplyForApp_select.jsp</result>
+    </action>
+    <action name="initApplyAllocationForAppInsert" class="allocationApplyForAppAction" method="initApplyAllocationForAppInsert">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocationApplyForApp_insert.jsp</result>
+    </action>
+    <action name="insertApplyAllocationForApp" class="allocationApplyForAppAction" method="insertApplyAllocationForApp">
+        <result name="error">/WEB-INF/pages/storage/allocation/allocationApplyForApp_insert.jsp</result>
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initApplyAllocationForAppUpdate" class="allocationApplyForAppAction" method="initApplyAllocationForAppUpdate">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocationApplyForApp_update.jsp</result>
+    </action>
+    <action name="updateApplyAllocationForApp" class="allocationApplyForAppAction" method="updateApplyAllocationForApp">
+        <result name="error">/WEB-INF/pages/storage/allocation/allocationApplyForApp_update.jsp</result>
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initApplyAllocationForAppDelete" class="allocationApplyForAppAction" method="initApplyAllocationForAppDelete">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocationApplyForApp_delete.jsp</result>
+    </action>
+    <action name="deleteApplyAllocationForApp" class="allocationApplyForAppAction" method="deleteApplyAllocationForApp">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="allocationApplyForAppDetails" class="allocationApplyForAppAction" method="allocationApplyForAppDetails">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocationApplyForApp_details.jsp</result>
+    </action>
+    <action name="receiveApplyAllocationForApp" class="allocationApplyForAppAction" method="receiveApplyAllocationForApp">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="returnAuditForApp" class="allocationApplyForAppAction" method="returnAuditForApp">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    
+    <action name="addApplyAllocationForAppDimension" class="allocationApplyForAppAction" method="addApplyAllocationForAppDimension">
+		<result name="i">/WEB-INF/pages/storage/allocation/allocationApplyForApp_insert.jsp</result>
+		<result name="u">/WEB-INF/pages/storage/allocation/allocationApplyForApp_update.jsp</result>
+    </action>
+	<action name="getApplyAjaxStockForApp" class="allocationApplyForAppAction" method="getApplyAjaxStockForApp">
+	</action>
+	<!-- 商品调拨申请管理 End by liujing 2013-07-30 -->
+	
+	<!-- 批发申请管理 Add by liujing -->
+    <action name="initApplyWholeForAppSel" class="wholeApplyForAppAction" method="initApplyWholeForAppSel">
+		<result name="success">/WEB-INF/pages/storage/wholeApply/wholeApply_select.jsp</result>
+		<result name="selApply" type="redirectAction">selApplyWholeForApp?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+    </action>
+    
+    <action name="selApplyWholeForApp" class="wholeApplyForAppAction" method="selApplyWholeForApp">
+		<result name="success">/WEB-INF/pages/storage/wholeApply/wholeApply_select.jsp</result>
+    </action>
+    
+    <action name="initApplyWholeForAppInsert" class="wholeApplyForAppAction" method="initApplyWholeForAppInsert">
+		<result name="success">/WEB-INF/pages/storage/wholeApply/wholeApply_insert.jsp</result>
+    </action>
+    
+    <action name="insertApplyWholeForApp" class="wholeApplyForAppAction" method="insertApplyWholeForApp">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    
+    <action name="initApplyWholeForAppUpdate" class="wholeApplyForAppAction" method="initApplyWholeForAppUpdate">
+		<result name="success">/WEB-INF/pages/storage/wholeApply/wholeApply_update.jsp</result>
+    </action>
+    
+    <action name="updateApplyWholeForApp" class="wholeApplyForAppAction" method="updateApplyWholeForApp">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    
+    <action name="initApplyWholeForAppDelete" class="wholeApplyForAppAction" method="initApplyWholeForAppDelete">
+		<result name="success">/WEB-INF/pages/storage/wholeApply/wholeApply_delete.jsp</result>
+    </action>
+    
+    <action name="deleteApplyWholeForApp" class="wholeApplyForAppAction" method="deleteApplyWholeForApp">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="wholeApplyForAppDetails" class="wholeApplyForAppAction" method="wholeApplyForAppDetails">
+		<result name="success">/WEB-INF/pages/storage/wholeApply/wholeApply_details.jsp</result>
+    </action>
+    
+    <action name="receiveApplyWholeForApp" class="wholeApplyForAppAction" method="receiveApplyWholeForApp">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    
+    <action name="returnAuditForApp" class="wholeApplyForAppAction" method="returnAuditForApp">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    
+    <action name="addApplyWholeForAppDimension" class="wholeApplyForAppAction" method="addApplyWholeForAppDimension">
+		<result name="i">/WEB-INF/pages/storage/wholeApply/wholeApply_insert.jsp</result>
+		<result name="u">/WEB-INF/pages/storage/wholeApply/wholeApply_update.jsp</result>
+    </action>
+	<action name="getApplyAjaxStock" class="wholeApplyForAppAction" method="getApplyAjaxStock">
+	</action>
+	
+	
+	
+    
+	<!-- 批发申请管理 End by liujing 2013-07-30 -->
+	
+	<!-- 商品调拨管理 Add by du -->
+    <action name="initAllocationSel" class="allocationAction" method="initAllocationSel">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_select.jsp</result>
+		<result name="selAlloca" type="redirectAction">selAllocation?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+    </action>
+    <action name="selAllocation" class="allocationAction" method="selAllocation">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_select.jsp</result>
+    </action>
+    <action name="initAllocationInsert" class="allocationAction" method="initAllocationInsert">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_insert.jsp</result>
+    </action>
+    <action name="insertAllocation" class="allocationAction" method="insertAllocation">
+    	<result name="error">/WEB-INF/pages/storage/allocation/allocation_insert.jsp</result>
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initAllocationUpdate" class="allocationAction" method="initAllocationUpdate">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_update.jsp</result>
+    </action>
+    <action name="updateAllocation" class="allocationAction" method="updateAllocation">
+    	<result name="error">/WEB-INF/pages/storage/allocation/allocation_update.jsp</result>
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initAllocationDelete" class="allocationAction" method="initAllocationDelete">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_delete.jsp</result>
+    </action>
+    <action name="deleteAllocation" class="allocationAction" method="deleteAllocation">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="allocationDetails" class="allocationAction" method="allocationDetails">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_details.jsp</result>
+    </action>
+    <action name="receiveAllocation" class="allocationAction" method="receiveAllocation">
+        <result name="error">/WEB-INF/pages/storage/allocation/allocation_details.jsp</result>
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="returnAudit" class="allocationAction" method="returnAudit">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+     <action name="selApplyAllocationBills" class="allocationAction" method="selApplyAllocationBills">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_insert.jsp</result>
+    </action>
+    <action name="selGoodsAllocationBills" class="allocationAction" method="selGoodsAllocationBills">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_insert.jsp</result>
+    </action>
+    <action name="selApplyAllocationBillsUpdate" class="allocationAction" method="selApplyAllocationBillsUpdate">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_update.jsp</result>
+    </action>
+     <action name="selAllocationBillsUpdate" class="allocationAction" method="selAllocationBillsUpdate">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_update.jsp</result>
+    </action>
+     <action name="selReceiptBills" class="allocationAction" method="selReceiptBills">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_insert.jsp</result>
+    </action>
+    <action name="selReceiptBillsUpdate" class="allocationAction" method="selReceiptBillsUpdate">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_update.jsp</result>
+    </action>
+    <action name="selReAllocationBills" class="allocationAction" method="selReAllocationBills">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_insert.jsp</result>
+    </action>
+    
+    <action name="addGoodsInfoForTable" class="allocationAction" method="addGoodsInfoForTable">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_insert.jsp</result>
+		<result name="update">/WEB-INF/pages/storage/allocation/allocation_update.jsp</result>
+    </action>
+    
+    <action name="selReAllocationBillsUpdate" class="allocationAction" method="selReAllocationBillsUpdate">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_update.jsp</result>
+    </action>
+    
+	<action name="getAjaxStock" class="allocationAction" method="getAjaxStock">
+	</action>
+	
+	<action name="initAllocationReSel" class="allocationAction" method="initAllocationReSel">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_select.jsp</result>
+		<result name="selAlloca" type="redirectAction">selAllocation?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+    </action>
+    
+    <action name="updateAllocationPrintType" class="allocationAction" method="updateAllocationPrintType">
+		<result name="success">/WEB-INF/pages/storage/allocation/allocation_select.jsp</result>
+    </action>
+    
+	<!-- 商品调拨管理 End by du -->	
+	
+	<!-- 商品副调拨管理 Add by du -->
+    <action name="initReAllocationSel" class="reAllocationAction" method="initReAllocationSel">
+		<result name="success">/WEB-INF/pages/storage/reAllocation/reallocation_select.jsp</result>
+    </action>
+    <action name="selReAllocation" class="reAllocationAction" method="selReAllocation">
+		<result name="success">/WEB-INF/pages/storage/reAllocation/reallocation_select.jsp</result>
+    </action>
+    <action name="initReAllocationInsert" class="reAllocationAction" method="initReAllocationInsert">
+		<result name="success">/WEB-INF/pages/storage/reAllocation/reallocation_insert.jsp</result>
+    </action>
+    <action name="insertReAllocation" class="reAllocationAction" method="insertReAllocation">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initReAllocationUpdate" class="reAllocationAction" method="initReAllocationUpdate">
+		<result name="success">/WEB-INF/pages/storage/reAllocation/reallocation_update.jsp</result>
+    </action>
+    <action name="updateReAllocation" class="reAllocationAction" method="updateReAllocation">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initReAllocationDelete" class="reAllocationAction" method="initReAllocationDelete">
+		<result name="success">/WEB-INF/pages/storage/reAllocation/reallocation_delete.jsp</result>
+    </action>
+    <action name="deleteReAllocation" class="reAllocationAction" method="deleteReAllocation">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="reAllocationDetails" class="reAllocationAction" method="reAllocationDetails">
+		<result name="success">/WEB-INF/pages/storage/reAllocation/reallocation_details.jsp</result>
+    </action>
+    <action name="reReceiveAllocation" class="reAllocationAction" method="reReceiveAllocation">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="reReturnAudit" class="reAllocationAction" method="reReturnAudit">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    
+	<action name="reGetAjaxStock" class="reAllocationAction" method="reGetAjaxStock">
+	</action>
+
+     
+	<!-- 商品副调拨管理 End by du -->	
+	
+	
+	<!-- 盘点 Add by Liuqian -->
+	<action name="initInsertCheckBarcode" class="checkStorageAction" method="initInsertCheckBarcode">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorage_import.jsp</result>
+    </action>
+    <action name="insertCheckBarcode" class="checkStorageAction" method="insertCheckBarcode">
+    	<interceptor-ref name="defaultStack"></interceptor-ref>
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+		<result name="input">/WEB-INF/pages/refresh.jsp</result>
+		<result name="errorBarcode">/WEB-INF/pages/storage/checkStorage/checkStorage_import.jsp</result>
+    </action>
+	<action name="initInsertCheckStorageSel" class="checkStorageAction" method="initInsertCheckStorageSel">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorage_insert.jsp</result>
+    </action>
+    <action name="selInsertCheckStorage" class="checkStorageAction" method="selInsertCheckStorage">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorage_insert.jsp</result>
+    </action>
+    <action name="initCheckStorageView" class="checkStorageAction" method="initCheckStorageView">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorage_details.jsp</result>
+    </action>
+    <action name="initCheckStorageDelete" class="checkStorageAction" method="initCheckStorageDelete">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorage_delete.jsp</result>
+    </action>
+    <action name="deleteCheckStorage" class="checkStorageAction" method="deleteCheckStorage">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initCheckStorageAudit" class="checkStorageAction" method="initCheckStorageAudit">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorage_audit.jsp</result>
+    </action>
+    <action name="auditCheckStorage" class="checkStorageAction" method="auditCheckStorage">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initCheckStorageBuild" class="checkStorageAction" method="initCheckStorageBuild">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorage_build.jsp</result>
+    </action>
+    <action name="buildCheckStorage" class="checkStorageAction" method="buildCheckStorage">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initInsertCheckStorageSumSel" class="checkStorageAction" method="initInsertCheckStorageSumSel">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorage_select.jsp</result>
+		<result name="storageSum" type="redirectAction">selInsertCheckStorageSum?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+    </action>
+    <action name="selInsertCheckStorageSum" class="checkStorageAction" method="selInsertCheckStorageSum">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorage_select.jsp</result>
+    </action>
+    <action name="initCheckStorageSumView" class="checkStorageAction" method="initCheckStorageSumView">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorageSum_details.jsp</result>
+    </action>
+    <action name="initCheckStorageSumAudit" class="checkStorageAction" method="initCheckStorageSumAudit">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorageSum_audit.jsp</result>
+    </action>
+    <action name="auditCheckStorageSum" class="checkStorageAction" method="auditCheckStorageSum">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initCheckStorageSumDelete" class="checkStorageAction" method="initCheckStorageSumDelete">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorageSum_delete.jsp</result>
+    </action>
+    <action name="deleteCheckStorageSum" class="checkStorageAction" method="deleteCheckStorageSum">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initbuildSCI" class="checkStorageAction" method="initbuildSCI">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorage_sci.jsp</result>
+    </action>
+    <action name="buildSCI" class="checkStorageAction" method="buildSCI">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initbuildSCO" class="checkStorageAction" method="initbuildSCO">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorage_sco.jsp</result>
+    </action>
+    <action name="buildSCO" class="checkStorageAction" method="buildSCO">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initCheckStorageykSel" class="checkStorageAction" method="initCheckStorageykSel">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorageyk_select.jsp</result>
+    </action>
+    <action name="checkStorageykSel" class="checkStorageAction" method="checkStorageykSel">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStorageyk_select.jsp</result>
+    </action>
+    <action name="initCheckStoragefxInsert" class="checkStorageAction" method="initCheckStoragefxInsert">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStoragefx_insert.jsp</result>
+    </action>
+    <action name="checkStoragefxInsert" class="checkStorageAction" method="checkStoragefxInsert">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="checkStoragefxSel" class="checkStorageAction" method="checkStoragefxSel">
+		<result name="success">/WEB-INF/pages/storage/checkStorage/checkStoragefx_select.jsp</result>
+    </action>    
+	<!-- 盘点 Add by Liuqian -->
+	
+	<!-- 盘盈盘亏 Add by Liuqian -->
+	<action name="initOveragelossesSel" class="overagelossesAction" method="initOveragelossesSel">
+		<result name="success">/WEB-INF/pages/storage/overagelosses/overagelosses_select.jsp</result>
+		<result name="selOverage" type="redirectAction">selOveragelosses?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+    </action>
+    <action name="selOveragelosses" class="overagelossesAction" method="selOveragelosses">
+		<result name="success">/WEB-INF/pages/storage/overagelosses/overagelosses_select.jsp</result>
+    </action>	
+    <action name="initOveragelossesInsert" class="overagelossesAction" method="initOveragelossesInsert">
+		<result name="success">/WEB-INF/pages/storage/overagelosses/overagelosses_insert.jsp</result>
+    </action>
+    <action name="insertOveragelosses" class="overagelossesAction" method="insertOveragelosses">
+    	<result name="error">/WEB-INF/pages/storage/overagelosses/overagelosses_insert.jsp</result>
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initOveragelossesDelete" class="overagelossesAction" method="initOveragelossesDelete">
+		<result name="success">/WEB-INF/pages/storage/overagelosses/overagelosses_delete.jsp</result>
+    </action>
+    <action name="deleteOveragelossesDelete" class="overagelossesAction" method="deleteOveragelossesDelete">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initOveragelossesDetails" class="overagelossesAction" method="initOveragelossesDetails">
+		<result name="success">/WEB-INF/pages/storage/overagelosses/overagelosses_details.jsp</result>
+    </action>
+    <action name="initOveragelossesFactDetails" class="overagelossesAction" method="initOveragelossesFactDetails">
+		<result name="success">/WEB-INF/pages/storage/overagelosses/overagelossesfact_details.jsp</result>
+    </action>
+    <action name="initOveragelossesAduit" class="overagelossesAction" method="initOveragelossesAduit">
+		<result name="success">/WEB-INF/pages/storage/overagelosses/overagelosses_audit.jsp</result>
+    </action>
+    <action name="auditduitOveragelosses" class="overagelossesAction" method="auditduitOveragelosses">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+	<!-- 盘盈盘亏 Add by Liuqian -->
+	
+	<!-- 不合格品管理  moyongsheng  begin-->
+		<action name="initNonconformingSel" class="nonconformingAction" method="initNonconformingSel">
+			<result name="success">/WEB-INF/pages/storage/nonconforming/nonconforming_select.jsp</result>
+			<result name="formingSel" type="redirectAction">selNonconforming?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selNonconforming" class="nonconformingAction" method="selNonconforming">
+			<result name="success">/WEB-INF/pages/storage/nonconforming/nonconforming_select.jsp</result>
+	    </action>
+	    <action name="initNonconformingInsert" class="nonconformingAction" method="initNonconformingInsert">
+			<result name="success">/WEB-INF/pages/storage/nonconforming/nonconforming_insert.jsp</result>
+	    </action>
+	    <action name="insertNonconforming" class="nonconformingAction" method="insertNonconforming">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="error">/WEB-INF/pages/storage/nonconforming/nonconforming_insert.jsp</result>
+	    </action>	    
+	    <action name="initNonconformingUpdate" class="nonconformingAction" method="initNonconformingUpdate">
+			<result name="success">/WEB-INF/pages/storage/nonconforming/nonconforming_update.jsp</result>
+	    </action>    
+	    <action name="updateNonconforming" class="nonconformingAction" method="updateNonconforming">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initNonconformingDelete" class="nonconformingAction" method="initNonconformingDelete">
+			<result name="success">/WEB-INF/pages/storage/nonconforming/nonconforming_delete.jsp</result>
+	    </action>    
+	    <action name="deleteNonconforming" class="nonconformingAction" method="deleteNonconforming">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initNonconformingDetails" class="nonconformingAction" method="initNonconformingDetails">
+			<result name="success">/WEB-INF/pages/storage/nonconforming/nonconforming_details.jsp</result>
+	    </action>
+	    <action name="initNonconformingDo" class="nonconformingAction" method="initNonconformingDo">
+			<result name="success">/WEB-INF/pages/storage/nonconforming/nonconforming_do.jsp</result>
+	    </action>
+	    <action name="doNonconforming" class="nonconformingAction" method="doNonconforming">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="error">/WEB-INF/pages/storage/nonconforming/nonconforming_do.jsp</result>
+	    </action>
+	    <action name="getAjaxDate" class="nonconformingAction" method="getAjaxDate">
+	    </action>
+	<!-- 不合格品管理 moyongsheng end-->
+	
+	<!-- 不合格品管理（同仁）  sxh  begin-->
+		<action name="initNonconformingSelTR" class="nonconformingAction" method="initNonconformingSelTR">
+			<result name="success">/WEB-INF/pages/storage/nonconformingTR/nonconforming_select.jsp</result>
+			<result name="formingSel" type="redirectAction">selNonconformingTR?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selNonconformingTR" class="nonconformingAction" method="selNonconformingTR">
+			<result name="success">/WEB-INF/pages/storage/nonconformingTR/nonconforming_select.jsp</result>
+	    </action>
+	    <action name="initNonconformingInsertTR" class="nonconformingAction" method="initNonconformingInsertTR">
+			<result name="success">/WEB-INF/pages/storage/nonconformingTR/nonconforming_insert.jsp</result>
+	    </action>
+	    <action name="insertNonconformingTR" class="nonconformingAction" method="insertNonconformingTR">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="error">/WEB-INF/pages/storage/nonconformingTR/nonconforming_insert.jsp</result>
+	    </action>	    
+	    <action name="initNonconformingUpdateTR" class="nonconformingAction" method="initNonconformingUpdateTR">
+			<result name="success">/WEB-INF/pages/storage/nonconformingTR/nonconforming_update.jsp</result>
+	    </action>    
+	    <action name="updateNonconformingTR" class="nonconformingAction" method="updateNonconformingTR">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="getAjaxDate" class="nonconformingAction" method="getAjaxDate">
+	    </action>
+	<!-- 不合格品管理 （同仁）  sxh end-->
+	
+	<!-- 不合格品汇总  liuqian  begin -->
+	<action name="initNonconformingSummarySel" class="nonconformingAction" method="initNonconformingSummarySel">
+		<result name="success">/WEB-INF/pages/storage/nonconformingSummary/nonconformingSummary_select.jsp</result>
+    </action>
+    <action name="selNonconformingSummary" class="nonconformingAction" method="selNonconformingSummary">
+		<result name="success">/WEB-INF/pages/storage/nonconformingSummary/nonconformingSummary_select.jsp</result>
+    </action>
+    <action name="summaryNonconforming" class="nonconformingAction" method="summaryNonconforming">
+		<result name="success">/WEB-INF/pages/storage/nonconformingSummary/nonconformingSummary_select.jsp</result>
+    </action>
+	<!-- 不合格品汇总  liuqian  end -->
+	
+	<!-- 其它出库 Add by du -->
+		<action name="initOtherOutSel" class="otherOutAction" method="initOtherOutSel">
+			<result name="success">/WEB-INF/pages/storage/otherOut/otherOut_select.jsp</result>
+			<result name="selOtherOut" type="redirectAction">selOtherOut?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		    <interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selOtherOut" class="otherOutAction" method="selOtherOut">
+			<result name="success">/WEB-INF/pages/storage/otherOut/otherOut_select.jsp</result>
+	    </action>
+	    <action name="initOtherOutInsert" class="otherOutAction" method="initOtherOutInsert">
+			<result name="success">/WEB-INF/pages/storage/otherOut/otherOut_insert.jsp</result>
+	    </action>
+	    <action name="insertOtherOut" class="otherOutAction" method="insertOtherOut">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initOtherOutUpdate" class="otherOutAction" method="initOtherOutUpdate">
+			<result name="success">/WEB-INF/pages/storage/otherOut/otherOut_update.jsp</result>
+	    </action>    
+	    <action name="updateOtherOut" class="otherOutAction" method="updateOtherOut">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initOtherOutDelete" class="otherOutAction" method="initOtherOutDelete">
+			<result name="success">/WEB-INF/pages/storage/otherOut/otherOut_delete.jsp</result>
+	    </action>    
+	    <action name="deleteOtherOut" class="otherOutAction" method="deleteOtherOut">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initOtherOutDetails" class="otherOutAction" method="initOtherOutDetails">
+			<result name="success">/WEB-INF/pages/storage/otherOut/otherOut_details.jsp</result>
+	    </action>
+	<!-- 其它出库 End by du -->
+	
+	<!-- 委外送货 Add by du -->
+		<action name="initConsignProcessDeliverSel" class="consignProcessDeliverAction" method="initConsignProcessDeliverSel">
+			<result name="success">/WEB-INF/pages/storage/consignProcessDeliver/consignProcessDeliver_select.jsp</result>
+			<result name="selConsignProcessDeliver" type="redirectAction">selConsignProcessDeliver?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>			
+	    </action>
+	    <action name="selConsignProcessDeliver" class="consignProcessDeliverAction" method="selConsignProcessDeliver">
+			<result name="success">/WEB-INF/pages/storage/consignProcessDeliver/consignProcessDeliver_select.jsp</result>
+	    </action>
+	    <action name="initConsignProcessDeliverInsert" class="consignProcessDeliverAction" method="initConsignProcessDeliverInsert">
+			<result name="success">/WEB-INF/pages/storage/consignProcessDeliver/consignProcessDeliver_insert.jsp</result>
+	    </action>
+	    <action name="insertConsignProcessDeliver" class="consignProcessDeliverAction" method="insertConsignProcessDeliver">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initConsignProcessDeliverUpdate" class="consignProcessDeliverAction" method="initConsignProcessDeliverUpdate">
+			<result name="success">/WEB-INF/pages/storage/consignProcessDeliver/consignProcessDeliver_update.jsp</result>
+	    </action>
+	    <action name="updateConsignProcessDeliver" class="consignProcessDeliverAction" method="updateConsignProcessDeliver">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initConsignProcessDeliverDelete" class="consignProcessDeliverAction" method="initConsignProcessDeliverDelete">
+			<result name="success">/WEB-INF/pages/storage/consignProcessDeliver/consignProcessDeliver_delete.jsp</result>
+	    </action>
+	    <action name="deleteConsignProcessDeliver" class="consignProcessDeliverAction" method="deleteConsignProcessDeliver">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="consignProcessDeliverDetails" class="consignProcessDeliverAction" method="consignProcessDeliverDetails">
+			<result name="success">/WEB-INF/pages/storage/consignProcessDeliver/consignProcessDeliver_details.jsp</result>
+	    </action>
+	<!-- 委外送货 End by du -->		
+	<!-- 待采购收货的订单查询 wanglei start -->	
+		<action name="initProcurementWaitSel" class="procurementWaitAction" method="initProcurementWaitSel">
+			<result name="success">/WEB-INF/pages/storage/procurementwait/procurementWait_select.jsp</result>
+			<result name="selProcurementWait" type="redirectAction">selProcurementWait?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    
+	    <action name="selProcurementWait" class="procurementWaitAction" method="selProcurementWait">
+			<result name="success">/WEB-INF/pages/storage/procurementwait/procurementWait_select.jsp</result>
+	    </action>
+	    
+	    <action name="initProcurementWaitUpdate" class="procurementWaitAction" method="initProcurementWaitUpdate">
+			<result name="success">/WEB-INF/pages/storage/procurementwait/procurementWait_update.jsp</result>
+	    </action>
+	    
+	    <action name="updateProcurementWait" class="procurementWaitAction" method="updateProcurementWait">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initProcurementWaityxUpdate" class="procurementWaitAction" method="initProcurementWaityxUpdate">
+			<result name="success">/WEB-INF/pages/storage/procurementwait/procurementWaityx_update.jsp</result>
+	    </action>
+	    
+	    <action name="updateProcurementWaityx" class="procurementWaitAction" method="updateProcurementWaityx">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 待采购收货的订单查询 wanglei end -->
+	
+	<!-- 待委外采购守候的订单查询wanglei start -->
+		<action name="initConsignProcessWaitSel" class="consignProcessWaitAction" method="initConsignProcessWaitSel">
+			<result name="success">/WEB-INF/pages/storage/consignProcessWait/consignProcessWait_select.jsp</result>
+	    </action>
+	    
+	    <action name="selConsignProcessWait" class="consignProcessWaitAction" method="selConsignProcessWait">
+			<result name="success">/WEB-INF/pages/storage/consignProcessWait/consignProcessWait_select.jsp</result>
+	    </action>
+	    
+	    <action name="initConsignProcessWaitUpdate" class="consignProcessWaitAction" method="initConsignProcessWaitUpdate">
+			<result name="success">/WEB-INF/pages/storage/consignProcessWait/consignProcessWait_update.jsp</result>
+	    </action>
+	    
+	    <action name="updateConsignProcessWait" class="consignProcessWaitAction" method="updateConsignProcessWait">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 待委外采购守候的订单查询wanglei start -->
+	
+	
+	<!-- 调价管理 Add by sb -->
+		<action name="initAdjustmentPriceSel" class="adjustmentPriceAction" method="initAdjustmentPriceSel">
+			<result name="success">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_select.jsp</result>
+			<result name="adjustmentPriceSel" type="redirectAction">adjustmentPriceSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	     <action name="adjustmentPriceSel" class="adjustmentPriceAction" method="adjustmentPriceSel">
+			<result name="success">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_select.jsp</result>
+	    </action>
+	    <action name="initBrandPriceInsert" class="adjustmentPriceAction" method="initBrandPriceInsert">
+			<result name="success">/WEB-INF/pages/storage/brandprice/brandprice_insert.jsp</result>
+	    </action>
+	    <action name="brandPriceInsert" class="adjustmentPriceAction" method="brandPriceInsert">
+			<result name="NoReapet">/WEB-INF/pages/storage/brandprice/brandprice_insert.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initAdjustmentPriceInsert" class="adjustmentPriceAction" method="initAdjustmentPriceInsert">
+			<result name="success">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_insert.jsp</result>
+	    </action>
+	    <action name="adjustmentPriceInsert" class="adjustmentPriceAction" method="adjustmentPriceInsert">
+			<result name="NoReapet">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_insert.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	     <action name="initAdjustmentPriceUpdate" class="adjustmentPriceAction" method="initAdjustmentPriceUpdate">
+			<result name="success">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_update.jsp</result>
+	    </action>
+	    <action name="adjustmentPriceUpdate" class="adjustmentPriceAction" method="adjustmentPriceUpdate">
+			<result name="NoReapet">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_update.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	     <action name="initAdjustmentPriceDelete" class="adjustmentPriceAction" method="initAdjustmentPriceDelete">
+			<result name="success">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_delete.jsp</result>
+	    </action>
+	     <action name="adjustmentPriceDelete" class="adjustmentPriceAction" method="adjustmentPriceDelete">
+			<result name="NoReapet">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_delete.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	     <action name="initAdjustmentPriceDetails" class="adjustmentPriceAction" method="initAdjustmentPriceDetails">
+			<result name="success">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_details.jsp</result>
+	    </action>
+	     <action name="addAdjustmentPrice" class="adjustmentPriceAction" method="addAdjustmentPrice">
+			<result name="success">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_insert.jsp</result>
+			<result name="UPDATE">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_update.jsp</result>
+	    </action>
+	    <action name="initChangeAdjustmentPriceBillUpdate" class="adjustmentPriceAction" method="initChangePriceBillUpdate">
+			<result name="success">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_change.jsp</result>
+	    </action>
+	    <action name="initChangeCostPriceBillUpdate" class="adjustmentPriceAction" method="initChangePriceBillUpdate">
+			<result name="success">/WEB-INF/pages/storage/adcostPrice/adcostPrice_change.jsp</result>
+	    </action>
+	    <action name="initChangeWholsSalesBillUpdate" class="adjustmentPriceAction" method="initChangePriceBillUpdate">
+			<result name="success">/WEB-INF/pages/storage/wholesalePrice/wholesaleprice_change.jsp</result>
+	    </action>	    
+	    <action name="updateChangePriceBill" class="adjustmentPriceAction" method="updateChangePriceBill">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	 <!--   
+	   	<action name="initAdjustmentPriceByBrandInsert" class="adjustmentPriceAction" method="initAdjustmentPriceInsert">
+			<result name="success">/WEB-INF/pages/storage/adjustmentPrice/adjustmentpricebybrand_insert.jsp</result>
+	    </action>
+	    <action name="adjustmentPriceByBrandInsert" class="adjustmentPriceAction" method="adjustmentPriceByBrandInsert">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	   
+	    <action name="initApGoodsInfoByBrandOpen" class="adjustmentPriceAction" method="initApGoodsInfoByBrandOpen">
+			<result name="success">/WEB-INF/pages/components/adjustmentPrice/adjustmentPriceByBrand_open.jsp</result>
+	    </action>
+	    <action name="apGoodsInfoByBrandOpen" class="adjustmentPriceAction" method="apGoodsInfoByBrandOpen">
+			<result name="success">/WEB-INF/pages/components/adjustmentPrice/adjustmentPriceByBrand_open.jsp</result>
+	    </action>
+	 -->   
+	   
+	<!-- 调价管理 End by sb -->	
+	
+	<!-- 库存预警设置 Liuqian start -->
+	<action name="initStockAlertSettingSel" class="stockAlertSettingAction" method="initStockAlertSettingSel">
+		<result name="success">/WEB-INF/pages/storage/stockAlertSetting/stockAlertSetting_select.jsp</result>
+		<result name="selStockAlertSetting" type="redirectAction">selStockAlertSetting?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+    </action>
+    <action name="selStockAlertSetting" class="stockAlertSettingAction" method="selStockAlertSetting">
+		<result name="success">/WEB-INF/pages/storage/stockAlertSetting/stockAlertSetting_select.jsp</result>
+    </action>
+    <action name="initStockAlertSettingInsert" class="stockAlertSettingAction" method="initStockAlertSettingInsert">
+		<result name="success">/WEB-INF/pages/storage/stockAlertSetting/stockAlertSetting_insert.jsp</result>
+    </action>
+    <action name="insertStockAlertSetting" class="stockAlertSettingAction" method="insertStockAlertSetting">
+		<result name="success">/WEB-INF/pages/storage/stockAlertSetting/stockAlertSetting_insert.jsp</result>
+    </action>
+    <action name="initStockAlertSettingUpdate" class="stockAlertSettingAction" method="initStockAlertSettingUpdate">
+		<result name="success">/WEB-INF/pages/storage/stockAlertSetting/stockAlertSetting_update.jsp</result>
+    </action>
+    <action name="updateStockAlertSetting" class="stockAlertSettingAction" method="updateStockAlertSetting">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    
+    <action name="initStockAlertSettingBatchDel" class="stockAlertSettingAction" method="initStockAlertSettingBatchDel">
+		<result name="success">/WEB-INF/pages/storage/stockAlertSetting/stockAlertSetting_delete.jsp</result>
+    </action>
+    <action name="stockAlertSettingBatchDel" class="stockAlertSettingAction" method="stockAlertSettingBatchDel">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>        
+    <action name="initStockAlertSettingBatchUpt" class="stockAlertSettingAction" method="initStockAlertSettingBatchUpt">
+		<result name="success">/WEB-INF/pages/storage/stockAlertSetting/stockAlertSetting_batchupt.jsp</result>
+    </action>
+    <action name="stockAlertSettingBatchUpt" class="stockAlertSettingAction" method="stockAlertSettingBatchUpt">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+	<!-- 库存预警设置 Liuqian end -->
+	
+	<!-- 委外误期管理查询 qiyue begin -->
+	<action name="initStorageDelaysReminder" class="storageDelaysReminderAction" method="initStorageDelaysReminder">
+		<result name="success">/WEB-INF/pages/storage/storageDelaysReminder/storageDelaysReminder_select.jsp</result>
+		<result name="selectStorageDelaysReminder" type="redirectAction">selectStorageDelaysReminder?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+    </action>
+	<action name="selectStorageDelaysReminder" class="storageDelaysReminderAction" method="selectStorageDelaysReminder">
+		<result name="success">/WEB-INF/pages/storage/storageDelaysReminder/storageDelaysReminder_select.jsp</result>
+    </action>
+    
+    <action name="initStorageDelaysReminderRegistration" class="storageDelaysReminderAction" method="initStorageDelaysReminderRegistration">
+		<result name="success">/WEB-INF/pages/storage/storageDelaysReminder/storageDelaysReminder_registration.jsp</result>
+    </action>
+    
+    <!-- 查询订单开窗 qiyue begin -->
+    	<action name="initOrderDelaysRemindert" class="storageDelaysReminderAction" method="initOrderDelaysRemindert">
+			<result name="success">/WEB-INF/pages/storage/storageDelaysReminder/delaysManagement_open.jsp</result>
+	    </action>
+    	<action name="selectOrderDelaysRemindert" class="storageDelaysReminderAction" method="selectOrderDelaysRemindert">
+			<result name="success">/WEB-INF/pages/storage/storageDelaysReminder/delaysManagement_open.jsp</result>
+	    </action>
+    <!-- 查询订单开 qiyue end  -->
+    <action name="selectSalesBasicODOS" class="storageDelaysReminderAction" method="selectSalesBasicODOS">
+		<result name="success">/WEB-INF/pages/storage/storageDelaysReminder/storageDelaysReminder_registration.jsp</result>
+    </action>
+    
+    <action name="insertDelaysReminder" class="storageDelaysReminderAction" method="insertDelaysReminder">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    
+    <action name="initDelaysReminderDel" class="storageDelaysReminderAction" method="initDelaysReminderDel">
+		<result name="success">/WEB-INF/pages/storage/storageDelaysReminder/storageDelaysReminder_delete.jsp</result>
+    </action>
+    
+    <action name="deleteDelaysReminder" class="storageDelaysReminderAction" method="deleteDelaysReminder">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    
+	<!-- 委外误期管理查询 qiyue end -->
+	
+	<!-- 在途查询 qiyue begin -->
+	<action name="initInTransitSel" class="inTransitAction" method="initInTransitSel">
+		<result name="success">/WEB-INF/pages/storage/inTransit/inTransit_select.jsp</result>
+		<result name="tranSel" type="redirectAction">selectInTransit?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+    </action>  
+	<action name="selectInTransit" class="inTransitAction" method="selectInTransit">
+		<result name="success">/WEB-INF/pages/storage/inTransit/inTransit_select.jsp</result>
+    </action>
+	<!-- 在途查询  qiyue end -->
+	
+	<!-- 在途状态修改 du begin -->
+	<action name="initInTransitUpdateSel" class="inTransitAction" method="initInTransitUpdateSel">
+		<result name="success">/WEB-INF/pages/storage/inTransit/inTransit_update.jsp</result>
+    </action>
+	<action name="selectInTransitUpdate" class="inTransitAction" method="selectInTransitUpdate">
+		<result name="success">/WEB-INF/pages/storage/inTransit/inTransit_update.jsp</result>
+    </action>
+    <action name="inTransitUpdate" class="inTransitAction" method="inTransitUpdate">
+		<result name="success">/WEB-INF/pages/storage/inTransit/inTransit_update.jsp</result>
+    </action>
+	<!-- 在途状态修改 du end -->
+	
+	<!-- 配镜发料 wanglei begin -->
+		<action name="initSpectaclesMaterialsSel" class="spectaclesMaterialsAction" method="initSpectaclesMaterialsSel">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterials/spectaclesMaterials_select.jsp</result>
+		  <result name="selectSpectaclesMaterials" type="redirectAction">selectSpectaclesMaterials?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <result name="autoselect">/WEB-INF/pages/storage/spectaclesMaterials/spectaclesMaterialsAuto_select.jsp</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<action name="selectSpectaclesMaterials" class="spectaclesMaterialsAction" method="selectSpectaclesMaterials">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterials/spectaclesMaterials_select.jsp</result>
+		</action>
+		
+		<action name="selectSpectaclesMaterialsAuto" class="spectaclesMaterialsAction" method="selectSpectaclesMaterialsAuto">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterials/spectaclesMaterialsAuto_select.jsp</result>
+		</action>
+		
+		<action name="initSpectaclesMaterialsIns" class="spectaclesMaterialsAction" method="initSpectaclesMaterialsIns">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterials/spectaclesMaterials_insert.jsp</result>
+		</action>
+		
+		<action name="insertSpectaclesMaterials" class="spectaclesMaterialsAction" method="insertSpectaclesMaterials">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="initSpectaclesMaterialsBatch" class="spectaclesMaterialsAction" method="initSpectaclesMaterialsBatch">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterials/spectaclesMaterialsbatch_insert.jsp</result>
+		</action>		
+		<action name="insertSpectaclesMaterialsBatch" class="spectaclesMaterialsAction" method="insertSpectaclesMaterialsBatch">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+	<!-- 配镜发料 wanglei end -->
+	
+	<!-- 配镜已发料 wanglei begin -->
+		<action name="initSpectaclesMaterialsFinishSel" class="spectaclesMaterialsFinishAction" method="initSpectaclesMaterialsFinishSel">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterialsFinish/spectaclesMaterialsFinish_select.jsp</result>
+		  <result name="selectSpectaclesMaterialsFinish" type="redirectAction">selectSpectaclesMaterialsFinish?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<action name="selectSpectaclesMaterialsFinish" class="spectaclesMaterialsFinishAction" method="selectSpectaclesMaterialsFinish">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterialsFinish/spectaclesMaterialsFinish_select.jsp</result>
+		</action>
+		
+		<action name="selectSpectaclesMaterialsFinishDetail" class="spectaclesMaterialsFinishAction" method="selectSpectaclesMaterialsFinishDetail">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterialsFinish/spectaclesMaterialsFinish_detail.jsp</result>
+		</action>
+	<!-- 配镜已发料 wanglei end -->
+	
+	<!-- 加工检验 wanglei begin -->
+		<action name="initWorkingCheckSel" class="workingCheckAction" method="initWorkingCheckSel">
+		  <result name="success">/WEB-INF/pages/storage/workingCheck/workingCheck_select.jsp</result>
+		  <result name="selectWorkingCheck" type="redirectAction">selectWorkingCheck?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<action name="selectWorkingCheck" class="workingCheckAction" method="selectWorkingCheck">
+		  <result name="success">/WEB-INF/pages/storage/workingCheck/workingCheck_select.jsp</result>
+		</action>
+		
+		<action name="initWorkingCheckIns" class="workingCheckAction" method="initWorkingCheckIns">
+		  <result name="success">/WEB-INF/pages/storage/workingCheck/workingCheck_insert.jsp</result>
+		</action>
+		
+		<action name="getLastWorkingCheck" class="workingCheckAction" method="getLastWorkingCheck">
+			<result name="success">/WEB-INF/pages/storage/workingCheck/workingCheck_insert.jsp</result>
+		</action>
+		
+		<action name="insertWorkingCheck" class="workingCheckAction" method="insertWorkingCheck">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="selectWorkingCheckDetails" class="workingCheckAction" method="selectWorkingCheckDetails">
+			<result name="success">/WEB-INF/pages/storage/workingCheck/workingCheck_details.jsp</result>
+		</action>
+		
+		<action name="initWorkingCheckHelp" class="workingCheckAction" method="initWorkingCheckHelp">
+			<result name="success">/WEB-INF/pages/storage/workingCheck/workingCheck_help.jsp</result>
+		</action>
+	<!-- 加工检验 wanglei end -->
+	
+	<!-- 加工检验单打印 wanglei begin -->
+		<action name="initPrintWorkingCheckSel" class="printWorkingCheckAction" method="initPrintWorkingCheckSel">
+		  <result name="success">/WEB-INF/pages/storage/printWorkingCheck/printWorkingCheck_select.jsp</result>
+		  <result name="selectPrintWorkingCheck" type="redirectAction">selectPrintWorkingCheck?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<action name="selectPrintWorkingCheck" class="printWorkingCheckAction" method="selectPrintWorkingCheck">
+		  <result name="success">/WEB-INF/pages/storage/printWorkingCheck/printWorkingCheck_select.jsp</result>
+		</action>
+	<!-- 加工检验单打印 wanglei end -->
+	
+	<!-- 记录加工时间 wanglei begin -->
+		<action name="initRecordWorkingTimeSel" class="recordWorkingTimeAction" method="initRecordWorkingTimeSel">
+		  <result name="success">/WEB-INF/pages/storage/recordWorkingTime/recordWorkingTime_select.jsp</result>
+		  <result name="selectRecordWorkingTime" type="redirectAction">selectRecordWorkingTime?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<action name="selectRecordWorkingTime" class="recordWorkingTimeAction" method="selectRecordWorkingTime">
+		  <result name="success">/WEB-INF/pages/storage/recordWorkingTime/recordWorkingTime_select.jsp</result>
+		</action>
+		
+		<action name="initRecordWorkingTimeIns" class="recordWorkingTimeAction" method="initRecordWorkingTimeIns">
+		  <result name="success">/WEB-INF/pages/storage/recordWorkingTime/recordWorkingTime_insert.jsp</result>
+		</action>
+		
+		<action name="initInsertRecordWorkingTime" class="recordWorkingTimeAction" method="initInsertRecordWorkingTime">
+		  <result name="success">/WEB-INF/pages/storage/recordWorkingTime/recordWorkingCheck_insert.jsp</result>
+		</action>
+		
+		<action name="insertRecordWorkingTime" class="recordWorkingTimeAction" method="insertRecordWorkingTime">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="initRecordWorkingCheckSel" class="recordWorkingTimeAction" method="initRecordWorkingCheckSel">
+		  <result name="success">/WEB-INF/pages/storage/recordWorkingTime/recordWorkingCheck_select.jsp</result>
+		  <result name="selectRecordWorkingCheck" type="redirectAction">selectRecordWorkingCheck?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		<action name="selectRecordWorkingCheck" class="recordWorkingTimeAction" method="selectRecordWorkingCheck">
+		  <result name="success">/WEB-INF/pages/storage/recordWorkingTime/recordWorkingCheck_select.jsp</result>
+		</action>
+		<action name="detailsRecordWorkingCheck" class="recordWorkingTimeAction" method="detailsRecordWorkingCheck">
+		  <result name="success">/WEB-INF/pages/storage/recordWorkingTime/recordWorkingCheck_details.jsp</result>
+		</action>
+	<!-- 记录加工时间 wanglei end -->
+	
+	<!-- 订单系统-订单状态查询 wanglei begin -->
+		<action name="initProcurementOrdersStatusSel" class="procurementOrdersStatusAction" method="initProcurementOrdersStatusSel">
+		  <result name="success">/WEB-INF/pages/storage/procurementOrdersStatus/procurementOrdersStatus_select.jsp</result>
+		</action>
+		
+		<action name="selectProcurementOrdersStatus" class="procurementOrdersStatusAction" method="selectProcurementOrdersStatus">
+		  <result name="success">/WEB-INF/pages/storage/procurementOrdersStatus/procurementOrdersStatus_select.jsp</result>
+		</action>
+		
+		<action name="selectProcurementSend" class="procurementOrdersStatusAction" method="selectProcurementSend">
+		  <result name="success">/WEB-INF/pages/storage/procurementOrdersStatus/procurementOrdersStatus_detaile.jsp</result>
+		</action>
+		
+		<action name="selectProcurementOrdersDetaile" class="procurementOrdersStatusAction" method="selectProcurementOrdersDetaile">
+		  <result name="success">/WEB-INF/pages/storage/procurementOrdersStatus/procurementOrdersGoods_detaile.jsp</result>
+		</action>
+		
+		<action name="selectProcurementSendDetaile" class="procurementOrdersStatusAction" method="selectProcurementSendDetaile">
+		  <result name="success">/WEB-INF/pages/storage/procurementOrdersStatus/procurementSendOutGoods_detaile.jsp</result>
+		</action>
+	<!-- 订单系统-订单状态查询  wanglei end -->
+	
+	<!-- 订单系统-委外订单状态查询 wanglei begin -->
+		<action name="initConsignProcessOrderStatusSel" class="consignProcessOrderStatusAction" method="initConsignProcessOrderStatusSel">
+		  <result name="success">/WEB-INF/pages/storage/consignProcessOrderStatus/consignProcessOrderStatus_select.jsp</result>
+		</action>
+		
+		<action name="selectConsignProcessOrderStatus" class="consignProcessOrderStatusAction" method="selectConsignProcessOrderStatus">
+		  <result name="success">/WEB-INF/pages/storage/consignProcessOrderStatus/consignProcessOrderStatus_select.jsp</result>
+		</action>
+		
+		<action name="selectConsignProcessSend" class="consignProcessOrderStatusAction" method="selectConsignProcessSend">
+		  <result name="success">/WEB-INF/pages/storage/consignProcessOrderStatus/consignProcessOrderStaus_detaile.jsp</result>
+		</action>
+		
+		<action name="selectConsignProcessOrdersDetaile" class="consignProcessOrderStatusAction" method="selectConsignProcessOrdersDetaile">
+		  <result name="success">/WEB-INF/pages/storage/consignProcessOrderStatus/consignOrdersGoods_detaile.jsp</result>
+		</action>
+		
+		<action name="selectConsignProcessSendDetaile" class="consignProcessOrderStatusAction" method="selectConsignProcessSendDetaile">
+		  <result name="success">/WEB-INF/pages/storage/consignProcessOrderStatus/consignSendOutGoods_detaile.jsp</result>
+		</action>
+	<!-- 订单系统-委外订单状态查询  wanglei end -->
+	
+	<!-- 订单系统-商品退货状态查询 wanglei begin -->
+		<action name="initOrdersStatusReturnSel" class="ordersStatusReturnAction" method="initOrdersStatusReturnSel">
+		  <result name="success">/WEB-INF/pages/storage/ordersStatusReturn/ordersStatusReturn_select.jsp</result>
+		</action>
+		
+		<action name="selectOrdersStatusReturn" class="ordersStatusReturnAction" method="selectOrdersStatusReturn">
+		  <result name="success">/WEB-INF/pages/storage/ordersStatusReturn/ordersStatusReturn_select.jsp</result>
+		</action>
+		
+		<action name="selectOrdersStatusReturnDetaile" class="ordersStatusReturnAction" method="selectOrdersStatusReturnDetaile">
+		  <result name="success">/WEB-INF/pages/storage/ordersStatusReturn/ordersStatusReturn_detaile.jsp</result>
+		</action>
+	<!-- 订单系统-商品退货状态查询  wanglei end -->
+		<action name="doAjax" class="smsAction" method="doAjax">
+			</action>
+			<action name="selectSms" class="smsAction" method="selectSms">
+			  <result name="success">/WEB-INF/pages/storage/allocation/sms_select.jsp</result>
+			</action>
+			<action name="smsReaded" class="smsAction" method="smsReaded">
+			  <result name="success">/WEB-INF/pages/storage/allocation/sms_select.jsp</result>
+			</action>
+			<action name="ordersRead" class="smsAction" method="ordersRead">
+			  <result name="success">/WEB-INF/pages/storage/allocation/sms_select.jsp</result>
+			</action>
+			
+			<action name="allSms" class="smsAction" method="allSms">
+			  <result name="success">/WEB-INF/pages/storage/allocation/allSms_select.jsp</result>
+			</action>
+			
+		<!-- 委外收货 wanglei begin -->
+			<action name="initConsignProcessTakeSel" class="consignProcessTakeAction" method="initConsignProcessTakeSel">
+				<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessTake_select.jsp</result>
+				<result name="selConsignProcessTake" type="redirectAction">selConsignProcessTake?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		        <interceptor-ref name="defaultStack"></interceptor-ref>
+   			</action>
+   			
+			<action name="selConsignProcessTake" class="consignProcessTakeAction" method="selConsignProcessTake">
+				<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessTake_select.jsp</result>
+   			</action>
+   				
+			<action name="initConsignProcessTakeInsert" class="consignProcessTakeAction" method="initConsignProcessTakeInsert">
+		  		<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessTake_insert.jsp</result>
+			</action>
+			
+			<action name="consignProcessTakeInsert" class="consignProcessTakeAction" method="consignProcessTakeInsert">
+		 		<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessTake_insert.jsp</result>
+			</action>
+			
+			<action name="initSalesIdSel" class="consignProcessTakeAction" method="initSalesIdSel">
+		 		<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessOrders_select.jsp</result>
+			</action>
+			
+			<action name="selectSalesId" class="consignProcessTakeAction" method="selectSalesId">
+		 		<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessOrders_select.jsp</result>
+			</action>
+			
+			<action name="initSalesIdsSel" class="consignProcessTakeAction" method="initSalesIdsSel">
+		 		<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessOrderss_select.jsp</result>
+		 		<result name="selectSalesIds" type="redirectAction">selectSalesIds?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+			
+			<action name="selectSalesIds" class="consignProcessTakeAction" method="selectSalesIds">
+		 		<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessOrderss_select.jsp</result>
+			</action>
+			
+			<action name="initSalesIdsSelW" class="consignProcessTakeAction" method="initSalesIdsSelW">
+		 		<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessOrdersW_select.jsp</result>
+		 		<result name="selectSalesIdsW" type="redirectAction">selectSalesIdsW?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+			
+			<action name="selectSalesIdsW" class="consignProcessTakeAction" method="selectSalesIdsW">
+		 		<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessOrdersW_select.jsp</result>
+			</action>
+			
+			<action name="initSalesIdsSel" class="consignProcessTakeAction" method="initSalesIdsSel">
+		 		<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessOrderss_select.jsp</result>
+		 		<result name="selectSalesIds" type="redirectAction">selectSalesIds?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+			
+			<action name="selectSalesIds" class="consignProcessTakeAction" method="selectSalesIds">
+		 		<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessOrderss_select.jsp</result>
+			</action>
+			
+			<action name="initdeliveryid" class="consignProcessTakeAction" method="initdeliveryid">
+		 		<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessDelivery_select.jsp</result>
+			</action>
+			
+			<action name="selectdeliveryid" class="consignProcessTakeAction" method="selectdeliveryid">
+		 		<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessDelivery_select.jsp</result>
+			</action>
+			
+			<action name="insertConsignProcessTake" class="consignProcessTakeAction" method="insertConsignProcessTake">
+		 		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			</action>
+			
+			<action name="consignProcessTakeDetails" class="consignProcessTakeAction" method="consignProcessTakeDetails">
+				<result name="success">/WEB-INF/pages/storage/consignProcessTake/consignProcessTake_delails.jsp</result>
+		    </action>
+		<!-- 委外收货 wanglei end -->
+		
+		
+		<!-- 条码打印 wanglei begin -->
+			<action name="initPrintBarcode" class="printBarcodeAction" method="initPrintBarcode">
+		  		<result name="success">/WEB-INF/pages/storage/printBarcode/printBarcode_select.jsp</result>
+			</action>
+			
+			<action name="initPrintJQ" class="printBarcodeAction" method="initPrintJQ">
+		  		<result name="success">/WEB-INF/pages/storage/printBarcode/printJQ_select.jsp</result>
+			</action>
+			
+			<action name="initPrintBrandBarcode" class="printBarcodeAction" method="initPrintBrandBarcode">
+		  		<result name="success">/WEB-INF/pages/storage/printBarcode/printBrand_select.jsp</result>
+			</action>
+			
+			<action name="initPrintJQcqjy" class="printBarcodeAction" method="initPrintJQcqjy">
+		  		<result name="success">/WEB-INF/pages/storage/printBarcode/printJQcqjy_select.jsp</result>
+			</action>
+		<!-- 条码打印 wanglei end -->
+		
+		<!-- 条码打印扫码打码 wanglei begin -->
+			<action name="initPrintsBarcode" class="printBarcodeAction" method="initPrintsBarcode">
+		  		<result name="success">/WEB-INF/pages/storage/printBarcode/printBarcodes_select.jsp</result>
+			</action>
+			
+			<action name="initPrintBarcodePrint" class="printBarcodeAction" method="initPrintBarcodePrint">
+		  		<result name="success">/WEB-INF/pages/storage/printBarcode/printBarcode_print.jsp</result>
+			</action>
+			
+			<action name="printBarcode" class="printBarcodeAction" method="printBarcode">
+			</action>
+		<!-- 条码打印扫码打码 wanglei end -->
+		
+		
+		<!-- 成本调价管理 wanglei begin -->
+			<action name="initcostPriceSel" class="adcostPriceAction" method="initcostPriceSel">
+		  		<result name="success">/WEB-INF/pages/storage/adcostPrice/adcostPrice_select.jsp</result>
+		  		<result name="selectcostPrice" type="redirectAction">selectcostPrice?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+			
+			<action name="selectcostPrice" class="adcostPriceAction" method="selectcostPrice">
+		  		<result name="success">/WEB-INF/pages/storage/adcostPrice/adcostPrice_select.jsp</result>
+			</action>
+			
+			<action name="initcostPriceInsert" class="adcostPriceAction" method="initcostPriceInsert">
+		  		<result name="success">/WEB-INF/pages/storage/adcostPrice/adcostPrice_insert.jsp</result>
+			</action>
+			
+			<action name="adcostPriceInsert" class="adcostPriceAction" method="adcostPriceInsert">
+		  		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			</action>
+			
+			<action name="initcostPriceUpdate" class="adcostPriceAction" method="initcostPriceUpdate">
+		  		<result name="success">/WEB-INF/pages/storage/adcostPrice/adcostPrice_update.jsp</result>
+			</action>
+			
+			<action name="adcostPriceUpdate" class="adcostPriceAction" method="adcostPriceUpdate">
+		  		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			</action>
+			
+			<action name="initAdcostPriceDelete" class="adcostPriceAction" method="initAdcostPriceDelete">
+		  		<result name="success">/WEB-INF/pages/storage/adcostPrice/adcostPrice_delete.jsp</result>
+			</action>
+			
+			<action name="adcostPriceDelete" class="adcostPriceAction" method="adcostPriceDelete">
+		  		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			</action>
+			
+			<action name="initAdcostPriceDetails" class="adcostPriceAction" method="initAdcostPriceDetails">
+		  		<result name="success">/WEB-INF/pages/storage/adcostPrice/adcostPrice_details.jsp</result>
+			</action>
+			<action name="initBrandPriceInsert2" class="adcostPriceAction" method="initBrandPriceInsert2">
+			    <result name="success">/WEB-INF/pages/storage/brandprice/brandprice_insert2.jsp</result>
+	        </action>
+	        <action name="brandPriceInsert2" class="adcostPriceAction" method="brandPriceInsert2">
+			    <result name="NoReapet">/WEB-INF/pages/storage/brandprice/brandprice_insert2.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="addAdcostPrice" class="adcostPriceAction" method="addAdcostPrice">
+		  		<result name="success">/WEB-INF/pages/storage/adcostPrice/adcostPrice_insert.jsp</result>
+		  		<result name="UPDATE">/WEB-INF/pages/storage/adcostPrice/adcostPrice_update.jsp</result>
+		</action>
+		<!-- 成本调价管理 wanglei end -->
+	    
+	    <!-- 抽检 sxh begin -->
+		<action name="initSamplingCheckSel" class="samplingCheckAction" method="initSamplingCheckSel">
+		  <result name="success">/WEB-INF/pages/storage/samplingCheck/samplingCheck_select.jsp</result>
+		</action>
+		<action name="selectSamplingCheck" class="samplingCheckAction" method="selectSamplingCheck">
+		  <result name="success">/WEB-INF/pages/storage/samplingCheck/samplingCheck_select.jsp</result>
+		</action>
+		<action name="initInsertSamplingCheck" class="samplingCheckAction" method="initInsertSamplingCheck">
+		  <result name="success">/WEB-INF/pages/storage/samplingCheck/samplingCheck_insert.jsp</result>
+		</action>
+		<action name="insertSamplingCheck" class="samplingCheckAction" method="insertSamplingCheck">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="initSelectSampledCheck" class="samplingCheckAction" method="initSelectSampledCheck">
+		  <result name="success">/WEB-INF/pages/storage/samplingCheck/sampledCheck_select.jsp</result>
+		</action>
+		<action name="selectSampledCheck" class="samplingCheckAction" method="selectSampledCheck">
+		  <result name="success">/WEB-INF/pages/storage/samplingCheck/sampledCheck_select.jsp</result>
+		</action>
+		<action name="initSamplingCheckDetails" class="samplingCheckAction" method="initSamplingCheckDetails">
+		  <result name="success">/WEB-INF/pages/storage/samplingCheck/sampledCheck_details.jsp</result>
+		</action>
+		<!-- 抽检 sxh end -->
+		
+		<!-- 收货检验sxh begin -->
+		<action name="initProcurementCheckSelect" class="procurementCheckAction" method="initProcurementCheckSelect">
+		  <result name="success">/WEB-INF/pages/storage/procurementCheck/procurementCheck_select.jsp</result>
+		  <result name="procurementCheckSelect" type="redirectAction">procurementCheckSelect?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<action name="procurementCheckSelect" class="procurementCheckAction" method="procurementCheckSelect">
+		  <result name="success">/WEB-INF/pages/storage/procurementCheck/procurementCheck_select.jsp</result>
+		</action>
+		
+		<action name="initProcurementCheckGlassInsert" class="procurementCheckAction" method="initProcurementCheckGlassInsert">
+		  <result name="success">/WEB-INF/pages/storage/procurementCheck/procurementCheckGlass_insert.jsp</result>
+		</action>
+		
+		<action name="initProcurementCheckUnGlassInsert" class="procurementCheckAction" method="initProcurementCheckUnGlassInsert">
+		  <result name="success">/WEB-INF/pages/storage/procurementCheck/procurementCheckUnGlass_insert.jsp</result>
+		</action>
+		
+		<action name="initProcurementCheckReceiptBillSelect" class="procurementCheckAction" method="initProcurementCheckReceiptBillSelect">
+		  <result name="success">/WEB-INF/pages/storage/procurementCheck/procurementCheckReceiptBill_select.jsp</result>
+		</action>
+		
+		<action name="procurementCheckReceiptBillSelect" class="procurementCheckAction" method="procurementCheckReceiptBillSelect">
+		  <result name="success">/WEB-INF/pages/storage/procurementCheck/procurementCheckReceiptBill_select.jsp</result>
+		</action>
+		
+		<action name="procurementCheckReceiptBillChange" class="procurementCheckAction" method="procurementCheckReceiptBillChange">
+		  <result name="success">/WEB-INF/pages/storage/procurementCheck/procurementCheckGlass_insert.jsp</result>
+		</action>
+		
+		<action name="procurementCheckUnReceiptBillChange" class="procurementCheckAction" method="procurementCheckUnReceiptBillChange">
+		  <result name="success">/WEB-INF/pages/storage/procurementCheck/procurementCheckUnGlass_insert.jsp</result>
+		</action>
+		
+		<action name="procurementCheckGlassInsert" class="procurementCheckAction" method="procurementCheckGlassInsert">
+	  		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="procurementCheckDetails" class="procurementCheckAction" method="procurementCheckDetails">
+	  		<result name="success">/WEB-INF/pages/storage/procurementCheck/procurementCheckGlass_details.jsp</result>
+	  		<result name="unglass">/WEB-INF/pages/storage/procurementCheck/procurementCheckUnGlass_details.jsp</result>
+		</action>
+		
+		<action name="procurementCheckUnGlassInsert" class="procurementCheckAction" method="procurementCheckUnGlassInsert">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="procurementCheckReceiptDetails" class="procurementCheckAction" method="procurementCheckReceiptDetails">
+			<result name="success">/WEB-INF/pages/storage/procurementCheck/procurementCheckReceiptBill_details.jsp</result>
+	    </action>
+		<!-- 收货检验sxh end -->
+		
+		<!-- 系统上线数据清理 szk begin -->
+		<action name="initSystemClear" class="systemClearAction" method="initSystemClear">
+		  <result name="success">/WEB-INF/pages/storage/systemclear/systemclear_select.jsp</result>
+		</action>
+		<action name="clearStorageData" class="systemClearAction" method="clearStorageData">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="updateSystemOnLineDate" class="systemClearAction" method="updateSystemOnLineDate">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="insertPayMentDate" class="systemClearAction" method="insertPayMentDate">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="initDataBaseBackupInsert" class="systemClearAction" method="initDataBaseBackupInsert">
+		  <result name="success">/WEB-INF/pages/storage/systemclear/systemclear_backup.jsp</result>
+		</action>
+		<action name="insertDataBaseBackup" class="systemClearAction" method="insertDataBaseBackup">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<!-- 系统上线数据清理 szk begin -->
+		
+		<!-- 批发调价管理 Add by liujing -->
+		<action name="initWholesalePriceSel" class="wholesalePriceAction" method="initWholesalePriceSel">
+			<result name="success">/WEB-INF/pages/storage/wholesalePrice/wholesaleprice_select.jsp</result>
+			<result name="wholesalePriceSel" type="redirectAction">wholesalePriceSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	     <action name="wholesalePriceSel" class="wholesalePriceAction" method="wholesalePriceSel">
+			<result name="success">/WEB-INF/pages/storage/wholesalePrice/wholesaleprice_select.jsp</result>
+	    </action>
+	    <action name="initWholesalePriceInsert" class="wholesalePriceAction" method="initWholesalePriceInsert">
+			<result name="success">/WEB-INF/pages/storage/wholesalePrice/wholesaleprice_insert.jsp</result>
+	    </action>
+	     <action name="wholesalePriceInsert" class="wholesalePriceAction" method="wholesalePriceInsert">
+			<result name="NoReapet">/WEB-INF/pages/storage/wholesalePrice/wholesaleprice_insert.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	     <action name="initWholesalePriceUpdate" class="wholesalePriceAction" method="initWholesalePriceUpdate">
+			<result name="success">/WEB-INF/pages/storage/wholesalePrice/wholesaleprice_update.jsp</result>
+	    </action>
+	      <action name="wholesalePriceUpdate" class="wholesalePriceAction" method="wholesalePriceUpdate">
+			<result name="NoReapet">/WEB-INF/pages/storage/wholesalePrice/wholesaleprice_update.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	     <action name="wholesalePriceDelete" class="wholesalePriceAction" method="wholesalePriceDelete">
+			<result name="NoReapet">/WEB-INF/pages/storage/wholesalePrice/wholesaleprice_delete.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	     <action name="initWholesalePriceDelete" class="wholesalePriceAction" method="initWholesalePriceDelete">
+			<result name="success">/WEB-INF/pages/storage/wholesalePrice/wholesaleprice_delete.jsp</result>
+	    </action>
+	     <action name="initWholesalePriceDetails" class="wholesalePriceAction" method="initWholesalePriceDetails">
+			<result name="success">/WEB-INF/pages/storage/wholesalePrice/wholesaleprice_details.jsp</result>
+	    </action>
+	    <action name="initBrandPriceInsert3" class="wholesalePriceAction" method="initBrandPriceInsert3">
+			<result name="success">/WEB-INF/pages/storage/brandprice/brandprice_insert3.jsp</result>
+	    </action>
+	    <action name="brandPriceInsert3" class="wholesalePriceAction" method="brandPriceInsert3">
+			<result name="NoReapet">/WEB-INF/pages/storage/brandprice/brandprice_insert3.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	     <action name="addWholesalePrice" class="wholesalePriceAction" method="addWholesalePrice">
+			<result name="success">/WEB-INF/pages/storage/wholesalePrice/wholesaleprice_insert.jsp</result>
+			<result name="UPDATE">/WEB-INF/pages/storage/wholesalePrice/wholesaleprice_update.jsp</result>
+	    </action>
+	<!-- 批发调价管理 End by liujing -->	
+		
+	<!-- 加盟店调货管理lvhz  begin-->
+		<action name="initStoreGoodsSel" class="storeGoodsAction" method="initStoreGoodsSel">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeGoods_select.jsp</result>
+			<result name="selStoreGoods" type="redirectAction">selStoreGoods?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    <action name="selStoreGoods" class="storeGoodsAction" method="selStoreGoods">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeGoods_select.jsp</result>
+	    </action>
+	    <action name="initStoreGoodsInsert" class="storeGoodsAction" method="initStoreGoodsInsert">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeGoods_insert.jsp</result>
+	    </action>
+	    <action name="insertStoreGoods" class="storeGoodsAction" method="insertStoreGoods">
+	    	<result name="error">/WEB-INF/pages/storage/storeGoods/storeGoods_insert.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initStoreGoodsUpdate" class="storeGoodsAction" method="initStoreGoodsUpdate">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeGoods_update.jsp</result>
+	    </action>    
+	    <action name="updateStoreGoods" class="storeGoodsAction" method="updateStoreGoods">
+	    	<result name="error">/WEB-INF/pages/storage/storeGoods/storeGoods_update.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initStoreGoodsDelete" class="storeGoodsAction" method="initStoreGoodsDelete">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeGoods_delete.jsp</result>
+	    </action>    
+	    <action name="deleteStoreGoods" class="storeGoodsAction" method="deleteStoreGoods">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStoreGoodsDetails" class="storeGoodsAction" method="initStoreGoodsDetails">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeGoods_details.jsp</result>
+	    </action>
+	    
+	    <action name="selAllocationBillsOut" class="storeGoodsAction" method="selAllocationBillsOut">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeGoods_insert.jsp</result>
+    	</action>
+   		 <action name="selAllocationBillsUpdateOut" class="storeGoodsAction" method="selAllocationBillsUpdateOut">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeGoods_update.jsp</result>
+    	</action>
+	<!-- 加盟店调货管理lvhz end-->
+	
+	<!-- 加盟店退货管理sxh begin-->
+		<action name="initStoreReturnGoodsSel" class="storeGoodsAction" method="initStoreReturnGoodsSel">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeReturnGoods_select.jsp</result>
+			<result name="selStoreReturnGoods" type="redirectAction">selStoreReturnGoods?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    <action name="selStoreReturnGoods" class="storeGoodsAction" method="selStoreReturnGoods">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeReturnGoods_select.jsp</result>
+	    </action>
+	    <action name="initStoreReturnGoodsInsert" class="storeGoodsAction" method="initStoreReturnGoodsInsert">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeReturnGoods_insert.jsp</result>
+	    </action>
+	    <action name="initStoreReturnGoodsForBatchInsert" class="storeGoodsAction" method="initStoreReturnGoodsForBatchInsert">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeReturnGoodsForBatch_insert.jsp</result>
+	    </action>
+	    <action name="insertStoreReturnGoods" class="storeGoodsAction" method="insertStoreReturnGoods">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initStoreReturnGoodsUpdate" class="storeGoodsAction" method="initStoreReturnGoodsUpdate">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeReturnGoods_update.jsp</result>
+	    </action>    
+	    <action name="updateStoreReturnGoods" class="storeGoodsAction" method="updateStoreReturnGoods">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initStoreReturnGoodsDelete" class="storeGoodsAction" method="initStoreReturnGoodsDelete">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeReturnGoods_delete.jsp</result>
+	    </action>    
+	    <action name="deleteStoreReturnGoods" class="storeGoodsAction" method="deleteStoreReturnGoods">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStoreReturnGoodsDetails" class="storeGoodsAction" method="initStoreReturnGoodsDetails">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeReturnGoods_details.jsp</result>
+	    </action>
+	    
+	    <action name="selAllocationReturnBillsOut" class="storeGoodsAction" method="selAllocationReturnBillsOut">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeReturnGoods_insert.jsp</result>
+    	</action>
+   		 <action name="selAllocationReturnBillsUpdateOut" class="storeGoodsAction" method="selAllocationReturnBillsUpdateOut">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeReturnGoods_update.jsp</result>
+    	</action>
+    	<action name="selStoreStockGoodsForBrandInsert" class="storeGoodsAction" method="selStoreStockGoodsForBrandInsert">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeReturnGoods_insert.jsp</result>
+    	</action>
+   		<action name="selStoreStockGoodsForBrandUpdate" class="storeGoodsAction" method="selStoreStockGoodsForBrandUpdate">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/storeReturnGoods_update.jsp</result>
+    	</action>
+    	
+    	<action name="selApplyWholeForAppOpen" class="storeGoodsAction" method="selApplyWholeForAppOpen">
+			<result name="success">/WEB-INF/pages/storage/storeGoods/wholeApplyOpen_select.jsp</result>
+    	</action>
+    	
+    	<action name="initWholeApplyGoodsOpenSetValue" class="storeGoodsAction" method="initWholeApplyGoodsOpenSetValue">
+			<result name="insert">/WEB-INF/pages/storage/storeGoods/storeGoods_insert.jsp</result>
+			<result name="update">/WEB-INF/pages/storage/storeGoods/storeGoods_update.jsp</result>
+    	</action>
+	<!-- 加盟店退货管理sxh end-->	
+	
+	<!-- 加工师加工sxh begin -->
+		<action name="initSelectStartWorking" class="recordWorkingTimeAction" method="initSelectStartWorking">
+			<result name="success">/WEB-INF/pages/storage/startWorking/startWorking_select.jsp</result>			
+			<result name="selectStartWorking" type="redirectAction">selectStartWorking?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+    	</action>
+    	
+    	<action name="selectStartWorking" class="recordWorkingTimeAction" method="selectStartWorking">
+			<result name="success">/WEB-INF/pages/storage/startWorking/startWorking_select.jsp</result>
+    	</action>
+    	
+    	<action name="initStartWorkingScanPerson" class="recordWorkingTimeAction" method="initStartWorkingScanPerson">
+			<result name="success">/WEB-INF/pages/components/person/personStartWorking_scan.jsp</result>
+    	</action>
+    	
+    	<action name="updateStartWorkingState" class="recordWorkingTimeAction" method="updateStartWorkingState">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="error">/WEB-INF/pages/components/person/personStartWorking_scan.jsp</result>
+    	</action>
+    	<action name="updateStartWorkingAllState" class="recordWorkingTimeAction" method="updateStartWorkingAllState">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="error">/WEB-INF/pages/components/person/personStartWorking_scan.jsp</result>
+    	</action>
+
+	<!-- 加工师加工sxh end -->
+	
+	<!-- 退货yy begin -->
+		<action name="initSalesReturnGoodsSel" class="salesReturnAction" method="initSalesReturnGoodsSel">
+			<result name="success">/WEB-INF/pages/storage/salesReturn/salesReturn_select.jsp</result>			
+			<result name="selSalesReturnGoodss" type="redirectAction">selSalesReturnGoods?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+    	</action>
+    	<action name="selSalesReturnGoods" class="salesReturnAction" method="selSalesReturnGoods">
+			<result name="success">/WEB-INF/pages/storage/salesReturn/salesReturn_select.jsp</result>
+    	</action>
+    	<action name="initSalesReturnGoodsInsert" class="salesReturnAction" method="initSalesReturnGoodsInsert">
+			<result name="success">/WEB-INF/pages/storage/salesReturn/salesReturn_insert.jsp</result>
+    	</action>
+    	<action name="insertSalesReturnGoods" class="salesReturnAction" method="insertSalesReturnGoods">
+			<result name="success">/WEB-INF/pages/storage/salesReturn/salesReturn_insert.jsp</result>
+    	</action>
+    	<action name="selSalesReturnManagement" class="salesReturnAction" method="selSalesReturnManagement">
+		   <result name="success">/WEB-INF/pages/storage/salesReturn/salesReturn_insert.jsp</result>
+		</action>
+		<action name="selectSellMirrorFrameAlls" class="salesReturnAction" method="selectSellMirrorFrameAlls">
+		   <result name="success">/WEB-INF/pages/components/sellMirrorFrame/sellMirrorFrameAllReturn_select.jsp</result>
+		</action>
+	<!-- 退货yy end -->
+	
+	<!-- 打印发料单 szk end -->	
+		<action name="initPrintSpectaclesMaterialsBillSel" class="spectaclesMaterialsAction" method="initPrintSpectaclesMaterialsBillSel">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterials/printspectaclesMaterials_select.jsp</result>
+		  <result name="selectPrintSpectaclesMaterialsBill" type="redirectAction">selectPrintSpectaclesMaterialsBill?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>		
+	    <action name="selectPrintSpectaclesMaterialsBill" class="spectaclesMaterialsAction" method="selectPrintSpectaclesMaterialsBill">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterials/printspectaclesMaterials_select.jsp</result>
+		</action>		
+		<action name="initPrintSpectaclesMaterialsBillFinishSel" class="spectaclesMaterialsFinishAction" method="initPrintSpectaclesMaterialsBillFinishSel">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterialsFinish/printspectaclesMaterialsFinish_select.jsp</result>
+		  <result name="selectPrintSpectaclesMaterialsBillFinish" type="redirectAction">selectPrintSpectaclesMaterialsBillFinish?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>		
+		<action name="selectPrintSpectaclesMaterialsBillFinish" class="spectaclesMaterialsFinishAction" method="selectPrintSpectaclesMaterialsBillFinish">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterialsFinish/printspectaclesMaterialsFinish_select.jsp</result>
+		</action>
+		<action name="selectPrintSpectaclesMaterialsBillRpt" class="spectaclesMaterialsFinishAction" method="selectPrintSpectaclesMaterialsBillRpt">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterials/spectaclesMaterials_report.jsp</result>
+		</action>
+		<action name="initPrintSpectaclesMaterialsBillDefineSel" class="spectaclesMaterialsFinishAction" method="initPrintSpectaclesMaterialsBillDefineSel">
+		  <result name="success">/WEB-INF/pages/storage/spectaclesMaterials/spectaclesMaterials_define.jsp</result>
+		</action>
+		<action name="selectPrintSpectaclesMaterialsBillDefine" class="spectaclesMaterialsFinishAction" method="selectPrintSpectaclesMaterialsBillDefine">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+	<!-- 打印发料单 szk end -->
+	
+	<!-- 批量结算 szk end -->
+		<action name="initFinancialSettlementBatch" class="financialSettlementAction" method="initFinancialSettlementBatch">
+		  <result name="success">/WEB-INF/pages/storage/financialSettlement/financialSettlement_batch.jsp</result>
+		</action>
+		<action name="insertFinancialSettlementBatch" class="financialSettlementAction" method="insertFinancialSettlementBatch">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>		
+	<!-- 批量结算 szk end -->
+	
+	<!-- 库存预警查询(二维) szk end -->
+		<action name="initStockAlert2DSel" class="stockSearchAction" method="initStockAlert2DSel">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockAlert_2D.jsp</result>
+	    </action>
+	    <action name="selStockAlert2D" class="stockSearchAction" method="selStockAlert2D">
+			<result name="success">/WEB-INF/pages/storage/stockSearch/stockAlert2D_report.jsp</result>
+	    </action>
+	<!-- 库存预警查询(二维) szk end -->
+	
+	<!-- 库存预警设置(二维) szk end -->
+	    <action name="initStockAlertSettingInsert2D" class="stockAlertSettingAction" method="initStockAlertSettingInsert2D">
+			<result name="success">/WEB-INF/pages/storage/stockAlertSetting/stockAlertSetting_2Dinsert.jsp</result>
+	    </action>
+	    <action name="insertStockAlertSetting2D" class="stockAlertSettingAction" method="insertStockAlertSetting2D">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="addStockAlertDimension" class="stockAlertSettingAction" method="addStockAlertDimension">
+			<result name="success">/WEB-INF/pages/storage/stockAlertSetting/stockAlertSetting_2Dinsert.jsp</result>
+	    </action>
+	<!-- 库存预警设置(二维) szk end -->
+	    
+	<!-- 调拨配送 sxh begin -->
+		<action name="initSelectAllocationSend" class="allocationSendAction" method="initSelectAllocationSend">
+		  <result name="success">/WEB-INF/pages/storage/allocationSend/allocationSend_select.jsp</result>
+		  <result name="selectAllocationSend" type="redirectAction">selectAllocationSend?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;outdepartment=${#request.outdepartment}&amp;starttime=${#request.starttime}&amp;endtime=${#request.endtime}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		<action name="selectAllocationSend" class="allocationSendAction" method="selectAllocationSend">
+		  <result name="success">/WEB-INF/pages/storage/allocationSend/allocationSend_select.jsp</result>
+		</action>
+		<action name="updateAllocationSend" class="allocationSendAction" method="updateAllocationSend">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  <result name="error">/WEB-INF/pages/components/person/person_scan.jsp</result>
+		</action>
+		<action name="initAllocationSendPensonScan" class="allocationSendAction" method="initAllocationSendPensonScan">
+		  <result name="success">/WEB-INF/pages/storage/allocationSend/person_scan.jsp</result>
+		</action>
+		
+		<action name="initSelectAllocationSended" class="allocationSendAction" method="initSelectAllocationSended">
+		  <result name="success">/WEB-INF/pages/storage/allocationSend/allocationSended_select.jsp</result>
+		  <result name="selectedDoorStoreDelivery" type="redirectAction">selectedDoorStoreDelivery?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;type=${#request.type}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		<action name="selectAllocationSended" class="allocationSendAction" method="selectAllocationSended">
+		  <result name="success">/WEB-INF/pages/storage/allocationSend/allocationSended_select.jsp</result>
+		</action>
+		<action name="selectAllocationSendedDetail" class="allocationSendAction" method="selectAllocationSendedDetail">
+		  <result name="success">/WEB-INF/pages/storage/allocationSend/allocationSend_detail.jsp</result>
+		</action>
+	<!-- 调拨配送 sxh end-->
+	
+	<!-- 配镜评级sxh begin -->
+		<action name="initGlassesCheckSel" class="glassesCheckAction" method="initGlassesCheckSel">
+		  <result name="success">/WEB-INF/pages/storage/glassesCheck/workingCheck_select.jsp</result>
+		  <result name="selectGlassesCheck" type="redirectAction">selectGlassesCheck?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<action name="selectGlassesCheck" class="glassesCheckAction" method="selectGlassesCheck">
+		  <result name="success">/WEB-INF/pages/storage/glassesCheck/workingCheck_select.jsp</result>
+		</action>
+		
+		<action name="initGlassesCheckIns" class="glassesCheckAction" method="initGlassesCheckIns">
+		  <result name="success">/WEB-INF/pages/storage/glassesCheck/workingCheck_insert.jsp</result>
+		</action>
+		
+		<action name="insertGlassesCheck" class="glassesCheckAction" method="insertGlassesCheck">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="selectGlassesCheckDetails" class="glassesCheckAction" method="selectGlassesCheckDetails">
+			<result name="success">/WEB-INF/pages/storage/glassesCheck/workingCheck_details.jsp</result>
+		</action>
+		
+		<action name="initGlassesCheckedSel" class="glassesCheckAction" method="initGlassesCheckedSel">
+		  <result name="success">/WEB-INF/pages/storage/glassesCheck/workingChecked_select.jsp</result>
+		  <result name="selectGlassesChecked" type="redirectAction">selectGlassesChecked?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<action name="selectGlassesChecked" class="glassesCheckAction" method="selectGlassesChecked">
+		  <result name="success">/WEB-INF/pages/storage/glassesCheck/workingChecked_select.jsp</result>
+		</action>
+	<!-- 配镜评级sxh end -->
+	
+	<!-- 委外配送 szk begin -->
+		<action name="initConsignProcessDelivery" class="outSourcingDeliveryAction" method="initConsignProcessDelivery">
+		  <result name="success">/WEB-INF/pages/storage/outsourcingdelivery/outsourcingdelivery_select.jsp</result>
+		  <result name="selectConsignProcessDelivery" type="redirectAction">selectConsignProcessDelivery?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		<action name="selectConsignProcessDelivery" class="outSourcingDeliveryAction" method="selectConsignProcessDelivery">
+		  <result name="success">/WEB-INF/pages/storage/outsourcingdelivery/outsourcingdelivery_select.jsp</result>
+		</action>		
+		<action name="initConsignProcessDeliveryUpdate" class="outSourcingDeliveryAction" method="initConsignProcessDeliveryUpdate">
+		  <result name="success">/WEB-INF/pages/storage/outsourcingdelivery/outsourcingdelivery_update.jsp</result>
+		</action>		
+		<action name="updateConsignProcessDelivery" class="outSourcingDeliveryAction" method="updateConsignProcessDelivery">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+	<!-- 委外配送 szk end-->
+	
+	<!-- 商品调拨结算管理 Add by szk -->
+    <action name="initAllocationSettlementSel" class="allocationAction" method="initAllocationSettlementSel">
+		<result name="success">/WEB-INF/pages/storage/allocationsettlement/allocationsettlement_select.jsp</result>
+		<result name="selAllocationSettlement" type="redirectAction">selAllocationSettlement?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+    </action>
+    <action name="selAllocationSettlement" class="allocationAction" method="selAllocationSettlement">
+		<result name="success">/WEB-INF/pages/storage/allocationsettlement/allocationsettlement_select.jsp</result>
+    </action>
+    <action name="initAllocationSettlementDetail" class="allocationAction" method="initAllocationSettlementDetail">
+		<result name="success">/WEB-INF/pages/storage/allocationsettlement/allocationsettlement_detail.jsp</result>
+    </action>
+    <action name="initAllocationSettlementInsert" class="allocationAction" method="initAllocationSettlementInsert">
+		<result name="success">/WEB-INF/pages/storage/allocationsettlement/allocationsettlement_update.jsp</result>
+    </action>
+    <action name="insertAllocationSettlement" class="allocationAction" method="insertAllocationSettlement">
+    	<result name="error">/WEB-INF/pages/storage/allocationsettlement/allocationsettlement_update.jsp</result>
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+	<!-- 商品调拨结算管理 Add by szk -->
+	
+	<!-- 客户批发收货 Add by sxh -->
+		<action name="initStoreReceiptSel" class="storeReceiptAction" method="initStoreReceiptSel">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeReceipt_select.jsp</result>
+			<result name="selStoreReceipt" type="redirectAction">selStoreReceipt?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selStoreReceipt" class="storeReceiptAction" method="selStoreReceipt">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeReceipt_select.jsp</result>
+	    </action>
+	    <action name="initStoreReceiptInsert" class="storeReceiptAction" method="initStoreReceiptInsert">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeReceipt_insert.jsp</result>
+	    </action>
+	    <action name="initStoreReceiptyxInsert" class="storeReceiptAction" method="initStoreReceiptyxInsert">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeReceiptyx_insert.jsp</result>
+	    </action>
+	    <action name="insertStoreReceipt" class="storeReceiptAction" method="insertStoreReceipt">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="input">/WEB-INF/pages/storage/storeReceipt/storeReceipt_update.jsp</result>
+	    </action>
+	    <action name="initStoreReceiptUpdate" class="storeReceiptAction" method="initStoreReceiptUpdate">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeReceipt_update.jsp</result>
+	    </action>
+	    <action name="updateStoreReceipt" class="storeReceiptAction" method="updateStoreReceipt">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="input">/WEB-INF/pages/storage/storeReceipt/storeReceipt_update.jsp</result>
+	    </action>
+	    
+	      <action name="insertStoreReceiptyx" class="storeReceiptAction" method="insertStoreReceiptyx">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="input">/WEB-INF/pages/storage/storeReceipt/storeReceiptyx_update.jsp</result>
+	    </action>
+	    <action name="initStoreReceiptUpdateyx" class="storeReceiptAction" method="initStoreReceiptUpdateyx">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeReceiptyx_update.jsp</result>
+	    </action>
+	      <action name="updateStoreReceiptyx" class="storeReceiptAction" method="updateStoreReceiptyx">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="input">/WEB-INF/pages/storage/storeReceipt/storeReceiptyx_update.jsp</result>
+	    </action>
+	    
+	    <action name="initStoreReceiptDelete" class="storeReceiptAction" method="initStoreReceiptDelete">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeReceipt_delete.jsp</result>
+	    </action>
+	    <action name="deleteStoreReceipt" class="storeReceiptAction" method="deleteStoreReceipt">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="storeReceiptDetails" class="storeReceiptAction" method="storeReceiptDetails">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeReceipt_details.jsp</result>
+	    </action>
+	    <action name="initInsertStoreReceipt" class="storeReceiptAction" method="initInsertStoreReceipt">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeReceipt_insert.jsp</result>
+			<result name="update">/WEB-INF/pages/storage/storeReceipt/storeReceipt_update.jsp</result>
+	    </action>
+	     <action name="initInsertStoreReceipts" class="storeReceiptAction" method="initInsertStoreReceipts">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeReceipt_insert.jsp</result>
+			<result name="update">/WEB-INF/pages/storage/storeReceipt/storeReceipt_update.jsp</result>
+	    </action>
+	      <action name="initInsertStoreReceiptyx" class="storeReceiptAction" method="initInsertStoreReceiptyx">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeReceiptyx_insert.jsp</result>
+			<result name="update">/WEB-INF/pages/storage/storeReceipt/storeReceiptyx_update.jsp</result>
+	    </action>
+	     <action name="initInsertStoreReceiptsyx" class="storeReceiptAction" method="initInsertStoreReceiptsyx">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeReceiptyx_insert.jsp</result>
+			<result name="update">/WEB-INF/pages/storage/storeReceipt/storeReceiptyx_update.jsp</result>
+	    </action>
+	    <action name="addStoreReceiptDimension" class="storeReceiptAction" method="addStoreReceiptDimension">
+			<result name="i">/WEB-INF/pages/storage/storeReceipt/storeReceipt_insert.jsp</result>
+			<result name="u">/WEB-INF/pages/storage/storeReceipt/storeReceipt_update.jsp</result>
+	    </action>
+	    <action name="addStoreReceiptDimensionyx" class="storeReceiptAction" method="addStoreReceiptDimensionyx">
+			<result name="i">/WEB-INF/pages/storage/storeReceipt/storeReceiptyx_insert.jsp</result>
+			<result name="u">/WEB-INF/pages/storage/storeReceipt/storeReceiptyx_update.jsp</result>
+	    </action>
+	     <action name="insertStoreReceiptDeliveryid" class="storeReceiptAction" method="insertStoreReceiptDeliveryid">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="importStoreFrameManyExcel" class="storeReceiptAction" method="importStoreFrameManyExcel">
+	      <result name="success">/WEB-INF/pages/storage/storeReceipt/storeReceipt_insert.jsp</result>
+	      <result name="yx">/WEB-INF/pages/storage/storeReceipt/storeReceiptyx_insert.jsp</result>
+	      <param name="savePath">/upload</param>
+	    </action>
+	    <action name="initStoreFinancialSettlementUpdate" class="storeReceiptAction" method="initStoreFinancialSettlementUpdate">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeFinancialSettlement_update.jsp</result>
+	    </action>    
+	    <action name="updateStoreFinancialSettlement" class="storeReceiptAction" method="updateStoreFinancialSettlement">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeFinancialSettlement_details.jsp</result>
+			<result name="input">/WEB-INF/pages/storage/storeReceipt/storeFinancialSettlement_update.jsp</result>
+	    </action>	    
+	    <action name="initStoreFinancialSettlementDetails" class="storeReceiptAction" method="initStoreFinancialSettlementDetails">
+			<result name="success">/WEB-INF/pages/storage/storeReceipt/storeFinancialSettlement_details.jsp</result>
+	    </action>
+	<!-- 客户批发收货 End by sxh -->
+	</package>
+</struts>

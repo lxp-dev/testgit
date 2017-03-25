@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="bgn"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="end"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select
+	temp.P_CH_CK_ProcessPersonID as P_CH_CK_ProcessPersonID,
+	temp.personName as personName,
+	temp.datestr as datestr,
+	sum(temp.GoodsValue) as GoodsValue,
+	sum(temp.HardValue) as HardValue
+	from(
+	select  P_CH_CK_ProcessPersonID as P_CH_CK_ProcessPersonID,
+			personName,
+			isnull(sum(S_SE_SD_Number),0.00) as GoodsValue,
+			0 as HardValue,
+			'${bgn}' + '----' +'${end}' as datestr
+	from dbo.uview_SalesBasic
+	inner join dbo.uview_SalesDetail on S_SE_SB_SalesID = S_SE_SD_SalesID
+	inner join S_SE_InTransit on S_SE_IT_SalesID = S_SE_SB_SalesID and S_SE_IT_State = '9'
+	inner join P_CH_Check on P_CH_CK_SalesId = S_SE_SB_SalesID
+    left join dbo.SYS_PersonInfo on id = P_CH_CK_ProcessPersonID
+	where S_SE_SD_CommoditiesFlag = '3'
+	  and convert(varchar(10),S_SE_IT_Date,23) >= '${bgn}'
+	  and convert(varchar(10),S_SE_IT_Date,23) <= '${end}'
+	group by P_CH_CK_ProcessPersonID,personName
+	union all
+	select  P_CH_CK_ProcessPersonID as P_CH_CK_ProcessPersonID,
+			personName,
+			0 as GoodsValue,
+			isnull(sum(S_SE_SD_HardValue),0.00) as HardValue,
+			'${bgn}' + '----' +'${end}' as datestr
+	from dbo.uview_SalesBasic
+	inner join dbo.uview_SalesDetail on S_SE_SB_SalesID = S_SE_SD_SalesID
+	inner join S_SE_InTransit on S_SE_IT_SalesID = S_SE_SB_SalesID and S_SE_IT_State = '9'
+	inner join P_CH_Check on P_CH_CK_SalesId = S_SE_SB_SalesID
+    left join dbo.SYS_PersonInfo on id = P_CH_CK_ProcessPersonID
+	where convert(varchar(10),S_SE_IT_Date,23) >= '${bgn}'
+	  and convert(varchar(10),S_SE_IT_Date,23) <= '${end}'
+	group by P_CH_CK_ProcessPersonID,personName
+)temp
+group by temp.P_CH_CK_ProcessPersonID,temp.personName,temp.datestr
+order by temp.P_CH_CK_ProcessPersonID]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1257300,914400,304800,723900,266700,914400,914400,914400,914400,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[876300,3162300,4914900,4191000,4648200,2743200,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="1" r="0" cs="3" s="0">
+<O>
+<![CDATA[天津眼科医院验光配镜中心]]></O>
+<Expand/>
+</C>
+<C c="4" r="0" s="1">
+<Expand/>
+</C>
+<C c="1" r="1" cs="4" s="2">
+<O>
+<![CDATA[加工师工作量统计表]]></O>
+<Expand/>
+</C>
+<C c="4" r="2" s="1">
+<Expand/>
+</C>
+<C c="1" r="3" s="3">
+<O>
+<![CDATA[查询日期：]]></O>
+<Expand/>
+</C>
+<C c="2" r="3" cs="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="datestr"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="3" s="1">
+<Expand/>
+</C>
+<C c="4" r="4" s="1">
+<Expand/>
+</C>
+<C c="0" r="5" s="1">
+<Expand/>
+</C>
+<C c="1" r="5" s="4">
+<O>
+<![CDATA[工号]]></O>
+<Expand/>
+</C>
+<C c="2" r="5" s="4">
+<O>
+<![CDATA[姓名]]></O>
+<Expand/>
+</C>
+<C c="3" r="5" s="4">
+<O>
+<![CDATA[加工片数]]></O>
+<Expand/>
+</C>
+<C c="4" r="5" s="4">
+<O>
+<![CDATA[难度系数]]></O>
+<Expand/>
+</C>
+<C c="0" r="6" s="1">
+<Expand/>
+</C>
+<C c="1" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="P_CH_CK_ProcessPersonID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="personName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="GoodsValue"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="HardValue"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="7" s="1">
+<Expand/>
+</C>
+<C c="1" r="7" cs="2" s="6">
+<O>
+<![CDATA[合计：]]></O>
+<Expand/>
+</C>
+<C c="3" r="7" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(D7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="7" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(E7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting>
+<Margin top="0" left="0" bottom="0" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="120"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

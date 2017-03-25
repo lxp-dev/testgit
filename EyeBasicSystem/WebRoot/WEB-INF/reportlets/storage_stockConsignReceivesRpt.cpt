@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="goodsNamerpt"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="instockIDrpt"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="financeAuditPersonNamerpt"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="startTimerpt"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryidrpt"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="sourceBillIDrpt"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="billIDrpt"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsIDrpt"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="selcstpsupplieridrpt"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="companyID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="auditStaterpt"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endTimerpt"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+	declare @billIDrpt varchar(50),
+		    @sourceBillIDrpt varchar(50),
+	        @selcstpsupplieridrpt varchar(50),
+			@instockIDrpt varchar(50),
+			@auditStaterpt varchar(50),
+			@startTimerpt varchar(50),
+			@endTimerpt varchar(50),
+			@financeAuditPersonNamerpt varchar(50),
+			@categoryidrpt varchar(50),
+			@goodsNamerpt varchar(50),
+			@goodsIDrpt varchar(50),
+			@bgnDate varchar(50),
+			@endDate varchar(50),
+			@companyID varchar(50)
+
+	set @billIDrpt = '${billIDrpt}'
+	set @sourceBillIDrpt = '${sourceBillIDrpt}'
+	set @selcstpsupplieridrpt = '${selcstpsupplieridrpt}'
+	set @instockIDrpt = '${instockIDrpt}'
+	set @auditStaterpt = '${auditStaterpt}'
+	set @startTimerpt = '${startTimerpt}'
+	set @endTimerpt = '${endTimerpt}'
+	set @financeAuditPersonNamerpt = '${financeAuditPersonNamerpt}'
+	set @categoryidrpt = '${categoryidrpt}'
+	set @goodsNamerpt = '${goodsNamerpt}'
+	set @goodsIDrpt = '${goodsIDrpt}'
+	set @bgnDate = '${bgnDate}'
+	set @endDate = '${endDate}'
+    set @companyID = '${companyID}'
+
+
+SELECT		   isnull(C_ST_I_DeliveryID,'')			   AS DeliveryID,
+               C_ST_IE_BillID as BillID,
+			   B_GI_SupplierID as SupplierID,
+			   B_SP_SupplierName as SupplierName,
+               sum(C_ST_IE_CostPriceAmount) as CostPriceAmount,
+			   convert(varchar(10),C_ST_I_FinanceAuditDate,23) as FinanceAuditDate
+        FROM   C_ST_INVENTORYENTRY
+			   left join C_ST_Inventory on C_ST_I_BillID = C_ST_IE_BillID
+               left JOIN B_WAREHOUSE ON B_WH_ID = C_ST_IE_InStockId
+               left join B_Departments on B_WH_deptID = B_DP_DepartmentID 
+			   left join SYS_PersonInfo a on a.id = C_ST_I_AuditPerson
+			   left join SYS_PersonInfo b on b.id = C_ST_I_FinanceAuditPerson
+			   left join B_GoodsInfo on B_GI_GoodsID = C_ST_IE_GoodsId
+			   left join B_Supplier on B_SP_ID = B_GI_SupplierID
+        WHERE  (isnull(@billIDrpt,'') = '' or C_ST_IE_BillID = @billIDrpt)
+		  AND  (isnull(@sourceBillIDrpt,'') = '' or C_ST_I_SourceBillId = @sourceBillIDrpt)
+		  AND  (isnull(@selcstpsupplieridrpt,'') = '' or C_ST_I_SupplierId = @selcstpsupplieridrpt)
+		  AND  (isnull(@instockIDrpt,'') = '' or C_ST_I_InStockId = @instockIDrpt)
+		  AND  (isnull(@auditStaterpt,'') = '' or C_ST_I_FinanceAuditState = @auditStaterpt)
+		  AND  (isnull(@startTimerpt,'') = '' or Convert(varchar(10),C_ST_I_FinanceAuditDate,23) >= @startTimerpt)
+		  AND  (isnull(@endTimerpt,'') = '' or Convert(varchar(10),C_ST_I_FinanceAuditDate,23) <= @endTimerpt)
+		  AND  (isnull(@financeAuditPersonNamerpt,'') = '' or b.personname like '%' + @financeAuditPersonNamerpt + '%')
+		  AND  (isnull(@categoryidrpt,'') = '' or B_GI_GoodsCategoryID = @categoryidrpt)
+		  AND  (isnull(@goodsNamerpt,'') = '' or B_GI_GoodsName like '%' + @goodsNamerpt + '%')
+		  AND  (isnull(@goodsIDrpt,'') = '' or B_GI_GoodsID like '%' + @goodsIDrpt + '%')
+		  AND  C_ST_IE_BillID LIKE 'CPIN%'
+		  AND  (isnull(@bgnDate,'') = '' or Convert(varchar(10),C_ST_I_billDate,23) >= @bgnDate)
+		  AND  (isnull(@endDate,'') = '' or Convert(varchar(10),C_ST_I_billDate,23) <= @endDate)
+          AND  (isnull(@companyID,'') = '' or B_DP_CompanysID = @companyID)
+
+	group by C_ST_I_DeliveryID,
+             C_ST_IE_BillID,
+			 B_GI_SupplierID,
+			 B_SP_SupplierName,C_ST_I_FinanceAuditDate 
+	order by C_ST_I_FinanceAuditDate
+]]></Query>
+</TableData>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="3" T="3"/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,952500,914400,914400,914400,914400,914400,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,0,1638300,495300,381000,2933700,2667000,2133600,2133600,7924800,3238500,5105400,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<Expand/>
+</C>
+<C c="2" r="0" cs="10" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" s="2">
+<Expand/>
+</C>
+<C c="2" r="1" cs="10" s="3">
+<O>
+<![CDATA[委外结算单]]></O>
+<Expand/>
+</C>
+<C c="2" r="3" cs="4" s="4">
+<O>
+<![CDATA[运单号]]></O>
+<Expand/>
+</C>
+<C c="6" r="3" cs="3" s="4">
+<O>
+<![CDATA[收货单号]]></O>
+<Expand/>
+</C>
+<C c="9" r="3" s="4">
+<O>
+<![CDATA[制造商]]></O>
+<Expand/>
+</C>
+<C c="10" r="3" s="4">
+<O>
+<![CDATA[审核日期]]></O>
+<Expand/>
+</C>
+<C c="11" r="3" s="4">
+<O>
+<![CDATA[价税合计]]></O>
+<Expand/>
+</C>
+<C c="0" r="4" s="5">
+<Expand/>
+</C>
+<C c="1" r="4">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="SupplierID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="4" cs="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="DeliveryID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="4" cs="3" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="BillID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="SupplierName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="FinanceAuditDate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="CostPriceAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="5" s="7">
+<Expand/>
+</C>
+<C c="1" r="5" s="7">
+<Expand/>
+</C>
+<C c="2" r="5" cs="9" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="SupplierName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA['按制造商 '+$$$ + ' 小计：']]></Result>
+<Parameters/>
+</O>
+<Expand dir="0" leftParentDefault="false" left="B5"/>
+</C>
+<C c="11" r="5" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(L5))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="6" s="10">
+<Expand/>
+</C>
+<C c="1" r="6" s="10">
+<Expand/>
+</C>
+<C c="2" r="6" cs="9" s="11">
+<O>
+<![CDATA[合计:]]></O>
+<Expand dir="1"/>
+</C>
+<C c="11" r="6" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(L6))]]></Attributes>
+</O>
+<Expand dir="1"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting>
+<Margin top="0" left="719999" bottom="0" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="120"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="queryPersonID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+
+select departmentID into #shopCode from sales_createShopCodeTab('${shopCode}')
+
+if ('${begDate}'<convert(varchar(10),getdate(),120))
+begin
+
+if ('${endDate}'<convert(varchar(10),getdate(),120))
+begin
+
+select   ('${begDate}'+'--'+'${endDate}') as queryDate,
+		  '' as departmentName,
+		  personID as personID,
+		  personName as personName,
+		  billCount as billCount
+   from (
+select  
+		  '' as departmentName,
+		  R_SM_OS_personID as personID,
+		  R_SM_OS_personName as personName,
+		  sum(R_SM_OS_billCount) as billCount
+		
+   from R_sendMaterialOnlyStore
+ where R_SM_OS_Date>='${begDate}' and R_SM_OS_Date<='${endDate}'
+        and ((ISNULL('${shopCode}', '') <> '' AND R_SM_OS_DepartmentId in (select departmentID from #shopCode)) OR ISNULL('${shopCode}', '') = '') 
+        and ((ISNULL('${queryPersonID}', '') <> '' AND R_SM_OS_personID='${queryPersonID}') OR ISNULL('${queryPersonID}', '') = '')
+
+  group by R_SM_OS_personName,R_SM_OS_personID
+)temp 
+  where billCount<>0
+
+end
+else
+begin
+
+
+
+select   ('${begDate}'+'--'+'${endDate}') as queryDate,
+		  '' as departmentName,
+		  personID as personID,
+		  personName as personName,
+		  sum(billCount) as billCount
+
+   from (
+
+select    '' as departmentName,
+		  personID as personID,
+		  personName as personName,
+		  billCount as billCount
+   from (
+select    '' as departmentName,
+		  R_SM_OS_personID as personID,
+		  R_SM_OS_personName as personName,
+		  sum(R_SM_OS_billCount) as billCount
+		
+   from R_sendMaterialOnlyStore
+ where R_SM_OS_Date>='${begDate}' 
+       and R_SM_OS_Date<=convert(char(10), dateadd(day,-1, '${endDate}'),120) 
+        and ((ISNULL('${shopCode}', '') <> '' AND R_SM_OS_DepartmentId in (select departmentID from #shopCode)) OR ISNULL('${shopCode}', '') = '') 
+        and ((ISNULL('${queryPersonID}', '') <> '' AND R_SM_OS_personID='${queryPersonID}') OR ISNULL('${queryPersonID}', '') = '')
+
+  group by R_SM_OS_personName,R_SM_OS_personID
+)temp 
+  where billCount<>0
+
+union all
+
+select '' as departmentName,
+      temp.personID as personID,
+       personName as personName,
+       isnull(billCount,0) as billCount
+   
+  from (
+
+select distinct S_SE_IT_CreatePerson as personID,personName as personName
+  from S_SE_InTransit left join SYS_PersonInfo on S_SE_IT_CreatePerson=id
+  where S_SE_IT_State='6' -- 已发料
+        and ((ISNULL('${shopCode}', '') <> '' AND S_SE_IT_Department in (select departmentID from #shopCode)) OR ISNULL('${shopCode}', '') = '') 
+        and ((ISNULL('${queryPersonID}', '') <> '' AND S_SE_IT_CreatePerson='${queryPersonID}') OR ISNULL('${queryPersonID}', '') = '')
+
+)temp 
+
+  left join (
+
+	select S_SE_IT_CreatePerson as personID,count(S_SE_IT_SalesID) as billCount
+	  from S_SE_InTransit left join SYS_PersonInfo on S_SE_IT_CreatePerson=id
+	  where S_SE_IT_State='6' -- 已发料
+			and convert(varchar(10),S_SE_IT_Date,120)>=convert(varchar(10),getdate(),120)
+			and convert(varchar(10),S_SE_IT_Date,120)<=convert(varchar(10),getdate(),120)
+        and ((ISNULL('${shopCode}', '') <> '' AND S_SE_IT_Department in (select departmentID from #shopCode)) OR ISNULL('${shopCode}', '') = '') 
+        and ((ISNULL('${queryPersonID}', '') <> '' AND S_SE_IT_CreatePerson='${queryPersonID}') OR ISNULL('${queryPersonID}', '') = '')
+
+	  group by S_SE_IT_CreatePerson
+
+  )temp2 on temp.personID=temp2.personID
+  where billCount<>0
+
+) temp4 
+
+ group by personID,personName
+
+
+end
+
+end
+else
+begin
+
+
+
+
+
+
+
+------------------------------------------------------
+
+select temp.personID as personID,personName as personName,isnull(billCount,0) as billCount
+       ,('${begDate}'+'--'+'${endDate}') as queryDate,
+      '' as departmentName
+  from (
+
+select distinct S_SE_IT_CreatePerson as personID,personName as personName
+  from S_SE_InTransit left join SYS_PersonInfo on S_SE_IT_CreatePerson=id
+  where S_SE_IT_State='6' -- 已发料
+        and ((ISNULL('${shopCode}', '') <> '' AND S_SE_IT_Department in (select departmentID from #shopCode)) OR ISNULL('${shopCode}', '') = '') 
+        and ((ISNULL('${queryPersonID}', '') <> '' AND S_SE_IT_CreatePerson='${queryPersonID}') OR ISNULL('${queryPersonID}', '') = '')
+
+)temp 
+
+  left join (
+
+	select S_SE_IT_CreatePerson as personID,count(S_SE_IT_SalesID) as billCount
+	  from S_SE_InTransit left join SYS_PersonInfo on S_SE_IT_CreatePerson=id
+	  where S_SE_IT_State='6' -- 已发料
+			and convert(varchar(10),S_SE_IT_Date,120)>=convert(varchar(10),getdate(),120)
+			and convert(varchar(10),S_SE_IT_Date,120)<=convert(varchar(10),getdate(),120)
+        and ((ISNULL('${shopCode}', '') <> '' AND S_SE_IT_Department in (select departmentID from #shopCode)) OR ISNULL('${shopCode}', '') = '') 
+        and ((ISNULL('${queryPersonID}', '') <> '' AND S_SE_IT_CreatePerson='${queryPersonID}') OR ISNULL('${queryPersonID}', '') = '')
+
+	  group by S_SE_IT_CreatePerson
+
+  )temp2 on temp.personID=temp2.personID
+  where billCount<>0
+
+end
+
+drop table #shopCode]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 '${customAmountName}' as customAmountName,'${ShopCodeName}' as ShopCodeName,'${queryWay}'  as queryWay,'${lookWay}' as lookWay
+]]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.page.First">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-First')}]]></Text>
+<IconName>
+<![CDATA[first]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Previous">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Previous')}]]></Text>
+<IconName>
+<![CDATA[previous]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.PageNavi">
+<WidgetAttr/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Next">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Next')}]]></Text>
+<IconName>
+<![CDATA[next]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Last">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Last')}]]></Text>
+<IconName>
+<![CDATA[last]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.FlashPrint">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Utils-Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.Export">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Export')}]]></Text>
+<IconName>
+<![CDATA[export]]></IconName>
+<Buttons pdf="true" excelP="true" excelO="true" excelS="true" word="true" image="true" html="true"/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.SetPrinterOffset">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('SetPrinterOffset')}]]></Text>
+<IconName>
+<![CDATA[setprinteroffset]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="false" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="7"/>
+<FR F="10" T="10"/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,2628900,6438900,4076700,3695700,1790700,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="1" r="0" cs="5" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="1" cs="5" s="1">
+<O>
+<![CDATA[发料人员工作量统计]]></O>
+<Expand/>
+</C>
+<C c="1" r="2" cs="5">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="3" s="2">
+<O>
+<![CDATA[查询日期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="3" cs="4" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begDate + " 至 " + $enddate]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="1" r="4" s="3">
+<O>
+<![CDATA[部门名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="4" cs="4" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="ShopCodeName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="1" r="5" s="3">
+<O>
+<![CDATA[查询方式：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="5" cs="4" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="queryWay"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="1" r="6" s="3">
+<O>
+<![CDATA[查看分类：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="6" cs="4" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="lookWay"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="1" r="7" s="4">
+<O>
+<![CDATA[工号]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="2" r="7" s="4">
+<O>
+<![CDATA[姓名]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="3" r="7" cs="3" s="5">
+<O>
+<![CDATA[发料数量]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[1]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[2]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="1" r="8" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="personID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0" order="2">
+<SortFormula>
+<![CDATA[SWITCH($order, "1", -TODOUBLE(D9), "2", TODOUBLE(D9), "3", -TODOUBLE(F9), "4", TODOUBLE(F9))]]></SortFormula>
+</Expand>
+</C>
+<C c="2" r="8" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="personName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="8" cs="3" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="billCount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="9" cs="2" s="7">
+<O>
+<![CDATA[合计：]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="3" r="9" cs="3" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(D9)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="1" r="10" s="2">
+<O>
+<![CDATA[打印日期:]]></O>
+<Expand/>
+</C>
+<C c="2" r="10" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=today()]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="10" cs="3" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="页次:第 " + $$page_number + " 页/共 " + $$totalPage_number + " 页"]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="0" bottom="986400" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72" foreground="-16776961" underline="1"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

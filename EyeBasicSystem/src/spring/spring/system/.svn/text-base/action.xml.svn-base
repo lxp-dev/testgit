@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+
+
+	<!-- 会员卡类别管理 du  begin-->
+	<bean id="memberManagementAction" class="com.pengsheng.eims.system.action.MemberManagementAction" scope="prototype"/>
+	<!-- 会员卡类别管理 du  end-->
+	
+	<!-- 员工打折管理 du  begin-->
+	<bean id="personDiscountAction" class="com.pengsheng.eims.system.action.PersonDiscountAction" scope="prototype"/>
+	<!-- 员工打折管理 du  end-->
+
+	<!-- 角色打折管理 du  begin-->
+    <bean id="roleDiscountAction" class="com.pengsheng.eims.system.action.RoleDiscountAction" scope="prototype"/>
+	<!-- 角色打折管理 du  end-->
+	
+	<!-- 工艺类型 Add by GuanZiGang 2009.12.10-->
+		<bean id="teachnologyTypeAction" class="com.pengsheng.eims.system.action.TeachnologyTypeAction" scope="prototype"/>
+	<!-- 工艺类型 End by GuanZiGang 2009.12.10-->
+	
+	<!-- 附加费用 Add by GuanZiGang 2009.12.14-->
+		<bean id="additionalCostsAction" class="com.pengsheng.eims.system.action.AdditionalCostsAction" scope="prototype"/>
+	<!-- 附加费用 End by GuanZiGang 2009.12.14-->
+	
+	<!-- 特殊加工要求 Add by GuanZiGang 2009.12.15-->
+		<bean id="specialRequirementsAction" class="com.pengsheng.eims.system.action.SpecialRequirementsAction" scope="prototype"/>
+	<!-- 特殊加工要求 End by GuanZiGang 2009.12.15-->
+	
+	<!-- 挂号类别 Add by GuanZiGang 2009.12.22-->
+		<bean id="registeredCategoryAction" class="com.pengsheng.eims.system.action.RegisteredCategoryAction" scope="prototype"/>
+	<!-- 挂号类别 End by GuanZiGang 2009.12.22-->
+	
+	<!-- 部门维护 Liuqian  begin-->
+    <bean id="departmentsAction" class="com.pengsheng.eims.system.action.DepartmentsAction" scope="prototype"/>
+	<!-- 部门维护 Liuqian  end-->
+	
+	<!-- 人员维护 Liuqian  begin-->
+    <bean id="personInfoAction" class="com.pengsheng.eims.system.action.PersonInfoAction" scope="prototype"/>
+	<!-- 人员维护 Liuqian  end-->
+	
+	<!-- 角色维护 Liuqian  begin-->
+	<bean id="roleAction" class="com.pengsheng.eims.system.action.RoleAction" scope="prototype"/>
+	<!-- 角色维护 Liuqian  end-->
+	
+	<!-- 公司名称设定 wanglei begin -->
+	<bean id="companyNameAction" class="com.pengsheng.eims.system.action.CompanyNameAction" scope="prototype"/>
+	<!-- 公司名称设定 wanglei end -->
+	
+	<!-- 打折快捷键维护 sxh begin -->
+	<bean id="discountShortcutKeysAction" class="com.pengsheng.eims.system.action.DiscountShortcutKeysAction" scope="prototype"/>
+	<!-- 打折快捷键维护 sxh end -->
+	
+	<!-- 系统参数设置 sxh begin -->
+	<bean id="systemParameterAction" class="com.pengsheng.eims.system.action.SystemParameterAction" scope="prototype"/>
+	<!-- 系统参数设置 sxh end -->
+	
+	<!-- 外账参数设置 sxh begin -->
+	<bean id="externalAccountParameterAction" class="com.pengsheng.eims.system.action.ExternalAccountParameterAction" scope="prototype"/>
+	<!-- 外账参数设置 sxh end -->
+	
+	<!-- 兴趣爱好 Add by -->
+		<bean id="interestAction" class="com.pengsheng.eims.system.action.InterestAction" scope="prototype"/>
+	<!-- 兴趣爱好 End by -->
+	
+	<!-- 职业 Add by -->
+		<bean id="workTypeAction" class="com.pengsheng.eims.system.action.WorkTypeAction" scope="prototype"/>
+	<!-- 职业 End by -->
+	
+	<!-- 镜架材质 Add by -->
+		<bean id="frameMaterialAction" class="com.pengsheng.eims.system.action.FrameMaterialAction" scope="prototype"/>
+	<!-- 镜架材质 End by -->
+	
+	<!-- 银行卡 Add by -->
+		<bean id="brankCardAction" class="com.pengsheng.eims.system.action.BrankCardAction" scope="prototype"/>
+	<!-- 银行卡 End by -->
+	
+	<!-- 客户机Mac地址维护  Add by moyongsheng 2013-5-6 13:00 Begin -->
+		<bean id="macAction" class="com.pengsheng.eims.system.action.MacAction" scope="prototype"/>
+	<!-- 客户机Mac地址维护  Add by moyongsheng 2013-5-6 13:00 End -->
+	
+	<!-- 商品条码批号维护 Add by du-->
+		<bean id="barCodeSetAction" class="com.pengsheng.eims.system.action.BarCodeSetAction" scope="prototype"/>
+	<!-- 商品条码批号维护 End by du-->
+	
+	<!-- 个人登录参数设置  Add by moyongsheng-->
+		<bean id="personSetOptionAction" class="com.pengsheng.eims.system.action.PersonSetOptionAction" scope="prototype"/>
+	<!-- 个人登录参数设置  Add by moyongsheng-->
+		
+	<!-- 数据库索引优化  Add by moyongsheng-->
+		<bean id="sqlIndexRecreateAction" class="com.pengsheng.eims.system.action.SqlIndexRecreateAction" scope="prototype"/>
+	<!-- 数据库索引优化  Add by moyongsheng-->
+</beans>

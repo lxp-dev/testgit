@@ -1,0 +1,1293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[2014-01-01]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[2014-01-01]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="MealID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ClassifyID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT departmentID
+INTO   #shopCode
+FROM   Sales_createshopcodetab('${shopCode}')
+
+SELECT '${bgnDate}' + '～' + '${endDate}'             AS printdate,
+       --temp.SalesItemID as GoodsID,
+       --B_GI_GoodsName as GoodsName,
+       B_GC_ID + B_BD_ID + B_SP_ID                   AS GoodsID,
+       B_BD_ID                                       AS brandID,
+       B_BD_brandName                                AS brandName,
+       B_SP_ID                                       AS SupplierID,
+       B_SP_SupplierName                             AS SupplierName,
+       B_GC_ID                                       AS CategoryID,
+       B_GC_GoodsCategoryName                        AS CategoryName,
+       SUM(TEMP.num1)                                AS num1,
+       SUM(TEMP.salesValue1)                         AS salesValue1,
+       SUM(TEMP.num2)                                AS num2,
+       SUM(TEMP.salesValue2)                         AS salesValue2,
+       SUM(TEMP.num1) + SUM(TEMP.num2)               AS num3,
+       SUM(TEMP.salesValue1) + SUM(TEMP.salesValue2) AS salesValue3
+FROM   (SELECT tt.SalesItemID               AS SalesItemID,
+               Isnull(t1.num1, 0)           AS num1,
+               Isnull(t1.salesValue1, 0.00) AS salesValue1,
+               Isnull(t2.num2, 0)           AS num2,
+               Isnull(t2.salesValue2, 0.00) AS salesValue2
+        FROM  (SELECT SalesItemID
+               FROM   (SELECT S_SE_SD_SalesItemID AS SalesItemID
+                       FROM   S_SE_SalesDetail
+                              INNER JOIN S_SE_SalesBasic
+                                ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                              INNER JOIN S_SM_SetMealRecord
+                                ON S_SM_SM_ID = S_SE_SD_Setmealid
+                       WHERE  1 = 1
+                              AND ( ( Isnull('${ClassifyID}', '') = ''
+                                       OR Isnull('${ClassifyID}', '') = '1'
+                                          AND S_SE_SB_OrdersType IN ( '1', '2' ) )
+                                     OR ( Isnull('${ClassifyID}', '') = ''
+                                           OR Isnull('${ClassifyID}', '') = '2'
+                                              AND S_SE_SB_OrdersType IN ( '3', '4' ) )
+                                     OR ( Isnull('${ClassifyID}', '') = ''
+                                           OR Isnull('${ClassifyID}', '') = '3'
+                                              AND S_SE_SB_OrdersType = '5' ) )
+                              AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) >= '${bgnDate}'
+                              AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) <= '${endDate}'
+                              AND ( ( S_SE_SB_ShopCode IN (SELECT departmentID
+                                                           FROM   #shopCode)
+                                      AND Isnull('${shopCode}', '') <> '' )
+                                     OR Isnull('${shopCode}', '') = '' )
+                              AND ( S_SM_SM_ID = '${MealID}'
+                                     OR Isnull('${MealID}', '') = '' )
+                              AND S_SE_SB_ValueFlag = '1'
+                       UNION ALL
+                       SELECT S_SE_SD_SalesItemID AS SalesItemID
+                       FROM   S_SE_SalesDetail
+                              INNER JOIN S_SE_SalesBasic
+                                ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                              INNER JOIN S_SM_SetMealRecord
+                                ON S_SM_SM_ID = S_SE_SD_Setmealid
+                       WHERE  1 = 1
+                              AND ( ( Isnull('${ClassifyID}', '') = ''
+                                       OR Isnull('${ClassifyID}', '') = '1'
+                                          AND S_SE_SB_OrdersType IN ( '1', '2' ) )
+                                     OR ( Isnull('${ClassifyID}', '') = ''
+                                           OR Isnull('${ClassifyID}', '') = '2'
+                                              AND S_SE_SB_OrdersType IN ( '3', '4' ) )
+                                     OR ( Isnull('${ClassifyID}', '') = ''
+                                           OR Isnull('${ClassifyID}', '') = '3'
+                                              AND S_SE_SB_OrdersType = '5' ) )
+                              AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) >= '${bgnDate}'
+                              AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) <= '${endDate}'
+                              AND ( ( S_SE_SB_ShopCode IN (SELECT departmentID
+                                                           FROM   #shopCode)
+                                      AND Isnull('${shopCode}', '') <> '' )
+                                     OR Isnull('${shopCode}', '') = '' )
+                              AND ( S_SM_SM_ID = '${MealID}'
+                                     OR Isnull('${MealID}', '') = '' )
+                              AND S_SE_SB_ValueFlag = '1'
+                              AND S_SE_SB_WithdrawFlag = '1'
+					   union all
+					   SELECT S_SE_SD_SalesItemID AS SalesItemID
+                       FROM   S_SE_SalesDetail_Finished
+                              INNER JOIN S_SE_SalesBasic_Finished
+                                ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                              INNER JOIN S_SM_SetMealRecord
+                                ON S_SM_SM_ID = S_SE_SD_Setmealid
+                       WHERE  1 = 1
+                              AND ( ( Isnull('${ClassifyID}', '') = ''
+                                       OR Isnull('${ClassifyID}', '') = '1'
+                                          AND S_SE_SB_OrdersType IN ( '1', '2' ) )
+                                     OR ( Isnull('${ClassifyID}', '') = ''
+                                           OR Isnull('${ClassifyID}', '') = '2'
+                                              AND S_SE_SB_OrdersType IN ( '3', '4' ) )
+                                     OR ( Isnull('${ClassifyID}', '') = ''
+                                           OR Isnull('${ClassifyID}', '') = '3'
+                                              AND S_SE_SB_OrdersType = '5' ) )
+                              AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) >= '${bgnDate}'
+                              AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) <= '${endDate}'
+                              AND ( ( S_SE_SB_ShopCode IN (SELECT departmentID
+                                                           FROM   #shopCode)
+                                      AND Isnull('${shopCode}', '') <> '' )
+                                     OR Isnull('${shopCode}', '') = '' )
+                              AND ( S_SM_SM_ID = '${MealID}'
+                                     OR Isnull('${MealID}', '') = '' )
+                              AND S_SE_SB_ValueFlag = '1'
+                       UNION ALL
+                       SELECT S_SE_SD_SalesItemID AS SalesItemID
+                       FROM   S_SE_SalesDetail_Finished
+                              INNER JOIN S_SE_SalesBasic_Finished
+                                ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                              INNER JOIN S_SM_SetMealRecord
+                                ON S_SM_SM_ID = S_SE_SD_Setmealid
+                       WHERE  1 = 1
+                              AND ( ( Isnull('${ClassifyID}', '') = ''
+                                       OR Isnull('${ClassifyID}', '') = '1'
+                                          AND S_SE_SB_OrdersType IN ( '1', '2' ) )
+                                     OR ( Isnull('${ClassifyID}', '') = ''
+                                           OR Isnull('${ClassifyID}', '') = '2'
+                                              AND S_SE_SB_OrdersType IN ( '3', '4' ) )
+                                     OR ( Isnull('${ClassifyID}', '') = ''
+                                           OR Isnull('${ClassifyID}', '') = '3'
+                                              AND S_SE_SB_OrdersType = '5' ) )
+                              AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) >= '${bgnDate}'
+                              AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) <= '${endDate}'
+                              AND ( ( S_SE_SB_ShopCode IN (SELECT departmentID
+                                                           FROM   #shopCode)
+                                      AND Isnull('${shopCode}', '') <> '' )
+                                     OR Isnull('${shopCode}', '') = '' )
+                              AND ( S_SM_SM_ID = '${MealID}'
+                                     OR Isnull('${MealID}', '') = '' )
+                              AND S_SE_SB_ValueFlag = '1'
+                              AND S_SE_SB_WithdrawFlag = '1')t
+               GROUP  BY SalesItemID)tt
+              LEFT JOIN (SELECT S_SE_SD_SalesItemID     AS SalesItemID,
+                                SUM(S_SE_SD_Number)     AS num1,
+                                SUM(S_SE_SD_SalesValue) AS salesValue1
+                         FROM   S_SE_SalesDetail
+                                INNER JOIN S_SE_SalesBasic
+                                  ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                INNER JOIN S_SM_SetMealRecord
+                                  ON S_SM_SM_ID = S_SE_SD_Setmealid
+                         WHERE  1 = 1
+                                AND ( ( Isnull('${ClassifyID}', '') = ''
+                                         OR Isnull('${ClassifyID}', '') = '1'
+                                            AND S_SE_SB_OrdersType IN ( '1', '2' ) )
+                                       OR ( Isnull('${ClassifyID}', '') = ''
+                                             OR Isnull('${ClassifyID}', '') = '2'
+                                                AND S_SE_SB_OrdersType IN ( '3', '4' ) )
+                                       OR ( Isnull('${ClassifyID}', '') = ''
+                                             OR Isnull('${ClassifyID}', '') = '3'
+                                                AND S_SE_SB_OrdersType = '5' ) )
+                                AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) >= '${bgnDate}'
+                                AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) <= '${endDate}'
+                                AND ( ( S_SE_SB_ShopCode IN (SELECT departmentID
+                                                             FROM   #shopCode)
+                                        AND Isnull('${shopCode}', '') <> '' )
+                                       OR Isnull('${shopCode}', '') = '' )
+                                AND ( S_SM_SM_ID = '${MealID}'
+                                       OR Isnull('${MealID}', '') = '' )
+                                AND S_SE_SB_ValueFlag = '1'
+                         GROUP  BY S_SE_SD_SalesItemID
+                         union all
+                         SELECT S_SE_SD_SalesItemID     AS SalesItemID,
+                                SUM(S_SE_SD_Number)     AS num1,
+                                SUM(S_SE_SD_SalesValue) AS salesValue1
+                         FROM   S_SE_SalesDetail_Finished
+                                INNER JOIN S_SE_SalesBasic_Finished
+                                  ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                INNER JOIN S_SM_SetMealRecord
+                                  ON S_SM_SM_ID = S_SE_SD_Setmealid
+                         WHERE  1 = 1
+                                AND ( ( Isnull('${ClassifyID}', '') = ''
+                                         OR Isnull('${ClassifyID}', '') = '1'
+                                            AND S_SE_SB_OrdersType IN ( '1', '2' ) )
+                                       OR ( Isnull('${ClassifyID}', '') = ''
+                                             OR Isnull('${ClassifyID}', '') = '2'
+                                                AND S_SE_SB_OrdersType IN ( '3', '4' ) )
+                                       OR ( Isnull('${ClassifyID}', '') = ''
+                                             OR Isnull('${ClassifyID}', '') = '3'
+                                                AND S_SE_SB_OrdersType = '5' ) )
+                                AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) >= '${bgnDate}'
+                                AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) <= '${endDate}'
+                                AND ( ( S_SE_SB_ShopCode IN (SELECT departmentID
+                                                             FROM   #shopCode)
+                                        AND Isnull('${shopCode}', '') <> '' )
+                                       OR Isnull('${shopCode}', '') = '' )
+                                AND ( S_SM_SM_ID = '${MealID}'
+                                       OR Isnull('${MealID}', '') = '' )
+                                AND S_SE_SB_ValueFlag = '1'
+                         GROUP  BY S_SE_SD_SalesItemID)t1
+                ON tt.SalesItemID = t1.SalesItemID
+              LEFT JOIN (SELECT S_SE_SD_SalesItemID      AS SalesItemID,
+                                -SUM(S_SE_SD_Number)     AS num2,
+                                -SUM(S_SE_SD_SalesValue) AS salesValue2
+                         FROM   S_SE_SalesDetail
+                                INNER JOIN S_SE_SalesBasic
+                                  ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                INNER JOIN S_SM_SetMealRecord
+                                  ON S_SM_SM_ID = S_SE_SD_Setmealid
+                         WHERE  1 = 1
+                                AND ( ( Isnull('${ClassifyID}', '') = ''
+                                         OR Isnull('${ClassifyID}', '') = '1'
+                                            AND S_SE_SB_OrdersType IN ( '1', '2' ) )
+                                       OR ( Isnull('${ClassifyID}', '') = ''
+                                             OR Isnull('${ClassifyID}', '') = '2'
+                                                AND S_SE_SB_OrdersType IN ( '3', '4' ) )
+                                       OR ( Isnull('${ClassifyID}', '') = ''
+                                             OR Isnull('${ClassifyID}', '') = '3'
+                                                AND S_SE_SB_OrdersType = '5' ) )
+                                AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) >= '${bgnDate}'
+                                AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) <= '${endDate}'
+                                AND ( ( S_SE_SB_ShopCode IN (SELECT departmentID
+                                                             FROM   #shopCode)
+                                        AND Isnull('${shopCode}', '') <> '' )
+                                       OR Isnull('${shopCode}', '') = '' )
+                                AND ( S_SM_SM_ID = '${MealID}'
+                                       OR Isnull('${MealID}', '') = '' )
+                                AND S_SE_SB_ValueFlag = '1'
+                                AND S_SE_SB_WithdrawFlag = '1'
+                         GROUP  BY S_SE_SD_SalesItemID
+                         union all
+                         SELECT S_SE_SD_SalesItemID      AS SalesItemID,
+                                -SUM(S_SE_SD_Number)     AS num2,
+                                -SUM(S_SE_SD_SalesValue) AS salesValue2
+                         FROM   S_SE_SalesDetail_Finished
+                                INNER JOIN S_SE_SalesBasic_Finished
+                                  ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                INNER JOIN S_SM_SetMealRecord
+                                  ON S_SM_SM_ID = S_SE_SD_Setmealid
+                         WHERE  1 = 1
+                                AND ( ( Isnull('${ClassifyID}', '') = ''
+                                         OR Isnull('${ClassifyID}', '') = '1'
+                                            AND S_SE_SB_OrdersType IN ( '1', '2' ) )
+                                       OR ( Isnull('${ClassifyID}', '') = ''
+                                             OR Isnull('${ClassifyID}', '') = '2'
+                                                AND S_SE_SB_OrdersType IN ( '3', '4' ) )
+                                       OR ( Isnull('${ClassifyID}', '') = ''
+                                             OR Isnull('${ClassifyID}', '') = '3'
+                                                AND S_SE_SB_OrdersType = '5' ) )
+                                AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) >= '${bgnDate}'
+                                AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) <= '${endDate}'
+                                AND ( ( S_SE_SB_ShopCode IN (SELECT departmentID
+                                                             FROM   #shopCode)
+                                        AND Isnull('${shopCode}', '') <> '' )
+                                       OR Isnull('${shopCode}', '') = '' )
+                                AND ( S_SM_SM_ID = '${MealID}'
+                                       OR Isnull('${MealID}', '') = '' )
+                                AND S_SE_SB_ValueFlag = '1'
+                                AND S_SE_SB_WithdrawFlag = '1'
+                         GROUP  BY S_SE_SD_SalesItemID)t2
+                ON tt.SalesItemID = t2.SalesItemID)TEMP
+       INNER JOIN B_GoodsInfo
+         ON SalesItemID = B_GI_GoodsID
+       INNER JOIN B_Supplier
+         ON B_GI_SupplierID = B_SP_ID
+       INNER JOIN B_Brand
+         ON B_GI_BrandID = B_BD_ID
+            AND B_GI_SupplierID = B_BD_SupplierID
+       INNER JOIN B_GoodsCategory
+         ON B_GC_ID = B_GI_GoodsCategoryID
+GROUP  BY B_BD_ID,
+          B_BD_brandName,
+          B_SP_ID,
+          B_SP_SupplierName,
+          B_GC_ID,
+          B_GC_GoodsCategoryName,
+          B_GC_ID + B_BD_ID + B_SP_ID
+order by B_GC_ID
+DROP TABLE #shopCode ]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="MealName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentNames"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[declare @MealName varchar(100)
+declare @departmentName varchar(100)
+set @MealName='${MealName}'
+set @departmentName='${departmentNames}'
+select @MealName as MealName,@departmentName as departmentName
+]]></Query>
+</TableData>
+</TableDataMap>
+<ReportExportAttr>
+<ExcelExportAttr hideColumn="false" hideRow="false"/>
+<PDFExportAttr/>
+<HTMLExportAttr/>
+</ReportExportAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="6"/>
+<FR/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,914400,914400,914400,914400,914400,907200,914400,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[0,0,0,0,576000,2592000,4000500,4320000,2743200,2743200,2743200,2743200,2743200,2743200,0,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<Expand/>
+</C>
+<C c="5" r="0" cs="9" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" s="0">
+<Expand/>
+</C>
+<C c="5" r="1" s="0">
+<Expand/>
+</C>
+<C c="6" r="1" cs="8" s="2">
+<O>
+<![CDATA[商品销售分析表(按套餐）]]></O>
+<Expand/>
+</C>
+<C c="5" r="2" s="3">
+<O>
+<![CDATA[查询日期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="6" r="2" cs="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$bgnDate + " 至 " + $endDate]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="9" r="2" cs="2" s="4">
+<O>
+<![CDATA[查看类型：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="11" r="2" cs="3">
+<O>
+<![CDATA[按商品]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="3" s="4">
+<O>
+<![CDATA[套餐名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="6" r="3" cs="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="MealName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="9" r="3" cs="2" s="4">
+<O>
+<![CDATA[套餐分类：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="11" r="3" cs="3">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="4" s="4">
+<O>
+<![CDATA[销售门店：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="6" r="4" cs="8">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="departmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="5" r="5" rs="2" s="5">
+<O>
+<![CDATA[序号]]></O>
+<Expand/>
+</C>
+<C c="6" r="5" cs="2" rs="2" s="5">
+<O>
+<![CDATA[商品名称]]></O>
+<Expand/>
+</C>
+<C c="8" r="5" cs="2" s="5">
+<O>
+<![CDATA[套餐销售]]></O>
+<Expand/>
+</C>
+<C c="10" r="5" cs="2" s="5">
+<O>
+<![CDATA[套餐退货]]></O>
+<Expand/>
+</C>
+<C c="12" r="5" cs="2" s="5">
+<O>
+<![CDATA[套餐实售]]></O>
+<Expand/>
+</C>
+<C c="8" r="6" s="6">
+<O>
+<![CDATA[销售数量]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[1]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[2]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand order="2"/>
+</C>
+<C c="9" r="6" s="6">
+<O>
+<![CDATA[销售金额]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[3]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[4]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand order="2"/>
+</C>
+<C c="10" r="6" s="6">
+<O>
+<![CDATA[退货数量]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[5]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[6]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand order="2"/>
+</C>
+<C c="11" r="6" s="6">
+<O>
+<![CDATA[退货金额]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[7]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[8]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand order="2"/>
+</C>
+<C c="12" r="6" s="6">
+<O>
+<![CDATA[实售数量]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[9]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[10]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand order="2"/>
+</C>
+<C c="13" r="6" s="6">
+<O>
+<![CDATA[实售金额]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[11]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[12]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand order="2"/>
+</C>
+<C c="0" r="7" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="CategoryName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="7" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="CategoryID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0" order="2">
+<SortFormula>
+<![CDATA[SWITCH($order, "1", -TODOUBLE(I8), "2", TODOUBLE(I8), "3", -TODOUBLE(J8), "4", TODOUBLE(J8), "5", -TODOUBLE(K8), "6", TODOUBLE(K8), "7", -TODOUBLE(L8), "8", TODOUBLE(L8), "9", -TODOUBLE(M8), "10", TODOUBLE(M8), "11", -TODOUBLE(N8), "12", TODOUBLE(N8))]]></SortFormula>
+</Expand>
+</C>
+<C c="2" r="7" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="SupplierID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="7" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="brandID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="7" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SEQ()]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[(row() - 7) % 20 = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.PageHighlightAction">
+<P i="1"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand leftParentDefault="false" left="G8"/>
+</C>
+<C c="6" r="7" cs="2" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="brandName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[(row() - 7) % 20 = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.PageHighlightAction">
+<P i="1"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="8" r="7" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="num1"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[(row() - 7) % 20 = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.PageHighlightAction">
+<P i="1"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="9" r="7" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="salesValue1"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[(row() - 7) % 20 = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.PageHighlightAction">
+<P i="1"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="10" r="7" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="num2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[(row() - 7) % 20 = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.PageHighlightAction">
+<P i="1"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="11" r="7" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="salesValue2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[(row() - 7) % 20 = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.PageHighlightAction">
+<P i="1"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="12" r="7" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="num3"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="departmentID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$shopCode]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="beginDate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$bgnDate]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endDate]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="GoodsCategoryID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B8]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="SupplierID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C8]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="BrandID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=D8]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="MealName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$MealName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ClassifyID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ClassifyID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_salesSetMealSumForSales.cpt&isShow="+isShow+"&departmentID="+departmentID+"&beginDate="+beginDate+"&endDate="+endDate+"&GoodsCategoryID="+GoodsCategoryID+"&SupplierID="+SupplierID+"&BrandID="+BrandID+"&MealName="+MealName+"&departmentName="+EncodeUtf8(departmentName)+"&ClassifyID="+ClassifyID+"&logincompanyid="+logincompanyid;
+
+
+openWindowForReport(DataURL);
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="13" r="7" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="salesValue3"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[(row() - 7) % 20 = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.PageHighlightAction">
+<P i="1"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="5" r="8" s="10">
+<Expand/>
+</C>
+<C c="6" r="8" cs="2" s="11">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="CategoryName"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$ + ' 合计：']]></Result>
+<Parameters/>
+</O>
+<Expand dir="0" leftParentDefault="false" left="A8"/>
+</C>
+<C c="8" r="8" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(I8)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="8" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J8))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="8" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(K8)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="8" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(L8))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="8" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(M8)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="8" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(N8))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="9" s="10">
+<Expand/>
+</C>
+<C c="6" r="9" cs="2" s="11">
+<O>
+<![CDATA[总计：]]></O>
+<Expand dir="0" leftParentDefault="false"/>
+</C>
+<C c="8" r="9" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(I8)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="9" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J8))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="9" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(K8)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="9" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(L8))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="9" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(M8)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="9" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(N8))]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="黑体" style="0" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-16776961" underline="1"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72" foreground="-16776961" underline="1"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

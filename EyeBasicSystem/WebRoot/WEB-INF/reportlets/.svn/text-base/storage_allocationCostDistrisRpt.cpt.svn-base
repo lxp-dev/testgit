@@ -1,0 +1,999 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="brandID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsCategoryID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="billDateStart"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="billDateEnd"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[DECLARE @bgndate         VARCHAR(10),
+        @enddate         VARCHAR(10),
+        @departmentid    VARCHAR(MAX),
+        @goodsName       VARCHAR(200),
+        @goodsID         VARCHAR(100),
+        @goodsCategoryID VARCHAR(10),
+        @supplierID      VARCHAR(10),
+        @brandID         VARCHAR(10)
+
+SET @bgndate = '${billDateStart}'
+SET @enddate = '${billDateEnd}'
+SET @goodsID = '${goodsID}'
+SET @goodsName = '${goodsName}'
+SET @goodsCategoryID = '${goodsCategoryID}'
+SET @supplierID = '${supplierID}'
+SET @departmentid = '${departmentid}'
+SET @brandID = '${brandID}'
+
+-- SET @bgndate = '2014-01-01'
+--  SET @enddate = '2014-01-31'
+--  SET @goodsID = ''
+--  SET @goodsName = ''
+--  SET @goodsCategoryID = ''
+--  SET @supplierID = ''
+--  SET @departmentid = 'hxc'
+--  SET @brandID = ''
+SELECT @bgndate + ' -- ' + @bgndate                       AS printdate,
+       C_SHA_Allocation.C_SHA_A_inDepartmentId            AS departmentId,--部门
+       B_Departments.B_DP_DepartmentName                  AS departmentName,--部门名称
+       C_SHA_AllocationEntry.C_SHA_A_inStockId            AS inStockID,--收入仓位
+       B_Warehouse.B_WH_warehouseName                     AS warehouseName,--收入仓位名称
+       B_GoodsInfo.B_GI_GoodsName                         AS GoodsName,--商品名称
+       B_GoodsInfo.B_GI_Spec                              AS spec,--规格型号
+       B_Unit.B_UT_unitName                               AS unitName,--单位
+       C_SHA_AllocationEntry.C_SHA_AE_requirementQuantity AS requirementQuantity,--数量
+       B_GI_RetailPrice                                   AS retailprice,--零售价格
+       Isnull(L_CT_CT_BackFillTaxRate, 0.00)              AS B_GI_CostPrice,--成本价格
+       C_SHA_AE_allocationQuantity                        AS C_SHA_AE_allocationQuantity,
+       C_SHA_AllocationEntry.C_SHA_AE_billId              AS C_SHA_AE_billId,
+       C_SHA_AllocationEntry.C_SHA_AE_goodsID             AS C_SHA_AE_goodsID
+FROM   C_SHA_AllocationEntry
+       INNER JOIN C_SHA_Allocation
+         ON C_SHA_Allocation.C_SHA_A_billID = C_SHA_AllocationEntry.C_SHA_AE_billId
+       INNER JOIN B_Departments
+         ON B_Departments.B_DP_DepartmentID = C_SHA_Allocation.C_SHA_A_inDepartmentId
+       INNER JOIN B_Warehouse
+         ON B_Warehouse.B_WH_ID = C_SHA_Allocation.C_SHA_A_inStockId
+       INNER JOIN B_GoodsInfo
+         ON B_GoodsInfo.B_GI_GoodsID = C_SHA_AllocationEntry.C_SHA_AE_goodsId
+       INNER JOIN B_Unit
+         ON B_Unit.B_UT_id = B_GoodsInfo.B_GI_UnitId
+       LEFT JOIN (SELECT L_CT_CT_GoodsID,
+                         L_CT_CT_BackFillTaxRate
+                  FROM   L_CT_HistoryCostingTemp
+                  WHERE  L_CT_CT_Date = Substring(@bgndate, 1, 7)) tmp
+         ON c_sha_allocationentry.C_SHA_AE_goodsid = tmp.L_CT_CT_GoodsID
+WHERE  C_SHA_A_consignState = 1
+       AND CONVERT(VARCHAR(10), C_SHA_Allocation.C_SHA_A_consignDate, 23) >= @bgndate
+       AND CONVERT(VARCHAR(10), C_SHA_Allocation.C_SHA_A_consignDate, 23) <= @enddate
+       AND ( B_GoodsInfo.B_GI_GoodsName LIKE '%' + @goodsName + '%'
+              OR Isnull(@goodsName, '') = '' )
+       AND ( C_SHA_Allocation.C_SHA_A_inStockId = @departmentid
+              OR Isnull(@departmentid, '') = '' )
+       AND ( B_GoodsInfo.B_GI_GoodsCategoryID = @goodsCategoryID
+              OR Isnull(@goodsCategoryID, '') = '' )
+       AND ( B_GoodsInfo.B_GI_SupplierID = @supplierID
+              OR Isnull(@supplierID, '') = '' )
+       AND ( C_SHA_AllocationEntry.C_SHA_AE_goodsId LIKE '%' + @goodsID + '%'
+              OR Isnull(@goodsID, '') = '' )
+       AND ( B_GoodsInfo.B_GI_BrandID = @brandID
+              OR Isnull(@brandID, '') = '' )
+UNION ALL
+SELECT @bgndate + ' -- ' + @bgndate                       AS printdate,
+       C_SHA_Allocation.C_SHA_A_outDepartmentId           AS departmentId,--部门
+       B_Departments.B_DP_DepartmentName                  AS departmentName,--部门名称
+       C_SHA_AllocationEntry.C_SHA_A_outStockId           AS inStockID,--收入仓位
+       B_Warehouse.B_WH_warehouseName                     AS warehouseName,--收入仓位名称
+       B_GoodsInfo.B_GI_GoodsName                         AS GoodsName,--商品名称
+       B_GoodsInfo.B_GI_Spec                              AS spec,--规格型号
+       B_Unit.B_UT_unitName                               AS unitName,--单位
+       C_SHA_AllocationEntry.C_SHA_AE_requirementQuantity AS requirementQuantity,--数量
+       B_GI_RetailPrice                                   AS retailprice,--零售价格
+       Isnull(L_CT_CT_BackFillTaxRate, 0.00)              AS B_GI_CostPrice,--成本价格
+       -C_SHA_AE_allocationQuantity                       AS C_SHA_AE_allocationQuantity,
+       C_SHA_AllocationEntry.C_SHA_AE_billId              AS C_SHA_AE_billId,
+       C_SHA_AllocationEntry.C_SHA_AE_goodsID             AS C_SHA_AE_goodsID
+FROM   C_SHA_AllocationEntry
+       INNER JOIN C_SHA_Allocation
+         ON C_SHA_Allocation.C_SHA_A_billID = C_SHA_AllocationEntry.C_SHA_AE_billId
+       INNER JOIN B_Departments
+         ON B_Departments.B_DP_DepartmentID = C_SHA_Allocation.C_SHA_A_outDepartmentId
+       INNER JOIN B_Warehouse
+         ON B_Warehouse.B_WH_ID = C_SHA_Allocation.C_SHA_A_outStockId
+       INNER JOIN B_GoodsInfo
+         ON B_GoodsInfo.B_GI_GoodsID = C_SHA_AllocationEntry.C_SHA_AE_goodsId
+       INNER JOIN B_Unit
+         ON B_Unit.B_UT_id = B_GoodsInfo.B_GI_UnitId
+       LEFT JOIN (SELECT L_CT_CT_GoodsID,
+                         L_CT_CT_BackFillTaxRate
+                  FROM   L_CT_HistoryCostingTemp
+                  WHERE  L_CT_CT_Date = Substring(@bgndate, 1, 7)) tmp
+         ON c_sha_allocationentry.C_SHA_AE_goodsid = tmp.L_CT_CT_GoodsID
+WHERE  C_SHA_A_consignState = 1
+       AND CONVERT(VARCHAR(10), C_SHA_Allocation.C_SHA_A_consignDate, 23) >= @bgndate
+       AND CONVERT(VARCHAR(10), C_SHA_Allocation.C_SHA_A_consignDate, 23) <= @enddate
+       AND ( B_GoodsInfo.B_GI_GoodsName LIKE '%' + @goodsName + '%'
+              OR Isnull(@goodsName, '') = '' )
+       AND ( C_SHA_Allocation.C_SHA_A_outStockId = @departmentid
+              OR Isnull(@departmentid, '') = '' )
+       AND ( B_GoodsInfo.B_GI_GoodsCategoryID = @goodsCategoryID
+              OR Isnull(@goodsCategoryID, '') = '' )
+       AND ( B_GoodsInfo.B_GI_SupplierID = @supplierID
+              OR Isnull(@supplierID, '') = '' )
+       AND ( C_SHA_AllocationEntry.C_SHA_AE_goodsId = @goodsID
+              OR Isnull(@goodsID, '') = '' )
+       AND ( B_GoodsInfo.B_GI_BrandID = @brandID
+              OR Isnull(@brandID, '') = '' )
+--ORDER  BY C_SHA_Allocation.C_SHA_A_inDepartmentId]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.page.First">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-First')}]]></Text>
+<IconName>
+<![CDATA[first]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Previous">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Previous')}]]></Text>
+<IconName>
+<![CDATA[previous]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.PageNavi">
+<WidgetAttr/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Next">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Next')}]]></Text>
+<IconName>
+<![CDATA[next]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Last">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Last')}]]></Text>
+<IconName>
+<![CDATA[last]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.FlashPrint">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Utils-Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.Export">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Export')}]]></Text>
+<IconName>
+<![CDATA[export]]></IconName>
+<Buttons pdf="true" excelP="true" excelO="true" excelS="true" word="true" image="true" html="true"/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.SetPrinterOffset">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('SetPrinterOffset')}]]></Text>
+<IconName>
+<![CDATA[setprinteroffset]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="false" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="5"/>
+<FR/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1440000,1440000,914400,914400,914400,1152000,914400,914400,914400,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[3657600,5676900,5829300,6400800,3009900,3048000,2971800,2781300,3543300,2880000,2880000,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="7" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="0" s="1">
+<Expand/>
+</C>
+<C c="10" r="0" s="1">
+<Expand/>
+</C>
+<C c="0" r="1" cs="9" s="2">
+<O>
+<![CDATA[调拨明细表]]></O>
+<Expand/>
+</C>
+<C c="9" r="1" s="1">
+<Expand/>
+</C>
+<C c="10" r="1" s="1">
+<Expand/>
+</C>
+<C c="0" r="2" s="3">
+<O>
+<![CDATA[仓位名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="2" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$warsehouseName]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="2" s="5">
+<O>
+<![CDATA[收货日期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="2" cs="2" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$billDateStart + " 至 " + $billDateEnd]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="6" r="2" s="3">
+<O>
+<![CDATA[统计类型：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="7" r="2" cs="4" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$statisticsName]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="3" s="3">
+<O>
+<![CDATA[商品类别：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="3" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$goodsCategoryName]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="3" s="5">
+<O>
+<![CDATA[制造商：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="3" cs="2" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$supplierName]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="6" r="3" s="3">
+<O>
+<![CDATA[商品品种：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="7" r="3" cs="4" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$brandName]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="4" s="3">
+<O>
+<![CDATA[商品名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="4" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$goodsName]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="4" s="5">
+<O>
+<![CDATA[商品代码：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="4" cs="4" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$goodsID]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="7" r="4">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="8" r="4">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="9" r="4" s="1">
+<Expand/>
+</C>
+<C c="10" r="4" s="1">
+<Expand/>
+</C>
+<C c="0" r="5" s="7">
+<O>
+<![CDATA[分店]]></O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="1" r="5" s="7">
+<O>
+<![CDATA[调拨单号]]></O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="2" r="5" s="7">
+<O>
+<![CDATA[商品代码]]></O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="3" r="5" s="7">
+<O>
+<![CDATA[商品名称]]></O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="4" r="5" s="7">
+<O>
+<![CDATA[规格型号]]></O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="5" r="5" s="7">
+<O>
+<![CDATA[成本价格]]></O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="6" r="5" s="7">
+<O>
+<![CDATA[零售价格]]></O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="7" r="5" s="7">
+<O>
+<![CDATA[单位]]></O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="8" r="5" s="7">
+<O>
+<![CDATA[数量]]></O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="9" r="5" s="7">
+<O>
+<![CDATA[成本合计]]></O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="10" r="5" s="7">
+<O>
+<![CDATA[销售合计]]></O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="0" r="6" rs="2" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="departmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="6" rs="2" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_SHA_AE_billId"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="6" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_SHA_AE_goodsID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="6" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="GoodsName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="6" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="spec"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="6" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_GI_CostPrice"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="6" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="retailprice"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="6" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="unitName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="6" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_SHA_AE_allocationQuantity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="6" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(F7 * I7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="6" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(G7 * I7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="7" s="10">
+<Expand/>
+</C>
+<C c="3" r="7" s="10">
+<Expand/>
+</C>
+<C c="4" r="7" s="10">
+<Expand/>
+</C>
+<C c="5" r="7" s="10">
+<Expand/>
+</C>
+<C c="6" r="7" s="10">
+<Expand/>
+</C>
+<C c="7" r="7" s="11">
+<O>
+<![CDATA[小 计：]]></O>
+<Expand leftParentDefault="false" left="B7"/>
+</C>
+<C c="8" r="7" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(I7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="7" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="7" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(K7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="8" cs="8" s="13">
+<O>
+<![CDATA[合 计：]]></O>
+<Expand/>
+</C>
+<C c="8" r="8" s="14">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(I8)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="8" s="14">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J8))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="8" s="14">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(K8))]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<PaperSize width="33120000" height="46080000"/>
+<Margin top="969120" left="712800" bottom="969120" right="712800"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="64"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="88"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

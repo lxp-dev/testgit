@@ -1,0 +1,1677 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="brandID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsCategoryID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="brandNameStr"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnretailamount"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="stockId"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="totalPriceType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="brandName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endretailamount"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[DECLARE @stockId VARCHAR(32)
+DECLARE @endDate VARCHAR(10)
+DECLARE @goodsCategoryID VARCHAR(10)
+DECLARE @supplierID VARCHAR(10)
+DECLARE @brandID VARCHAR(10)
+DECLARE @brandName VARCHAR(100)
+DECLARE @brandNameStr VARCHAR(100)
+DECLARE @totalPriceType  VARCHAR(10)
+DECLARE @bgnretailamount varchar(20)
+DECLARE @endretailamount varchar(20)
+
+SET @stockId = '${stockId}'
+SET @endDate = '${endDate}'
+SET @goodsCategoryID = '${goodsCategoryID}'
+SET @supplierID = '${supplierID}'
+SET @brandID = '${brandID}'
+SET @brandName = '${brandName}'
+SET @brandNameStr = '${brandNameStr}'
+SET @totalPriceType = '${totalPriceType}'
+set @bgnretailamount = '${bgnretailamount}'
+set @endretailamount = '${endretailamount}'
+
+--SET @stockId = ''
+--SET @endDate='2014-06-07'
+--SET @totalPriceType='1'
+--SET @goodsCategoryID = ''
+--SET @supplierID = ''
+--SET @brandID = ''
+--SET @brandName = ''
+--set @bgnretailamount = '100.00'
+--set @endretailamount = '1000.00'
+
+if @bgnretailamount = ''
+begin
+   set @bgnretailamount = NULL
+end
+
+if @endretailamount = ''
+begin
+   set @endretailamount = NULL
+end
+
+if @endDate = ''
+begin
+   set @endDate =  convert(varchar(10),getdate(),120)
+end
+
+SELECT stockId INTO #stroageStockId FROM Storage_createstockidtab(@stockId)
+
+if (@endDate<convert(varchar(10),getdate(),120))
+begin
+
+select B_GC_ID as goodsCategoryID,
+       B_GC_GoodsCategoryName as goodsCategoryName,
+       B_SP_ID as supplierID,
+       B_SP_SupplierName as supplierName, 
+       B_BD_ID  AS brandID,
+       B_BD_brandName as brandName,
+       StockID as StockID,
+       B_WH_warehouseName as StockName,
+       B_DP_Type,
+       sum(isnull(qichuNum,0)) as qichuNum,
+       sum(isnull(qichucost,0)) as qichucost
+  from (
+select substring(L_CT_CT_GoodsID,1,7) as goodsID,
+L_CT_CT_StockID as StockID,
+       sum(L_CT_CT_GoodsQuantity) as qichuNum,
+       (case @totalPriceType when '1' then sum(L_CT_CT_Goodsnottaxrateamount) else sum(L_CT_CT_GoodsRateamount) end) as qichucost,
+       0 as caigouNum,0 as caigoucost,
+       0 as diaoboNum,0 as diaobocost,
+       0 as xiaoshouNum,0 as xiaoshoucost,
+       0 as pankuiNum,0 as pankuicost,
+       0 as panyingNum,0 as panyingcost,
+       0 as lingyongNum,0 as lingyongcost,
+       0 as pifaNum,0 as pifacost
+  from L_CT_CostingStockTemplate
+  where 1=1
+       and ( ( Isnull(@stockId, '') <> '' AND L_CT_CT_StockID IN (SELECT StockId FROM   #stroageStockId) ) OR ( Isnull(@stockId, '') = '' ) )
+       group by substring(L_CT_CT_GoodsID,1,7)
+,L_CT_CT_StockID
+union all
+select R_GS_RR_GoodsID as goodsID,
+       R_GS_RR_WarehouseID as StockID,
+       (sum(isnull(R_GS_RR_Caigounum,0))+sum(isnull(R_GS_RR_Diaobonum,0))+sum(isnull(R_GS_RR_Xiaoshounum,0))+sum(isnull(R_GS_RR_Pankuinum,0))+sum(isnull(R_GS_RR_Panyingnum,0))+sum(isnull(R_GS_RR_Lingyongnum,0))+ sum(isnull(R_GS_RR_Kehupifanum,0))) as qichuNum,
+       (sum(isnull(R_GS_RR_Caigouamount,0))+sum(isnull(R_GS_RR_Diaoboamount,0))+sum(isnull(R_GS_RR_Xiaoshouamount,0))+sum(isnull(R_GS_RR_Pankuiamount,0))+sum(isnull(R_GS_RR_Panyingamount,0))+sum(isnull(R_GS_RR_Lingyongamount,0))+sum(isnull(R_GS_RR_Kehupifaamount,0))) as qichucost,
+       0 as caigouNum,0 as caigoucost,
+       0 as diaoboNum,0 as diaobocost,
+       0 as xiaoshouNum,0 as xiaoshoucost,
+       0 as pankuiNum,0 as pankuicost,
+       0 as panyingNum,0 as panyingcost,
+       0 as lingyongNum,0 as lingyongcost,
+       0 as pifaNum,0 as pifacost
+  from (
+select R_GS_RR_GoodsID,
+       R_GS_RR_WarehouseID,
+       R_GS_RR_Caigounum,
+       (case @totalPriceType when '1' then R_GS_RR_Caigouamount else R_GS_RR_CaigouRateamount end) as R_GS_RR_Caigouamount,
+	   0 as R_GS_RR_Diaobonum,0 as R_GS_RR_Diaoboamount,
+       R_GS_RR_Xiaoshounum,
+       R_GS_RR_XiaoshouAverageamount as R_GS_RR_Xiaoshouamount,
+       R_GS_RR_Pankuinum,
+       R_GS_RR_PankuiAverageamount as R_GS_RR_Pankuiamount,
+       R_GS_RR_Panyingnum,
+       R_GS_RR_PanyingAverageamount as R_GS_RR_Panyingamount,
+       R_GS_RR_Lingyongnum,
+       R_GS_RR_LingyongAverageamount as R_GS_RR_Lingyongamount,
+       R_GS_RR_Kehupifanum,
+       R_GS_RR_KehupifaAverageamount as R_GS_RR_Kehupifaamount
+  from R_GS_RR_GoodsStorageRevolveRateBillTemp
+  where 1=1
+     and ( ( Isnull(@stockId, '') <> '' AND R_GS_RR_WarehouseID IN (SELECT StockId FROM   #stroageStockId) ) OR ( Isnull(@stockId, '') = '' ) )
+	 and isnull(@endDate,'')<>'' and convert(varchar(10),R_GS_RR_Date,120)<=@endDate 
+union all
+select R_GS_RR_GoodsID,
+       R_GS_RR_WarehouseID, 
+       0,0,
+	   R_GS_RR_Diaobonum,
+       R_GS_RR_DiaoboAverageamount as R_GS_RR_Diaoboamount,
+       0,0,
+       0,0,
+       0,0,
+       0,0,
+       0,0
+  from R_GS_RR_GoodsStorageRevolveRateBillTemp
+  where 1=1
+     and ( ( Isnull(@stockId, '') <> '' AND R_GS_RR_WarehouseID IN (SELECT StockId FROM   #stroageStockId) ) OR ( Isnull(@stockId, '') = '' ) )
+	 and isnull(@endDate,'')<>'' and convert(varchar(10),R_GS_RR_Date,120) <=@endDate
+)t0
+  group by R_GS_RR_GoodsID,R_GS_RR_WarehouseID
+
+)t2 
+ inner join B_GoodsCategory on B_GC_ID=substring(goodsID,1,1)
+ INNER JOIN B_Supplier ON B_SP_ID = substring(goodsID,3,2)
+ INNER JOIN B_Brand ON B_BD_SupplierID = substring(goodsID,3,2) AND B_BD_ID = substring(goodsID,6,2)
+ INNER JOIN B_Warehouse ON StockID = B_WH_ID
+ INNER JOIN B_Departments ON B_WH_deptID=B_DP_DepartmentID
+  where 1=1
+     and ((ISNULL(@goodsCategoryID,'')<>'' AND B_GC_ID = @goodsCategoryID) OR ISNULL(@goodsCategoryID,'')='')
+     AND ( ( Isnull(@supplierID, '') <> '' AND B_SP_ID = @supplierID ) OR Isnull(@supplierID, '') = '' )
+     AND ( ( Isnull(@brandID, '') <> '' AND B_BD_ID = @brandID ) OR Isnull(@brandID, '') = '' )
+     and ((isnull(@brandNameStr,'')<>'' and B_BD_brandName like '%' + isnull(@brandNameStr,'') + '%') or isnull(@brandNameStr,'')='')
+
+group by B_GC_ID,B_GC_GoodsCategoryName,B_SP_ID,B_SP_SupplierName,B_BD_ID,B_BD_brandName,B_DP_Type,StockID,B_WH_warehouseName
+ORDER BY B_DP_Type desc,StockID desc
+
+end
+
+else 
+
+begin
+
+
+select substring(goodsID,1,7) as R_GS_RR_GoodsID,B_WH_ID as R_GS_RR_WarehouseID,
+isnull(sum(caigouNum),0) as R_GS_RR_Caigounum,isnull(sum(caigouamount),0.00) as R_GS_RR_Caigouamount,isnull(sum(caigouRateamount),0.00) as R_GS_RR_CaigouRateamount,isnull(sum(caigouAverageamount),0.00) as R_GS_RR_CaigouAverageamount,
+isnull(sum(diaoboNum),0) as R_GS_RR_Diaobonum,isnull(sum(diaoboamount),0.00) as R_GS_RR_Diaoboamount,isnull(sum(diaoboRateamount),0.00) as R_GS_RR_DiaoboRateamount,isnull(sum(diaoboAverageamount),0.00) as R_GS_RR_DiaoboAverageamount,
+isnull(sum(xiaoshouNum),0) as R_GS_RR_Xiaoshounum,isnull(sum(xiaoshouamount),0.00) as R_GS_RR_Xiaoshouamount,isnull(sum(xiaoshouRateamount),0.00) as R_GS_RR_XiaoshouRateamount,isnull(sum(xiaoshouAverageamount),0.00) as R_GS_RR_XiaoshouAverageamount,
+isnull(sum(panyingNum),0) as R_GS_RR_Panyingnum,isnull(sum(panyingamount),0.00) as R_GS_RR_Panyingamount,isnull(sum(panyingRateamount),0.00) as R_GS_RR_PanyingRateamount,isnull(sum(panyingAverageamount),0.00) as R_GS_RR_PanyingAverageamount,
+isnull(sum(pankuiNum),0) as R_GS_RR_Pankuinum,isnull(sum(pankuiamount),0.00) as R_GS_RR_Pankuiamount,isnull(sum(pankuiRateamount),0.00) as R_GS_RR_PankuiRateamount,isnull(sum(pankuiAverageamount),0.00) as R_GS_RR_PankuiAverageamount,
+isnull(sum(lingyongNum),0) as R_GS_RR_Lingyongnum,isnull(sum(lingyongamount),0.00) as R_GS_RR_Lingyongamount,isnull(sum(lingyongRateamount),0.00) as R_GS_RR_LingyongRateamount,isnull(sum(lingyongAverageamount),0.00) as R_GS_RR_LingyongAverageamount,
+isnull(sum(pifaNum),0) as R_GS_RR_Kehupifanum,isnull(sum(kehupifaamount),0.00) as R_GS_RR_Kehupifaamount,isnull(sum(kehupifRateaamount),0.00) as R_GS_RR_KehupifRateaamount,isnull(sum(kehupifaAverageamount),0.00) as R_GS_RR_KehupifaAverageamount
+into #costtemp
+from(
+-- 采购
+select C_ST_IE_GoodsId as goodsID,B_WH_ID,
+sum(C_ST_IE_GoodsQuantity) as caigouNum,sum(C_ST_IE_NotTaxRateAmount) as caigouamount,sum(C_ST_IE_CostPriceAmount) as caigouRateamount,sum(B_GI_AverageNotTaxRate*C_ST_IE_GoodsQuantity) as caigouAverageamount,
+0 as diaoboNum,0 as diaoboamount,0 as diaoboRateamount,0 as diaoboAverageamount,
+0 as xiaoshouNum,0 as xiaoshouamount,0 as xiaoshouRateamount,0 as xiaoshouAverageamount,
+0 as panyingNum,0 as panyingamount,0 as panyingRateamount,0 as panyingAverageamount,
+0 as pankuiNum,0 as pankuiamount,0 as pankuiRateamount,0 as pankuiAverageamount,
+0 as lingyongNum,0 as lingyongamount,0 as lingyongRateamount,0 as lingyongAverageamount,
+0 as pifaNum,0 as kehupifaamount,0 as kehupifRateaamount,0 as kehupifaAverageamount
+from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+inner join B_Warehouse on C_ST_IE_InStockId=B_WH_ID
+inner join B_GoodsInfo on C_ST_IE_GoodsId=B_GI_GoodsID
+where C_ST_I_BillTypeId in ('1','9','7') and C_ST_I_AuditState='1' and C_ST_I_FinanceAuditState='1'
+and convert(varchar(10),C_ST_I_FinanceAuditDate,120)>=convert(varchar(10),getdate(),120)
+and convert(varchar(10),C_ST_I_FinanceAuditDate,120)<=convert(varchar(10),getdate(),120)
+group by C_ST_IE_GoodsId,B_WH_ID
+
+union all
+
+select C_ST_IE_GoodsId as goodsID,B_WH_ID,
+-sum(C_ST_IE_GoodsQuantity) as caigouNum,-sum(C_ST_IE_NotTaxRateAmount) as caigouamount,-sum(C_ST_IE_CostPriceAmount) as caigouRateamount,-sum(B_GI_AverageNotTaxRate*C_ST_IE_GoodsQuantity) as caigouAverageamount,
+0 as diaoboNum,0 as diaoboamount,0 as diaoboRateamount,0 as diaoboAverageamount,
+0 as xiaoshouNum,0 as xiaoshouamount,0 as xiaoshouRateamount,0 as xiaoshouAverageamount,
+0 as panyingNum,0 as panyingamount,0 as panyingRateamount,0 as panyingAverageamount,
+0 as pankuiNum,0 as pankuiamount,0 as pankuiRateamount,0 as pankuiAverageamount,
+0 as lingyongNum,0 as lingyongamount,0 as lingyongRateamount,0 as lingyongAverageamount,
+0 as pifaNum,0 as kehupifaamount,0 as kehupifRateaamount,0 as kehupifaAverageamount
+from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+inner join B_Warehouse on C_ST_IE_OutStockId=B_WH_ID
+inner join B_GoodsInfo on C_ST_IE_GoodsId=B_GI_GoodsID
+where C_ST_I_BillTypeId in ('2') and C_ST_I_AuditState='1' and C_ST_I_FinanceAuditState='1'
+and convert(varchar(10),C_ST_I_FinanceAuditDate,120)>=convert(varchar(10),getdate(),120)
+and convert(varchar(10),C_ST_I_FinanceAuditDate,120)<=convert(varchar(10),getdate(),120)
+group by C_ST_IE_GoodsId,B_WH_ID
+
+union all
+-- 调拨
+select C_ST_IE_GoodsId as goodsID,B_WH_ID,
+0 as caigouNum,0 as caigouamount,0 as caigouRateamount,0 as caigouAverageamount,
+sum(C_ST_IE_GoodsQuantity) as diaoboNum,sum(C_ST_IE_NotTaxRateAmount) as diaoboamount,sum(C_ST_IE_CostPriceAmount) as diaoboRateamount,sum(B_GI_AverageNotTaxRate*C_ST_IE_GoodsQuantity) as diaoboAverageamount,
+0 as xiaoshouNum,0 as xiaoshouamount,0 as xiaoshouRateamount,0 as xiaoshouAverageamount,
+0 as panyingNum,0 as panyingamount,0 as panyingRateamount,0 as panyingAverageamount,
+0 as pankuiNum,0 as pankuiamount,0 as pankuiRateamount,0 as pankuiAverageamount,
+0 as lingyongNum,0 as lingyongamount,0 as lingyongRateamount,0 as lingyongAverageamount,
+0 as pifaNum,0 as kehupifaamount,0 as kehupifRateaamount,0 as kehupifaAverageamount
+from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+inner join B_Warehouse on C_ST_IE_InStockId=B_WH_ID
+inner join B_GoodsInfo on C_ST_IE_GoodsId=B_GI_GoodsID
+where C_ST_I_BillTypeId in ('4') and C_ST_I_AuditState='1'
+and convert(varchar(10),C_ST_I_AuditDate,120)>=convert(varchar(10),getdate(),120)
+and convert(varchar(10),C_ST_I_AuditDate,120)<=convert(varchar(10),getdate(),120)
+group by C_ST_IE_GoodsId,B_WH_ID
+
+union all
+
+select C_ST_IE_GoodsId as goodsID,B_WH_ID,
+0 as caigouNum,0 as caigouamount,0 as caigouRateamount,0 as caigouAverageamount,
+-sum(C_ST_IE_GoodsQuantity) as diaoboNum,-sum(C_ST_IE_NotTaxRateAmount) as diaoboamount,-sum(C_ST_IE_CostPriceAmount) as diaoboRateamount,-sum(B_GI_AverageNotTaxRate*C_ST_IE_GoodsQuantity) as diaoboAverageamount,
+0 as xiaoshouNum,0 as xiaoshouamount,0 as xiaoshouRateamount,0 as xiaoshouAverageamount,
+0 as panyingNum,0 as panyingamount,0 as panyingRateamount,0 as panyingAverageamount,
+0 as pankuiNum,0 as pankuiamount,0 as pankuiRateamount,0 as pankuiAverageamount,
+0 as lingyongNum,0 as lingyongamount,0 as lingyongRateamount,0 as lingyongAverageamount,
+0 as pifaNum,0 as kehupifaamount,0 as kehupifRateaamount,0 as kehupifaAverageamount
+from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+inner join B_Warehouse on C_ST_IE_OutStockId=B_WH_ID
+inner join B_GoodsInfo on C_ST_IE_GoodsId=B_GI_GoodsID
+where C_ST_I_BillTypeId in ('4') and C_ST_I_AuditState='1'
+and convert(varchar(10),C_ST_I_AuditDate,120)>=convert(varchar(10),getdate(),120)
+and convert(varchar(10),C_ST_I_AuditDate,120)<=convert(varchar(10),getdate(),120)
+group by C_ST_IE_GoodsId,B_WH_ID
+
+union all
+-- 销售
+select C_ST_IE_GoodsId as goodsID,B_WH_ID,
+0 as caigouNum,0 as caigouamount,0 as caigouRateamount,0 as caigouAverageamount,
+0 as diaoboNum,0 as diaoboamount,0 as diaoboRateamount,0 as diaoboAverageamount,
+-sum(C_ST_IE_GoodsQuantity) as xiaoshouNum,-sum(C_ST_IE_NotTaxRateAmount) as xiaoshouamount,-sum(C_ST_IE_CostPriceAmount) as xiaoshouRateamount,-sum(B_GI_AverageNotTaxRate*C_ST_IE_GoodsQuantity) as xiaoshouAverageamount,
+0 as panyingNum,0 as panyingamount,0 as panyingRateamount,0 as panyingAverageamount,
+0 as pankuiNum,0 as pankuiamount,0 as pankuiRateamount,0 as pankuiAverageamount,
+0 as lingyongNum,0 as lingyongamount,0 as lingyongRateamount,0 as lingyongAverageamount,
+0 as pifaNum,0 as kehupifaamount,0 as kehupifRateaamount,0 as kehupifaAverageamount
+from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+inner join B_Warehouse on C_ST_IE_OutStockId=B_WH_ID
+inner join B_GoodsInfo on C_ST_IE_GoodsId=B_GI_GoodsID
+where C_ST_I_BillTypeId in ('3') and C_ST_I_AuditState='1' and C_ST_IE_GoodsId not like '%附%'
+and convert(varchar(10),C_ST_I_AuditDate,120)>=convert(varchar(10),getdate(),120)
+and convert(varchar(10),C_ST_I_AuditDate,120)<=convert(varchar(10),getdate(),120)
+group by C_ST_IE_GoodsId,B_WH_ID
+
+union all
+-- 盘盈
+select C_ST_IE_GoodsId as goodsID,B_WH_ID,
+0 as caigouNum,0 as caigouamount,0 as caigouRateamount,0 as caigouAverageamount,
+0 as diaoboNum,0 as diaoboamount,0 as diaoboRateamount,0 as diaoboAverageamount,
+0 as xiaoshouNum,0 as xiaoshouamount,0 as xiaoshouRateamount,0 as xiaoshouAverageamount,
+sum(C_ST_IE_GoodsQuantity) as panyingNum,sum(C_ST_IE_NotTaxRateAmount) as panyingamount,sum(C_ST_IE_CostPriceAmount) as panyingRateamount,sum(B_GI_AverageNotTaxRate*C_ST_IE_GoodsQuantity) as panyingAverageamount,
+0 as pankuiNum,0 as pankuiamount,0 as pankuiRateamount,0 as pankuiAverageamount,
+0 as lingyongNum,0 as lingyongamount,0 as lingyongRateamount,0 as lingyongAverageamount,
+0 as pifaNum,0 as kehupifaamount,0 as kehupifRateaamount,0 as kehupifaAverageamount
+from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+inner join B_Warehouse on C_ST_IE_InStockId=B_WH_ID
+inner join B_GoodsInfo on C_ST_IE_GoodsId=B_GI_GoodsID
+where C_ST_I_BillTypeId in ('5') and C_ST_I_AuditState='1' 
+and convert(varchar(10),C_ST_I_AuditDate,120)>=convert(varchar(10),getdate(),120)
+and convert(varchar(10),C_ST_I_AuditDate,120)<=convert(varchar(10),getdate(),120)
+group by C_ST_IE_GoodsId,B_WH_ID
+
+union all
+-- 盘亏
+select C_ST_IE_GoodsId as goodsID,B_WH_ID,
+0 as caigouNum,0 as caigouamount,0 as caigouRateamount,0 as caigouAverageamount,
+0 as diaoboNum,0 as diaoboamount,0 as diaoboRateamount,0 as diaoboAverageamount,
+0 as xiaoshouNum,0 as xiaoshouamount,0 as xiaoshouRateamount,0 as xiaoshouAverageamount,
+0 as panyingNum,0 as panyingamount,0 as panyingRateamount,0 as panyingAverageamount,
+-sum(C_ST_IE_GoodsQuantity) as pankuiNum,-sum(C_ST_IE_NotTaxRateAmount) as pankuiamount,-sum(C_ST_IE_CostPriceAmount) as pankuiRateamount,-sum(B_GI_AverageNotTaxRate*C_ST_IE_GoodsQuantity) as pankuiAverageamount,
+0 as lingyongNum,0 as lingyongamount,0 as lingyongRateamount,0 as lingyongAverageamount,
+0 as pifaNum,0 as kehupifaamount,0 as kehupifRateaamount,0 as kehupifaAverageamount
+from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+inner join B_Warehouse on C_ST_IE_OutStockId=B_WH_ID
+inner join B_GoodsInfo on C_ST_IE_GoodsId=B_GI_GoodsID
+where C_ST_I_BillTypeId in ('6') and C_ST_I_AuditState='1' 
+and convert(varchar(10),C_ST_I_AuditDate,120)>=convert(varchar(10),getdate(),120)
+and convert(varchar(10),C_ST_I_AuditDate,120)<=convert(varchar(10),getdate(),120)
+group by C_ST_IE_GoodsId,B_WH_ID
+
+union all
+-- 领用
+select C_ST_IE_GoodsId as goodsID,B_WH_ID,
+0 as caigouNum,0 as caigouamount,0 as caigouRateamount,0 as caigouAverageamount,
+0 as diaoboNum,0 as diaoboamount,0 as diaoboRateamount,0 as diaoboAverageamount,
+0 as xiaoshouNum,0 as xiaoshouamount,0 as xiaoshouRateamount,0 as xiaoshouAverageamount,
+0 as panyingNum,0 as panyingamount,0 as panyingRateamount,0 as panyingAverageamount,
+0 as pankuiNum,0 as pankuiamount,0 as pankuiRateamount,0 as pankuiAverageamount,
+sum(C_ST_IE_GoodsQuantity) as lingyongNum,sum(C_ST_IE_NotTaxRateAmount) as lingyongamount,sum(C_ST_IE_CostPriceAmount) as lingyongRateamount,sum(B_GI_AverageNotTaxRate*C_ST_IE_GoodsQuantity) as lingyongAverageamount,
+0 as pifaNum,0 as kehupifaamount,0 as kehupifRateaamount,0 as kehupifaAverageamount
+from C_ST_TakeInventory inner join C_ST_TakeInventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+inner join B_Warehouse on C_ST_IE_OutStockId=B_WH_ID
+inner join B_GoodsInfo on C_ST_IE_GoodsId=B_GI_GoodsID
+where C_ST_I_BillTypeId in ('3') and C_ST_I_AuditState='1'
+and convert(varchar(10),C_ST_I_AuditDate,120)>=convert(varchar(10),getdate(),120)
+and convert(varchar(10),C_ST_I_AuditDate,120)<=convert(varchar(10),getdate(),120)
+group by C_ST_IE_GoodsId,B_WH_ID
+
+union all
+-- 批发
+select M_TE_GoodsId as goodsID,B_WH_ID,
+0 as caigouNum,0 as caigouamount,0 as caigouRateamount,0 as caigouAverageamount,
+0 as diaoboNum,0 as diaoboamount,0 as diaoboRateamount,0 as diaoboAverageamount,
+0 as xiaoshouNum,0 as xiaoshouamount,0 as xiaoshouRateamount,0 as xiaoshouAverageamount,
+0 as panyingNum,0 as panyingamount,0 as panyingRateamount,0 as panyingAverageamount,
+0 as pankuiNum,0 as pankuiamount,0 as pankuiRateamount,0 as pankuiAverageamount,
+0 as lingyongNum,0 as lingyongamount,0 as lingyongRateamount,0 as lingyongAverageamount,
+sum(M_TE_GoodsQuantity) as pifaNum,sum(M_TE_NotTaxRateAmount) as kehupifaamount,sum(M_TE_CostPriceAmount) as kehupifRateaamount,sum(B_GI_AverageNotTaxRate*M_TE_GoodsQuantity) as kehupifaAverageamount
+from M_Trac inner join M_TracEntry on M_T_BillID=M_TE_BillID
+inner join B_Warehouse on M_T_InStockId=B_WH_ID
+inner join B_GoodsInfo on M_TE_GoodsId=B_GI_GoodsID
+where M_T_BillTypeId in ('2') and M_T_AuditState='1'
+and convert(varchar(10),M_T_AuditDate,120)>=convert(varchar(10),getdate(),120)
+and convert(varchar(10),M_T_AuditDate,120)<=convert(varchar(10),getdate(),120)
+group by M_TE_GoodsId,B_WH_ID
+
+union all
+
+select M_TE_GoodsId as goodsID,B_WH_ID,
+0 as caigouNum,0 as caigouamount,0 as caigouRateamount,0 as caigouAverageamount,
+0 as diaoboNum,0 as diaoboamount,0 as diaoboRateamount,0 as diaoboAverageamount,
+0 as xiaoshouNum,0 as xiaoshouamount,0 as xiaoshouRateamount,0 as xiaoshouAverageamount,
+0 as panyingNum,0 as panyingamount,0 as panyingRateamount,0 as panyingAverageamount,
+0 as pankuiNum,0 as pankuiamount,0 as pankuiRateamount,0 as pankuiAverageamount,
+0 as lingyongNum,0 as lingyongamount,0 as lingyongRateamount,0 as lingyongAverageamount,
+-sum(M_TE_GoodsQuantity) as pifaNum,-sum(M_TE_NotTaxRateAmount) as kehupifaamount,-sum(M_TE_CostPriceAmount) as kehupifRateaamount,-sum(B_GI_AverageNotTaxRate*M_TE_GoodsQuantity) as kehupifaAverageamount
+from M_Trac inner join M_TracEntry on M_T_BillID=M_TE_BillID
+inner join B_Warehouse on M_T_OutStockId=B_WH_ID
+inner join B_GoodsInfo on M_TE_GoodsId=B_GI_GoodsID
+where M_T_BillTypeId in ('3') and M_T_AuditState='1'
+and convert(varchar(10),M_T_AuditDate,120)>=convert(varchar(10),getdate(),120)
+and convert(varchar(10),M_T_AuditDate,120)<=convert(varchar(10),getdate(),120)
+group by M_TE_GoodsId,B_WH_ID
+)t group by substring(goodsID,1,7),B_WH_ID
+
+
+
+select B_GC_ID as goodsCategoryID,
+       B_GC_GoodsCategoryName as goodsCategoryName, 
+       B_SP_ID as supplierID,
+       B_SP_SupplierName as supplierName, 
+       B_BD_ID  AS brandID,
+       B_BD_brandName as brandName,
+       StockID as StockID,
+       B_WH_warehouseName as StockName,
+       B_DP_Type,
+       sum(isnull(qichuNum,0)) as qichuNum,
+       sum(isnull(qichucost,0)) as qichucost
+  from (
+select substring(L_CT_CT_GoodsID,1,7) as goodsID,
+L_CT_CT_StockID as StockID,
+       sum(L_CT_CT_GoodsQuantity) as qichuNum,
+       (case @totalPriceType when '1' then sum(L_CT_CT_Goodsnottaxrateamount) else sum(L_CT_CT_GoodsRateamount) end) as qichucost,
+       0 as caigouNum,0 as caigoucost,
+       0 as diaoboNum,0 as diaobocost,
+       0 as xiaoshouNum,0 as xiaoshoucost,
+       0 as pankuiNum,0 as pankuicost,
+       0 as panyingNum,0 as panyingcost,
+       0 as lingyongNum,0 as lingyongcost,
+       0 as pifaNum,0 as pifacost
+  from L_CT_CostingStockTemplate
+  where 1=1
+       and ( ( Isnull(@stockId, '') <> '' AND L_CT_CT_StockID IN (SELECT StockId FROM   #stroageStockId) ) OR ( Isnull(@stockId, '') = '' ) )
+       group by substring(L_CT_CT_GoodsID,1,7)
+,L_CT_CT_StockID
+
+union all
+
+select R_GS_RR_GoodsID as goodsID,
+       R_GS_RR_WarehouseID as StockID,
+       (sum(isnull(R_GS_RR_Caigounum,0))+sum(isnull(R_GS_RR_Diaobonum,0))+sum(isnull(R_GS_RR_Xiaoshounum,0))+sum(isnull(R_GS_RR_Pankuinum,0))+sum(isnull(R_GS_RR_Panyingnum,0))+sum(isnull(R_GS_RR_Lingyongnum,0))+ sum(isnull(R_GS_RR_Kehupifanum,0))) as qichuNum,
+       (sum(isnull(R_GS_RR_Caigouamount,0))+sum(isnull(R_GS_RR_Diaoboamount,0))+sum(isnull(R_GS_RR_Xiaoshouamount,0))+sum(isnull(R_GS_RR_Pankuiamount,0))+sum(isnull(R_GS_RR_Panyingamount,0))+sum(isnull(R_GS_RR_Lingyongamount,0))+sum(isnull(R_GS_RR_Kehupifaamount,0))) as qichucost,
+       0 as caigouNum,0 as caigoucost,
+       0 as diaoboNum,0 as diaobocost,
+       0 as xiaoshouNum,0 as xiaoshoucost,
+       0 as pankuiNum,0 as pankuicost,
+       0 as panyingNum,0 as panyingcost,
+       0 as lingyongNum,0 as lingyongcost,
+       0 as pifaNum,0 as pifacost
+  from (
+select R_GS_RR_GoodsID,
+       R_GS_RR_WarehouseID,
+       R_GS_RR_Caigounum,
+       (case @totalPriceType when '1' then R_GS_RR_Caigouamount else R_GS_RR_CaigouRateamount end) as R_GS_RR_Caigouamount,
+	   0 as R_GS_RR_Diaobonum,0 as R_GS_RR_Diaoboamount,
+       R_GS_RR_Xiaoshounum,
+       R_GS_RR_XiaoshouAverageamount as R_GS_RR_Xiaoshouamount,
+       R_GS_RR_Pankuinum,
+       R_GS_RR_PankuiAverageamount as R_GS_RR_Pankuiamount,
+       R_GS_RR_Panyingnum,
+       R_GS_RR_PanyingAverageamount as R_GS_RR_Panyingamount,
+       R_GS_RR_Lingyongnum,
+       R_GS_RR_LingyongAverageamount as R_GS_RR_Lingyongamount,
+       R_GS_RR_Kehupifanum,
+       R_GS_RR_KehupifaAverageamount as R_GS_RR_Kehupifaamount
+  from R_GS_RR_GoodsStorageRevolveRateBillTemp
+  where 1=1
+     and ( ( Isnull(@stockId, '') <> '' AND R_GS_RR_WarehouseID IN (SELECT StockId FROM   #stroageStockId) ) OR ( Isnull(@stockId, '') = '' ) )
+	 and isnull(@endDate,'')<>'' and convert(varchar(10),R_GS_RR_Date,120)<=@endDate 
+union all
+select R_GS_RR_GoodsID,
+       R_GS_RR_WarehouseID, 
+       0,0,
+	   R_GS_RR_Diaobonum,
+       R_GS_RR_DiaoboAverageamount as R_GS_RR_Diaoboamount,
+       0,0,
+       0,0,
+       0,0,
+       0,0,
+       0,0
+  from R_GS_RR_GoodsStorageRevolveRateBillTemp
+  where 1=1
+     and ( ( Isnull(@stockId, '') <> '' AND R_GS_RR_WarehouseID IN (SELECT StockId FROM   #stroageStockId) ) OR ( Isnull(@stockId, '') = '' ) )
+	 and isnull(@endDate,'')<>'' and convert(varchar(10),R_GS_RR_Date,120) <=@endDate
+)t0
+  group by R_GS_RR_GoodsID,R_GS_RR_WarehouseID
+
+union all
+
+select R_GS_RR_GoodsID as goodsID,
+       R_GS_RR_WarehouseID as StockID,
+       (sum(isnull(R_GS_RR_Caigounum,0))+sum(isnull(R_GS_RR_Diaobonum,0))+sum(isnull(R_GS_RR_Xiaoshounum,0))+sum(isnull(R_GS_RR_Pankuinum,0))+sum(isnull(R_GS_RR_Panyingnum,0))+sum(isnull(R_GS_RR_Lingyongnum,0))+ sum(isnull(R_GS_RR_Kehupifanum,0))) as qichuNum,
+       (sum(isnull(R_GS_RR_Caigouamount,0))+sum(isnull(R_GS_RR_Diaoboamount,0))+sum(isnull(R_GS_RR_Xiaoshouamount,0))+sum(isnull(R_GS_RR_Pankuiamount,0))+sum(isnull(R_GS_RR_Panyingamount,0))+sum(isnull(R_GS_RR_Lingyongamount,0))+sum(isnull(R_GS_RR_Kehupifaamount,0))) as qichucost,
+       0 as caigouNum,0 as caigoucost,
+       0 as diaoboNum,0 as diaobocost,
+       0 as xiaoshouNum,0 as xiaoshoucost,
+       0 as pankuiNum,0 as pankuicost,
+       0 as panyingNum,0 as panyingcost,
+       0 as lingyongNum,0 as lingyongcost,
+       0 as pifaNum,0 as pifacost
+  from (
+select R_GS_RR_GoodsID,
+       R_GS_RR_WarehouseID,
+       R_GS_RR_Caigounum,
+       (case @totalPriceType when '1' then R_GS_RR_Caigouamount else R_GS_RR_CaigouRateamount end) as R_GS_RR_Caigouamount,
+	   0 as R_GS_RR_Diaobonum,0 as R_GS_RR_Diaoboamount,
+       R_GS_RR_Xiaoshounum,
+       R_GS_RR_XiaoshouAverageamount as R_GS_RR_Xiaoshouamount,
+       R_GS_RR_Pankuinum,
+       R_GS_RR_PankuiAverageamount as R_GS_RR_Pankuiamount,
+       R_GS_RR_Panyingnum,
+       R_GS_RR_PanyingAverageamount as R_GS_RR_Panyingamount,
+       R_GS_RR_Lingyongnum,
+       R_GS_RR_LingyongAverageamount as R_GS_RR_Lingyongamount,
+       R_GS_RR_Kehupifanum,
+       R_GS_RR_KehupifaAverageamount as R_GS_RR_Kehupifaamount
+  from #costtemp
+  where 1=1
+     and ( ( Isnull(@stockId, '') <> '' AND R_GS_RR_WarehouseID IN (SELECT StockId FROM   #stroageStockId) ) OR ( Isnull(@stockId, '') = '' ) )
+
+union all
+select R_GS_RR_GoodsID,
+       R_GS_RR_WarehouseID, 
+       0,0,
+	   R_GS_RR_Diaobonum,
+       R_GS_RR_DiaoboAverageamount as R_GS_RR_Diaoboamount,
+       0,0,
+       0,0,
+       0,0,
+       0,0,
+       0,0
+  from #costtemp
+  where 1=1
+     and ( ( Isnull(@stockId, '') <> '' AND R_GS_RR_WarehouseID IN (SELECT StockId FROM   #stroageStockId) ) OR ( Isnull(@stockId, '') = '' ) )
+
+)t00
+  group by R_GS_RR_GoodsID,R_GS_RR_WarehouseID
+
+
+
+)t2 
+ inner join B_GoodsCategory on B_GC_ID=substring(goodsID,1,1)
+ INNER JOIN B_Supplier ON B_SP_ID = substring(goodsID,3,2)
+ INNER JOIN B_Brand ON B_BD_SupplierID = substring(goodsID,3,2) AND B_BD_ID = substring(goodsID,6,2)
+ INNER JOIN B_Warehouse ON StockID = B_WH_ID
+ INNER JOIN B_Departments ON B_WH_deptID=B_DP_DepartmentID
+  where 1=1
+     and ((ISNULL(@goodsCategoryID,'')<>'' AND B_GC_ID = @goodsCategoryID) OR ISNULL(@goodsCategoryID,'')='')
+     AND ( ( Isnull(@supplierID, '') <> '' AND B_SP_ID = @supplierID ) OR Isnull(@supplierID, '') = '' )
+     AND ( ( Isnull(@brandID, '') <> '' AND B_BD_ID = @brandID ) OR Isnull(@brandID, '') = '' )
+     and ((isnull(@brandNameStr,'')<>'' and B_BD_brandName like '%' + isnull(@brandNameStr,'') + '%') or isnull(@brandNameStr,'')='')
+
+group by B_GC_ID,B_GC_GoodsCategoryName,B_SP_ID,B_SP_SupplierName,B_BD_ID,B_BD_brandName,B_DP_Type,StockID,B_WH_warehouseName
+ORDER BY B_DP_Type desc,StockID desc
+
+drop table #costtemp
+
+end
+
+
+drop table #stroageStockId
+]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="goodsCategoryID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select B_GC_GoodsCategoryName
+ from B_GoodsCategory
+ where ((isnull('${goodsCategoryID}','')='' and B_GC_ID in (select B_GC_ID  from B_GoodsCategory)) or (isnull('${goodsCategoryID}','')<>'' and B_GC_ID='${goodsCategoryID}'))]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="9"/>
+<FR/>
+<HC F="0" T="11"/>
+<FC/>
+<UPFCR COLUMN="true" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,0,0,0,3168000,2880000,2880000,0,2880000,3600000,0,2880000,2880000,2880000,2880000,2880000,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<Expand/>
+</C>
+<C c="2" r="0" s="0">
+<Expand/>
+</C>
+<C c="4" r="0" cs="8" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$showCompanyName = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="12" r="0" s="0">
+<Expand/>
+</C>
+<C c="13" r="0" s="0">
+<Expand/>
+</C>
+<C c="14" r="0" s="0">
+<Expand/>
+</C>
+<C c="15" r="0" s="0">
+<Expand/>
+</C>
+<C c="0" r="1" s="0">
+<Expand/>
+</C>
+<C c="2" r="1" s="0">
+<Expand/>
+</C>
+<C c="4" r="1" cs="8" s="2">
+<O>
+<![CDATA[库存商品统计表(按结算单据-品种)]]></O>
+<Expand/>
+</C>
+<C c="12" r="1">
+<Expand/>
+</C>
+<C c="13" r="1">
+<Expand/>
+</C>
+<C c="14" r="1">
+<Expand/>
+</C>
+<C c="15" r="1">
+<Expand/>
+</C>
+<C c="0" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="2" s="3">
+<O>
+<![CDATA[仓位名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="2" cs="7" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$warsehouseName]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="3" s="3">
+<O>
+<![CDATA[查询日期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="3" cs="7" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=" 至 " + $endDate]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="4">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="4" s="3">
+<O>
+<![CDATA[商品类别：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="4" cs="7" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="B_GC_GoodsCategoryName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="5" s="3">
+<O>
+<![CDATA[制造商名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="5" cs="7" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$supplierName]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="6">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="6" s="3">
+<O>
+<![CDATA[商品品种：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="6" cs="7" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$brandName]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="12" r="6">
+<Expand/>
+</C>
+<C c="4" r="7" s="3">
+<O>
+<![CDATA[品种名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="7" cs="7" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$brandNameStr]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="12" r="7">
+<Expand/>
+</C>
+<C c="4" r="8" cs="2" rs="2" s="4">
+<O>
+<![CDATA[品种/仓位]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="6" r="8" cs="6" s="4">
+<O>
+<![CDATA[小计]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="12" r="8" cs="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="StockName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$shopcol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<CellInsertPolicy/>
+<Expand dir="1"/>
+</C>
+<C c="6" r="9" s="5">
+<O>
+<![CDATA[数量]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[1]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[2]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="8" r="9" s="5">
+<O>
+<![CDATA[数量占比]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[3]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[4]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand order="2"/>
+</C>
+<C c="9" r="9" s="5">
+<O>
+<![CDATA[成本]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[5]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[6]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$permission <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="11" r="9" s="5">
+<O>
+<![CDATA[成本占比]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[7]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[8]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$permission <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="12" r="9" s="4">
+<O>
+<![CDATA[数量]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="13" r="9" s="4">
+<O>
+<![CDATA[数量占比]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="14" r="9" s="4">
+<O>
+<![CDATA[成本]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$permission <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="15" r="9" s="4">
+<O>
+<![CDATA[成本占比]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$permission <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="1" r="10">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsCategoryID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="10">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="supplierID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="10">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="brandID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0" order="2">
+<SortFormula>
+<![CDATA[SWITCH($order, "1", -TODOUBLE(G11), "2", TODOUBLE(G11), "3", -TODOUBLE(H11), "4", TODOUBLE(H11), "5", -TODOUBLE(J11), "6", TODOUBLE(J11), "7", -TODOUBLE(K11), "8", TODOUBLE(K11))]]></SortFormula>
+</Expand>
+</C>
+<C c="4" r="10" cs="2" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="brandName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="goodscategoryID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B11]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="stockId"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$stockId]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="permission"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$permission]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="warsehouseName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$warsehouseName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="totalPriceType"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$totalPriceType]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="shopcol"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$shopcol]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endDate]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C11]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="brandID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=D11]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$supplierName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="brandName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=E11]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="showCompanyName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$showCompanyName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=storage_kcsptj_bill_slje4.cpt&__bypagesize__=false&isShow="+isShow+"&goodscategoryID="+goodscategoryID+"&stockId="+stockId+"&warsehouseName="+EncodeUtf8(warsehouseName)+"&permission="+permission+"&totalPriceType="+totalPriceType+"&shopcol="+shopcol+"&endDate="+endDate+"&supplierID="+supplierID+"&brandID="+brandID+"&brandName="+EncodeUtf8(brandName)+"&supplierName="+EncodeUtf8(supplierName)+"&showCompanyName="+showCompanyName+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[(row() - 10) % 15 = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.PageHighlightAction">
+<P i="1"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="6" r="10" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(M11)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((G11 / G13) * 100)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="10" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((G11 / G12) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="10" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(O11))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="10" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((J11 / J13) * 100)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="10" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((J11 / J12) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="10" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="qichuNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="10" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((M11 / M12) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="14" r="10" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="qichucost"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="15" r="10" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((O11 / O12) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="11" cs="2" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsCategoryName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0" leftParentDefault="false" left="B11"/>
+</C>
+<C c="6" r="11" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(G11)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="11" s="11">
+<Expand/>
+</C>
+<C c="8" r="11" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((G12 / G13) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="11" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J11))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="11" s="11">
+<Expand/>
+</C>
+<C c="11" r="11" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((J12 / J13) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="11" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(M11)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="11" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((M12 / M13) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="14" r="11" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(O11))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="15" r="11" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((O12 / O13) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="12" cs="2" s="13">
+<O>
+<![CDATA[合计]]></O>
+<Expand/>
+</C>
+<C c="6" r="12" s="13">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(G12)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="12" s="14">
+<Expand/>
+</C>
+<C c="9" r="12" s="13">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J12))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="12" s="14">
+<Expand/>
+</C>
+<C c="12" r="12" s="13">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(M12)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="12" s="14">
+<Expand/>
+</C>
+<C c="14" r="12" s="13">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(O12))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="15" r="12" s="14">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<PaperSize width="33912000" height="46411200"/>
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="黑体" style="0" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80" foreground="-16776961" underline="1"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72" foreground="-16776961" underline="1"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="宋体" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="宋体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

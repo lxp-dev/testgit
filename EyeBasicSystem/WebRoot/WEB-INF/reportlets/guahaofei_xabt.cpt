@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salseID"/>
+<O>
+<![CDATA[2c95a4814b2f3990014b2f619aff0000]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+S_ME_CI_Name as '会员姓名',
+S_ME_CI_MemberId AS '会员卡号',
+case  
+when S_ME_CI_Sex = '0'  then '男' else '女'
+ end  as '性别',
+S_ME_CI_Phone as '会员电话',
+convert(varchar(10),S_CR_RD_CasherDate,120) as '收银日期',
+replace(replace(replace(CONVERT(varchar, S_CR_RD_CasherDate, 120 ),'-',''),' ',''),':','') AS '时间流水号',
+F_RC_RegisteredName AS '挂号费名称',
+sum(S_CR_RD_Money) as '金额合计',
+S_CR_RD_Money AS '金额',
+personName as '收银员姓名',
+ID AS '收银员工号',
+B_DP_DepartmentName as '门店名称',
+B_DP_Phone AS'门店电话',
+B_DP_Address AS  '门店地址',
+B_DP_Address + '  ' + B_DP_Phone AS '门店地址及电话' 
+from S_CR_RegisteredDetails 
+      left join B_Departments on S_CR_RD_ShopCode = B_DP_DepartmentID
+       left join F_RegisteredCategory on S_CR_RD_RegisteredID = F_RC_ID
+       left join S_ME_CustomerInfo on S_CR_RD_CustomerID = S_ME_CI_CustomerID
+       left join SYS_PersonInfo on S_CR_RD_Casher = id
+  where S_CR_RD_DetailsID = '${salseID}' and S_CR_RD_Flag = '1'
+  group by S_ME_CI_Name,convert(varchar(10),S_CR_RD_CasherDate,120),personName,
+S_ME_CI_MemberId,S_ME_CI_Sex,F_RC_RegisteredName,B_DP_DepartmentName,B_DP_Phone,B_DP_Address,S_ME_CI_Phone,ID,S_CR_RD_Money
+,S_CR_RD_CasherDate]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[571500,533400,800100,876300,432000,432000,914400,876300,990600,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[432000,432000,432000,432000,228600,304800,0,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,432000,304800,432000,533400,432000,114300,304800,152400,190500,0,0,762000,432000,432000,114300,0,38100,342900,266700,228600,0,0,609600,0,0,0,0,0,0,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<Expand/>
+</C>
+<C c="1" r="0" s="1">
+<Expand/>
+</C>
+<C c="2" r="0" s="1">
+<Expand/>
+</C>
+<C c="3" r="0" s="1">
+<Expand/>
+</C>
+<C c="4" r="0" s="1">
+<Expand/>
+</C>
+<C c="5" r="0" s="1">
+<Expand/>
+</C>
+<C c="6" r="0" s="1">
+<Expand/>
+</C>
+<C c="7" r="0" s="1">
+<Expand/>
+</C>
+<C c="8" r="0" cs="12" rs="3" s="2">
+<Expand/>
+</C>
+<C c="20" r="0" s="1">
+<Expand/>
+</C>
+<C c="21" r="0" cs="10" rs="3" s="0">
+<Expand/>
+</C>
+<C c="31" r="0" s="1">
+<Expand/>
+</C>
+<C c="32" r="0" s="1">
+<Expand/>
+</C>
+<C c="33" r="0" s="1">
+<Expand/>
+</C>
+<C c="34" r="0" s="1">
+<Expand/>
+</C>
+<C c="35" r="0" s="1">
+<Expand/>
+</C>
+<C c="36" r="0" s="1">
+<Expand/>
+</C>
+<C c="37" r="0" s="1">
+<Expand/>
+</C>
+<C c="38" r="0" s="1">
+<Expand/>
+</C>
+<C c="39" r="0" s="1">
+<Expand/>
+</C>
+<C c="40" r="0" s="1">
+<Expand/>
+</C>
+<C c="41" r="0" s="1">
+<Expand/>
+</C>
+<C c="42" r="0" s="1">
+<Expand/>
+</C>
+<C c="43" r="0" s="1">
+<Expand/>
+</C>
+<C c="44" r="0" s="1">
+<Expand/>
+</C>
+<C c="45" r="0" s="1">
+<Expand/>
+</C>
+<C c="0" r="1" s="1">
+<Expand/>
+</C>
+<C c="1" r="1" s="1">
+<Expand/>
+</C>
+<C c="2" r="1" s="1">
+<Expand/>
+</C>
+<C c="3" r="1" s="1">
+<Expand/>
+</C>
+<C c="4" r="1" s="1">
+<Expand/>
+</C>
+<C c="5" r="1" s="1">
+<Expand/>
+</C>
+<C c="6" r="1" s="1">
+<Expand/>
+</C>
+<C c="7" r="1" s="1">
+<Expand/>
+</C>
+<C c="20" r="1" s="1">
+<Expand/>
+</C>
+<C c="31" r="1" s="1">
+<Expand/>
+</C>
+<C c="32" r="1" s="1">
+<Expand/>
+</C>
+<C c="33" r="1" s="1">
+<Expand/>
+</C>
+<C c="34" r="1" s="1">
+<Expand/>
+</C>
+<C c="35" r="1" s="1">
+<Expand/>
+</C>
+<C c="36" r="1" s="1">
+<Expand/>
+</C>
+<C c="37" r="1" s="1">
+<Expand/>
+</C>
+<C c="38" r="1" s="1">
+<Expand/>
+</C>
+<C c="39" r="1" s="1">
+<Expand/>
+</C>
+<C c="40" r="1" s="1">
+<Expand/>
+</C>
+<C c="41" r="1" s="1">
+<Expand/>
+</C>
+<C c="42" r="1" s="1">
+<Expand/>
+</C>
+<C c="43" r="1" s="1">
+<Expand/>
+</C>
+<C c="44" r="1" s="1">
+<Expand/>
+</C>
+<C c="45" r="1" s="1">
+<Expand/>
+</C>
+<C c="0" r="2" s="1">
+<Expand/>
+</C>
+<C c="1" r="2" s="1">
+<Expand/>
+</C>
+<C c="2" r="2" s="1">
+<Expand/>
+</C>
+<C c="3" r="2" s="1">
+<Expand/>
+</C>
+<C c="4" r="2" s="1">
+<Expand/>
+</C>
+<C c="5" r="2" s="1">
+<Expand/>
+</C>
+<C c="6" r="2" s="1">
+<Expand/>
+</C>
+<C c="7" r="2" s="1">
+<Expand/>
+</C>
+<C c="20" r="2" s="1">
+<Expand/>
+</C>
+<C c="31" r="2" s="1">
+<Expand/>
+</C>
+<C c="32" r="2" s="1">
+<Expand/>
+</C>
+<C c="33" r="2" s="1">
+<Expand/>
+</C>
+<C c="34" r="2" s="1">
+<Expand/>
+</C>
+<C c="35" r="2" s="1">
+<Expand/>
+</C>
+<C c="36" r="2" s="1">
+<Expand/>
+</C>
+<C c="37" r="2" s="1">
+<Expand/>
+</C>
+<C c="38" r="2" s="1">
+<Expand/>
+</C>
+<C c="39" r="2" s="1">
+<Expand/>
+</C>
+<C c="40" r="2" s="1">
+<Expand/>
+</C>
+<C c="41" r="2" s="1">
+<Expand/>
+</C>
+<C c="42" r="2" s="1">
+<Expand/>
+</C>
+<C c="43" r="2" s="1">
+<Expand/>
+</C>
+<C c="44" r="2" s="1">
+<Expand/>
+</C>
+<C c="45" r="2" s="1">
+<Expand/>
+</C>
+<C c="0" r="3" cs="7" s="3">
+<O>
+<![CDATA[时间]]></O>
+<Expand/>
+</C>
+<C c="7" r="3" cs="9" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="收银日期"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="3" cs="5" s="4">
+<O>
+<![CDATA[NO:]]></O>
+<Expand/>
+</C>
+<C c="21" r="3" cs="19" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="时间流水号"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="40" r="3" s="6">
+<Expand/>
+</C>
+<C c="41" r="3" s="6">
+<Expand/>
+</C>
+<C c="42" r="3" s="6">
+<Expand/>
+</C>
+<C c="43" r="3" s="6">
+<Expand/>
+</C>
+<C c="44" r="3" s="6">
+<Expand/>
+</C>
+<C c="45" r="3" s="6">
+<Expand/>
+</C>
+<C c="0" r="4" cs="7" rs="2" s="3">
+<O>
+<![CDATA[卡号]]></O>
+<Expand/>
+</C>
+<C c="7" r="4" cs="36" rs="2" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="会员卡号"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="43" r="4" s="6">
+<Expand/>
+</C>
+<C c="44" r="4" s="6">
+<Expand/>
+</C>
+<C c="45" r="4" s="6">
+<Expand/>
+</C>
+<C c="43" r="5" s="6">
+<Expand/>
+</C>
+<C c="44" r="5" s="6">
+<Expand/>
+</C>
+<C c="45" r="5" s="6">
+<Expand/>
+</C>
+<C c="0" r="6" cs="7" s="3">
+<O>
+<![CDATA[姓名]]></O>
+<Expand/>
+</C>
+<C c="7" r="6" cs="9" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="会员姓名"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="6" cs="5" s="3">
+<O>
+<![CDATA[电话]]></O>
+<Expand/>
+</C>
+<C c="21" r="6" cs="19" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="会员电话"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="40" r="6" s="6">
+<Expand/>
+</C>
+<C c="41" r="6" s="6">
+<Expand/>
+</C>
+<C c="42" r="6" s="6">
+<Expand/>
+</C>
+<C c="43" r="6" s="6">
+<Expand/>
+</C>
+<C c="44" r="6" s="6">
+<Expand/>
+</C>
+<C c="45" r="6" s="6">
+<Expand/>
+</C>
+<C c="0" r="7" cs="7" s="7">
+<O>
+<![CDATA[检查项目]]></O>
+<Expand/>
+</C>
+<C c="7" r="7" cs="14" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="挂号费名称"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0" multiNumber="5"/>
+</C>
+<C c="21" r="7" cs="7" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="28" r="7" cs="18" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="金额合计"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Result>
+<![CDATA[IF($$$<>0,$$$,'')]]></Result>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="0" r="8" cs="7" s="3">
+<O>
+<![CDATA[合计大写]]></O>
+<Expand/>
+</C>
+<C c="7" r="8" cs="14" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=CNMONEY(sum(AC8))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="21" r="8" cs="7" s="3">
+<O>
+<![CDATA[合计]]></O>
+<Expand/>
+</C>
+<C c="28" r="8" cs="18" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(AC8)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="9" cs="7" rs="2" s="3">
+<O>
+<![CDATA[收银员]]></O>
+<Expand/>
+</C>
+<C c="7" r="9" cs="9" rs="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="收银员工号"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="9" cs="5" rs="2" s="3">
+<O>
+<![CDATA[客服热线]]></O>
+<Expand/>
+</C>
+<C c="21" r="9" cs="19" rs="2" s="3">
+<O>
+<![CDATA[400-600-3322]]></O>
+<Expand/>
+</C>
+<C c="40" r="9" s="6">
+<Expand/>
+</C>
+<C c="41" r="9" s="6">
+<Expand/>
+</C>
+<C c="42" r="9" s="6">
+<Expand/>
+</C>
+<C c="43" r="9" s="6">
+<Expand/>
+</C>
+<C c="44" r="9" s="6">
+<Expand/>
+</C>
+<C c="45" r="9" s="6">
+<Expand/>
+</C>
+<C c="40" r="10" s="6">
+<Expand/>
+</C>
+<C c="41" r="10" s="6">
+<Expand/>
+</C>
+<C c="42" r="10" s="6">
+<Expand/>
+</C>
+<C c="43" r="10" s="6">
+<Expand/>
+</C>
+<C c="44" r="10" s="6">
+<Expand/>
+</C>
+<C c="45" r="10" s="6">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting>
+<PaperSize width="14400000" height="12672000"/>
+<Margin top="122400" left="7200" bottom="122400" right="7200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="true" delayPlaying="true" windowPosition="1" align="0"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="1" size="152"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="微软雅黑" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

@@ -1,0 +1,2685 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="beginTime"/>
+<O>
+<![CDATA[2014-12-20]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCode"/>
+<O>
+<![CDATA[01]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O>
+<![CDATA[2014-12-20]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select departmentID into #shopCode from sales_createShopCodeTab('${ShopCode}')
+if ('${beginTime}'<convert(varchar(10),getdate(),120))
+begin
+
+if ('${endTime}'<convert(varchar(10),getdate(),120))
+begin
+select * into #R_RC_DaySalesEntry--进入临时表
+from (
+select R_RC_DaySalesEntry.*,B_GI_isCustomize,B_GI_AccessoriesType
+from R_RC_DaySalesEntry
+inner join B_GoodsInfo 	on B_GI_GoodsID = R_RC_DSE_GoodsID
+ where   datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+   and R_SD_DSE_SalesType='2'
+union all
+select R_RC_DaySalesEntry_ZZ.*,B_GI_isCustomize,B_GI_AccessoriesType
+from R_RC_DaySalesEntry_ZZ
+inner join B_GoodsInfo 	on B_GI_GoodsID = R_RC_DSE_GoodsID
+ where   datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+   and R_SD_DSE_SalesType='2'
+)t
+
+select SalseItemID as SalseItemID, -- 商品代码
+       substring(SalseItemID,1,4) as supplierID,
+       B_SP_SupplierName as supplierName, -- 制造商代码
+	   R_RC_DSE_BandName as salesItemName, -- 商品名称
+	   isnull(R_RC_DSE_RetailPrice,0.00) as sprice, -- 商品单价
+	   isnull(sum(cast(Number as int)),0) as Number, 
+	   isnull(sum(cast(PriceSum as numeric(20, 2))),0.00) as PriceSum, -- 原价合计
+	   isnull(sum(cast(DiscountNum as numeric(20, 2))),0.00) as DiscountNum, -- 折扣金额
+	   isnull(sum(cast(SalseValue as numeric(20, 2))),0.00) as SalseValue, 
+       groupBy,
+	   total 
+
+	from (
+
+
+-- 退款 ------------------------------------------------------------------
+
+-- begin 成品片 ------------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       1 AS groupBy --分组条件
+,'成品片小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='3'
+   and B_GI_isCustomize = '0'  -- 是否为订做片
+   and R_RC_DSE_SupplierID<>'ZZ'  -- 去掉顾客自片/单眼片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 成品片 ------------------------------------------------------------------
+union all
+-- begin 订做片 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       3 AS groupBy --分组条件
+,'订做片小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='3'
+   and B_GI_isCustomize = 'D'  -- 是否为订做片
+   and R_RC_DSE_SupplierID<>'ZZ'  -- 去掉顾客自片/单眼片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 订做片 ----------------------------------------------------------------
+union all
+-- begin 镜架 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       5 AS groupBy --分组条件
+,'镜架小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='1'
+   and R_RC_DSE_SupplierID<>'ZZ'  -- 去掉顾客自片/单眼片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 镜架 ----------------------------------------------------------------
+union all
+-- begin 太阳镜 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       7 AS groupBy --分组条件
+,'太阳镜小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='6'
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 太阳镜 ----------------------------------------------------------------
+union all
+-- begin 老花镜 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       9 AS groupBy --分组条件
+,'老花镜小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='8'
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 老花镜 ----------------------------------------------------------------
+union all
+-- begin 镜架配件类 -----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       11 AS groupBy --分组条件
+,'镜架配件小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='2'
+   and R_SD_DSE_SalesType='2'
+ and B_GI_AccessoriesType='1'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 镜架配件类-----------------------------------------------------------------
+union all
+-- begin 隐形配件类 -----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       12 AS groupBy --分组条件
+,'隐形配件小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='2'
+   and R_SD_DSE_SalesType='2'
+ and B_GI_AccessoriesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 隐形配件类-----------------------------------------------------------------
+
+union all
+-- begin 隐形成品片 -----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       13 AS groupBy --分组条件
+,'隐形成品片小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='4'
+   and B_GI_isCustomize = '0'  -- 是否为订做片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 隐形成品片 -----------------------------------------------------------------
+union all
+-- begin 隐形订做片 -----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       15 AS groupBy --分组条件
+,'隐形订做片小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='4'
+   and B_GI_isCustomize = 'D'  -- 是否为订做片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 隐形订做片 -----------------------------------------------------------------
+union all
+-- begin 隐形护理液 -----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       17 AS groupBy --分组条件
+,'隐形护理液小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='5'
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 隐形护理液 -----------------------------------------------------------------
+union all
+-- begin 自带镜架 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       19 AS groupBy --分组条件
+,'自带镜架小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='1'
+   and R_RC_DSE_SupplierID='ZZ'  -- 去掉顾客自片/单眼片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 自带镜架 ----------------------------------------------------------------
+union all
+-- begin 自片 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       21 AS groupBy --分组条件
+,'自片小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='3'
+   and R_RC_DSE_SupplierID='ZZ'  -- 去掉顾客自片/单眼片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 自片 ----------------------------------------------------------------
+union all
+-- begin 耗材商品 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       23 AS groupBy --分组条件
+,'耗材商品小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='7'
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 耗材商品 ----------------------------------------------------------------
+union all
+-- begin 视光类 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       25 AS groupBy --分组条件
+,'视光商品小计：' AS total --合计
+ from #R_RC_DaySalesEntry
+where R_RC_DSE_GoodsCategoryID='9'
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 视光类 ----------------------------------------------------------------
+) temp 
+   
+   left join B_Supplier on substring(SalseItemID,3,2)=B_SP_ID
+
+	group by B_SP_SupplierName,groupBy, total, SalseItemID, R_RC_DSE_BandName, 
+             R_RC_DSE_RetailPrice
+	order by groupBy,R_RC_DSE_RetailPrice 
+
+drop table #R_RC_DaySalesEntry
+
+end
+else
+begin
+
+select * into #R_RC_DaySalesEntry2--进入临时表
+from (
+select R_RC_DaySalesEntry.*,B_GI_isCustomize,B_GI_AccessoriesType
+from R_RC_DaySalesEntry
+inner join B_GoodsInfo 	on B_GI_GoodsID = R_RC_DSE_GoodsID
+ where   datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+   and R_SD_DSE_SalesType='2'
+union all
+select R_RC_DaySalesEntry_ZZ.*,B_GI_isCustomize,B_GI_AccessoriesType
+from R_RC_DaySalesEntry_ZZ
+inner join B_GoodsInfo 	on B_GI_GoodsID = R_RC_DSE_GoodsID
+ where   datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+   and R_SD_DSE_SalesType='2'
+)t
+
+
+select SalseItemID as SalseItemID, -- 商品代码
+       substring(SalseItemID,1,4) as supplierID,
+       B_SP_SupplierName as supplierName, -- 制造商代码
+	   R_RC_DSE_BandName as salesItemName, -- 商品名称
+	   isnull(R_RC_DSE_RetailPrice,0.00) as sprice, -- 商品单价
+	   isnull(sum(cast(Number as int)),0) as Number, 
+	   isnull(sum(cast(PriceSum as numeric(20, 2))),0.00) as PriceSum, -- 原价合计
+	   isnull(sum(cast(DiscountNum as numeric(20, 2))),0.00) as DiscountNum, -- 折扣金额
+	   isnull(sum(cast(SalseValue as numeric(20, 2))),0.00) as SalseValue, 
+       groupBy,
+	   total 
+
+	from (
+
+
+-- 退款 ------------------------------------------------------------------
+
+-- begin 成品片 ------------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       1 AS groupBy --分组条件
+,'成品片小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='3'
+   and B_GI_isCustomize = '0'  -- 是否为订做片
+   and R_RC_DSE_SupplierID<>'ZZ'  -- 去掉顾客自片/单眼片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 成品片 ------------------------------------------------------------------
+union all
+-- begin 订做片 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       3 AS groupBy --分组条件
+,'订做片小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='3'
+   and B_GI_isCustomize = 'D'  -- 是否为订做片
+   and R_RC_DSE_SupplierID<>'ZZ'  -- 去掉顾客自片/单眼片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 订做片 ----------------------------------------------------------------
+union all
+-- begin 镜架 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       5 AS groupBy --分组条件
+,'镜架小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='1'
+   and R_RC_DSE_SupplierID<>'ZZ'  -- 去掉顾客自片/单眼片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 镜架 ----------------------------------------------------------------
+union all
+-- begin 太阳镜 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       7 AS groupBy --分组条件
+,'太阳镜小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='6'
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 太阳镜 ----------------------------------------------------------------
+union all
+-- begin 老花镜 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       9 AS groupBy --分组条件
+,'老花镜小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='8'
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 老花镜 ----------------------------------------------------------------
+union all
+-- begin 镜架配件类 -----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       11 AS groupBy --分组条件
+,'镜架配件小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='2'
+   and R_SD_DSE_SalesType='2'
+ and B_GI_AccessoriesType='1'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 镜架配件类-----------------------------------------------------------------
+union all
+-- begin 隐形配件类 -----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       12 AS groupBy --分组条件
+,'隐形配件小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='2'
+   and R_SD_DSE_SalesType='2'
+ and B_GI_AccessoriesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 隐形配件类-----------------------------------------------------------------
+union all
+-- begin 隐形成品片 -----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       13 AS groupBy --分组条件
+,'隐形成品片小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='4'
+   and B_GI_isCustomize = '0'  -- 是否为订做片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 隐形成品片 -----------------------------------------------------------------
+union all
+-- begin 隐形订做片 -----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       15 AS groupBy --分组条件
+,'隐形订做片小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='4'
+   and B_GI_isCustomize = 'D'  -- 是否为订做片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 隐形订做片 -----------------------------------------------------------------
+union all
+-- begin 隐形护理液 -----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       17 AS groupBy --分组条件
+,'隐形护理液小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='5'
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 隐形护理液 -----------------------------------------------------------------
+union all
+-- begin 自带镜架 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       19 AS groupBy --分组条件
+,'自带镜架小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='1'
+   and R_RC_DSE_SupplierID='ZZ'  -- 去掉顾客自片/单眼片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 自带镜架 ----------------------------------------------------------------
+union all
+-- begin 自片 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       21 AS groupBy --分组条件
+,'自片小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='3'
+   and R_RC_DSE_SupplierID='ZZ'  -- 去掉顾客自片/单眼片
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 自片 ----------------------------------------------------------------
+union all
+-- begin 耗材商品 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       23 AS groupBy --分组条件
+,'耗材商品小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='7'
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 耗材商品 ----------------------------------------------------------------
+union all
+-- begin 视光类 ----------------------------------------------------------------
+select substring(R_RC_DSE_GoodsID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	   R_RC_DSE_BandName, -- 商品名称
+	   R_RC_DSE_RetailPrice, -- 商品单价
+	   sum(cast(R_SD_DSE_GoodsNum as int)) as Number, 
+	   sum(cast(R_SD_DSE_GoodsPriceAmount as numeric(20, 2))) as PriceSum, -- 原价合计
+	   sum(cast(R_SD_DSE_GoodsDiscountAmount as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   sum(cast(R_SD_DSE_GoodsAmount as numeric(20, 2))) as SalseValue, 
+       25 AS groupBy --分组条件
+,'视光商品小计：' AS total --合计
+ from #R_RC_DaySalesEntry2
+where R_RC_DSE_GoodsCategoryID='9'
+   and R_SD_DSE_SalesType='2'
+ and ((isnull('${ShopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ and datediff(day, '${beginTime}', R_SD_DSE_Date) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', R_SD_DSE_Date) <= 0    -- 结束时间
+
+ group by substring(R_RC_DSE_GoodsID,1,7),--S_SE_SD_SalesItemID, 
+		 R_RC_DSE_RetailPrice, 
+		R_RC_DSE_BandName
+-- end 视光类 ----------------------------------------------------------------
+union all
+-- 实时 ----------------------------------------------------------------
+
+
+
+
+-- BEGIN 成品片退款 ------------------------------------------------------------------
+	select substring(S_SE_SD_SalesItemID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue, 
+      1 AS groupBy --分组条件
+,'成品片小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid and S_SE_SB_ValueFlag = 1 inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+where  B_GI_GoodsCategoryID = '3'  -- 商品类型
+   and B_GI_isCustomize = '0'  -- 是否为订做片
+   and S_SE_SD_SalesItemID not in ('3.ZZ.05.000000001', '3.ZZ.06.000000001')  -- 去掉顾客自片/单眼片
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 成品片退款 ------------------------------------------------------------------
+union all
+-- begin 订做片退款 ----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue  ,
+       3 AS groupBy --分组条件
+,'订做片小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '3'  -- 商品类型
+   and B_GI_isCustomize = 'D'  -- 是否为订做片
+   and S_SE_SD_SalesItemID not in ('3.ZZ.05.000000001', '3.ZZ.06.000000001')  -- 去掉顾客自片/单眼片
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day,'${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 订做片退款 ----------------------------------------------------------------
+union all
+-- begin 镜架退款 ----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue, 
+       5 AS groupBy --分组条件
+,'镜架小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '1'  -- 商品类型
+ and B_GI_SupplierID<>'ZZ' -- 去掉顾客自架
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day,'${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 镜架退款 ----------------------------------------------------------------
+union all
+-- begin 太阳镜退款 ----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       7 AS groupBy --分组条件
+,'太阳镜小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '6'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day,'${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7), 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 太阳镜退款 ----------------------------------------------------------------
+union all
+-- begin 老花镜退款 ----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       9 AS groupBy --分组条件
+,'老花镜小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '8'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+ and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day,'${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7), 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 老花镜退款 ----------------------------------------------------------------
+union all
+-- begin 镜架配件类退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       11 AS groupBy --分组条件
+,'镜架配件小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '2'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and B_GI_AccessoriesType='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end  镜架配件类退款 -----------------------------------------------------------------
+union all
+-- begin 隐形配件类退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       12 AS groupBy --分组条件
+,'隐形配件小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '2'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and B_GI_AccessoriesType='2'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day,'${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end  隐形配件类退款 -----------------------------------------------------------------
+union all
+-- begin 隐形成品片退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       13 AS groupBy --分组条件
+,'隐形成品片小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '4'  -- 商品类型
+   and B_GI_isCustomize = '0'  -- 是否为订做片
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 隐形成品片退款 -----------------------------------------------------------------
+union all
+-- begin 隐形订做片退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       15 AS groupBy --分组条件
+,'隐形订做片小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '4'  -- 商品类型
+   and B_GI_isCustomize = 'D'  -- 是否为订做片
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 隐形订做片退款 --------------------------------------------
+union all
+-- begin 隐形护理液退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       17 AS groupBy --分组条件
+,'隐形护理液小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '5'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 隐形护理液退款 ----------------------------------------------
+union all
+-- begin 自带镜架退款 ----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue, 
+       19 AS groupBy --分组条件
+,'自带镜架小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '1'  -- 商品类型
+   and b_gi_supplierid='ZZ'-- 去掉顾客自架
+and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day,'${endTime}', S_SE_SB_WithdrawDate) <= 0     -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 自带镜架退款 ----------------------------------------------
+union all
+-- begin 自片退款 ----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue  ,
+       21 AS groupBy --分组条件
+,'自片小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '3'  -- 商品类型
+   --and B_GI_isCustomize = 'D'  -- 是否为订做片
+   and b_gi_supplierid='ZZ'  -- 去掉顾客自片/单眼片
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day,'${endTime}', S_SE_SB_WithdrawDate) <= 0     -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 自片 ----------------------------------------------------------------
+union all
+-- begin 耗材类退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       23 AS groupBy --分组条件
+,'耗材商品小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '7'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day,'${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 耗材商品退款 ----------------------------------------------
+union all
+-- begin 视光商品退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice as R_RC_DSE_RetailPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       25 AS groupBy --分组条件
+,'视光商品小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '9'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+ and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, getdate(), S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day,'${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 视光商品退款 ----------------------------------------------
+) temp 
+ 
+   
+   left join B_Supplier on substring(SalseItemID,3,2)=B_SP_ID
+
+	group by B_SP_SupplierName,groupBy, total, SalseItemID, R_RC_DSE_BandName, 
+             R_RC_DSE_RetailPrice
+	order by groupBy,R_RC_DSE_RetailPrice 
+
+drop table #R_RC_DaySalesEntry2
+
+
+end
+end
+else
+begin
+
+select SalseItemID as SalseItemID, -- 商品代码
+       substring(SalseItemID,1,4) as supplierID,
+       B_SP_SupplierName as supplierName, -- 制造商代码
+	   B_BD_brandName as salesItemName, -- 商品名称
+		--SPEC,
+	   isnull(S_SE_SD_SPrice,0.00) as sprice, -- 商品单价
+	   isnull(sum(cast(Number as int)),0) as Number, 
+	   isnull(sum(cast(PriceSum as numeric(20, 2))),0.00) as PriceSum, -- 原价合计
+	   isnull(sum(cast(DiscountNum as numeric(20, 2))),0.00) as DiscountNum, -- 折扣金额
+	   isnull(sum(cast(SalseValue as numeric(20, 2))),0.00) as SalseValue, 
+       groupBy,
+	   total 
+
+	from (
+
+
+-- BEGIN 成品片退款 ------------------------------------------------------------------
+	select substring(S_SE_SD_SalesItemID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue, 
+      1 AS groupBy --分组条件
+,'成品片小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid and S_SE_SB_ValueFlag = 1 inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+where  B_GI_GoodsCategoryID = '3'  -- 商品类型
+   and B_GI_isCustomize = '0'  -- 是否为订做片
+   and S_SE_SD_SalesItemID not in ('3.ZZ.05.000000001', '3.ZZ.06.000000001')  -- 去掉顾客自片/单眼片
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 成品片退款 ------------------------------------------------------------------
+union all
+-- begin 订做片退款 ----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue  ,
+       3 AS groupBy --分组条件
+,'订做片小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '3'  -- 商品类型
+   and B_GI_isCustomize = 'D'  -- 是否为订做片
+   and S_SE_SD_SalesItemID not in ('3.ZZ.05.000000001', '3.ZZ.06.000000001')  -- 去掉顾客自片/单眼片
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 订做片退款 ----------------------------------------------------------------
+union all
+-- begin 镜架退款 ----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue, 
+       5 AS groupBy --分组条件
+,'镜架小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '1'  -- 商品类型
+ and B_GI_SupplierID<>'ZZ' -- 去掉顾客自架
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 镜架退款 ----------------------------------------------------------------
+union all
+-- begin 太阳镜退款 ----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       7 AS groupBy --分组条件
+,'太阳镜小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '6'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7), 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 太阳镜退款 ----------------------------------------------------------------
+union all
+-- begin 老花镜退款 ----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       9 AS groupBy --分组条件
+,'老花镜小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '8'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+ and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7), 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 老花镜退款 ----------------------------------------------------------------
+union all
+-- begin 镜架配件类退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       11 AS groupBy --分组条件
+,'镜架配件小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '2'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and B_GI_AccessoriesType='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end  镜架配件类退款 -----------------------------------------------------------------
+union all
+-- begin 隐形配件类退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       12 AS groupBy --分组条件
+,'隐形配件小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '2'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and B_GI_AccessoriesType='2'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end  隐形配件类退款 -----------------------------------------------------------------
+union all
+-- begin 隐形成品片退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       13 AS groupBy --分组条件
+,'隐形成品片小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '4'  -- 商品类型
+   and B_GI_isCustomize = '0'  -- 是否为订做片
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 隐形成品片退款 -----------------------------------------------------------------
+union all
+-- begin 隐形订做片退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       15 AS groupBy --分组条件
+,'隐形订做片小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '4'  -- 商品类型
+   and B_GI_isCustomize = 'D'  -- 是否为订做片
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 隐形订做片退款 --------------------------------------------
+union all
+-- begin 隐形护理液退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       17 AS groupBy --分组条件
+,'隐形护理液小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '5'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 隐形护理液退款 ----------------------------------------------
+union all
+-- begin 自带镜架退款 ----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue, 
+       19 AS groupBy --分组条件
+,'自带镜架小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '1'  -- 商品类型
+   and b_gi_supplierid='ZZ'-- 去掉顾客自架
+and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 自带镜架退款 ----------------------------------------------
+union all
+-- begin 自片退款 ----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7)as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue  ,
+       21 AS groupBy --分组条件
+,'自片小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '3'  -- 商品类型
+   --and B_GI_isCustomize = 'D'  -- 是否为订做片
+   and b_gi_supplierid='ZZ'  -- 去掉顾客自片/单眼片
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 自片 ----------------------------------------------------------------
+union all
+-- begin 耗材类退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       23 AS groupBy --分组条件
+,'耗材商品小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '7'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 耗材商品退款 ----------------------------------------------
+union all
+-- begin 视光商品退款 -----------------------------------------------------------------
+select substring(S_SE_SD_SalesItemID,1,7) as SalseItemID,--S_SE_SD_SalesItemID, -- 商品代码
+	 B_BD_brandName, -- 商品名称
+
+	  S_SE_SD_SPrice, -- 商品单价
+	   -sum(cast(S_SE_SD_Number as int)) as Number, 
+	   -sum(cast(S_SE_SD_PriceSum as numeric(20, 2))) as PriceSum, -- 原价合计
+	   -sum(cast(S_SE_SD_DiscountNum as numeric(20, 2))) as DiscountNum, -- 折扣金额
+	   -sum(cast(S_SE_SD_SalesValue as numeric(20, 2))) as SalseValue ,
+       25 AS groupBy --分组条件
+,'视光商品小计：' AS total --合计
+
+  from S_SE_SalesDetail_Today inner join S_SE_SalesBasic_Today 
+	on S_SE_SD_SalesID = S_se_sb_Salesid inner join b_goodsinfo 
+	on B_GI_GoodsID = S_SE_SD_SalesItemID
+inner join B_Brand on B_BD_ID = B_GI_BrandID and B_BD_SupplierID = B_GI_SupplierID
+ where  B_GI_GoodsCategoryID = '9'  -- 商品类型
+ and S_SE_SB_WithdrawFlag='1'-- 退款表示1  
+ and S_SE_SB_ValueFlag='1'
+ and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+ and datediff(day, '${beginTime}', S_SE_SB_WithdrawDate) >= 0  -- 开始时间
+ and datediff(day, '${endTime}', S_SE_SB_WithdrawDate) <= 0    -- 结束时间
+ group by substring(S_SE_SD_SalesItemID,1,7),--S_SE_SD_SalesItemID, 
+		 S_SE_SD_SPrice, 
+		B_BD_brandName
+-- end 视光商品退款 ----------------------------------------------
+
+) temp 
+   
+   left join B_Supplier on substring(SalseItemID,3,2)=B_SP_ID
+
+	group by B_SP_SupplierName,groupBy, total, SalseItemID, B_BD_brandName, --spec,
+             S_SE_SD_SPrice
+	order by groupBy,S_SE_SD_SPrice 
+
+end
+
+
+drop table #shopCode
+]]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters/>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds4" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="beginTime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select departmentID into #shopCode from sales_createShopCodeTab('${ShopCode}')
+select
+    temp.s_se_sb_PosID
+   ,sum(temp.amount) as amount
+   ,temp.S_SE_SB_ShopCode
+from
+(
+    select
+          S_SE_SB_WithdrawPersonID as s_se_sb_PosID
+         ,-cast(cast(isnull(S_SE_AdditionalCDetail.S_SE_Amount*S_SE_Number,'0.0') as varchar(32)) as decimal(18, 2))  as amount
+         ,S_SE_SB_ShopCode
+	 from 
+        uview_SalesBasic
+    left join 
+        S_SE_AdditionalCDetail
+	on S_SE_AdditionalCDetail.S_SE_SalesID = s_se_sb_salesid
+	where 1=1
+and ((isnull('${ShopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${ShopCode}','')=''))
+ 
+    and s_se_sb_ValueFlag = '1'
+    and convert(varchar(10), S_SE_SB_WithdrawDate, 23) >=  '${beginTime}'
+	and convert(varchar(10), S_SE_SB_WithdrawDate, 23) <='${endTime}'
+	and s_se_sb_withdrawflag = 1
+)temp
+group by s_se_sb_PosID,S_SE_SB_ShopCode
+drop table #ShopCode]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="ShopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT B_DP_DepartmentName FROM b_Departments WHERE B_DP_DepartmentID='${ShopCode}']]></Query>
+</TableData>
+<TableData name="ds5" class="com.fr.data.impl.DBTableData">
+<Parameters/>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[DECLARE @departmentNames VARCHAR(1000)
+        @salesTypeText VARCHAR(1000)
+        @customAmountText VARCHAR(1000)
+
+SET @departmentNames = '${departmentNames}'
+SET @salesTypeText = '${salesTypeText}'
+SET @customAmountText = '${customAmountText}']]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.page.First">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-First')}]]></Text>
+<IconName>
+<![CDATA[first]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Previous">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Previous')}]]></Text>
+<IconName>
+<![CDATA[previous]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.PageNavi">
+<WidgetAttr/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Next">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Next')}]]></Text>
+<IconName>
+<![CDATA[next]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Last">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Last')}]]></Text>
+<IconName>
+<![CDATA[last]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.FlashPrint">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Utils-Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.Export">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Export')}]]></Text>
+<IconName>
+<![CDATA[export]]></IconName>
+<Buttons pdf="true" excelP="true" excelO="true" excelS="true" word="true" image="true" html="true"/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.SetPrinterOffset">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('SetPrinterOffset')}]]></Text>
+<IconName>
+<![CDATA[setprinteroffset]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="false" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="8"/>
+<FR F="15" T="15"/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,144000,914400,144000,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[0,0,576000,5638800,10134600,3352800,2857500,3733800,3733800,3733800,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$showCompanyName = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="0">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$showCompanyName = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="0">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$showCompanyName = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="0" cs="7" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$showCompanyName = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="3" r="2" cs="7" s="1">
+<O>
+<![CDATA[销售业绩表(按商品方式)]]></O>
+<Expand/>
+</C>
+<C c="0" r="4" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="4" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="4" s="2">
+<Expand/>
+</C>
+<C c="3" r="4" s="3">
+<O>
+<![CDATA[销售日期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="4" cs="2" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$beginTime + " 至 " + $endTime]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="6" r="4" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="7" r="4" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="8" r="4" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="9" r="4" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="5" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="5" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="5" s="2">
+<Expand/>
+</C>
+<C c="3" r="5" s="2">
+<O>
+<![CDATA[配镜单状态：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="5" cs="5" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$salesTypeText]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="9" r="5" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="6" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="6" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="6" s="2">
+<Expand/>
+</C>
+<C c="3" r="6" s="2">
+<O>
+<![CDATA[订金统计方式：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="6" cs="6" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$customAmountText]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="7" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="7" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="7" s="2">
+<Expand/>
+</C>
+<C c="3" r="7" s="3">
+<O>
+<![CDATA[销售门店：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="7" cs="6" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentNames]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isshow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="0" r="8" s="4">
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="1" r="8" s="4">
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="2" r="8" s="5">
+<Expand/>
+</C>
+<C c="3" r="8" s="6">
+<O>
+<![CDATA[商品代码]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="4" r="8" s="6">
+<O>
+<![CDATA[商品名称]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="5" r="8" s="6">
+<O>
+<![CDATA[单价]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="6" r="8" s="6">
+<O>
+<![CDATA[数量]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="7" r="8" s="6">
+<O>
+<![CDATA[原价金额]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="8" r="8" s="6">
+<O>
+<![CDATA[折扣金额]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="9" r="8" s="6">
+<O>
+<![CDATA[应收金额]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="0" r="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="groupBy"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="supplierID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="9" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="SalseItemID"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[(ROW() - 6) % 30 = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.PageHighlightAction">
+<P i="1"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="4" r="9" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="salesItemName"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="9" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="sprice"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="9" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="Number"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="9" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="PriceSum"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="9" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(H10 - J10)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="9" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="SalseValue"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="10" cs="3" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="supplierName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[CONCATENATE($$$,'  小计:')]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0" leftParentDefault="false" left="B10"/>
+</C>
+<C c="6" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(G10)]]></Attributes>
+</O>
+<Expand dir="0" leftParentDefault="false" left="B10"/>
+</C>
+<C c="7" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(H10))]]></Attributes>
+</O>
+<Expand dir="0" leftParentDefault="false" left="B10"/>
+</C>
+<C c="8" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(I10))]]></Attributes>
+</O>
+<Expand dir="0" leftParentDefault="false" left="B10"/>
+</C>
+<C c="9" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J10))]]></Attributes>
+</O>
+<Expand dir="0" leftParentDefault="false" left="B10"/>
+</C>
+<C c="3" r="11" cs="3" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="total"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="0" leftParentDefault="false" left="A10"/>
+</C>
+<C c="6" r="11" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(G11)]]></Attributes>
+</O>
+<Expand dir="0" leftParentDefault="false" left="A10"/>
+</C>
+<C c="7" r="11" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(H11))]]></Attributes>
+</O>
+<Expand dir="0" leftParentDefault="false" left="A10"/>
+</C>
+<C c="8" r="11" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(I11))]]></Attributes>
+</O>
+<Expand dir="0" leftParentDefault="false" left="A10"/>
+</C>
+<C c="9" r="11" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J11))]]></Attributes>
+</O>
+<Expand dir="0" leftParentDefault="false" left="A10"/>
+</C>
+<C c="3" r="12" cs="3" s="8">
+<O>
+<![CDATA[合计：]]></O>
+<Expand/>
+</C>
+<C c="6" r="12" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(G12)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="12" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(H10))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="12" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(I10))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="12" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J10))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="13" cs="3" s="8">
+<O>
+<![CDATA[附加费用合计：]]></O>
+<Expand/>
+</C>
+<C c="6" r="13" s="10">
+<Expand/>
+</C>
+<C c="7" r="13" s="10">
+<Expand/>
+</C>
+<C c="8" r="13" s="10">
+<Expand/>
+</C>
+<C c="9" r="13" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="amount"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="3" r="14" cs="3" s="8">
+<O>
+<![CDATA[总合计：]]></O>
+<Expand/>
+</C>
+<C c="6" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(G13)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(H10) + J14)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(I10))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J10) + J14)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="15" s="2">
+<Expand/>
+</C>
+<C c="1" r="15" s="2">
+<Expand/>
+</C>
+<C c="2" r="15" s="2">
+<Expand/>
+</C>
+<C c="3" r="15" cs="2" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="打印日期：" + today()]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="15" s="2">
+<Expand/>
+</C>
+<C c="6" r="15" s="2">
+<Expand/>
+</C>
+<C c="7" r="15" cs="3" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="页次:第 " + $$page_number + " 页/共 " + $$totalPage_number + " 页"]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1"/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80" foreground="-13421773"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

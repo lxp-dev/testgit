@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	<!-- 职务维护   lvhz 2012 11 08 begin-->
+	<bean id="postDao" class="com.pengsheng.eims.personnel.dao.impl.PostDaoImpl" />
+	<!-- 职务维护   lvhz 2012 11 08 end-->
+	
+	<!-- 培训等级维护   lvhz begin-->
+	<bean id="trainLevelDao" class="com.pengsheng.eims.personnel.dao.impl.TrainLevelDaoImpl" />
+	<!-- 培训等级维护   lvhz  end-->
+	
+	<!-- 培训内容维护   lvhz begin-->
+	<bean id="trainContentDao" class="com.pengsheng.eims.personnel.dao.impl.TrainContentDaoImpl" />
+	<!-- 培训内容维护   lvhz  end-->
+	
+	<!-- 班次维护   lvhz begin-->
+	<bean id="shiftMaintainDao" class="com.pengsheng.eims.personnel.dao.impl.ShiftMaintainDaoImpl" />
+	<!-- 培训内容维护   lvhz  end-->
+	
+	<!-- 员工管理   begin-->
+	<bean id="mpersonInfoDao" class="com.pengsheng.eims.personnel.dao.impl.MPersonInfoDaoImpl"></bean>
+	<!-- 员工管理  end-->
+	
+	<!-- 员工打折管理  begin-->
+	<bean id="personDiscountDao" class="com.pengsheng.eims.system.dao.impl.PersonDiscountDaoImpl"></bean>
+	<!-- 员工打折管理   end-->
+	
+	<!-- 角色打折管理  begin-->
+	<bean id="roleDiscountDao" class="com.pengsheng.eims.system.dao.impl.RoleDiscountDaoImpl"></bean>
+	<!-- 角色打折管理   end-->
+	
+	<!-- 员工薪酬维护   begin-->
+	<bean id="compensationTemplateDao" class="com.pengsheng.eims.personnel.dao.impl.CompensationTemplateDaoImpl"></bean>
+	<!-- 员工薪酬维护  end-->
+	
+	<!-- 排班维护   begin-->
+	<bean id="schedulingDao" class="com.pengsheng.eims.personnel.dao.impl.SchedulingDaoImpl"></bean>
+	<!-- 排班维护end-->
+	
+	<!-- 考勤维护   begin-->
+	<bean id="attendanceManageDao" class="com.pengsheng.eims.personnel.dao.impl.AttendanceManageDaoImpl"></bean>
+	<!-- 考勤维护end-->
+	
+	<!-- 员工奖惩  sxh  begin-->
+	<bean id="rewardsAndPenaltiesDao" class="com.pengsheng.eims.personnel.dao.impl.RewardsAndPenaltiesDaoImpl"></bean>
+	<!-- 员工奖惩  sxh  end-->
+	
+	<!-- 培训信息  sxh  begin-->
+	<bean id="trainDao" class="com.pengsheng.eims.personnel.dao.impl.TrainDaoImpl"></bean>
+	<!-- 培训信息  sxh  end-->
+	
+	<!-- 学历  begin-->
+	<bean id="educationDao" class="com.pengsheng.eims.personnel.dao.impl.EducationDaoImpl"></bean>
+	<!-- 学历  end-->	
+	
+	<!-- 工龄  begin-->
+	<bean id="workageDao" class="com.pengsheng.eims.personnel.dao.impl.WorkageDaoImpl"></bean>
+	<!-- 工龄  end-->	
+	
+	<!-- 工资维护   begin-->
+	<bean id="salaryDao" class="com.pengsheng.eims.personnel.dao.impl.SalaryDaoImpl"></bean>
+	<!-- 工资维护  end-->	
+</beans>

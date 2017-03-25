@@ -1,0 +1,62 @@
+package com.pengsheng.eims.logistics.mgr;
+
+import java.util.List;
+
+import com.pengsheng.eims.storage.persistence.InventoryEntryPo;
+import com.pengsheng.eims.storage.persistence.InventoryPo;
+
+public interface InvoiceSelectBillMgr {
+
+	/**
+	 * 得到业务表信息数量
+	 * @param invoicePo
+	 * @return
+	 */
+	public int getSelectBillCount(InventoryPo inventoryPo);
+	public int getSelBillCount(InventoryPo inventoryPo);
+	
+	/**
+	 * 查询业务表信息List
+	 * @param invoicePo
+	 * @param start
+	 * @param size
+	 * @return
+	 */
+	public List<InventoryPo> selectSelectBill(InventoryPo inventoryPo , int start , int size);
+	public List<InventoryPo> selSelectBill(InventoryPo inventoryPo , int start , int size);
+	
+	/**
+	 * 查询业务表信息List
+	 * @param invoicePo
+	 * @param start
+	 * @param size
+	 * @return
+	 */
+	public List<InventoryPo> selectSelectBill(InventoryPo inventoryPo);
+	
+	/**
+	 * 详细开窗表头
+	 * @param inventoryPo
+	 * @return
+	 */
+	public InventoryPo getBill(InventoryPo inventoryPo);
+	
+	/**
+	 * 详细开窗表体
+	 * @param inventoryEntryPo
+	 * @return
+	 */
+	public List<InventoryEntryPo> getBillEntry(InventoryEntryPo inventoryEntryPo);
+	
+	/**
+	 * 得到明细商品信息
+	 * @param inventoryPo
+	 * @return
+	 */
+	public List<InventoryEntryPo> getBillGoods(List<InventoryEntryPo> inventoryEntryList,String[] bills,String invoiceType);
+	public InventoryPo getBillSum(InventoryPo inventoryPo);
+	
+	public int getSelectGoodsCount(InventoryPo inventoryPo);
+	public List<InventoryEntryPo> selectSelectGoods(InventoryPo inventoryPo,int start, int size);
+	
+}

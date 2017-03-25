@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 3 isnull(S_SE_SD_SalesItemName,'') as goodsname,-isnull(sum(isnull(S_SE_SD_Number,0)),0) as goodsnum,
+       isnull(S_SE_SD_SPrice,0) as goodsprice,-isnull(sum(isnull(S_SE_SD_PriceSum,0)),0) as pricesum
+  from S_SE_SalesBasic inner join S_SE_SalesDetail on S_SE_SB_SalesID=S_SE_SD_SalesID
+  where S_SE_SB_SalesID='${salesID}' and S_SE_SB_ValueFlag='1' and isnull(S_SE_SD_LargessFlag,'0')='1' and S_SE_SB_WithdrawFlag='1'
+  group by S_SE_SD_SalesItemID,S_SE_SD_SalesItemName,S_SE_SD_SPrice
+  
+
+union all 
+select top 3 isnull(S_SE_SD_SalesItemName,'') as goodsname,-isnull(sum(isnull(S_SE_SD_Number,0)),0) as goodsnum,
+       isnull(S_SE_SD_SPrice,0) as goodsprice,-isnull(sum(isnull(S_SE_SD_PriceSum,0)),0) as pricesum
+  from S_SE_SalesBasic_Finished inner join S_SE_SalesDetail_Finished on S_SE_SB_SalesID=S_SE_SD_SalesID
+  where S_SE_SB_SalesID='${salesID}' and S_SE_SB_ValueFlag='1' and isnull(S_SE_SD_LargessFlag,'0')='1' and S_SE_SB_WithdrawFlag='1'
+  group by S_SE_SD_SalesItemID,S_SE_SD_SalesItemName,S_SE_SD_SPrice
+]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[722880,723900,723900,723900,723900,723900,723900,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[10629900,3048480,1905000,2743200,2743200,2743200,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="goodsname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Scope val="1"/>
+<Background name="ColorBackground"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="1" r="0" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="goodsnum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Scope val="1"/>
+<Background name="ColorBackground"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0" printBackground="false">
+<PaperSetting>
+<Margin top="0" left="0" bottom="0" right="0"/>
+</PaperSetting>
+<Background name="ColorBackground"/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

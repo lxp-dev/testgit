@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="inventoryid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT C_ST_I_BillID,convert(varchar(10),C_ST_I_billDate,23) as C_ST_I_billDate,
+B_SP_SupplierName,C_ST_I_SourceBillId,C_ST_I_Remark,
+(select personname from SYS_PERSONINFO where id=C_ST_I_FinanceAuditPerson)financeauditpersonname,
+(select personname from SYS_PERSONINFO where id=C_ST_I_AuditPerson)auditpersonname,
+(select personname from SYS_PERSONINFO where id=C_ST_I_createPerson)createpersonname,
+convert(varchar(10),C_ST_I_AuditDate,23),
+convert(varchar(10),C_ST_I_AuditDate,23) as auditdatetime,
+convert(varchar(10),C_ST_I_FinanceAuditDate,23) as financedatetime,
+C_ST_I_DeliveryID as deliveryID
+FROM C_ST_INVENTORY
+INNER JOIN B_SUPPLIER ON C_ST_I_SUPPLIERID=B_SP_ID
+ WHERE C_ST_I_BILLID='${inventoryid}']]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="inventoryid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT goodsid,
+       B_GI_GoodsName,
+       SUM(C_ST_IE_GoodsQuantity) AS C_ST_IE_GoodsQuantity,
+       B_WH_warehouseName,
+       SUM(chengbentotal)         AS chengbentotal,
+       SUM(shuietotal)            AS shuietotal,
+       SUM(jieshuitotal)          AS jieshuitotal,
+	   B_GI_RetailPrice			  AS 零售价,
+       costprice                  AS costprice
+FROM   (SELECT Substring(C_ST_IE_GOODSID, 1, 7)goodsid,
+               B_GI_GoodsName,
+               C_ST_IE_GoodsQuantity,
+               B_WH_warehouseName,
+               C_ST_IE_NotTaxRateAmount        AS chengbentotal,
+               C_ST_IE_TaxAmount               AS shuietotal,
+               C_ST_IE_CostPriceAmount         AS jieshuitotal,
+			   B_GOODSINFO.B_GI_RetailPrice    AS B_GI_RetailPrice,
+               C_ST_IE_NotTaxRate              AS costprice
+        FROM   C_ST_INVENTORYENTRY
+               INNER JOIN B_GOODSINFO
+                 ON B_GI_GoodsID = C_ST_IE_GoodsId
+               INNER JOIN B_WAREHOUSE
+                 ON B_WH_ID = C_ST_IE_InStockId
+        WHERE  C_ST_IE_BillID = '${inventoryid}')TEMP
+GROUP  BY goodsid,
+          B_GI_GoodsName,
+          B_WH_warehouseName,
+	B_GI_RetailPrice,
+          costprice ]]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="4" T="4"/>
+<FR F="9" T="9"/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1143000,1143000,914400,1181100,914400,914400,914400,1257300,914400,914400,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[0,1638300,495300,381000,1371600,2667000,2133600,762000,2286000,1790700,2781300,2628900,2667000,2209800,952500,800100,1028700,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="1" r="0" cs="16" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" s="1">
+<Expand/>
+</C>
+<C c="1" r="1" cs="16" s="2">
+<O>
+<![CDATA[采购结算单]]></O>
+<Expand/>
+</C>
+<C c="1" r="2" cs="2" s="3">
+<O>
+<![CDATA[制造商：]]></O>
+<Expand/>
+</C>
+<C c="3" r="2" cs="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_SP_SupplierName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="2" cs="2" s="3">
+<O>
+<![CDATA[收货日期：]]></O>
+<Expand/>
+</C>
+<C c="9" r="2" cs="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_I_billDate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="2" s="3">
+<O>
+<![CDATA[收货单号：]]></O>
+<Expand/>
+</C>
+<C c="12" r="2" cs="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_I_BillID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="3" cs="2" s="3">
+<O>
+<![CDATA[订单号：]]></O>
+<Expand/>
+</C>
+<C c="3" r="3" cs="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_I_SourceBillId"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="7" r="3" cs="2" s="3">
+<O>
+<![CDATA[运单号:]]></O>
+<Expand/>
+</C>
+<C c="9" r="3" cs="7" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="deliveryID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="16" r="3">
+<Expand/>
+</C>
+<C c="1" r="4" cs="4" s="5">
+<O>
+<![CDATA[商品代码]]></O>
+<Expand/>
+</C>
+<C c="5" r="4" cs="3" s="5">
+<O>
+<![CDATA[商品名称]]></O>
+<Expand/>
+</C>
+<C c="8" r="4" s="5">
+<O>
+<![CDATA[单位成本]]></O>
+<Expand/>
+</C>
+<C c="9" r="4" s="5">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="10" r="4" s="5">
+<O>
+<![CDATA[成本合计]]></O>
+<Expand/>
+</C>
+<C c="11" r="4" s="5">
+<O>
+<![CDATA[税额合计]]></O>
+<Expand/>
+</C>
+<C c="12" r="4" s="5">
+<O>
+<![CDATA[价税合计]]></O>
+<Expand/>
+</C>
+<C c="13" r="4" s="5">
+<O>
+<![CDATA[零售价]]></O>
+<Expand/>
+</C>
+<C c="14" r="4" cs="3" s="5">
+<O>
+<![CDATA[收入仓位]]></O>
+<Expand/>
+</C>
+<C c="0" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="goodsid"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="1" r="5" cs="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="goodsid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="5" cs="3" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="B_GI_GoodsName"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="8" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="costprice"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="C_ST_IE_GoodsQuantity"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="10" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="chengbentotal"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="11" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="shuietotal"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="12" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="jieshuitotal"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="13" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="零售价"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="5" cs="3" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="B_WH_warehouseName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="6" cs="7" s="5">
+<O>
+<![CDATA[合计:]]></O>
+<Expand/>
+</C>
+<C c="8" r="6" s="5">
+<Expand/>
+</C>
+<C c="9" r="6" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(J6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="6" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(K6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="6" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(L6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="6" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(M6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="6" s="7">
+<Expand/>
+</C>
+<C c="14" r="6" cs="3" s="8">
+<Expand/>
+</C>
+<C c="1" r="7" s="3">
+<O>
+<![CDATA[备注：]]></O>
+<Expand/>
+</C>
+<C c="2" r="7" cs="15">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_I_Remark"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="8" cs="2" s="3">
+<O>
+<![CDATA[制单人：]]></O>
+<Expand/>
+</C>
+<C c="3" r="8" cs="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="createpersonname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="8" cs="2" s="9">
+<O>
+<![CDATA[收货人：]]></O>
+<Expand/>
+</C>
+<C c="8" r="8" cs="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="auditpersonname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="8" s="9">
+<O>
+<![CDATA[审核人：]]></O>
+<Expand/>
+</C>
+<C c="11" r="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="financeauditpersonname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="8" s="3">
+<O>
+<![CDATA[审核日期：]]></O>
+<Expand/>
+</C>
+<C c="13" r="8" cs="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="financedatetime"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="9" cs="3">
+<O>
+<![CDATA[打印日期：]]></O>
+<Expand/>
+</C>
+<C c="4" r="9" cs="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=TODAY()]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="9">
+<Expand/>
+</C>
+<C c="12" r="9" cs="5" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="页次:第 " + $$page_number + " 页/共 " + $$totalPage_number + " 页"]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting>
+<Margin top="0" left="719999" bottom="0" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="108"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="120"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="120"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<Format class="com.fr.base.CoreDecimalFormat">
+<![CDATA[#0.00]]></Format>
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

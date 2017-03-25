@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+    
+<struts>
+	
+	<package name="login" namespace="/" extends="struts-default">
+	   <!-- 登陆拦截器 Star -->
+		<interceptors>   
+		    <interceptor name="loginInterceptor" class="loginInterceptor"></interceptor>
+		    <interceptor-stack name="loginDefaultStack">
+		        <interceptor-ref name="loginInterceptor"></interceptor-ref>
+		        <interceptor-ref name="defaultStack"></interceptor-ref>
+		    </interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="loginDefaultStack"></default-interceptor-ref>
+		<!-- <interceptor-ref name="defaultStack"></interceptor-ref> 加入action 过滤器失效 -->
+ 
+		<global-results>
+		    <result name="login" type="chain">initLogin</result>
+			<result name="logout" type="redirect">/loginOut.jsp</result>
+			<result name="error">/error.jsp</result>
+		</global-results>
+
+		<!-- 登陆拦截器 End -->
+<!-- 
+	    <global-exception-mappings>   
+	       <exception-mapping exception="java.lang.Exception" result="error"></exception-mapping>   
+	    </global-exception-mappings>
+ -->	    	    
+		<!-- Action Start -->			
+					
+			<action name="initAdminLogin" class="loginAction" method="initAdminLogin">
+				<result name="success">index_admin.html</result>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+			
+			<action name="adminLogin" class="loginAction" method="adminLogin">
+				<result name="success">adminSoft.jsp</result>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+			
+			<action name="adminLoginSearch" class="loginAction" method="adminLoginSearch">
+			<param name="savePath">img</param>
+			    <param name="defaultLogoPath">img/frame/index01-eims12.jpg</param>
+	            <param name="defaultBgPath">img/frame/index02-eims.jpg</param>
+	            <param name="defaultDepPath">img/login/P11.jpg</param>
+				<result name="success">index_admin.jsp</result>
+				<result name="error" type="chain">initAdminLogin</result>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+				
+			<action name="initLogin" class="loginAction" method="initLogin">
+				<result name="success">eyeSoft.jsp</result>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+			
+			<action name="loginSearch" class="loginAction" method="loginSearch">
+			 <param name="savePath">img</param>
+			    <param name="defaultLogoPath">img/frame/index01-eims12.jpg</param>
+	            <param name="defaultBgPath">img/frame/index02-eims.jpg</param>
+	            <param name="defaultDepPath">img/login/P11.jpg</param>
+				<result name="success">chooseDepartment.jsp</result>
+				<result name="onedepartment">index.jsp</result>
+				<result name="error" type="chain">initLogin</result>
+				<result name="chooseDepartment" type="chain">initAffirmDepartment</result>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+			
+			<action name="initAffirmDepartment" class="loginAction" method="initAffirmDepartment">
+			 <param name="savePath">img</param>
+			    <param name="defaultLogoPath">img/frame/index01-eims12.jpg</param>
+	            <param name="defaultBgPath">img/frame/index02-eims.jpg</param>
+	            <param name="defaultDepPath">img/login/P11.jpg</param>
+				<result name="success">chooseDepartment.jsp</result>
+				<result name="error" type="chain">initLogin</result>
+			</action>
+			
+			<action name="affirmDepartment" class="loginAction" method="affirmDepartment">
+				<result name="success" >index.jsp</result>
+				<result name="chooseDepartment" type="chain">initAffirmDepartment</result>
+			</action>
+			
+			<action name="loginOut" class="loginAction" method="loginOut">
+			    <result name="success">eyeSoft.jsp</result>
+			    <result name="adminsucess">adminSoft.jsp</result>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+			
+			<action name="getProjectModule" class="projectTreeAction" method="getProjectModule">
+				<result name="success">newleftFrame.jsp</result>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+			
+			<action name="getTreeView" class="roleModuleTreeViewAction" method="getTreeView">
+				<result name="success">leftTreeFrame.jsp</result>
+			</action>
+			
+			<action name="getRightFrame" class="loginAction" method="getRightFrame">
+				<result name="success">rightFrame.jsp</result>
+			</action>
+			
+			<action name="getTreeViewForAdmin" class="roleModuleTreeViewAction" method="getTreeViewForAdmin">
+				<result name="success">leftTreeFrame_admin.jsp</result>
+			</action>
+			
+			<action name="initTopFrame" class="loginAction" method="initTopFrame">
+			    <param name="savePath">img</param>
+			    <param name="defaultLogoPath">img/frame/index01-eims12.jpg</param>
+	            <param name="defaultBgPath">img/frame/index02-eims.jpg</param>
+	            <param name="defaultDepPath">img/login/P11.jpg</param>
+				<result name="success">topFrame.jsp</result>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+			
+			<action name="initButtomFrame" class="loginAction" method="initButtomFrame">
+				<result name="success">bottom.jsp</result>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+			
+			<action name="initPswdUpdate" class="loginAction" method="initPswdUpdate">
+				<result name="success">pswdUpdate.jsp</result>
+			</action>
+			<action name="pswdUpdate" class="loginAction" method="pswdUpdate">
+				<result name="success">pswdUpdate.jsp</result>
+			</action>
+			
+			<action name="updateSysLicence" class="loginAction" method="updateSysLicence">
+				<result name="success">licence.jsp</result>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</action>
+			
+		<!-- Action End -->
+	</package>
+</struts>

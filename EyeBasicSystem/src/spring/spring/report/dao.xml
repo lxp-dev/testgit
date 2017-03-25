@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	<!-- 门店销售指南 Liuqian  begin-->
+	<bean id="qmshtDao" class="com.pengsheng.eims.report.dao.impl.QmshtDaoImpl" />
+	<!-- 门店销售指南 Liuqian end-->
+	
+	<!-- 商品销售分析表 begin-->
+	<bean id="goodsSalesAnalysisDao" class="com.pengsheng.eims.report.dao.impl.GoodsSalesAnalysisDaoImpl" />
+	<!-- 商品销售分析表 end-->
+	
+	<!-- 各门店镜片加工数量 liujing  begin-->
+	<bean id="qmshPersonWorkingGlassDao" class="com.pengsheng.eims.report.dao.impl.QmshPersonWorkingGlassDaoImpl" />
+	<!-- 各门店镜片加工数量 liujing end-->
+	
+	<!-- 对账表szk  begin-->
+	<bean id="contrastAccountDao" class="com.pengsheng.eims.report.dao.impl.ContrastAccountDaoImpl" />
+	<!-- 对账表szk  end-->
+	
+	<!-- 领导看板等         szk begin-->
+	<bean id="leaderBoardDao" class="com.pengsheng.eims.report.dao.impl.LeaderBoardDaoImpl" />
+	<!-- 领导看板等         szk begin-->
+	
+	<!-- 报表石英维护         szk begin-->
+	<bean id="reportQuartzDao" class="com.pengsheng.eims.report.dao.impl.ReportQuartzDaoImpl" />
+	<!-- 报表石英维护         szk begin-->
+
+</beans>

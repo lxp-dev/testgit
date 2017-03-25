@@ -1,0 +1,2195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="endtime"/>
+<O>
+<![CDATA[2014-04-07]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="saler"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O>
+<![CDATA[2014-04-01]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="depid"/>
+<O>
+<![CDATA[000]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[DECLARE @bgnDate  VARCHAR(10),
+        @endDate  VARCHAR(10),
+        @shopCode VARCHAR(4000),
+		@saler		VARCHAR(10)
+
+SET @bgnDate='${begintime}'
+SET @endDate='${endtime}'
+SET @shopCode='${depid}'
+SET @saler='${saler}'
+--SET @bgnDate='2014-08-15'
+--SET @endDate='2014-08-15'
+--SET @shopCode='000'
+--SET @saler='0003'
+
+IF ( Object_id('tempdb..#saleslog') IS NOT NULL )
+  DROP TABLE #saleslog
+
+IF ( Object_id('tempdb..#salesDepartments') IS NOT NULL )
+  DROP TABLE #salesDepartments
+
+SELECT departmentID
+INTO   #salesDepartments
+FROM   Sales_createshopcodetab(@shopCode)
+
+SELECT dptid,salesid,
+       dptname,
+       paytype,
+       conid,
+       price,
+       arramount,
+       iprice
+INTO   #saleslog
+FROM   (SELECT S_SE_SL_SalesID AS salesid, 
+			   S_SE_SL_Person                   AS dptid,
+               personName						AS dptname,
+               S_SE_SL_PaymentType              AS paytype,
+               S_SE_SL_ConsumptionID            AS conid,
+               Isnull(S_SE_SL_Price, 0)         AS price,
+               0                                AS arramount,
+               Isnull(S_SE_SL_IntegralPrice, 0) AS iprice
+        FROM   S_SE_SalesLog
+               INNER JOIN SYS_PersonInfo
+                 ON ID = S_SE_SL_Person
+        WHERE  ( ( Isnull(@shopCode, '') <> ''
+                   AND S_SE_SL_ShopCode IN (SELECT departmentID
+                                            FROM   #salesDepartments) )
+                  OR Isnull(@shopCode, '') = '' )
+               AND ( ( Isnull(@bgnDate, '') <> ''
+                       AND CONVERT(VARCHAR(10), S_SE_SL_DateTime, 120) >= @bgnDate )
+                      OR Isnull(@bgnDate, '') = '' )
+               AND ( ( Isnull(@endDate, '') <> ''
+                       AND CONVERT(VARCHAR(10), S_SE_SL_DateTime, 120) <= @endDate )
+                      OR Isnull(@endDate, '') = '' )
+			   AND ( ( Isnull(@saler, '') <> ''
+                       AND S_SE_SL_Person = @saler )
+                      OR Isnull(@saler, '') = '' ))TEMP
+
+SELECT dptid,
+salesid as salesid,
+       dptname AS dptname,
+       a1      AS xj,
+       a2      AS zl,
+       a3      AS yhk,
+       a4      AS czk,
+       a5      AS jf,
+       a6      AS hj
+FROM   (SELECT dptid,
+salesid as salesid,
+               dptname                                                                                                                                                                       AS dptname,
+               Isnull(SUM(Isnull(CAST(a1 AS NUMERIC(30, 2)), 0)), 0)                                                                                                                         AS a1,
+               Isnull(SUM(Isnull(CAST(a2 AS NUMERIC(30, 2)), 0)), 0)                                                                                                                         AS a2,
+               Isnull(SUM(Isnull(CAST(a3 AS NUMERIC(30, 2)), 0)), 0)                                                                                                                         AS a3,
+               Isnull(SUM(Isnull(CAST(a4 AS NUMERIC(30, 2)), 0)), 0)                                                                                                                         AS a4,
+               Isnull(SUM(Isnull(CAST(a5 AS NUMERIC(30, 2)), 0)), 0)                                                                                                                         AS a5,
+               Isnull(SUM(Isnull(CAST(a6 AS NUMERIC(30, 2)), 0)), 0) AS a6
+        FROM   (
+               -- 全款(现金)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      CAST(price AS NUMERIC(30, 2)) AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '1'
+                      AND conid = '1'
+               UNION ALL
+               -- 订金(现金)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      CAST(price AS NUMERIC(30, 2)) AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '2'
+                      AND conid = '1'
+               UNION ALL
+               -- 补齐(现金)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      CAST(price AS NUMERIC(30, 2)) AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '3'
+                      AND conid = '1'
+               UNION ALL
+               -- 退款(现金)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      0                                   AS a5,
+                      0                                   AS a6
+               FROM   #saleslog
+               WHERE  paytype = '4'
+                      AND conid = '1'
+               UNION ALL
+               -- 无配镜单退款(现金)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      0                                   AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '5'
+                      AND conid = '1'
+               UNION ALL
+               -- 挂号费(现金)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      CAST(price AS NUMERIC(30, 2)) AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '6'
+                      AND conid = '1'
+               UNION ALL
+               -- 退挂号费(现金)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      0                                   AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '7'
+                      AND conid = '1'
+               UNION ALL
+               
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      CAST(price AS NUMERIC(30, 2)) AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '8'
+                      AND conid = '1'
+               UNION ALL
+               
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '10'
+                      AND conid = '1'
+               UNION ALL
+               -- 找零(现金)
+               SELECT dptid                                            AS dptid,
+salesid as salesid,
+                      dptname                                          AS dptname,
+                      -Abs(CAST(Isnull(price, '0') AS NUMERIC(30, 2))) AS a1,
+                      0                                                AS a2,
+                      0                                                AS a3,
+                      0                                                AS a4,
+                      0                                                AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  conid = '5'
+               union all
+               ------------------------------------------------------------------------------------------------------------------------------------------------
+               -- 全款(代金券)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      CAST(price AS NUMERIC(30, 2)) AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '1'
+                      AND conid = '7'
+               UNION ALL
+               -- 订金(代金券)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      CAST(price AS NUMERIC(30, 2)) AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '2'
+                      AND conid = '7'
+               UNION ALL
+               -- 补齐(代金券)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      CAST(price AS NUMERIC(30, 2)) AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '3'
+                      AND conid = '7'
+               UNION ALL
+               -- 退款(代金券)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      0                                   AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '4'
+                      AND conid = '7'
+               UNION ALL
+               -- 无配镜单退款(代金券)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      0                                   AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '5'
+                      AND conid = '7'
+               UNION ALL
+               -- 挂号费(代金券)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      CAST(price AS NUMERIC(30, 2)) AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '6'
+                      AND conid = '7'
+               UNION ALL
+               -- 退挂号费(代金券)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      0                                   AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '7'
+                      AND conid = '7'
+               UNION ALL
+               
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      CAST(price AS NUMERIC(30, 2)) AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '8'
+                      AND conid = '7'
+               UNION ALL
+               
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '10'
+                      AND conid = '7'
+
+               ------------------------------------------------------------------------------------------------------------------------------------------------
+               UNION ALL
+               -- 全款(银行卡)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      CAST(price AS NUMERIC(30, 2)) AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '1'
+                      AND conid = '3'
+               UNION ALL
+               -- 订金(银行卡)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      CAST(price AS NUMERIC(30, 2)) AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '2'
+                      AND conid = '3'
+               UNION ALL
+               -- 补齐(银行卡)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      CAST(price AS NUMERIC(30, 2)) AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '3'
+                      AND conid = '3'
+               UNION ALL
+               -- 退款(银行卡)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a3,
+                      0                                   AS a4,
+                      0                                   AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '4'
+                      AND conid = '3'
+               UNION ALL
+               -- 无配镜单退款(银行卡)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a3,
+                      0                                   AS a4,
+                      0                                   AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '5'
+                      AND conid = '3'
+               UNION ALL
+               -- 挂号费(银行卡)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      CAST(price AS NUMERIC(30, 2)) AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '6'
+                      AND conid = '3'
+               UNION ALL
+               -- 退挂号费(银行卡)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a3,
+                      0                                   AS a4,
+                      0                                   AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '7'
+                      AND conid = '3'
+               UNION ALL
+               
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      CAST(price AS NUMERIC(30, 2)) AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '8'
+                      AND conid = '3'
+               UNION ALL
+               
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '10'
+                      AND conid = '3'
+               ---------------------------------------------------------------------------------------------------------------------------------------------------
+               UNION ALL
+               -- 全款(非现金)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      CAST(price AS NUMERIC(30, 2)) AS a6
+               FROM   #saleslog
+               WHERE  paytype = '1'
+                      AND conid = '6'
+               UNION ALL
+               -- 订金(非现金)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      CAST(price AS NUMERIC(30, 2)) AS a6
+               FROM   #saleslog
+               WHERE  paytype = '2'
+                      AND conid = '6'
+               UNION ALL
+               -- 补齐(非现金)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      CAST(price AS NUMERIC(30, 2)) AS a6
+               FROM   #saleslog
+               WHERE  paytype = '3'
+                      AND conid = '6'
+               UNION ALL
+               -- 退款(非现金)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      0                                   AS a5,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a6
+               FROM   #saleslog
+               WHERE  paytype = '4'
+                      AND conid = '6'
+               UNION ALL
+               -- 无配镜单退款(非现金)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      0                                   AS a5,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a6
+               FROM   #saleslog
+               WHERE  paytype = '5'
+                      AND conid = '6'
+               UNION ALL
+               -- 挂号费(非现金)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      CAST(price AS NUMERIC(30, 2)) AS a6
+               FROM   #saleslog
+               WHERE  paytype = '6'
+                      AND conid = '6'
+               UNION ALL
+               -- 退挂号费(非现金)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      0                                   AS a5,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a6
+               FROM   #saleslog
+               WHERE  paytype = '7'
+                      AND conid = '6'
+               UNION ALL
+               
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      CAST(price AS NUMERIC(30, 2)) AS a6
+               FROM   #saleslog
+               WHERE  paytype = '8'
+                      AND conid = '6'
+               UNION ALL
+               
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      0                             AS a4,
+                      0                             AS a5,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a6
+               FROM   #saleslog
+               WHERE  paytype = '10'
+                      AND conid = '6'
+               ---------------------------------------------------------------------------------------------------------------------------------------------------
+               UNION ALL
+               -- 全款(储值卡)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      CAST(price AS NUMERIC(30, 2)) AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '1'
+                      AND conid = '4'
+               UNION ALL
+               -- 订金(储值卡)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      CAST(price AS NUMERIC(30, 2)) AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '2'
+                      AND conid = '4'
+               UNION ALL
+               -- 补齐(储值卡)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      CAST(price AS NUMERIC(30, 2)) AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '3'
+                      AND conid = '4'
+               UNION ALL
+               -- 退款(储值卡)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a4,
+                      0                                   AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '4'
+                      AND conid = '4'
+               UNION ALL
+               -- 无配镜单退款(储值卡)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a4,
+                      0                                   AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '5'
+                      AND conid = '4'
+               UNION ALL
+               -- 挂号费(储值卡)
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      CAST(price AS NUMERIC(30, 2)) AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '6'
+                      AND conid = '4'
+               UNION ALL
+               -- 退挂号费(储值卡)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a4,
+                      0                                   AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '7'
+                      AND conid = '4'
+               UNION ALL
+               
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      CAST(price AS NUMERIC(30, 2)) AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '8'
+                      AND conid = '4'
+               UNION ALL
+               
+               SELECT dptid                         AS dptid,
+salesid as salesid,
+                      dptname                       AS dptname,
+                      0                             AS a1,
+                      0                             AS a2,
+                      0                             AS a3,
+                      -Abs(CAST(price AS NUMERIC(30, 2))) AS a4,
+                      0                             AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '10'
+                      AND conid = '4'
+               -------------------------------------------------------------------------------------------------------------------------------------------------
+               UNION ALL
+               -- 全款(积分)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      Abs(CAST(iprice AS NUMERIC(30, 2))) AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '1'
+                      AND conid = '2'
+               UNION ALL
+               -- 订金(积分)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      Abs(CAST(iprice AS NUMERIC(30, 2))) AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '2'
+                      AND conid = '2'
+               UNION ALL
+               -- 补齐(积分)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      Abs(CAST(iprice AS NUMERIC(30, 2))) AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '3'
+                      AND conid = '2'
+               UNION ALL
+               -- 退款(积分)
+               SELECT dptid                                AS dptid,
+salesid as salesid,
+                      dptname                              AS dptname,
+                      0                                    AS a1,
+                      0                                    AS a2,
+                      0                                    AS a3,
+                      0                                    AS a4,
+                      -Abs(CAST(iprice AS NUMERIC(30, 2))) AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '4'
+                      AND conid = '2'
+               UNION ALL
+               -- 无配镜单退款(积分)
+               SELECT dptid                                AS dptid,
+salesid as salesid,
+                      dptname                              AS dptname,
+                      0                                    AS a1,
+                      0                                    AS a2,
+                      0                                    AS a3,
+                      0                                    AS a4,
+                      -Abs(CAST(iprice AS NUMERIC(30, 2))) AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '5'
+                      AND conid = '2'
+               UNION ALL
+               -- 挂号费(积分)
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      Abs(CAST(iprice AS NUMERIC(30, 2))) AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '6'
+                      AND conid = '2'
+                UNION ALL
+                -- 退挂号费(积分)
+                SELECT dptid                                AS dptid,
+salesid as salesid,
+                       dptname                              AS dptname,
+                       0                                    AS a1,
+                       0                                    AS a2,
+                       0                                    AS a3,
+                       0                                    AS a4,
+                       -Abs(CAST(iprice AS NUMERIC(30, 2))) AS a5,
+                      0                             AS a6
+                FROM   #saleslog
+                WHERE  paytype = '7'
+                       AND conid = '2'
+               UNION ALL
+               
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      Abs(CAST(iprice AS NUMERIC(30, 2))) AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '8'
+                      AND conid = '2'
+               UNION ALL
+               
+               SELECT dptid                               AS dptid,
+salesid as salesid,
+                      dptname                             AS dptname,
+                      0                                   AS a1,
+                      0                                   AS a2,
+                      0                                   AS a3,
+                      0                                   AS a4,
+                      -Abs(CAST(iprice AS NUMERIC(30, 2))) AS a5,
+                      0                             AS a6
+               FROM   #saleslog
+               WHERE  paytype = '10'
+                      AND conid = '2'
+)TEMP
+        GROUP  BY dptname,salesid,
+                  dptid)TEMP
+
+where        a1<>0 or a2<>0 or a3<>0 or a4<>0 or a5<>0 or a6<>0
+--ORDER  BY dptid,salesid,
+--          a6 DESC
+union all
+
+select ID as dptid,
+S_SE_SB_SalesID as salesid,
+personname as dptname,
+--CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) as dateymd,
+0.00 as xj,
+0.00 as zl,
+0.00 as yhk,
+0.00 as czk,
+0.00 as jf,
+0.00 as hj
+from S_SE_SalesBasic
+INNER JOIN SYS_PersonInfo ON ID = S_SE_SB_PosID
+where S_SE_SB_Psalsvalue=0
+AND ( ( Isnull(@shopCode, '') <> '' AND S_SE_SB_ShopCode = Isnull(@shopCode, '')) OR Isnull(@shopCode, '') = '' )
+AND ( ( Isnull(@bgnDate, '') <> '' AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) >= @bgnDate ) OR Isnull(@bgnDate, '') = '' )
+AND ( ( Isnull(@endDate, '') <> '' AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) <= @endDate ) OR Isnull(@endDate, '') = '' )
+AND ( ( Isnull(@saler, '') <> ''   AND ID = @saler ) OR Isnull(@saler, '') = '' )
+
+union all
+
+select ID as dptid,
+S_SE_SB_SalesID as salesid,
+personname as dptname,
+--CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) as dateymd,
+0.00 as xj,
+0.00 as zl,
+0.00 as yhk,
+0.00 as czk,
+0.00 as jf,
+0.00 as hj
+from S_SE_SalesBasic_Finished
+INNER JOIN SYS_PersonInfo ON ID = S_SE_SB_PosID
+where S_SE_SB_Psalsvalue=0
+AND ( ( Isnull(@shopCode, '') <> '' AND S_SE_SB_ShopCode = Isnull(@shopCode, '')) OR Isnull(@shopCode, '') = '' )
+AND ( ( Isnull(@bgnDate, '') <> '' AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) >= @bgnDate ) OR Isnull(@bgnDate, '') = '' )
+AND ( ( Isnull(@endDate, '') <> '' AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) <= @endDate ) OR Isnull(@endDate, '') = '' )
+AND ( ( Isnull(@saler, '') <> ''   AND ID = @saler ) OR Isnull(@saler, '') = '' )
+
+DROP TABLE #saleslog
+]]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="endtime"/>
+<O>
+<![CDATA[2014-04-02]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O>
+<![CDATA[2014-04-02]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="depid"/>
+<O>
+<![CDATA[000]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[DECLARE @bgnDate  VARCHAR(10),
+        @endDate  VARCHAR(10),
+        @shopCode VARCHAR(4000)
+
+SET @bgnDate='${begintime}'
+SET @endDate='${endtime}'
+SET @shopCode='${depid}'
+
+IF ( Object_id('tempdb..#saleslog') IS NOT NULL )
+  DROP TABLE #saleslog
+
+SELECT dptid      AS dptid,
+       salesid    AS salesid,
+       dptname    AS dptname,
+       bankName   AS bankName,
+       SUM(price) AS price
+FROM   (SELECT S_SE_SL_SalesID                                       AS salesid,
+               S_SE_SL_person                                      AS dptid,
+               B_DP_DepartmentName                                   AS dptname,
+               B_B_Name                                              AS bankName,
+               SUM(CAST(Isnull(S_SE_SL_Price, 0) AS NUMERIC(30, 2))) AS price
+        FROM   S_SE_SalesLog
+               INNER JOIN B_Departments
+                 ON S_SE_SL_ShopCode = B_DP_DepartmentID
+               LEFT JOIN B_Bank
+                 ON S_SE_SL_SourceID = B_B_Number
+        WHERE  S_SE_SL_ConsumptionID = '3'
+               AND S_SE_SL_PaymentType NOT IN ( '4', '5', '7','10' )
+               AND ( ( Isnull(@shopCode, '') <> ''
+                       AND S_SE_SL_ShopCode = @shopCode )
+                      OR Isnull(@shopCode, '') = '' )
+               AND ( ( Isnull(@bgnDate, '') <> ''
+                       AND CONVERT(VARCHAR(10), S_SE_SL_DateTime, 120) >= @bgnDate )
+                      OR Isnull(@bgnDate, '') = '' )
+               AND ( ( Isnull(@endDate, '') <> ''
+                       AND CONVERT(VARCHAR(10), S_SE_SL_DateTime, 120) <= @endDate )
+                      OR Isnull(@endDate, '') = '' )
+        GROUP  BY S_SE_SL_person,
+                  S_SE_SL_SalesID,
+                  B_DP_DepartmentName,
+                  B_B_Name
+        UNION ALL
+        SELECT S_SE_SL_SalesID                                        AS salesid,
+               S_SE_SL_person                                       AS dptid,
+               B_DP_DepartmentName                                    AS dptname,
+               B_B_Name                                               AS bankName,
+               -SUM(CAST(Isnull(S_SE_SL_Price, 0) AS NUMERIC(30, 2))) AS price
+        FROM   S_SE_SalesLog
+               INNER JOIN B_Departments
+                 ON S_SE_SL_ShopCode = B_DP_DepartmentID
+               LEFT JOIN B_Bank
+                 ON S_SE_SL_SourceID = B_B_Number
+        WHERE  S_SE_SL_ConsumptionID = '3'
+               AND S_SE_SL_PaymentType IN ( '4', '5', '7','10' )
+               AND ( ( Isnull(@shopCode, '') <> ''
+                       AND S_SE_SL_ShopCode = @shopCode )
+                      OR Isnull(@shopCode, '') = '' )
+               AND ( ( Isnull(@bgnDate, '') <> ''
+                       AND CONVERT(VARCHAR(10), S_SE_SL_DateTime, 120) >= @bgnDate )
+                      OR Isnull(@bgnDate, '') = '' )
+               AND ( ( Isnull(@endDate, '') <> ''
+                       AND CONVERT(VARCHAR(10), S_SE_SL_DateTime, 120) <= @endDate )
+                      OR Isnull(@endDate, '') = '' )
+        GROUP  BY S_SE_SL_person,
+                  S_SE_SL_SalesID,
+                  B_DP_DepartmentName,
+                  B_B_Name) TEMP
+GROUP  BY dptid,
+          salesid,
+          dptname,
+          bankName
+HAVING SUM(price) <> 0
+ORDER  BY dptid,
+          salesid,
+          dptname DESC
+DROP TABLE #saleslog
+]]></Query>
+</TableData>
+<TableData name="ds5" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 '${customAmountName}' as customAmountName,'${ShopCodeName}' as ShopCodeName,'${queryWay}'  as queryWay,'${lookWay}' as lookWay
+
+]]></Query>
+</TableData>
+<TableData name="ds4" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="endtime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="depid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[DECLARE @bgnDate  VARCHAR(10),
+        @endDate  VARCHAR(10),
+        @shopCode VARCHAR(4000)
+
+SET @bgnDate='${begintime}'
+SET @endDate='${endtime}'
+SET @shopCode='${depid}'
+
+IF ( Object_id('tempdb..#saleslog') IS NOT NULL )
+  DROP TABLE #saleslog
+
+SELECT dptid      AS dptid,
+       salesid    AS salesid,
+       dptname    AS dptname,
+       bankName   AS bankName,
+       SUM(price) AS price
+FROM   (SELECT S_SE_SL_SalesID                                       AS salesid,
+               S_SE_SL_person                                      AS dptid,
+               B_DP_DepartmentName                                   AS dptname,
+               B_B_Name                                              AS bankName,
+               SUM(CAST(Isnull(S_SE_SL_Price, 0) AS NUMERIC(30, 2))) AS price
+        FROM   S_SE_SalesLog
+               INNER JOIN B_Departments
+                 ON S_SE_SL_ShopCode = B_DP_DepartmentID
+               LEFT JOIN B_Bank
+                 ON S_SE_SL_SourceID = B_B_Number
+        WHERE  S_SE_SL_ConsumptionID = '6'
+               AND S_SE_SL_PaymentType NOT IN ( '4', '5', '7','10' )
+               AND ( ( Isnull(@shopCode, '') <> ''
+                       AND S_SE_SL_ShopCode = @shopCode )
+                      OR Isnull(@shopCode, '') = '' )
+               AND ( ( Isnull(@bgnDate, '') <> ''
+                       AND CONVERT(VARCHAR(10), S_SE_SL_DateTime, 120) >= @bgnDate )
+                      OR Isnull(@bgnDate, '') = '' )
+               AND ( ( Isnull(@endDate, '') <> ''
+                       AND CONVERT(VARCHAR(10), S_SE_SL_DateTime, 120) <= @endDate )
+                      OR Isnull(@endDate, '') = '' )
+        GROUP  BY S_SE_SL_person,
+                  S_SE_SL_SalesID,
+                  B_DP_DepartmentName,
+                  B_B_Name
+        UNION ALL
+        SELECT S_SE_SL_SalesID                                        AS salesid,
+               S_SE_SL_person                                       AS dptid,
+               B_DP_DepartmentName                                    AS dptname,
+               B_B_Name                                               AS bankName,
+               -SUM(CAST(Isnull(S_SE_SL_Price, 0) AS NUMERIC(30, 2))) AS price
+        FROM   S_SE_SalesLog
+               INNER JOIN B_Departments
+                 ON S_SE_SL_ShopCode = B_DP_DepartmentID
+               LEFT JOIN B_Bank
+                 ON S_SE_SL_SourceID = B_B_Number
+        WHERE  S_SE_SL_ConsumptionID = '6'
+               AND S_SE_SL_PaymentType IN ( '4', '5', '7','10' )
+               AND ( ( Isnull(@shopCode, '') <> ''
+                       AND S_SE_SL_ShopCode = @shopCode )
+                      OR Isnull(@shopCode, '') = '' )
+               AND ( ( Isnull(@bgnDate, '') <> ''
+                       AND CONVERT(VARCHAR(10), S_SE_SL_DateTime, 120) >= @bgnDate )
+                      OR Isnull(@bgnDate, '') = '' )
+               AND ( ( Isnull(@endDate, '') <> ''
+                       AND CONVERT(VARCHAR(10), S_SE_SL_DateTime, 120) <= @endDate )
+                      OR Isnull(@endDate, '') = '' )
+        GROUP  BY S_SE_SL_person,
+                  S_SE_SL_SalesID,
+                  B_DP_DepartmentName,
+                  B_B_Name) TEMP
+GROUP  BY dptid,
+          salesid,
+          dptname,
+          bankName
+HAVING SUM(price) <> 0
+ORDER  BY dptid,
+          salesid,
+          dptname DESC
+DROP TABLE #saleslog
+]]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.page.First">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-First')}]]></Text>
+<IconName>
+<![CDATA[first]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Previous">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Previous')}]]></Text>
+<IconName>
+<![CDATA[previous]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.PageNavi">
+<WidgetAttr/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Next">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Next')}]]></Text>
+<IconName>
+<![CDATA[next]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Last">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Last')}]]></Text>
+<IconName>
+<![CDATA[last]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.FlashPrint">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Utils-Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.Export">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Export')}]]></Text>
+<IconName>
+<![CDATA[export]]></IconName>
+<Buttons pdf="true" excelP="true" excelO="true" excelS="true" word="true" image="true" html="true"/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.SetPrinterOffset">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('SetPrinterOffset')}]]></Text>
+<IconName>
+<![CDATA[setprinteroffset]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="false" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="8"/>
+<FR F="11" T="11"/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,2628900,1485900,7962900,3600000,3600000,3600000,3600000,3600000,3600000,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="1" r="0" cs="9" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="1" cs="9" s="1">
+<O>
+<![CDATA[收银员工作量统计]]></O>
+<Expand/>
+</C>
+<C c="1" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="6" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="8" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="9" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="3" s="2">
+<O>
+<![CDATA[部门名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="3" cs="7" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="ShopCodeName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="3" r="3" cs="7" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="ShopCodeName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="1" r="4" s="2">
+<O>
+<![CDATA[查询日期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="4" cs="7" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime + " 至 " + $endtime]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="4" cs="7" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime + " 至 " + $endtime]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="5" s="2">
+<O>
+<![CDATA[订金方式：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="5" cs="7" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="customAmountName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="3" r="5" cs="7" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="customAmountName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="1" r="6" s="2">
+<O>
+<![CDATA[查询方式：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="6" cs="7" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="queryWay"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="3" r="6" cs="7" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="queryWay"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="1" r="7" s="2">
+<O>
+<![CDATA[查看分类：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="7" cs="7" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="lookWay"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="3" r="7" cs="7" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="lookWay"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="1" r="8" cs="2" s="3">
+<O>
+<![CDATA[收银员]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="3" r="8" s="3">
+<O>
+<![CDATA[配镜单号]]></O>
+<Expand/>
+</C>
+<C c="4" r="8" s="3">
+<O>
+<![CDATA[现金]]></O>
+<Expand/>
+</C>
+<C c="5" r="8" s="3">
+<O>
+<![CDATA[积分消费]]></O>
+<Expand/>
+</C>
+<C c="6" r="8" s="3">
+<O>
+<![CDATA[储蓄卡]]></O>
+<Expand/>
+</C>
+<C c="7" r="8" s="3">
+<O>
+<![CDATA[代金券]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="8" r="8" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="bankName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="1"/>
+</C>
+<C c="9" r="8" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="bankName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="1"/>
+</C>
+<C c="0" r="9" s="4">
+<Expand/>
+</C>
+<C c="1" r="9" cs="2" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="dptname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="9" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="salesid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="salesid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=D10]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$customAmountName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$queryWay]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$lookWay]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="type"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=D10]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[
+if (type == '挂号费'){
+    return;
+}
+
+var DataURL = "report.action?reportlet=sales_CashierManyTypeDetailsByGoods.cpt&__bypagesize__=false&customAmountName="+EncodeUtf8(customAmountName)+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&queryWay="+EncodeUtf8(queryWay)+"&lookWay="+EncodeUtf8(lookWay)+"&isShow="+isShow+"&salesid="+salesid+"&begintime="+begintime+"&endtime="+endtime+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.ListCondition">
+<JoinCondition join="0">
+<Condition class="com.fr.data.condition.ObjectCondition">
+<Compare op="7">
+<O>
+<![CDATA[X]]></O>
+</Compare>
+</Condition>
+</JoinCondition>
+<JoinCondition join="0">
+<Condition class="com.fr.data.condition.ObjectCondition">
+<Compare op="7">
+<O>
+<![CDATA[WX]]></O>
+</Compare>
+</Condition>
+</JoinCondition>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ValueHighlightAction">
+<O>
+<![CDATA[挂号费]]></O>
+</HighlightAction>
+</Highlight>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性2]]></Name>
+<Condition class="com.fr.data.condition.ObjectCondition">
+<Compare op="6">
+<O>
+<![CDATA[WX]]></O>
+</Compare>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ValueHighlightAction">
+<O>
+<![CDATA[维修费]]></O>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="4" r="9" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="xj"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$xj = "0"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="5" r="9" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="jf"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$jf = "0"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="6" r="9" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="czk"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$czk = "0"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="7" r="9" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="zl"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$zl = "0"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="8" r="9" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="price"/>
+<Condition class="com.fr.data.condition.CommonCondition">
+<CNUMBER>
+<![CDATA[2]]></CNUMBER>
+<CNAME>
+<![CDATA[salesid]]></CNAME>
+<Compare op="0">
+<SimpleDSColumn dsName="ds2" columnName="salesid"/>
+</Compare>
+</Condition>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$yhk = "0"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0" leftParentDefault="false" left="D10"/>
+</C>
+<C c="9" r="9" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="price"/>
+<Condition class="com.fr.data.condition.CommonCondition">
+<CNUMBER>
+<![CDATA[2]]></CNUMBER>
+<CNAME>
+<![CDATA[salesid]]></CNAME>
+<Compare op="0">
+<SimpleDSColumn dsName="ds2" columnName="salesid"/>
+</Compare>
+</Condition>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$qt = "0"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0" leftParentDefault="false" left="D10"/>
+</C>
+<C c="1" r="10" cs="3" s="8">
+<O>
+<![CDATA[合计:]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="4" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(E10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="5" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(F10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="6" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(G10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="7" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(H10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="8" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(I10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="9" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(J10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="1" r="11" cs="3" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="打印日期:" + today()]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="11">
+<Expand/>
+</C>
+<C c="5" r="11">
+<Expand/>
+</C>
+<C c="6" r="11">
+<Expand/>
+</C>
+<C c="8" r="11" s="10">
+<Expand/>
+</C>
+<C c="9" r="11" s="10">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<PaperSize width="101808000" height="144000000"/>
+<Margin top="0" left="0" bottom="0" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="宋体" style="1" size="72" foreground="-16776961" underline="1"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="宋体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<Format class="com.fr.base.CoreDecimalFormat">
+<![CDATA[#0.00]]></Format>
+<FRFont name="黑体" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

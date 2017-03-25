@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	<!-- 会员人群分类维护 moyongsheng  begin-->
+	<bean id="crowdCategoriesDao" class="com.pengsheng.eims.member.dao.impl.CrowdCategoriesDaoImpl" />
+	<!-- 会员人群分类维护 moyongsheng  end-->
+		
+	<!-- 顾客满意度表 moyongsheng  begin-->
+		<bean id="customerSatisfactionDao" class="com.pengsheng.eims.member.dao.impl.CustomerSatisfactionDaoImpl" />
+	<!-- 顾客满意度表 moyongsheng  end-->		
+	
+	<!-- 顾客基本资料 moyongsheng  begin-->
+		<bean id="customerInfoDao" class="com.pengsheng.eims.member.dao.impl.CustomerInfoDaoImpl" />
+	<!-- 顾客基本资料 moyongsheng  end-->
+	
+	<!-- 会员卡升级 wanglei  begin-->
+		<bean id="memberUpGradeDao" class="com.pengsheng.eims.member.dao.impl.MemberUpGradeDaoImpl" />
+	<!-- 会员卡升级 wanglei  end-->
+	
+	<!-- 顾客回访 wanglei  begin-->
+		<bean id="customerReturnVisitDao" class="com.pengsheng.eims.member.dao.impl.CustomerReturnVisitDaoImpl" />
+	<!-- 顾客回访 wanglei  end-->
+	
+	<!-- 短息维护 qiyue  begin-->
+		<bean id="smsSetDao" class="com.pengsheng.eims.member.dao.impl.SmsSetDaoImpl" />
+	<!-- 短息维护 qiyue end-->
+</beans>

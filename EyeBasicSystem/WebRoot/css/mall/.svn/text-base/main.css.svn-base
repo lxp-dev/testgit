@@ -1,0 +1,215 @@
+@charset "utf-8";
+*{ 
+	margin:0;
+	padding:0;
+}
+a{
+	color:#000;
+	text-decoration:none;
+}
+ul,ol,li{list-style:none;}
+#black_bg{
+	width:100%; height:100%;  background:url(black_bg.png); position:fixed; top:0; left:0;display:none; z-index:999;
+}
+#close_search{
+	width:100%; height:100%;  position:fixed;  left:0;z-index:1000;
+}
+#search_header{
+	max-width:640px;
+	min-width:320px;
+	background-color:#E30165;
+	margin:0 auto;
+	position:relative;
+}
+#header{
+	max-width:640px;
+	min-width:320px;
+	background-color:#E30165;
+	margin:0 auto;
+	position:relative;
+}
+#menu{
+	max-width:640px;
+	min-width:320px;
+	background-color:#F2F2F2;
+	margin:0 auto;
+}
+.mbs_logo{
+	display:block;
+	position:absolute;
+}
+.download_app{
+	display:block;
+	position:absolute;
+}
+.search_button{
+	display:block;
+	position:absolute;
+	right:0;
+	border-left:1px solid #EB4E94;
+}
+.show_search_button{
+	display:block;
+	position:absolute;
+	right:0;
+}
+.keyword_input{
+	position:absolute;
+	top:0;
+	left:0;
+	border:none;
+}
+.keyword_list{
+	max-width:640px; min-width:320px; position:fixed; z-index:1001;
+}
+.keyword_list a{
+	float:left; border:1px solid #FFF; display:block; color:#FFF; overflow:hidden;
+}
+.content{margin:0 auto;}
+/*T站首页-焦点图*/
+.banner{position:relative;min-width:320px;max-width:640px;height:126px;overflow:hidden;}
+.banner .bar_list{min-width:320px;max-width:640px;height:124px;overflow:hidden;}
+.banner .bar_list ul{position:relative;overflow:hidden; }
+.banner .bar_list ul li,.banner .bar_btn ul li{float:left;}
+.banner .bar_list ul li a,.banner .bar_list ul li a img{display:block;min-width:320px;max-width:640px;}
+.banner .bar_btn{min-width:320px;max-width:640px;overflow:hidden;}
+.banner .bar_btn ul{ position:absolute;bottom:10px;}
+.banner .bar_btn ul li{width:4px;height:4px;background:#cacfcb; border:1px solid #D7DCE1; border-radius:4px; margin-right:3px;}
+.banner .bar_btn ul li.cur{background:#e60065;}
+.banner .small_btn{position:absolute;bottom:8px;right:8px;}
+.banner_bottom{ position:absolute; z-index:10; bottom:0; left:0; width:100%;}
+/*功能按钮*/
+.fun_button{
+	max-width:640px;
+	min-width:320px;
+}
+.fun_button_con{
+	margin:0 auto;
+}
+.fun_button_con img{
+	width:25%;
+}
+/*专题区*/
+.topic_area{
+	max-width:640px;
+	min-width:320px;
+	overflow:hidden;
+} 
+.topic_area img{
+	width:100%;
+}
+.topic_area_left{
+	float:left;
+} 
+.topic_area_left_img1{
+	width:100%;
+	overflow:hidden;
+} 
+.topic_area_left_img2{
+	width:100%;
+	overflow:hidden;
+} 
+.topic_area_right{
+	float:right;
+} 
+.topic_area_right_img1{
+	width:100%;
+	overflow:hidden;
+} 
+.topic_area_right_img2{
+	width:100%;
+	overflow:hidden;
+} 
+/*馆系列*/
+.mall_area{
+	max-width:640px;
+	min-width:320px;
+	margin:0 auto;
+	overflow:hidden;
+} 
+.mall_area_title{
+	overflow:hidden;
+	margin:0 auto;
+	display:block;
+	text-decoration:none;
+	color:#000;
+	text-align:center;
+} 
+.mall_area_banner{
+	overflow:hidden;
+	margin:0 auto;
+}
+.mall_area_banner img{
+	width:100%;
+} 
+.mall_area_left{
+	overflow:hidden;
+	float:left;
+} 
+.mall_area_right{
+	overflow:hidden;
+	float:right;
+} 
+.mall_area_keyword{
+	border-bottom:1px solid #CCCCCC;
+	overflow:hidden;
+	margin:0 auto;
+}
+.mall_area_keyword a{
+	text-decoration:none;
+	color:#000;
+	display:block;
+	width:100%;
+}
+.keyword_table{
+    border-collapse:collapse;
+	width:100%;
+}
+.keyword_table td{
+	text-align:center;
+}
+.keyword_table tr td:first-child{
+    border-right:1px dotted #C6C6C6;
+}
+.keyword_table tr td:last-child{
+    border-left:1px dotted #C6C6C6;
+}
+.keyword_table tr:first-child{
+	border-bottom:1px dotted #C6C6C6;
+}
+/*馆品种区*/
+.hot_brand{
+	overflow:hidden;
+	max-width:640px;
+	min-width:320px;
+} 
+.hot_brand_title{
+	width:100%;
+	overflow:hidden;
+	border-bottom:1px solid #888888;
+	width:94.68%;
+	margin:0 auto;
+} 
+.hot_brand_title_name{
+	display:block;
+	float:left;
+} 
+.hot_brand_title_more{
+	display:block;
+	float:right;
+	color:#A0A0A0;
+} 
+.hot_brand_logo{
+	overflow:hidden;
+	width:100%;
+} 
+.hot_brand_logo a{
+	overflow:hidden;
+	display:block;
+	float:left;
+} 
+.hot_brand_logo img{
+	width:100%;
+} 
+/*浮动按钮*/
+.go_top{ position:fixed;  display:none; overflow:hidden;}

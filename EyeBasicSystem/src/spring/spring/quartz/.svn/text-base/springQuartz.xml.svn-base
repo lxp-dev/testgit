@@ -1,0 +1,944 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans default-autowire="no" default-lazy-init="false"
+	default-dependency-check="none">
+	<!-- 代理程式 start -->
+	<!-- 基本配置 -->
+	<bean
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="adjustmentPrice" />       <!-- 商品调价定时器 -->
+	 		    <ref bean="smsSetBirthday" />        <!-- 生日提醒 -->
+				<ref bean="consignProcessTake" />    <!-- 委外收货定时器 -->
+				<ref bean="strogeSummaryJobTake" />  <!-- 库存汇总定时器 Liuqian start -->
+				<ref bean="deliverSalesOutJob" />	<!-- 委外送货单汇总出库单  start -->
+				<ref bean="deliverSalesOutJobs" />	<!-- 委外订单报残汇总出库单 start -->
+				<ref bean="processOutJob" />	<!-- 不合格品转销售出库或采购退货 start -->
+				<ref bean="adcostPrice" />	         <!-- 成本调价定时器 --> 
+				<ref bean="wholesalePrice" />        <!-- 批发价定时器 --> 
+				<ref bean="cashierWorkload" />	                 <!-- 收银员工作量统计 --> 
+			    <ref bean="registrationDeskWorkload" />	         <!-- 挂号台工作量统计 --> 
+				<ref bean="inspectPersonWorkload" />             <!-- 检查人员工作量统计 -->
+			    <ref bean="getBackEyeglassPersonWorkload" />     <!-- 取镜人员工作量统计 -->
+			    <ref bean="processWorkingStatisticsWorkload" />  <!-- 加工人员工作量统计 --> 
+			    <ref bean="sendMaterialWorkload" />              <!-- 发料人员工作量统计 --> 
+			    <ref bean="salesPersonQTWorkload" />              <!-- 营业员工作量统计 --> 
+			    <ref bean="goodsSalesAnalysis" />              <!-- 商品销售统计 -->
+			    <ref bean="optometryWorkload" />              <!-- 验光师工作量统计--> 				
+				<ref bean="cleanTodaySalesData" />              <!-- 清空当日销售数据 -->
+				<ref bean="autoCostAccount" />              <!-- 自动进行成本计算、物流汇总销售出库单、商品进销存表 -->				
+				<ref bean="autoCustomerUpGrade" />              <!-- 会员升级 -->
+				<ref bean="dayCollect" />              <!-- 日销售汇总表统计 -->
+				<ref bean="dayCollectEntry" />         <!-- 日销售商品类别汇总表统计 -->
+				<ref bean="dayCollectAreaEntry" />     <!-- 日销售商品类别区间汇总表统计 -->
+				<ref bean="dayGoodsSalesEntry" />     <!-- 日销售商品明细表统计 -->
+				<ref bean="storeCustomerFlowEntry" />     <!-- 销售产品同期综合对比分析表(隐形镜片分析) -->
+                <ref bean="setMealOverdue" />  <!-- 判断套餐是否过期 -->                
+                <ref bean="goodsStorageRevolveRate" />  <!-- 商品库存周转率统计表 -->
+                <ref bean="flysheet" />  <!-- 外帐汇总采购收货单和退货单 -->
+                <ref bean="toFlysheetGiveSalesBill" />  <!--向外帐传递配镜单 -->
+                <ref bean="collectStealthStorage" />  <!--按商品类型汇总库存 -->
+                <ref bean="collectPerCustomer" />  <!--汇总客单价统计 -->
+                <ref bean="fendianxiaoshouzhinan" />  <!-- 分店销售指南表 -->
+				<ref bean="switchAmount" />  <!-- 自动关账和创建临时凭证表 -->
+				<!--<ref bean="brandStorageRevolveRate" />  汇总品种周转率石英  -->
+				<!--<ref bean="dayBrandSalesEntry" />      日销售品种明细表统计 -->
+				<ref bean="updateCostprice" />      <!--医院端是否自动同步集团端商品成本（爱尔）--> 
+				<ref bean="uploadCustomerInfo" />	<!--医院端是否是否上传会员信息（爱尔）--> 
+			</list>
+		</property>
+	</bean>
+	<!-- 商品调价定时器 -->
+	<bean id="adjustmentPrice"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="adjustmentPriceJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 35 02 * * ? *</value><!-- 每天淩晨2點35執行 -->
+		</property>
+	</bean>
+	
+	<bean id="adjustmentPriceJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adjustmentPriceJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>updateAadjustmentPriceEffective</value>
+		</property>
+	</bean>
+	<bean id="adjustmentPriceJobClass" class="com.pengsheng.eims.quartz.job.AdjustmentPriceJob" autowire="byName"></bean>
+	
+	<bean id="adjustmentPriceJobDao" class="com.pengsheng.eims.quartz.dao.impl.AdjustmentPriceJobDaoImpl" autowire="byName"></bean>
+	<bean id="adjustmentPriceJobMgrImpl" class="com.pengsheng.eims.quartz.mgr.impl.AdjustmentPriceJobMgrImpl" autowire="byName"></bean>
+	<bean id="adjustmentPriceJobMgr" parent="baseTransactionProxy" autowire="byName">
+		<property name="target">
+			<ref bean="adjustmentPriceJobMgrImpl"/>
+		</property>
+	</bean>
+	
+	<!-- 商品批发调价定时器 -->
+	<bean id="wholesalePrice"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="wholesalePriceJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 50 04 * * ? *</value><!-- 每天淩晨4点50執行 -->
+		</property>
+	</bean>
+	
+	<bean id="wholesalePriceJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="wholesalePriceJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>updateWholesalePriceEffective</value>
+		</property>
+	</bean>
+	<bean id="wholesalePriceJobClass" class="com.pengsheng.eims.quartz.job.WholesalePriceJob" autowire="byName"></bean>
+	
+	<bean id="wholesalePriceJobDao" class="com.pengsheng.eims.quartz.dao.impl.WholesalePriceJobDaoImpl" autowire="byName"></bean>
+	<bean id="wholesalePriceJobMgrImpl" class="com.pengsheng.eims.quartz.mgr.impl.WholesalePriceJobMgrImpl" autowire="byName"></bean>
+	<bean id="wholesalePriceJobMgr" parent="baseTransactionProxy" autowire="byName">
+		<property name="target">
+			<ref bean="wholesalePriceJobMgrImpl"/>
+		</property>
+	</bean>
+	
+	
+	<!-- 委外收货定时器 wanglei start -->
+	<bean id="consignProcessTake"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="adConsignProcessTake" />
+		</property>
+		<property name="cronExpression">
+			<value>00 40 04 * * ? *</value> <!--每天晚4點40執行 -->
+			
+		</property>
+	</bean>
+	
+	<bean id="adConsignProcessTake" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adConsignProcessTakeJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>adConsignProcess</value>
+		</property>
+	</bean>
+	<bean id="adConsignProcessTakeJobClass" class="com.pengsheng.eims.quartz.job.AdConsignProcessTakeJob" autowire="byName"></bean>
+	
+	<bean id="adConsignProcessTakeDao" class="com.pengsheng.eims.quartz.dao.impl.AdConsignProcessTakeDaoImpl" autowire="byName"></bean>
+	<bean id="adConsignProcessTakeMgrImpl" class="com.pengsheng.eims.quartz.mgr.impl.AdConsignProcessTakeMgrImpl" autowire="byName"></bean>
+	<bean id="adConsignProcessTakeMgr" parent="baseTransactionProxy" autowire="byName">
+		<property name="target">
+			<ref bean="adConsignProcessTakeMgrImpl"/>
+		</property>
+	</bean>
+	<!-- 委外收货定时器 wanglei end -->
+	
+	
+	<!-- 库存汇总定时器 Liuqian start -->
+	<bean id="strogeSummaryJobTake" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="strogeSummaryTake" />
+		</property>
+		<property name="cronExpression">
+			<value>00 00 06 01 * ? *</value><!-- 每月第一天凌晨06点00分00秒 -->
+		</property>
+	</bean>
+	
+	<bean id="strogeSummaryTake" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="strogeSummaryJob"/>
+		</property>
+		<property name="targetMethod">
+			<value>stockSummary</value>
+		</property>
+	</bean>
+	<bean id="strogeSummaryJob" class="com.pengsheng.eims.quartz.job.StrogeSummaryJob" autowire="byName"></bean>
+	
+	<bean id="stockSummaryDao" class="com.pengsheng.eims.quartz.dao.impl.StockSummaryDaoImpl" autowire="byName"></bean>
+	<bean id="stockSummaryMgrImpl" class="com.pengsheng.eims.quartz.mgr.impl.StockSummaryMgrImpl" autowire="byName"></bean>
+	<bean id="stockSummaryMgr" parent="baseTransactionProxy" autowire="byName">
+		<property name="target">
+			<ref bean="stockSummaryMgrImpl"/>
+		</property>
+	</bean>
+	<!-- 库存汇总定时器 Liuqian end -->
+
+
+	<!-- 生日提醒 qiyue begin-->
+	<bean id="smsSetBirthday" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="smsSetBirthdayJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 00 06 * * ? </value><!-- 每天早晨6點00執行 -->
+		</property>
+	</bean>
+	
+	<bean id="smsSetBirthdayJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="smsSetBirthdayJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>smsSetBirthday</value>
+		</property>
+	</bean>
+	<bean id="smsSetBirthdayJobClass" class="com.pengsheng.eims.quartz.job.SmsSetBirthdayJob" autowire="byName"></bean>
+	<bean id="smsSetBirthdayDao" class="com.pengsheng.eims.quartz.dao.impl.SmsSetBirthdayDaoImpl" autowire="byName"></bean>
+	<bean id="smsSetBirthdayMgrImpl" class="com.pengsheng.eims.quartz.mgr.impl.SmsSetBirthdayMgrImpl" autowire="byName"></bean>
+	<bean id="smsSetBirthdayMgr" parent="baseTransactionProxy" autowire="byName">
+		<property name="target">
+			<ref bean="smsSetBirthdayMgrImpl"/>
+		</property>
+	</bean>
+	<!-- 生日提醒  qiyue end -->
+	
+	<!-- 财务系统汇总出库单 wanglei start -->
+
+	<bean id="salesInInventoryJob"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="adSalesInInventoryJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 00 22 * * ? *</value><!-- 每天晚上10点执行 -->
+		</property>
+	</bean>	
+
+	<bean id="adSalesInInventoryJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertCollectSalesOutStorageBill</value>
+		</property>
+	</bean>
+	<bean id="adSalesInInventoryJobClass" class="com.pengsheng.eims.quartz.job.AdSalesInInventoryJob" autowire="byName"></bean>
+	
+	<bean id="adSalesInInventoryDao" class="com.pengsheng.eims.quartz.dao.impl.AdSalesInInventoryDaoImpl" autowire="byName"></bean>
+	<bean id="adSalesInInventoryMgrImpl" class="com.pengsheng.eims.quartz.mgr.impl.AdSalesInInventoryMgrImpl" autowire="byName"></bean>
+	<bean id="adSalesInInventoryMgr" parent="baseTransactionProxy" autowire="byName">
+		<property name="target">
+			<ref bean="adSalesInInventoryMgrImpl"/>
+		</property>
+	</bean>
+	
+	<!-- 财务系统汇总出库单 wanglei end -->
+
+	<!-- 委外送货单汇总出库单  start -->
+	<bean id="deliverSalesOutJob"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="deliverSalesOut" />
+		</property>
+		<property name="cronExpression">
+			<value>0 00 23 * * ?</value><!-- 每天晚上23点00分执行 -->
+		</property>
+	</bean>
+	
+	<bean id="deliverSalesOut" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="deliverSalesOutClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertDeliverSalesOut</value>
+		</property>
+	</bean>
+	<bean id="deliverSalesOutClass" class="com.pengsheng.eims.quartz.job.DeliverSalesOutJob" autowire="byName"></bean>
+	
+	<bean id="deliverSalesOutDao" class="com.pengsheng.eims.quartz.dao.impl.DeliverSalesOutDaoImpl" autowire="byName"></bean>
+	<bean id="deliverSalesOutMgrImpl" class="com.pengsheng.eims.quartz.mgr.impl.DeliverSalesOutMgrImpl" autowire="byName"></bean>
+	<bean id="deliverSalesOutMgr" parent="baseTransactionProxy" autowire="byName">
+		<property name="target">
+			<ref bean="deliverSalesOutMgrImpl"/>
+		</property>
+	</bean>
+	<!-- 委外送货单汇总出库单  end -->	
+	
+	<!-- 委外订单报残汇总出库单  start -->
+	<bean id="deliverSalesOutJobs"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="deliverSalesOuts" />
+		</property>
+		<property name="cronExpression">
+			<value>00 05 23 * * ?</value><!-- 每天晚上23点05分执行 -->
+		</property>
+	</bean>
+	
+	<bean id="deliverSalesOuts" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="deliverSalesOutsClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertDeliverSalesOuts</value>
+		</property>
+	</bean>
+	<bean id="deliverSalesOutsClass" class="com.pengsheng.eims.quartz.job.DeliverSalesOutJobs" autowire="byName"></bean>
+	
+	<bean id="deliverSalesOutsDao" class="com.pengsheng.eims.quartz.dao.impl.DeliverSalesOutsDaoImpl" autowire="byName"></bean>
+	<bean id="deliverSalesOutsMgrImpl" class="com.pengsheng.eims.quartz.mgr.impl.DeliverSalesOutsMgrImpl" autowire="byName"></bean>
+	<bean id="deliverSalesOutsMgr" parent="baseTransactionProxy" autowire="byName">
+		<property name="target">
+			<ref bean="deliverSalesOutsMgrImpl"/>
+		</property>
+	</bean>
+	<!-- 委外订单报残汇总出库单liujing  end -->
+
+	<!-- 成本调价定时器 -->
+	<bean id="adcostPrice"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="adcostPriceJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 45 04 * * ? *</value><!-- 每天晚上4点45分执行 -->
+		</property>
+	</bean>
+	
+	<bean id="adcostPriceJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adcostPriceJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>updateAdcostPriceEffective</value>
+		</property>
+	</bean>
+	<bean id="adcostPriceJobClass" class="com.pengsheng.eims.quartz.job.AdcostPriceJob" autowire="byName"></bean>
+	
+	<bean id="adcostPriceJobDao" class="com.pengsheng.eims.quartz.dao.impl.AdcostPriceJobDaoImpl" autowire="byName"></bean>
+	<bean id="adcostPriceJobMgrImpl" class="com.pengsheng.eims.quartz.mgr.impl.AdcostPriceJobMgrImpl" autowire="byName"></bean>
+	<bean id="adcostPriceJobMgr" parent="baseTransactionProxy" autowire="byName">
+		<property name="target">
+			<ref bean="adcostPriceJobMgrImpl"/>
+		</property>
+	</bean>
+	<!-- 成本调价定时器 -->
+	
+	<!-- 不合格品转销售出库或采购退货  start -->
+	<bean id="processOutJob"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="processOut" />
+		</property>
+		<property name="cronExpression">
+			<value>00 10 23 * * ? *</value><!-- 每天晚上23点10分执行 -->
+		</property>
+	</bean>
+	
+	<bean id="processOut" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="processOutClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertProcessOut</value>
+		</property>
+	</bean>
+	<bean id="processOutClass" class="com.pengsheng.eims.quartz.job.ProcessOutJob" autowire="byName"></bean>
+	<bean id="processOutDao" class="com.pengsheng.eims.quartz.dao.impl.ProcessOutDaoImpl" autowire="byName"></bean>
+	<bean id="processOutMgrImpl" class="com.pengsheng.eims.quartz.mgr.impl.ProcessOutMgrImpl" autowire="byName"></bean>
+	<bean id="processOutMgr" parent="baseTransactionProxy" autowire="byName">
+		<property name="target">
+			<ref bean="processOutMgrImpl"/>
+		</property>
+	</bean>
+	 <!--报残负调拨报残汇总出库单  end -->
+	
+	<!-- 收银员工作量统计 szk -->
+	<bean id="cashierWorkload"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="cashierWorkloadJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 00 03 * * ? *</value><!-- 每天晚上3点执行 -->
+		</property>
+	</bean>
+	
+	<bean id="cashierWorkloadJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertCashierWorkload</value>
+		</property>
+	</bean>	
+	<!-- 收银员工作量统计 szk -->
+	
+	<!-- 挂号台工作量统计表 szk -->
+	<bean id="registrationDeskWorkload"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="registrationDeskWorkloadJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 05 03 * * ? *</value><!-- 每天晚上3点5分执行 -->
+		</property>
+	</bean>
+	
+	<bean id="registrationDeskWorkloadJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertRegistrationDeskWorkload</value>
+		</property>
+	</bean>	
+	<!-- 挂号台工作量统计表 szk -->
+	
+	<!-- 检查人员工作量统计表 qy -->
+	<bean id="inspectPersonWorkload"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="inspectPersonWorkloadJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 10 03 * * ? *</value><!-- 每天晚上3点10分执行 -->
+		</property>
+	</bean>
+	
+	<bean id="inspectPersonWorkloadJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertInspectPersonWorkload</value>
+		</property>
+	</bean>	
+	<!-- 检查人员工作量统计表 qy -->
+	
+	<!-- 取镜人员工作量统计表  qy -->
+	<bean id="getBackEyeglassPersonWorkload"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="getBackEyeglassPersonWorkloadJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 15 03 * * ? *</value><!-- 每天晚上3点15分执行 -->
+		</property>
+	</bean>
+	
+	<bean id="getBackEyeglassPersonWorkloadJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertGetBackEyeglassPersonWorkload</value>
+		</property>
+	</bean>	
+	<!-- 取镜人员工作量统计表  qy -->
+	
+	
+	
+	<!-- 加工人员工作量统计 qy -->
+	<bean id="processWorkingStatisticsWorkload"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="processWorkingStatisticsWorkloadJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 20 03 * * ? *</value><!-- 每天晚上3点20分执行 -->
+		</property>
+	</bean>
+	
+	<bean id="processWorkingStatisticsWorkloadJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertProcessWorkingStatisticsWorkload</value>
+		</property>
+	</bean>	
+	<!-- 加工人员工作量统计 qy -->
+	
+    <!-- 发料人员工作量统计 qy -->
+	<bean id="sendMaterialWorkload"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="sendMaterialWorkloadJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 25 03 * * ? *</value><!-- 每天晚上3点25分执行 -->
+		</property>
+	</bean>
+	
+	<bean id="sendMaterialWorkloadJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertSendMaterialWorkload</value>
+		</property>
+	</bean>	
+	<!-- 发料人员工作量统计 qy --> 
+	
+	
+	<!-- 营业员工作量统计表 qy -->
+	<bean id="salesPersonQTWorkload"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="salesPersonQTWorkloadJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 30 03 * * ? *</value><!-- 每天晚上3点30执行 -->
+		</property>
+	</bean>
+	
+	<bean id="salesPersonQTWorkloadJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertSalesPersonQTWorkload</value>
+		</property>
+	</bean>	
+	<!-- 营业员工作量统计表 qy --> 
+	
+	<!-- 商品销售统计表 -->
+	<bean id="goodsSalesAnalysis"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="goodsSalesAnalysisJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 40 03 * * ? *</value><!-- 每天晚上3点40执行 -->
+		</property>
+	</bean>
+	
+	<bean id="goodsSalesAnalysisJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertGoodsSalesAnalysis</value>
+		</property>
+	</bean>	
+	<!-- 商品销售统计表 --> 
+	
+	<!-- 清空当日销售数据  -->
+	<bean id="cleanTodaySalesData"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="cleanTodaySalesDataJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 20 04 * * ? *</value><!-- 每天晚上4点20执行 -->
+		</property>
+	</bean>
+	
+	<bean id="cleanTodaySalesDataJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>deleteTodaySalesDataJob</value>
+		</property>
+	</bean>	
+	<!-- 清空当日销售数据  --> 
+	
+	<!-- 自动进行成本计算  -->
+	<bean id="autoCostAccount"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="autoCostAccountJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 25 04 * * ? *</value><!-- 每天晚上4点25执行 -->
+		</property>
+	</bean>
+	
+	<bean id="autoCostAccountJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertAutoCostAccountJob</value>
+		</property>
+	</bean>	
+	<!-- 自动进行成本计算  --> 
+	
+	<!-- 验光师工作量统计表 szk -->
+	<bean id="optometryWorkload"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="optometryWorkloadJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 35 03 * * ? *</value><!-- 每天晚上3点35执行 -->
+		</property>
+	</bean>
+	
+	<bean id="optometryWorkloadJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertOptometryWorkload</value>
+		</property>
+	</bean>	
+	<!-- 验光师工作量统计表szk -->
+	
+	<!-- 自动进行会员升级  -->
+	<bean id="autoCustomerUpGrade"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="autoCustomerUpGradeJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 30 04 * * ? *</value><!-- 每天晚上4点30整执行 -->
+		</property>
+	</bean>
+	
+	<bean id="autoCustomerUpGradeJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertAutoCustomerUpGradeJob</value>
+		</property>
+	</bean>	
+	<!-- 自动进行会员升级  --> 
+	
+		<!-- 日销售汇总表统计 liujing -->
+	<bean id="dayCollect"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="dayCollectJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 45 03 * * ? *</value><!-- 每天晚上3点45执行 -->
+		</property>
+	</bean>
+	
+	<bean id="dayCollectJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertDayCollect</value>
+		</property>
+	</bean>	
+	<!-- 日销售汇总表统计 liujing -->
+	
+	
+		<!-- 日商品类别销售汇总表统计 liujing -->
+	<bean id="dayCollectEntry"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="dayCollectEntryJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 50 03 * * ? *</value><!-- 每天晚上3点50执行 -->
+		</property>
+	</bean>
+	
+	<bean id="dayCollectEntryJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertDayCollectEntry</value>
+		</property>
+	</bean>	
+	<!-- 日商品类别销售汇总表统计 liujing -->
+	
+		<!-- 日商品类别区间销售汇总表统计 liujing -->
+	<bean id="dayCollectAreaEntry"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="dayCollectAreaEntryJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 55 03 * * ? *</value><!-- 每天3点55执行 -->
+		</property>
+	</bean>
+	
+	<bean id="dayCollectAreaEntryJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertDayCollectAreaEntry</value>
+		</property>
+	</bean>	
+	<!-- 日商品类别区间销售汇总表统计 liujing -->
+	
+	<!-- 日商品销售明细表统计 liujing -->
+	<bean id="dayGoodsSalesEntry"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="dayGoodsSalesEntryJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 00 04 * * ? *</value><!-- 每天4点执行 -->
+		</property>
+	</bean>
+	
+	<bean id="dayGoodsSalesEntryJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertDaySalesEntry</value>
+		</property>
+	</bean>	
+	<!-- 日商品销售明细表统计 liujing -->
+	
+	<!-- 判断套餐是否过期  -->
+	<bean id="setMealOverdue"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="setMealOverdueJob" />
+		</property>
+		<property name="cronExpression">
+			<value>0 15 4 * * ?</value><!-- 每天凌晨4点15执行 -->
+		</property>
+	</bean>
+	
+	<bean id="setMealOverdueJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>updateSetMealOverdueJob</value>
+		</property>
+	</bean>	
+	<!-- 判断套餐是否过期  -->
+	
+	<!-- 销售产品同期综合对比分析表(隐形镜片分析) -->
+	<bean id="storeCustomerFlowEntry"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="storeCustomerFlowEntryJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 10 04 * * ? *</value><!-- 每天4点10执行 -->
+		</property>
+	</bean>
+	
+	<bean id="storeCustomerFlowEntryJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertStoreCustomerFlowEntry</value>
+		</property>
+	</bean>	
+	<!-- 销售产品同期综合对比分析表(隐形镜片分析) -->
+	
+	<!-- 商品库存周转率统计表  -->
+	<bean id="goodsStorageRevolveRate"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="goodsStorageRevolveRateJob" />
+		</property>
+		<property name="cronExpression">
+			<value>0 55 5 * * ?</value><!-- 每天凌晨5点55执行 -->
+		</property>
+	</bean>
+	
+	<bean id="goodsStorageRevolveRateJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertGoodsStorageRevolveRate</value>
+		</property>
+	</bean>	
+	<!-- 商品库存周转率统计表  -->
+	
+	<!-- 外帐汇总采购收货单和退货单  -->
+	<bean id="flysheet"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="flysheetJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 30 03 * * ?</value><!-- 每天凌晨3点30分执行 -->
+		</property>
+	</bean>
+	
+	<bean id="flysheetJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="flysheetJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertFlysheet</value>
+		</property>
+	</bean>	
+	<!-- 外帐汇总采购收货单和退货单  -->
+	
+	<!-- 向外帐传递配镜单  -->
+	<bean id="toFlysheetGiveSalesBill"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="toFlysheetGiveSalesBillJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 40 23 * * ?</value><!-- 每天晚23点40执行 -->
+		</property>
+	</bean>
+	
+	<bean id="toFlysheetGiveSalesBillJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="flysheetJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertToFlysheetGiveSalesBill</value>
+		</property>
+	</bean>	
+	<!-- 向外帐传递配镜单  -->
+
+	<!-- 汇总隐形、护理液的库存  -->
+	<bean id="collectStealthStorage"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="collectStealthStorageJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 05 05 * * ?</value><!-- 每天凌晨5点5分点执行 -->
+		</property>
+	</bean>
+	
+	<bean id="collectStealthStorageJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertCollectStealthStorage</value>
+		</property>
+	</bean>	
+	<!-- 汇总隐形、护理液的库存  -->
+	
+	<!-- 汇总客单价统计  -->
+	<bean id="collectPerCustomer"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="collectPerCustomerJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 10 05 * * ?</value><!-- 每天凌晨5点10分点执行 -->
+		</property>
+	</bean>
+	
+	<bean id="collectPerCustomerJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>insertCollectPerCustomer</value>
+		</property>
+	</bean>	
+	<!-- 汇总客单价统计  -->
+	
+	<!-- 分店销售指南表    start -->
+	<bean id="fendianxiaoshouzhinan"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="salesGuideJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 30 23 * * ? *</value><!-- 每天凌晨23点30分点执行 -->
+		</property>
+	</bean>
+	
+	<bean id="salesGuideJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>collectEachShopSalesGuide</value>
+		</property>
+	</bean>
+	<!-- 分店销售指南表     end -->
+	
+	<!-- 自动关账和创建临时凭证表    start -->
+	<bean id="switchAmount"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="switchAmountJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 20 23 * * ? *</value><!-- 每天凌晨23点20分点执行 -->
+		</property>
+	</bean>
+	
+	<bean id="switchAmountJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="adSalesInInventoryJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>switchAmount</value>
+		</property>
+	</bean>
+	<!-- 自动关账和创建临时凭证表     end -->
+	
+	<!-- 波涛掰轨系统 begin -->
+	<bean id="flysheetJobClass" class="com.pengsheng.eims.quartz.job.FlysheetJob" autowire="byName"></bean>
+	
+	<bean id="flysheetDao" class="com.pengsheng.eims.quartz.dao.impl.FlysheetDaoImpl" autowire="byName"></bean>
+	<bean id="flysheetMgrImpl" class="com.pengsheng.eims.quartz.mgr.impl.FlysheetMgrImpl" autowire="byName"></bean>
+	<bean id="flysheetMgr" parent="baseTransactionProxy" autowire="byName">
+		<property name="target">
+			<ref bean="flysheetMgrImpl"/>
+		</property>
+	</bean>
+	<!-- 波涛掰轨系统 end -->
+	
+	<!-- 医院端是否自动同步集团端商品成本（爱尔）  start -->
+	<bean id="updateCostprice"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="updateCostpriceJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 10 00 * * ? *</value><!-- 每天晚上00点10分执行 -->
+		</property>
+	</bean>
+	
+	<bean id="updateCostpriceJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="downloadJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>updateCostprice</value>
+		</property>
+	</bean>
+	<bean id="downloadJobClass" class="com.pengsheng.eims.quartz.job.DownloadJob" autowire="byName"></bean>
+	<bean id="downloadJobDao" class="com.pengsheng.eims.quartz.dao.impl.DownloadJobDaoImpl" autowire="byName"></bean>
+	<bean id="downloadJobMgrImpl" class="com.pengsheng.eims.quartz.mgr.impl.DownloadJobMgrImpl" autowire="byName"></bean>
+	<bean id="downloadJobMgr" parent="baseTransactionProxy" autowire="byName">
+		<property name="target">
+			<ref bean="downloadJobMgrImpl"/>
+		</property>
+	</bean>
+	 <!--医院端是否自动同步集团端商品成本（爱尔）  end -->
+	 
+	 <!--医院端是否是否上传会员信息（爱尔）  start -->
+	<bean id="uploadCustomerInfo"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="uploadCustomerInfoJob" />
+		</property>
+		<property name="cronExpression">
+			<value>00 20 00 * * ? *</value><!-- 每天晚上00点20分执行 -->
+		</property>
+	</bean>
+	
+	<bean id="uploadCustomerInfoJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="downloadJobClass"/>
+		</property>
+		<property name="targetMethod">
+			<value>uploadCustomerInfo</value>
+		</property>
+	</bean>
+	 <!--医院端是否是否上传会员信息（爱尔）  end -->
+</beans>
+

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+
+	<!-- 发票管理  begin-->
+	<bean id="ykinvoiceDao" class="com.pengsheng.eims.yklogistics.dao.impl.InvoiceDaoImpl" />
+	<!-- 发票管理  Liuqian end-->
+
+	
+	<!-- 发票单据选择开窗 wanglei begin-->
+	<bean id="ykinvoiceSelectBillDao" class="com.pengsheng.eims.yklogistics.dao.impl.InvoiceSelectBillDaoImpl" />
+	<!-- 发票单据选择开窗 wanglei end-->
+
+	<!-- 凭证单据选择开窗 wanglei begin-->
+	<bean id="ykproofSelectBillDao" class="com.pengsheng.eims.yklogistics.dao.impl.ProofSelectBillDaoImpl" />
+	<!-- 凭证单据选择开窗 wanglei end-->
+
+	
+	<!-- 凭证管理 Add by SZK -->
+	<bean id="ykvoucherDao" class="com.pengsheng.eims.yklogistics.dao.impl.VoucherDaoImpl"/>
+	<bean id="ykvoucherTallyDao" class="com.pengsheng.eims.yklogistics.dao.impl.VoucherTallyDaoImpl"/>
+	<!-- 凭证管理 End by SZK -->
+
+	
+	<!-- 成本计算  begin-->
+	<bean id="ykcalDao" class="com.pengsheng.eims.yklogistics.dao.impl.CalDaoImpl" />
+	<!-- 成本计算 end-->
+	
+	<!-- 日志SZK begin-->
+	<bean id="yklogisticsLogDao" class="com.pengsheng.eims.yklogistics.dao.impl.LogisticsLogDaoImpl" />
+	<!-- 日志SZK end-->
+</beans>

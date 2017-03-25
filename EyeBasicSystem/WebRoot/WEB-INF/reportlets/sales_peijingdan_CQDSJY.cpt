@@ -1,0 +1,2867 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[X1120120140320225946 ]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT S_SE_SB_SalesID           AS '销售单号',
+       S_SE_SB_ShopCode          AS '店号',
+       xsdd.B_DP_DepartmentName  AS '销售店名',
+       S_ME_CI_MemberId          AS '顾客号',
+       S_ME_CI_Name              AS '顾客姓名',
+                ( YEAR(Getdate()) - YEAR(S_ME_CI_Birthday) )              AS '年龄',
+                ( CASE S_ME_CI_Sex 
+                 WHEN '0' THEN '男' 
+                  WHEN '1' THEN '女' 
+                 ELSE '' 
+                 END ) AS '顾客性别',
+
+S_ME_CI_Address AS '会员地址',
+       S_ME_CI_Phone             AS '顾客电话',
+S_ME_CI_Integral                 AS '顾客积分' ,
+       S_ME_CI_CardType          AS '顾客卡类型',
+       S_SE_SB_OptID             AS '验光号-验光基表',
+       S_SE_SB_OptometryID       AS '验光病历号',
+S_OP_Optometry.S_OP_OY_PersonID AS '验光师ID',
+yg.personName AS '验光师姓名',
+       S_SE_SB_InspectionID      AS '检查结论ID',
+convert(varchar(16),S_SE_SB_TakeGlassData,23) as '取镜日期',
+convert(varchar(16),S_SE_SB_SalesDatetime,23) as '销售日期',
+       S_SE_SB_OrdersType        AS '订单类型',
+       ( CASE S_SE_SB_OrdersType
+           WHEN '1' THEN '镜架成品片'
+           WHEN '2' THEN '镜架订做片'
+           WHEN '3' THEN '隐形成品片'
+           WHEN '4' THEN '隐形订做片'
+           WHEN '5' THEN '辅料'
+           ELSE ''
+         END )                   AS '订单类型名称',
+       S_SE_SB_BallGlassOD       AS '右眼球镜',
+       S_SE_SB_BallGlassOS       AS '左眼球镜',
+       S_SE_SB_PostGlassOD       AS '右眼柱镜',
+       S_SE_SB_PostGlassOS       AS '左眼柱镜',
+       S_SE_SB_AxesOD            AS '右眼轴向',
+       S_SE_SB_AxesOS            AS '左眼轴向',
+       S_SE_SB_ADDOD             AS '右眼add',
+       S_SE_SB_ADDOS             AS '左眼add',
+       S_SE_SB_ArriseGlassOD1    AS '右眼三棱镜',
+       S_SE_SB_ArriseGlassOS1    AS '左眼三棱镜',
+       S_SE_SB_BasisOD1          AS '右眼基底1',
+       S_SE_SB_BasisOS1          AS '左眼基底1',
+       S_SE_SB_PrismOD           AS '右眼棱镜',
+       S_SE_SB_PrismOS           AS '左眼棱镜',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_InterHighOD
+when S_SE_SB_RecipeType = '2' then S_SE_SB_InterDistanceOD
+when S_SE_SB_RecipeType = '3' then S_SE_SB_InterHighOD
+when S_SE_SB_RecipeType = '5' then S_SE_SB_InterHighOD
+else ''
+end as '右眼瞳距',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_InterHighOs
+when S_SE_SB_RecipeType = '2' then S_SE_SB_InterDistanceOs
+when S_SE_SB_RecipeType = '3' then S_SE_SB_InterHighOs
+when S_SE_SB_RecipeType = '5' then S_SE_SB_InterHighOs
+else ''
+end as '左眼瞳距',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_FarVAOd
+when S_SE_SB_RecipeType = '2' then S_SE_SB_CloseVAOd
+when S_SE_SB_RecipeType = '3' then S_SE_SB_FarVAOd
+else ''
+end as '右眼矫视',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_FarVAOS
+when S_SE_SB_RecipeType = '2' then S_SE_SB_CloseVAOs
+when S_SE_SB_RecipeType = '3' then S_SE_SB_FarVAOS
+else ''
+end as '左眼矫视',
+       S_SE_SB_RecipeType        AS '处方形式',
+       ( CASE S_SE_SB_RecipeType
+           WHEN '1' THEN '远用'
+           WHEN '2' THEN '近用'
+           WHEN '3' THEN '渐进/双光'
+           WHEN '4' THEN '隐形'
+           ELSE ''
+         END )                   AS '处方形式名称',
+       S_SE_SB_DignosisRe        AS '备注',
+       S_SE_SB_DiameterOD        AS '隐形右眼直径',
+       S_SE_SB_DiameterOS        AS '隐形左眼直径',
+       S_SE_SB_ConRecipeType     AS '隐形处理方式',
+       S_SE_SB_SecCheckDate      AS '复诊时间',
+       S_SE_SB_SubVisitUnit      AS '复诊时间单位',
+       S_SE_SB_SalesType         AS '销售类型',
+       ( CASE S_SE_SB_SalesType
+           WHEN '1' THEN '内方'
+           WHEN '2' THEN '外方'
+           WHEN '3' THEN '辅料'
+           ELSE ''
+         END )                   AS '销售类型',
+       S_SE_SB_SalerID           AS '销售人员ID',
+       xs.personName             AS '销售员姓名',
+       S_SE_SB_Lryid             AS '录入员ID',
+       lr.personName             AS '录入员姓名',
+       S_SE_SB_PosDatetime       AS '收银日期',
+       S_SE_SB_PosID             AS '收银员ID',
+       sy.personName             AS '收银员姓名',
+       S_SE_SB_PriceSum          AS '原价合计',
+       S_SE_SB_SalesValue        AS '应收金额',
+       S_SE_SB_EyeCurvatureOD1   AS '隐形右眼曲率1',
+       S_SE_SB_EyeCurvatureOD2   AS '隐形右眼曲率2',
+       S_SE_SB_EyeCurvatureOS1   AS '隐形左眼曲率1',
+       S_SE_SB_EyeCurvatureOS2   AS '隐形左眼曲率2',
+       S_SE_SB_DiscountRate      AS '折扣率',
+       S_SE_SB_DiscountNum       AS '折扣金额',
+       S_SE_SB_Psalsvalue        AS '实缴金额',
+       S_SE_SB_ArrearsValue      AS '欠款金额',
+       S_SE_SB_Location          AS '取镜地点',
+       qjdd.B_DP_DepartmentName  AS '销售店名',
+       S_SE_SB_ArrivedDate       AS '到镜日期',
+       S_SE_SB_ValueFlag         AS '收费标志',
+       ( CASE S_SE_SB_ValueFlag
+           WHEN '0' THEN '未收费'
+           WHEN '1' THEN '已收费'
+           ELSE ''
+         END )                   AS '收费状态',
+       S_SE_SB_CheckoutFlag      AS '欠费标志',
+       ( CASE S_SE_SB_CheckoutFlag
+           WHEN '0' THEN '未欠费'
+           WHEN '1' THEN '欠费'
+           ELSE ''
+         END )                   AS '欠费状态',
+       S_SE_SB_InTransit         AS '配镜单当前在途状态',
+       S_SE_SB_WithdrawDate      AS '退费日期',
+       S_SE_SB_WithdrawFlag      AS '退费标示位',
+       S_SE_SB_WithdrawPersonID  AS '退费人员',
+       sy.personName             AS '退费人员姓名',
+       S_SE_SB_MovementType      AS '活动类型ID',
+       S_SE_SB_ArrearsAppendDate AS '补齐欠款日期',
+       S_SE_SB_ArrearsDate       AS '欠款日期',
+       S_SE_SB_PayCash           AS '缴费现金金额',
+       S_SE_SB_BankCard          AS '缴费银行卡金额',
+       S_SE_SB_StoredCard        AS '缴费储值卡金额',
+       S_SE_SB_Renums            AS '抹零金额',
+       S_SE_SB_DiscountType      AS '折扣类型',
+       S_SE_SB_DiscountPerson    AS '打折人',
+       dz.personName             AS '打折人员姓名',
+       S_SE_SB_DragsType         AS '委外类型',
+       S_SE_SB_PupilHeightOD     AS '右眼瞳高',
+       S_SE_SB_PupilHeightOS     AS '左眼瞳高',
+       S_SE_SB_FavorableAmount,
+       S_SE_SB_WorryType         AS '加急状态',
+       S_SE_SB_Integral,
+       S_SE_SB_SetMealID         AS '套餐ID',
+       S_SM_SM_Title             AS '套餐名称',
+       S_SE_SB_ExecStandard,
+       S_SE_SB_SalesRemark       AS '销售备注',
+       S_SE_SB_SourceSalesID,
+       S_SE_SB_SwapGoodsFlag     AS '配镜单退款类型',
+       ( CASE S_SE_SB_CheckoutFlag
+           WHEN '1' THEN '整单退款'
+           WHEN '2' THEN '部分退款'
+           WHEN '3' THEN '部分换货'
+           WHEN '4' THEN '直接退款'
+           ELSE ''
+         END )                   AS '配镜单退款类型名称',
+       S_SE_SD_SalesItemID       AS '商品代码',
+       S_SE_SD_ItemID            AS '商品条码',
+       S_SE_SD_StockId           AS '仓储ID',
+       B_WH_warehouseName        AS '仓位名称',
+       S_SE_SD_SalesItemName     AS '商品名称',
+       S_SE_SD_Sprice            AS '商品单价',
+       S_SE_SD_Number            AS '数量',
+B_UT_unitName AS '单位',
+       S_SE_SD_UnitPrice         AS '单位成本(不含税价格)',
+       S_SE_SD_CostsPrive        AS '成本价格',
+       S_SE_SD_PriceSum          AS '原价合计',
+       S_SE_SD_SalesValue        AS '应收金额',
+B_GI_Spec AS '规格',
+B_GI_Color AS '色号',
+F_TT_Name AS '加工工艺',
+       S_SE_SD_DiscountRate      AS '折率',
+       S_SE_SD_DiscountNum       AS '折扣金额',
+       S_SE_SD_GoodDescribe      AS '商品描述',
+       S_SE_SD_GlassFlag         AS '右左眼标识',
+       S_SE_SD_CommoditiesFlag   AS '商品类别',
+(CASE S_SE_SD_CommoditiesFlag 
+	WHEN '1' THEN 1
+	WHEN '2' THEN 999
+	WHEN '3' THEN 2
+	WHEN '4' THEN 3
+	WHEN '5' THEN 4
+	WHEN '6' THEN 5
+	WHEN '7' THEN 99
+	WHEN '8' THEN 6
+	WHEN '9' THEN 7
+ELSE '101' END) AS '排序列',
+       S_SE_SD_Updatetime        AS '更新时间',
+       S_SE_SD_LargessFlag       AS '赠品标识',
+       S_SE_SD_Renums            AS '抹零金额',
+       S_SE_SD_IsCollect         AS '汇总销售出库单的标志',
+       S_SE_SD_DiscountType      AS '折扣类型',
+       S_SE_SD_DiscountSource    AS '关联打折工号、打折卡号、打折券',
+       S_SE_SD_InStockId         AS '退款仓位',
+       S_SE_SD_Favorable         AS '优惠金额',
+       S_SE_SD_Integral          AS '积分',
+       S_SE_SD_OutStorageFlag    AS '结款是否出库',
+       S_SE_SD_InStorageFlag     AS '退款是否入库',
+       S_SE_SD_Guaranteeperiod   AS '失效日期',
+       S_SE_SD_Batch             AS '批号',
+       S_SE_SD_WithdrawFlag,
+       S_SE_SD_WithdrawDate,
+       S_SE_SD_WithdrawPersonID,
+       S_SE_SD_ExchageFlag,S_OP_OY_CustomerID
+FROM   S_SE_SalesBasic
+       LEFT JOIN S_SE_SalesDetail
+         ON S_SE_SD_SalesID = S_SE_SB_SalesID
+       LEFT JOIN B_Departments xsdd
+         ON xsdd.B_DP_DepartmentID = S_SE_SB_ShopCode
+       LEFT JOIN B_Departments qjdd
+         ON qjdd.B_DP_DepartmentID = S_SE_SB_Location
+       LEFT JOIN B_Warehouse
+         ON B_WH_ID = S_SE_SD_StockId
+       LEFT JOIN S_ME_CustomerInfo
+         ON S_ME_CI_CustomerID = S_SE_SB_CustomerID
+       LEFT JOIN S_SM_SetMeal
+         ON S_SM_SM_ID = S_SE_SB_SetMealID
+       LEFT JOIN SYS_PersonInfo xs
+         ON xs.ID = S_SE_SB_SalerID
+       LEFT JOIN SYS_PersonInfo lr
+         ON lr.ID = S_SE_SB_Lryid
+       LEFT JOIN SYS_PersonInfo sy
+         ON sy.ID = S_SE_SB_PosID
+       LEFT JOIN SYS_PersonInfo tf
+         ON tf.ID = S_SE_SB_WithdrawPersonID
+       LEFT JOIN SYS_PersonInfo dz
+         ON dz.ID = S_SE_SB_DiscountPerson
+	INNER JOIN B_GoodsInfo ON B_GI_GoodsID = S_SE_SD_SalesItemID
+	LEFT JOIN F_TechnologyType ON F_TT_ID = B_GI_FinishedGlassesType
+	LEFT JOIN B_Unit ON B_UT_id = B_GI_UnitId
+	LEFT JOIN S_OP_Optometry ON S_OP_OY_OptometryID = S_SE_SB_OptometryID
+	LEFT JOIN SYS_PersonInfo yg ON yg.ID = S_OP_Optometry.S_OP_OY_PersonID
+WHERE  S_SE_SB_SalesID = '${salesid}' 
+
+--------
+union all 
+SELECT S_SE_SB_SalesID           AS '销售单号',
+       S_SE_SB_ShopCode          AS '店号',
+       xsdd.B_DP_DepartmentName  AS '销售店名',
+       S_ME_CI_MemberId          AS '顾客号',
+       S_ME_CI_Name              AS '顾客姓名',
+                ( YEAR(Getdate()) - YEAR(S_ME_CI_Birthday) )              AS '年龄',
+                ( CASE S_ME_CI_Sex 
+                 WHEN '0' THEN '男' 
+                  WHEN '1' THEN '女' 
+                 ELSE '' 
+                 END ) AS '顾客性别',
+
+S_ME_CI_Address AS '会员地址',
+       S_ME_CI_Phone             AS '顾客电话',
+S_ME_CI_Integral                 AS '顾客积分' ,
+       S_ME_CI_CardType          AS '顾客卡类型',
+       S_SE_SB_OptID             AS '验光号-验光基表',
+       S_SE_SB_OptometryID       AS '验光病历号',
+S_OP_Optometry.S_OP_OY_PersonID AS '验光师ID',
+yg.personName AS '验光师姓名',
+       S_SE_SB_InspectionID      AS '检查结论ID',
+convert(varchar(16),S_SE_SB_TakeGlassData,23) as '取镜日期',
+convert(varchar(16),S_SE_SB_SalesDatetime,23) as '销售日期',
+       S_SE_SB_OrdersType        AS '订单类型',
+       ( CASE S_SE_SB_OrdersType
+           WHEN '1' THEN '镜架成品片'
+           WHEN '2' THEN '镜架订做片'
+           WHEN '3' THEN '隐形成品片'
+           WHEN '4' THEN '隐形订做片'
+           WHEN '5' THEN '辅料'
+           ELSE ''
+         END )                   AS '订单类型名称',
+       S_SE_SB_BallGlassOD       AS '右眼球镜',
+       S_SE_SB_BallGlassOS       AS '左眼球镜',
+       S_SE_SB_PostGlassOD       AS '右眼柱镜',
+       S_SE_SB_PostGlassOS       AS '左眼柱镜',
+       S_SE_SB_AxesOD            AS '右眼轴向',
+       S_SE_SB_AxesOS            AS '左眼轴向',
+       S_SE_SB_ADDOD             AS '右眼add',
+       S_SE_SB_ADDOS             AS '左眼add',
+       S_SE_SB_ArriseGlassOD1    AS '右眼三棱镜',
+       S_SE_SB_ArriseGlassOS1    AS '左眼三棱镜',
+       S_SE_SB_BasisOD1          AS '右眼基底1',
+       S_SE_SB_BasisOS1          AS '左眼基底1',
+       S_SE_SB_PrismOD           AS '右眼棱镜',
+       S_SE_SB_PrismOS           AS '左眼棱镜',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_InterHighOD
+when S_SE_SB_RecipeType = '2' then S_SE_SB_InterDistanceOD
+when S_SE_SB_RecipeType = '3' then S_SE_SB_InterHighOD
+when S_SE_SB_RecipeType = '5' then S_SE_SB_InterHighOD
+else ''
+end as '右眼瞳距',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_InterHighOs
+when S_SE_SB_RecipeType = '2' then S_SE_SB_InterDistanceOs
+when S_SE_SB_RecipeType = '3' then S_SE_SB_InterHighOs
+when S_SE_SB_RecipeType = '5' then S_SE_SB_InterHighOs
+else ''
+end as '左眼瞳距',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_FarVAOd
+when S_SE_SB_RecipeType = '2' then S_SE_SB_CloseVAOd
+when S_SE_SB_RecipeType = '3' then S_SE_SB_FarVAOd
+else ''
+end as '右眼矫视',
+case
+when S_SE_SB_RecipeType = '1' then S_SE_SB_FarVAOS
+when S_SE_SB_RecipeType = '2' then S_SE_SB_CloseVAOs
+when S_SE_SB_RecipeType = '3' then S_SE_SB_FarVAOS
+else ''
+end as '左眼矫视',
+       S_SE_SB_RecipeType        AS '处方形式',
+       ( CASE S_SE_SB_RecipeType
+           WHEN '1' THEN '远用'
+           WHEN '2' THEN '近用'
+           WHEN '3' THEN '渐进/双光'
+           WHEN '4' THEN '隐形'
+           ELSE ''
+         END )                   AS '处方形式名称',
+       S_SE_SB_DignosisRe        AS '备注',
+       S_SE_SB_DiameterOD        AS '隐形右眼直径',
+       S_SE_SB_DiameterOS        AS '隐形左眼直径',
+       S_SE_SB_ConRecipeType     AS '隐形处理方式',
+       S_SE_SB_SecCheckDate      AS '复诊时间',
+       S_SE_SB_SubVisitUnit      AS '复诊时间单位',
+       S_SE_SB_SalesType         AS '销售类型',
+       ( CASE S_SE_SB_SalesType
+           WHEN '1' THEN '内方'
+           WHEN '2' THEN '外方'
+           WHEN '3' THEN '辅料'
+           ELSE ''
+         END )                   AS '销售类型',
+       S_SE_SB_SalerID           AS '销售人员ID',
+       xs.personName             AS '销售员姓名',
+       S_SE_SB_Lryid             AS '录入员ID',
+       lr.personName             AS '录入员姓名',
+       S_SE_SB_PosDatetime       AS '收银日期',
+       S_SE_SB_PosID             AS '收银员ID',
+       sy.personName             AS '收银员姓名',
+       S_SE_SB_PriceSum          AS '原价合计',
+       S_SE_SB_SalesValue        AS '应收金额',
+       S_SE_SB_EyeCurvatureOD1   AS '隐形右眼曲率1',
+       S_SE_SB_EyeCurvatureOD2   AS '隐形右眼曲率2',
+       S_SE_SB_EyeCurvatureOS1   AS '隐形左眼曲率1',
+       S_SE_SB_EyeCurvatureOS2   AS '隐形左眼曲率2',
+       S_SE_SB_DiscountRate      AS '折扣率',
+       S_SE_SB_DiscountNum       AS '折扣金额',
+       S_SE_SB_Psalsvalue        AS '实缴金额',
+       S_SE_SB_ArrearsValue      AS '欠款金额',
+       S_SE_SB_Location          AS '取镜地点',
+       qjdd.B_DP_DepartmentName  AS '销售店名',
+       S_SE_SB_ArrivedDate       AS '到镜日期',
+       S_SE_SB_ValueFlag         AS '收费标志',
+       ( CASE S_SE_SB_ValueFlag
+           WHEN '0' THEN '未收费'
+           WHEN '1' THEN '已收费'
+           ELSE ''
+         END )                   AS '收费状态',
+       S_SE_SB_CheckoutFlag      AS '欠费标志',
+       ( CASE S_SE_SB_CheckoutFlag
+           WHEN '0' THEN '未欠费'
+           WHEN '1' THEN '欠费'
+           ELSE ''
+         END )                   AS '欠费状态',
+       S_SE_SB_InTransit         AS '配镜单当前在途状态',
+       S_SE_SB_WithdrawDate      AS '退费日期',
+       S_SE_SB_WithdrawFlag      AS '退费标示位',
+       S_SE_SB_WithdrawPersonID  AS '退费人员',
+       sy.personName             AS '退费人员姓名',
+       S_SE_SB_MovementType      AS '活动类型ID',
+       S_SE_SB_ArrearsAppendDate AS '补齐欠款日期',
+       S_SE_SB_ArrearsDate       AS '欠款日期',
+       S_SE_SB_PayCash           AS '缴费现金金额',
+       S_SE_SB_BankCard          AS '缴费银行卡金额',
+       S_SE_SB_StoredCard        AS '缴费储值卡金额',
+       S_SE_SB_Renums            AS '抹零金额',
+       S_SE_SB_DiscountType      AS '折扣类型',
+       S_SE_SB_DiscountPerson    AS '打折人',
+       dz.personName             AS '打折人员姓名',
+       S_SE_SB_DragsType         AS '委外类型',
+       S_SE_SB_PupilHeightOD     AS '右眼瞳高',
+       S_SE_SB_PupilHeightOS     AS '左眼瞳高',
+       S_SE_SB_FavorableAmount,
+       S_SE_SB_WorryType         AS '加急状态',
+       S_SE_SB_Integral,
+       S_SE_SB_SetMealID         AS '套餐ID',
+       S_SM_SM_Title             AS '套餐名称',
+       S_SE_SB_ExecStandard,
+       S_SE_SB_SalesRemark       AS '销售备注',
+       S_SE_SB_SourceSalesID,
+       S_SE_SB_SwapGoodsFlag     AS '配镜单退款类型',
+       ( CASE S_SE_SB_CheckoutFlag
+           WHEN '1' THEN '整单退款'
+           WHEN '2' THEN '部分退款'
+           WHEN '3' THEN '部分换货'
+           WHEN '4' THEN '直接退款'
+           ELSE ''
+         END )                   AS '配镜单退款类型名称',
+       S_SE_SD_SalesItemID       AS '商品代码',
+       S_SE_SD_ItemID            AS '商品条码',
+       S_SE_SD_StockId           AS '仓储ID',
+       B_WH_warehouseName        AS '仓位名称',
+       S_SE_SD_SalesItemName     AS '商品名称',
+       S_SE_SD_Sprice            AS '商品单价',
+       S_SE_SD_Number            AS '数量',
+B_UT_unitName AS '单位',
+       S_SE_SD_UnitPrice         AS '单位成本(不含税价格)',
+       S_SE_SD_CostsPrive        AS '成本价格',
+       S_SE_SD_PriceSum          AS '原价合计',
+       S_SE_SD_SalesValue        AS '应收金额',
+B_GI_Spec AS '规格',
+B_GI_Color AS '色号',
+F_TT_Name AS '加工工艺',
+       S_SE_SD_DiscountRate      AS '折率',
+       S_SE_SD_DiscountNum       AS '折扣金额',
+       S_SE_SD_GoodDescribe      AS '商品描述',
+       S_SE_SD_GlassFlag         AS '右左眼标识',
+       S_SE_SD_CommoditiesFlag   AS '商品类别',
+(CASE S_SE_SD_CommoditiesFlag 
+	WHEN '1' THEN 1
+	WHEN '2' THEN 999
+	WHEN '3' THEN 2
+	WHEN '4' THEN 3
+	WHEN '5' THEN 4
+	WHEN '6' THEN 5
+	WHEN '7' THEN 99
+	WHEN '8' THEN 6
+	WHEN '9' THEN 7
+ELSE '101' END) AS '排序列',
+       S_SE_SD_Updatetime        AS '更新时间',
+       S_SE_SD_LargessFlag       AS '赠品标识',
+       S_SE_SD_Renums            AS '抹零金额',
+       S_SE_SD_IsCollect         AS '汇总销售出库单的标志',
+       S_SE_SD_DiscountType      AS '折扣类型',
+       S_SE_SD_DiscountSource    AS '关联打折工号、打折卡号、打折券',
+       S_SE_SD_InStockId         AS '退款仓位',
+       S_SE_SD_Favorable         AS '优惠金额',
+       S_SE_SD_Integral          AS '积分',
+       S_SE_SD_OutStorageFlag    AS '结款是否出库',
+       S_SE_SD_InStorageFlag     AS '退款是否入库',
+       S_SE_SD_Guaranteeperiod   AS '失效日期',
+       S_SE_SD_Batch             AS '批号',
+       S_SE_SD_WithdrawFlag,
+       S_SE_SD_WithdrawDate,
+       S_SE_SD_WithdrawPersonID,
+       S_SE_SD_ExchageFlag,S_OP_OY_CustomerID
+FROM   S_SE_SalesBasic_Finished
+       LEFT JOIN S_SE_SalesDetail_Finished
+         ON S_SE_SD_SalesID = S_SE_SB_SalesID
+       LEFT JOIN B_Departments xsdd
+         ON xsdd.B_DP_DepartmentID = S_SE_SB_ShopCode
+       LEFT JOIN B_Departments qjdd
+         ON qjdd.B_DP_DepartmentID = S_SE_SB_Location
+       LEFT JOIN B_Warehouse
+         ON B_WH_ID = S_SE_SD_StockId
+       LEFT JOIN S_ME_CustomerInfo
+         ON S_ME_CI_CustomerID = S_SE_SB_CustomerID
+       LEFT JOIN S_SM_SetMeal
+         ON S_SM_SM_ID = S_SE_SB_SetMealID
+       LEFT JOIN SYS_PersonInfo xs
+         ON xs.ID = S_SE_SB_SalerID
+       LEFT JOIN SYS_PersonInfo lr
+         ON lr.ID = S_SE_SB_Lryid
+       LEFT JOIN SYS_PersonInfo sy
+         ON sy.ID = S_SE_SB_PosID
+       LEFT JOIN SYS_PersonInfo tf
+         ON tf.ID = S_SE_SB_WithdrawPersonID
+       LEFT JOIN SYS_PersonInfo dz
+         ON dz.ID = S_SE_SB_DiscountPerson
+	INNER JOIN B_GoodsInfo ON B_GI_GoodsID = S_SE_SD_SalesItemID
+	LEFT JOIN F_TechnologyType ON F_TT_ID = B_GI_FinishedGlassesType
+	LEFT JOIN B_Unit ON B_UT_id = B_GI_UnitId
+	LEFT JOIN S_OP_Optometry ON S_OP_OY_OptometryID = S_SE_SB_OptometryID
+	LEFT JOIN SYS_PersonInfo yg ON yg.ID = S_OP_Optometry.S_OP_OY_PersonID
+WHERE  S_SE_SB_SalesID = '${salesid}' 
+ORDER BY [排序列]A]]></Query>
+</TableData>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select
+S_SE_CostsName AS '附加费名称',
+S_SE_Number AS '数量',
+cast(S_SE_Amount * S_SE_Number as numeric(18,2)) as '金额合计'
+from S_SE_AdditionalCDetail
+where S_SE_SalesID = '${salesid}']]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+
+select 
+       isnull(S_OP_R_NakedOD,'') AS '裸眼视力右',
+       ISNULL(S_OP_R_NakedOS,'') AS '裸眼视力左'
+
+ from S_SE_SalesBasic 
+left join S_OP_Refractive on S_OP_R_OptometryID = S_SE_SB_OptometryID
+where S_SE_SB_SalesID = '${salesid}'
+
+union all 
+
+select 
+       isnull(S_OP_R_NakedOD,'') AS '裸眼视力右',
+       ISNULL(S_OP_R_NakedOS,'') AS '裸眼视力左'
+
+ from S_SE_SalesBasic_Finished 
+left join S_OP_Refractive on S_OP_R_OptometryID = S_SE_SB_OptometryID
+where S_SE_SB_SalesID = '${salesid}'
+
+
+
+]]></Query>
+</TableData>
+<TableData name="ds4" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select S_SE_SD_Requirement As '特殊加工要求' from S_SE_SpecialPDetail
+ where S_SE_SD_SalesID = '${salesid}']]></Query>
+</TableData>
+<TableData name="ds5" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT 
+B_DP_Phone AS '部门电话',
+B_DP_CompanyName AS '公司名称'
+FROM
+B_Departments
+       LEFT JOIN S_SE_SalesBasic
+         ON B_DP_DepartmentID = S_SE_SB_ShopCode
+
+WHERE  
+S_SE_SB_SalesID = '${salesid}' 
+
+union all 
+SELECT 
+B_DP_Phone AS '部门电话',
+B_DP_CompanyName AS '公司名称'
+FROM
+B_Departments
+       LEFT JOIN S_SE_SalesBasic_Finished
+         ON B_DP_DepartmentID = S_SE_SB_ShopCode
+
+WHERE  
+S_SE_SB_SalesID = '${salesid}' ]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,381000,216000,457200,216000,216000,419100,216000,216000,216000,216000,216000,216000,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,248478,216000,216000,216000,216000,216000,216000,216000,228600,228600,228600,228600,228600,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,216000,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[288000,288000,288000,304800,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,288000,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<Expand/>
+</C>
+<C c="1" r="0" s="0">
+<Expand/>
+</C>
+<C c="2" r="0" s="0">
+<Expand/>
+</C>
+<C c="3" r="0" s="0">
+<Expand/>
+</C>
+<C c="4" r="0" s="0">
+<Expand/>
+</C>
+<C c="5" r="0" s="0">
+<Expand/>
+</C>
+<C c="6" r="0" s="0">
+<Expand/>
+</C>
+<C c="7" r="0" s="0">
+<Expand/>
+</C>
+<C c="8" r="0" s="0">
+<Expand/>
+</C>
+<C c="9" r="0" s="0">
+<Expand/>
+</C>
+<C c="10" r="0" s="0">
+<Expand/>
+</C>
+<C c="11" r="0" s="0">
+<Expand/>
+</C>
+<C c="12" r="0" s="0">
+<Expand/>
+</C>
+<C c="13" r="0" s="0">
+<Expand/>
+</C>
+<C c="14" r="0" s="0">
+<Expand/>
+</C>
+<C c="15" r="0" s="0">
+<Expand/>
+</C>
+<C c="16" r="0" s="0">
+<Expand/>
+</C>
+<C c="17" r="0" s="0">
+<Expand/>
+</C>
+<C c="18" r="0" s="0">
+<Expand/>
+</C>
+<C c="19" r="0" s="0">
+<Expand/>
+</C>
+<C c="20" r="0" s="0">
+<Expand/>
+</C>
+<C c="21" r="0" s="0">
+<Expand/>
+</C>
+<C c="22" r="0" s="0">
+<Expand/>
+</C>
+<C c="23" r="0" s="0">
+<Expand/>
+</C>
+<C c="24" r="0" s="0">
+<Expand/>
+</C>
+<C c="25" r="0" s="0">
+<Expand/>
+</C>
+<C c="26" r="0" s="0">
+<Expand/>
+</C>
+<C c="27" r="0" s="0">
+<Expand/>
+</C>
+<C c="28" r="0" s="0">
+<Expand/>
+</C>
+<C c="29" r="0" s="0">
+<Expand/>
+</C>
+<C c="30" r="0" s="0">
+<Expand/>
+</C>
+<C c="31" r="0" s="0">
+<Expand/>
+</C>
+<C c="32" r="0" s="0">
+<Expand/>
+</C>
+<C c="33" r="0" s="0">
+<Expand/>
+</C>
+<C c="34" r="0" s="0">
+<Expand/>
+</C>
+<C c="35" r="0" s="0">
+<Expand/>
+</C>
+<C c="36" r="0" s="0">
+<Expand/>
+</C>
+<C c="37" r="0" s="0">
+<Expand/>
+</C>
+<C c="38" r="0" s="0">
+<Expand/>
+</C>
+<C c="39" r="0" s="0">
+<Expand/>
+</C>
+<C c="40" r="0" s="0">
+<Expand/>
+</C>
+<C c="41" r="0" s="0">
+<Expand/>
+</C>
+<C c="42" r="0" s="0">
+<Expand/>
+</C>
+<C c="43" r="0" s="0">
+<Expand/>
+</C>
+<C c="44" r="0" s="0">
+<Expand/>
+</C>
+<C c="45" r="0" s="0">
+<Expand/>
+</C>
+<C c="46" r="0" s="0">
+<Expand/>
+</C>
+<C c="47" r="0" s="0">
+<Expand/>
+</C>
+<C c="48" r="0" s="0">
+<Expand/>
+</C>
+<C c="49" r="0" s="0">
+<Expand/>
+</C>
+<C c="50" r="0" s="0">
+<Expand/>
+</C>
+<C c="51" r="0" s="0">
+<Expand/>
+</C>
+<C c="52" r="0" s="0">
+<Expand/>
+</C>
+<C c="53" r="0" s="0">
+<Expand/>
+</C>
+<C c="54" r="0" s="0">
+<Expand/>
+</C>
+<C c="55" r="0" s="0">
+<Expand/>
+</C>
+<C c="56" r="0" s="0">
+<Expand/>
+</C>
+<C c="57" r="0" s="0">
+<Expand/>
+</C>
+<C c="58" r="0" s="0">
+<Expand/>
+</C>
+<C c="59" r="0" s="0">
+<Expand/>
+</C>
+<C c="60" r="0" s="0">
+<Expand/>
+</C>
+<C c="61" r="0" s="0">
+<Expand/>
+</C>
+<C c="62" r="0" s="0">
+<Expand/>
+</C>
+<C c="63" r="0" s="0">
+<Expand/>
+</C>
+<C c="64" r="0" s="0">
+<Expand/>
+</C>
+<C c="65" r="0" s="0">
+<Expand/>
+</C>
+<C c="66" r="0" s="0">
+<Expand/>
+</C>
+<C c="67" r="0" s="0">
+<Expand/>
+</C>
+<C c="68" r="0" s="0">
+<Expand/>
+</C>
+<C c="69" r="0" s="0">
+<Expand/>
+</C>
+<C c="70" r="0" s="0">
+<Expand/>
+</C>
+<C c="71" r="0" s="0">
+<Expand/>
+</C>
+<C c="72" r="0" s="0">
+<Expand/>
+</C>
+<C c="73" r="0" s="0">
+<Expand/>
+</C>
+<C c="74" r="0" s="0">
+<Expand/>
+</C>
+<C c="75" r="0" s="0">
+<Expand/>
+</C>
+<C c="76" r="0" s="0">
+<Expand/>
+</C>
+<C c="77" r="0" s="0">
+<Expand/>
+</C>
+<C c="78" r="0" s="0">
+<Expand/>
+</C>
+<C c="79" r="0" s="0">
+<Expand/>
+</C>
+<C c="80" r="0" s="0">
+<Expand/>
+</C>
+<C c="81" r="0" s="0">
+<Expand/>
+</C>
+<C c="82" r="0" s="0">
+<Expand/>
+</C>
+<C c="83" r="0" s="0">
+<Expand/>
+</C>
+<C c="84" r="0" s="0">
+<Expand/>
+</C>
+<C c="85" r="0" s="0">
+<Expand/>
+</C>
+<C c="86" r="0" s="0">
+<Expand/>
+</C>
+<C c="87" r="0" s="0">
+<Expand/>
+</C>
+<C c="88" r="0" s="0">
+<Expand/>
+</C>
+<C c="89" r="0" s="0">
+<Expand/>
+</C>
+<C c="90" r="0" s="0">
+<Expand/>
+</C>
+<C c="91" r="0" s="0">
+<Expand/>
+</C>
+<C c="92" r="0" s="0">
+<Expand/>
+</C>
+<C c="93" r="0" s="0">
+<Expand/>
+</C>
+<C c="94" r="0" s="0">
+<Expand/>
+</C>
+<C c="95" r="0" s="0">
+<Expand/>
+</C>
+<C c="96" r="0" s="0">
+<Expand/>
+</C>
+<C c="97" r="0" s="0">
+<Expand/>
+</C>
+<C c="98" r="0" s="0">
+<Expand/>
+</C>
+<C c="99" r="0" s="0">
+<Expand/>
+</C>
+<C c="100" r="0" s="0">
+<Expand/>
+</C>
+<C c="101" r="0" s="0">
+<Expand/>
+</C>
+<C c="0" r="1" s="0">
+<Expand/>
+</C>
+<C c="1" r="1" s="0">
+<Expand/>
+</C>
+<C c="2" r="1" s="0">
+<Expand/>
+</C>
+<C c="3" r="1" s="0">
+<Expand/>
+</C>
+<C c="4" r="1" s="0">
+<Expand/>
+</C>
+<C c="5" r="1" s="0">
+<Expand/>
+</C>
+<C c="6" r="1" s="0">
+<Expand/>
+</C>
+<C c="7" r="1" s="0">
+<Expand/>
+</C>
+<C c="8" r="1" s="0">
+<Expand/>
+</C>
+<C c="9" r="1" s="0">
+<Expand/>
+</C>
+<C c="10" r="1" s="0">
+<Expand/>
+</C>
+<C c="11" r="1" s="0">
+<Expand/>
+</C>
+<C c="12" r="1" s="0">
+<Expand/>
+</C>
+<C c="13" r="1" s="0">
+<Expand/>
+</C>
+<C c="14" r="1" s="0">
+<Expand/>
+</C>
+<C c="15" r="1" s="0">
+<Expand/>
+</C>
+<C c="16" r="1" s="0">
+<Expand/>
+</C>
+<C c="17" r="1" s="0">
+<Expand/>
+</C>
+<C c="18" r="1" s="0">
+<Expand/>
+</C>
+<C c="19" r="1" s="0">
+<Expand/>
+</C>
+<C c="20" r="1" s="0">
+<Expand/>
+</C>
+<C c="21" r="1" s="0">
+<Expand/>
+</C>
+<C c="22" r="1" s="0">
+<Expand/>
+</C>
+<C c="23" r="1" cs="9" rs="5" s="1">
+<O t="Image">
+<IM>
+<![CDATA[!Ds]A:kD<#17h#eD$31&+%7s)Y;?-[sB`J,5C'Xk@!!"]ApkedB#(`5h45u`*_m@A*1eRb2h$P
+&2plPcE3B.]AZS/&'722*)g)/(lU\X&=NlCIa?'&!K]A-q61MLS5!TBfg$*ma*#!G&>=2$$5dK
+u3:*^JlAc(S5a4hE,>g]A[!s1MlVmNk.0B\knms_G&s7GsF]AX1Xb>'fc#jF9p#:J\0#pO-ECb
+O`*6BAti)>JUFF'A-#e2hBeOII$=c\WE2o0'?FoRI!ZoS(ltYNh-1>RMYEt]A'@eE;jT7_nQ[
+L9q1[l[mks"sr4Af_h_qHSj.o+dQT_R!b.T;i3SQ[4]A>8FQmHqN0mp>S6?UHQ0\mg-Uj@(`,
+-7u7tqSVt^.P>l#%:Y^/D#KsVDu]A1><KHR:>e*ugS%N:VUoIV$iSA&[%9G)oQo]A`WLF8Q<Yk
++f9FsU2&YS3=.5&UN')/ti[$Q%=o*:O\(&@miRH3rpbCt<JlbS/6XlE(;F%^nB3r`W-V/@;R
+ab'`"*7t-0"ZG;J:J6c)Pq^%6XHQRXJT_]AOrQ\Q!Fgp2]AnlK-jG<;eT1THj_gjZbjdc>==i9
+G:dnqbP6#?+*,G$fB8n$f6_L?j&_WT7U?3AGk/E*PpW=MDfhXo5em<l:!5J65MHqh.3=HRmH
+GIV-@%aKR3>l'."DrA[>e-a]AMkj$"8Up4oAsQ)Ft/N1!#c\S6EVBkM4j'(D,rM]A/_+2dEk0n
+:R9V&DRsdY@/!)[#KacgqcCQjm*RM-b9CZN`n1r?S[I#R"W(X%P:?2$P"\tknp:'mrinh95V
+B=c4BHffM7'A;!/*kBEcZ2L^"<@^j-o=6l@al5J+hQ.iu'qWn_iCKcBu3pp5cCNWSH><9i\;
+E?=H6dB,O@Zc-/0N=e;8#<n`68mP4P&9n+EW6e74B=o`!\,ho1\)T>g3!gaW5**K!TW!/O.[
+6Weu3Bgl,&-;N0(Hr:L;'["Xpoct(3d1@g-eBjTKlP,*W`ko2=BNkQFA'IE[UGk7"(b?k.l!
+Hi$aNOhea":K#qsQjr%7bF%<rj7=4er@IH]A@T60NXF<m`T]A6H=%Mgo,2.Kn8>J+SLUXL1Mq,
+Il&tV,W^5UTU'?oArL/R:&14_AuMrt*1=WrgT&u+KE3Jq^.Gr%f+^]Ab"B=4Np.)YBO#ZCm35
+MbogPR(:JR@32Ql$3^dLja<lE!mh_rRs.%N$sWj3B]At&m6`50JRS0e#mn<[B*T!I!,=2^^_m
+4UDomB2l^gRm?+Ld,p44OM@`&a0CX)T0*B\oRaUYC,A7/WKgaVt/nqf?mW`sAW?[2Lf,]A86#
+Q&DRj,M_Nrb9>)`\r"%jmF4m$]AO+0k!1Yf(BGm$9[Ec!eW^WeE,EpP'7H8`+2G:/r:j,;G+i
+BjKtHImMbE&.A'(--Xi4A5/%rT*jj2Dl4U/+m39Z*@p\@bLAdPi]A.)u[/r"VkSA!$f3Q.I-o
+J,.iokEB`br)YOpM*qE2m<ia/n*c[Ns5oK1S,TG\S#)dTQ+5dfhuc'^3$tmt4b/.>(9"csa]A
+uOrZrJ&FW`4^<%Z_fbDId?"4l%,ABn#6R(;*cD_PLngroT-el,f>>M4$(6fRXis-b0JrVSA]A
+4G%m[iIUh!Ze8BT,@MMk"\S*+O'h1U_.[Prgjb0*R]A&D?u.#_\LkMG=NpbDrSlrrH$N+oArl
+`X]AI+OA!0.uBV;$J6Xc`gXYpETYQ:VmkI<;M$s%$oeJ>q'P.`AO&pCaW`d++2o]Aq$=i]AFQ/(
+_-fe!0-CmJJjTknn2q7HZBCW"1A'O[D".p)P&l:#iq^*t!iIsb`tTNbSg%HIHR]AD";78qKQS
+f='COQu7/"@+d+#FhB4:n']Ap=^1#(&,YJ;#e?<Fec77eD02/rlOtq;O%,r^XbGBcNK52pI*]A
+@GoguHnqDji/j`eA4eeSOVa;e'<oGGm3KKrF(#jWlHHP71IqfMf)gVL%Po^*T+>%XUTn@'Cb
+bk':6h^_-[Y+BEG7*-m]Ao8:#I&L7WYU(r-X0R>u>gnrTJi`>_h$9o'o^k1AVN%NRX%j#_Im[
+6conBtcIAY&'CHiu3P-`]A4\JXKlVM2[4L3E%!IUL(]A+fQ.m#h9U@`*B8Td$I747TjfQEp.CA
+BaP/au=^cSnUfYK3LecB;f%hS8Q!,'Ul)et6OMR1=7]A[&+f3.'OCXfAe-l@qVl`t'Ruo#7-h
+L'3]Ak<gi4>d<+%'m&>#H%Q/l1Ade'0VX,"'^KGlaU_pM`,!X7pm-n.;31QG+1+FgMmYmT=Y!
+E/5]AZb,-6bF_jT*$qg-88$BJK6^:7d_jGba9aBOdT?[=gsDK]A$;oiG!no2-%T'$_bR>()0rf
+Fmql"d!ER(I1kh$9k&MCB"cO-qV+@EE5ROZ>dZmQd&Td5.k3A/mo"'2G)J/8!3SUWW($p>!j
+g#%=@4N`d9ns_)<!V&f4@ec-FFqX,#8AEA0=HZ[%qn62EHh>Z:s2[Q+h^%pF?p"T$`]AiPp@_
+!HNZ?_ni'_?r/(kkK,u+C(YTpT6@W9Ro7dfB,0>?7D\X?,!E!Q6LU"X>(o/gh?nJj)<,NU'Y
+c:PQOMk/3:YX!0Fk$9mL0mB&=NQZq'.O+<>_9%^*dU<CH9\B=4^4!#tH*F+/>VTM9"m^Wn]AC
+I.mb_\-J.`8amR5'DO8<+DS,hU)nIt'G#p37Ps23`:-j',L9k5uqG:f01ig_'>PL[Q:(m!*`
+1p9c2.$n51,(H5M5iJM^q$<d&=cAQ3s]AYcFuCoi;K<FL",m<@oECuO74e[W0FWKH/)SXl=!>
+4pKIGn"7b=$=,F7jXc@G4K`eU^f%f=UOEgfpC%>J-fJ.,m3"TQfK+O6H,Itj\M;,^:N-r?dD
+9/kVRj+btid#f.+&\Z#VWU9E!'nhg@6S.I_otSrWQQfbl_X@gRe;8Q6[aFSuqG>?BE<]A3,!b
+WV<tp^".n'_;r6J!<N/86c+GKpAXs%dbjZ?&5%)u?eNrYKY_Co'$k'q`CI@/V=L,8&A&Ut@:
+I9$qO'<UWf"$p1X.^nPQiM`mn^l?pr;Y>;jXSHV2(G3=q0Fo947kfrpm0hG_`8m8G7N,modE
+?B+FYuoAA=%@q8f%I!@=Pg)g%=.E8KR)A-Mc7]A1i(M+r*d]AtnC?')82`6CVpj4g*\STD7IMW
+KIT0gnQQ*4s>(1?R6"0T!tFbZ-0CWk&2]AK<Rj_V0iTt>jV(T$YAA-%H$CmXnBWK:5)c-$[t(
+ZYV$0dT-YT(1HLKYZ9<Rp#s("6E""d'qpQ>[<qu+$a;^thnXKnj2hq>J`DuI!:9#5&QJ(_6F
++`SG6/4hb]A%q*Ec/7Wh+pQCorlI%?MA/@_:mWA/k^J0>d7_R7'M0X":h<PTSYJ0n++4Rl9A`
+^ST:U!g&^]AQn[5F"L.=nRqMOSm7/RUIt\+C2++mu1k?I*]AY#DZ8@g#i,FjNc0Ll#)":&7DA'
+QUdgS,'IiPZ`AjROq;o=9cLRb;4^hMP$fE^FU.UIF%b#-.g&(:=4?[9)]AID0TLNV-shPZ9N?
+1]Ado^N\h%S'?b]Arqmc,?9Pqlq:FR1Q"U5:Y1TH"E-B5\5Po']Ai]AHsolHi&"b!?2W+5W,$(l=
+28C=>Rni$'%QY[Wt:Wga#N)7tC!)m4'-]A)GJUIZ\,6-\#7SpcRU=*AG(kKf_TImN$$C6nU1S
+i-*Hqg5M[r5]AMm>+&(9?(^.G]A:H"UPYGtTN.:qSqE.jB,#/phI.YJY,WH2Aq)4C0>l`hXt/5
+cF53:[,O.%c<ni<A3oG)_;T17Qhm^CrgUJ,g)S?Mn2d#T.O1iqf9R?_-cHak)^>=j7_5QhmP
+!pRjP15+"X?,@@\[)":&7@:.W.0&VNbrcWK(7G<Z*YqI<C]A?.kq%c=e,cBHX*ln4KeNU%P>_
+iiM!*l6H.9sS.3O2+E4qRb@N"uW%V,N0JiA+9t7lIYGH67V=oY7t`__8Sm\DGJgr\VUOMSN8
+_1Va;'21IFGFJ*1Z,.O(_#2NOC2:=%,(GrOoF3cla^c14';QI"\KH3+W\"@++K&4=8Gm-\\7
+bUdkb4E%7FG^0`f4_Q#JFt2CL&a4;_`Jorc:R)T:Z<?(oG!ciSHFu\X$D"RF?Mf@aKj:+ID\
+aE7R]A9^!.h9O?Tdbm0NfOtf.qJOtbO-QmbF4`ZI00gaI@Br$E-J2T/0OZVG:mc,qR<N9(f\-
+;,JO,_"/_/%=DdQ<@>?Q"$S9u9,GKsA%eaa3,[A[s]A*s91m,3[g7b::%UT#XS<(jIE.!k[0)
+[bn/1E`hd!4b3ig8q*&@c6g@T.InA_76BQXVGT%DB?aZ^4YrfW;><Dr4=XXj1Tmig'('>,QZ
+/Mh-5Z(^doIPg[.hb+N:9+:58*Jm,4<]A1+.CeZ@J'F$5eIEomEuWnJ(at>ep_K%[W/s#1fYs
+!/KYK+!=sI#mq]A!a9>r<3ssFY3t60Y0C\(0f?ZdbAB0]ApM\U!N:"GfjM+74G5kr0;`<NCDbJ
+IjYOs"T]AW_$*0W=QlR%5@gY@XeE1?q5+(2+/R/Pp[^-!mu=\o66QUL7J(A:b'6`="I3i^UrB
+-jS$agZak[0aXhO4)J_+IGtlWg]A*s?gG'4)V'L9K0n4D^Ff@H"&@C\*,?Z;>?KZI<n&ptrI"
+$u@%I9^,J_EE(5H#<t45P4;;o2i*cB%,i4CVtlD*qo3uK4BZT"K'O4<5DirRKW0iU(f<o\qR
+/[#GclAOZ,6]A79D\ti;W;L;Em#N@>FenXe:'hd=J80+sc/1l+#V-O(VS!P1O4r\<CFTeo9,m
+Ru:=/NV9^sG5Z5pn9c"<LY5k]A,a'U6)dm;21]A8uUZ1@(2$QCY0X[HLQ"6T`>-7+6l@4C@()-
+oc2=_"'J9\+NE]AHORJDD#T7)(`WA;rp`Z3_dC133*tj<6YQPgT7>$OmRM!9=J=,b4pK?[<4Y
+%G%c<[)maIIW@GudB!QlEcAdX6dX]A+JG/<6Vb!OK9LBc#<T%b3C<4nFA'5BNC%e^l%i<NK@D
+@iY?;*n94c'.I7XaQ@<W&+d-VMuU>YpZX.$M?0u<V,C-I:VfDkp#%P9^jK!<$5#g&I&r%2HH
+9?l;N%Vp-$FD^nsXH3<J$X*-*K:L)\5:^T:-m3:$uP+a9F4i*]A:u-!134(G+%-!e"_;782@!
+#mYc>2c6.4Xfo+>I'e7@cGp]AT6DgcMXF>:deNUnKN`<@lA&g[&8Y(&DA4oNW:5"m>;aNqdL/
+T1/V-\&^Du=Rf/Y?4&I7r/PUlA<$^\&GeCK*f$<m9G(V))WLZ;8b(Vg=F=m%T9+SLgh5+$XN
+%.4q]A`+&/:$1gCtVY&564Eeu'%-@0X%i0tn>noNmV5`Ha!j%WT1b3Ujj&K9*:+sYX@%jb3Qi
+WH[UAt,cUa,.>LL$ph<q8?H2!Jo1ipU'X:^r'jgT&$[Q!s^BeAoYBBAm[eU]A2jVJJkt"hVp]A
+j:.#)(R+X>8Bn$!kiq88CjZ7q7<CRic9]A/hf(8C>#(0opp%POWBhSI[k`<^6l<MsiBPSRspJ
+L\,>pdciZ*0mbBG!j6=d%PB<ZGA*3Lfg;!N?QuJhQKh5M:iLJ9RBT'Q%;ua!D?g[n]AQ:%eVW
+:GdE:ps+1&F`V^D#8Vn8_1Lobu"S'TNCcML(0a;e*kkmM\R>4dR+;IapMGc,U0.m#A6e^CRp
+%3EPQ$#B_r.H?>KOj[(m>V7QT3qcE7nL:9YdhJ&k(<t3ru0._I,j/X`H2l*sObKYq*F-hT/+
+QT).1YMg83L/&.[lhB9:n9H(=`"k*3(Vmq@"Ng\)pBL?,9MSkkjRr5@&H>*C:uml-7D0f5#c
+eL_*&N\:4<Rfh3EkZW6g81:#=gl#=d?S@MaLYiBP@KMSG#AamudK;!!W)Jr%Ng#T`7;%XnUN
+PO+G.K9'PWWdkF?oF9H4aJ^X(Q59m60dAtQK.irMDR;!^&$/6"U^KI5YSRgK7?M)dBM1Mu$&
+K,7\=KiH$bi:(_:Df@XU>UkoJ(0,f'Nj,ITEVK3iM;7OVk7*5&)n_k9k'c"2[emmGR9Al#!6
+$dmjEZCDD%@:GaFQ>LF._:4QsTGg2/J%@_P^qtT3&#mo7`<#6a[Z8\%W6LLQ3cgHK[7q=7`T
+1;N+q6bMlV)k/<a7IA^rq74-]A$W_Q9"YP6ZBUNXk?nQ92K\H6Y)E=:6p."GVk*Khb$:JXoqS
+d!>bT0td_V7dfEL,cg/RP9U'i(Ff*_B;0D8'RI#C_)3p[9VLhK1YB>SOnP1q#oBtAOq@i'6W
+C@n2M,i8>DpP`fe?c[@HTMK#<*"*7p2SbGaJrW;A1`PV47`$i0+QBo;7\m]A40"!Uf(V?D@*0
+jgFJmfWsJNMH!5XmBN@Cd5-hcLQZ'iAHLCX(u=Pruo9e>?,)(nlCYU*0u8EdW#AI7qK$n^mc
+%]A)^Eh4qU&XECl/d%HVJoWd&/oDXOeM2^RRD^Jh3F?D6i:><4A0h$d9+rgRbk`P1*q3;DtRE
+Y3UcG(4hXdbf<<k)-s'p_WgecIXjJ='gMHbY^Tb5'G)j638+7j+YT2[2aVG0mfqo^CtZQg:\
+_H%=S2H<^0C?Qt;IVdNqWs>>81+>236D`g!^ngcp'*`S&VOe_VZ")a[IdNVM"jheqCB))Iij
+@_`!IT$(ja/fJC*^A8Ao([Zj-/"C8qF%@6jo>ogClp?]A'Nn\AkKd:YVX(Z,3>j:?\AspW\>D
+J\a:O.&LLsl0nh6[X:%80eACYMr5=FKq)ed_;9k66%O+2V]APbYt"THq*'!"LRh8BBLTF3n&o
+uD$9?MF$3FJd0AiS(nn31#>^W:n4KM30PY9HJR.KrL->#(@YG.ccu%\&Fd_LVpI2!Mhl)_H@
+W#+s:*-Zbl4-q%.C&bO@&bHd2s%*XY1QMZW2gm&;(O9JF)C_O:>@/EeKYi/56DHT3?4Tj,eA
+]A9VduTPB9s+a/$C*\)ts&S?=9\UGB.cYfCR#K)m,%,]AUE6^e^g0!1@6qB>L3A!3:\4LVp.=u
+L%Oeq<jW%l>8KJo@E)^a@&IV>a3JO_e\3(-Y]AcsUW,rYbPq#nEYUJTMeHeQ#k1*is1gTRi-G
+'i/DLh[0%l5/QhBb4/g<Q=sL1G1Z[+cVJEo6KWH>'%Z74(GB#/e^t`DE23l5pR:fQ!UQHh1_
+R]A:lVKgtBcE9a!spVi#beo[5'Pm8_[hF2,,VEhaNTeQWPnjs+oN8tKFW[a%5MYB*iqq:h[R4
+MHMOBlN9hpEaVQd6CJbOD<8?8VM'Kd+Stf)m=R0(Kb&9jSG!%`]AT=]AO2.D0%<l^7FdF-L>Y<
+o1Yg[-P2?rFj*:YP_Vp&LP/dDkjNusk!:$^3A(!s_";"jrpe?SbY5uhb]A,pR6WdL5tXF]AGP=
+GI1t_3sdpT/i&#KWYFLrA;#m'p@t3]A-hNIEr:XMWGpVgOXh10BeoK?o_]AuqEOgVhE"9^TXQ&
+6aB^:]AYk7isg?&CaO+O/9ZMmFCk:_r[\oJ,"3#B(0*n=*$j&L+^R<NM''<ao-%KZ&7B:PAq$
+:nS:eiX*Er#6\J`%`#9t)`AiAD?M'2>r1_>80_r4C"8PSPick%"4*BhQbgUCQNL"=CZVE7`h
+G("%(;]A9slZVGSKRGWpmJ+g6M963qQ/[j4WftNnqBPhY.V^M*MhE=;Q.p("?`rds4SLfgYR>
+G9%]Af>s/sh$eN?G$I$*gB+%m"AjVnHH]A!A.fOG:kGH;O!Woqr;H:O(Q%G]A)kDpQ64`rV,*[!
+fLbUfs"G+H`<^$7-!P?8:?&3SKoXj]A]A@TRIn@O)->r6W%loh;,?5gE(?ljW;k?E_2o&2:s4S
+!]A*R5C?tN($8"kR_WpZXFgb2u^)R#Hm?*Q\]A_`pPgKUUCC^TrDLI,_g9HXLmtW-jD7d^k8;,
+)]Aam:2X<g+0[Jgc!MJILsdDeF'TX-/B_]Ai>/0A/-NDA3%gHNLecm)IWDrrI4Ig6SL2:o=9n!
+!#SZ:.26O@"J~
+]]></IM>
+</O>
+<Expand/>
+</C>
+<C c="32" r="1" s="0">
+<Expand/>
+</C>
+<C c="33" r="1" s="0">
+<Expand/>
+</C>
+<C c="34" r="1" s="0">
+<Expand/>
+</C>
+<C c="35" r="1" s="0">
+<Expand/>
+</C>
+<C c="36" r="1" s="0">
+<Expand/>
+</C>
+<C c="37" r="1" s="0">
+<Expand/>
+</C>
+<C c="38" r="1" s="0">
+<Expand/>
+</C>
+<C c="39" r="1" s="0">
+<Expand/>
+</C>
+<C c="40" r="1" s="0">
+<Expand/>
+</C>
+<C c="41" r="1" s="0">
+<Expand/>
+</C>
+<C c="42" r="1" s="0">
+<Expand/>
+</C>
+<C c="43" r="1" s="0">
+<Expand/>
+</C>
+<C c="44" r="1" s="0">
+<Expand/>
+</C>
+<C c="45" r="1" s="0">
+<Expand/>
+</C>
+<C c="46" r="1" s="0">
+<Expand/>
+</C>
+<C c="47" r="1" s="0">
+<Expand/>
+</C>
+<C c="48" r="1" s="0">
+<Expand/>
+</C>
+<C c="49" r="1" s="0">
+<Expand/>
+</C>
+<C c="50" r="1" s="0">
+<Expand/>
+</C>
+<C c="51" r="1" s="0">
+<Expand/>
+</C>
+<C c="52" r="1" s="0">
+<Expand/>
+</C>
+<C c="53" r="1" s="0">
+<Expand/>
+</C>
+<C c="54" r="1" s="0">
+<Expand/>
+</C>
+<C c="55" r="1" s="0">
+<Expand/>
+</C>
+<C c="56" r="1" s="0">
+<Expand/>
+</C>
+<C c="57" r="1" s="0">
+<Expand/>
+</C>
+<C c="58" r="1" s="0">
+<Expand/>
+</C>
+<C c="59" r="1" s="0">
+<Expand/>
+</C>
+<C c="60" r="1" s="0">
+<Expand/>
+</C>
+<C c="61" r="1" s="0">
+<Expand/>
+</C>
+<C c="62" r="1" s="0">
+<Expand/>
+</C>
+<C c="63" r="1" s="0">
+<Expand/>
+</C>
+<C c="64" r="1" s="0">
+<Expand/>
+</C>
+<C c="65" r="1" s="0">
+<Expand/>
+</C>
+<C c="66" r="1" s="0">
+<Expand/>
+</C>
+<C c="67" r="1" s="0">
+<Expand/>
+</C>
+<C c="68" r="1" s="0">
+<Expand/>
+</C>
+<C c="69" r="1" s="0">
+<Expand/>
+</C>
+<C c="70" r="1" s="0">
+<Expand/>
+</C>
+<C c="71" r="1" s="0">
+<Expand/>
+</C>
+<C c="72" r="1" s="0">
+<Expand/>
+</C>
+<C c="73" r="1" s="0">
+<Expand/>
+</C>
+<C c="74" r="1" s="0">
+<Expand/>
+</C>
+<C c="75" r="1" s="0">
+<Expand/>
+</C>
+<C c="76" r="1" s="0">
+<Expand/>
+</C>
+<C c="77" r="1" s="0">
+<Expand/>
+</C>
+<C c="78" r="1" s="0">
+<Expand/>
+</C>
+<C c="79" r="1" s="0">
+<Expand/>
+</C>
+<C c="80" r="1" s="0">
+<Expand/>
+</C>
+<C c="81" r="1" s="0">
+<Expand/>
+</C>
+<C c="82" r="1" s="0">
+<Expand/>
+</C>
+<C c="83" r="1" s="0">
+<Expand/>
+</C>
+<C c="84" r="1" s="0">
+<Expand/>
+</C>
+<C c="85" r="1" s="0">
+<Expand/>
+</C>
+<C c="86" r="1" s="0">
+<Expand/>
+</C>
+<C c="87" r="1" s="0">
+<Expand/>
+</C>
+<C c="88" r="1" s="0">
+<Expand/>
+</C>
+<C c="89" r="1" s="0">
+<Expand/>
+</C>
+<C c="90" r="1" s="0">
+<Expand/>
+</C>
+<C c="91" r="1" s="0">
+<Expand/>
+</C>
+<C c="92" r="1" s="0">
+<Expand/>
+</C>
+<C c="93" r="1" s="0">
+<Expand/>
+</C>
+<C c="94" r="1" s="0">
+<Expand/>
+</C>
+<C c="95" r="1" s="0">
+<Expand/>
+</C>
+<C c="96" r="1" s="0">
+<Expand/>
+</C>
+<C c="97" r="1" s="0">
+<Expand/>
+</C>
+<C c="98" r="1" s="0">
+<Expand/>
+</C>
+<C c="99" r="1" s="0">
+<Expand/>
+</C>
+<C c="100" r="1" s="0">
+<Expand/>
+</C>
+<C c="101" r="1" s="0">
+<Expand/>
+</C>
+<C c="0" r="2" s="0">
+<Expand/>
+</C>
+<C c="1" r="2" s="0">
+<Expand/>
+</C>
+<C c="2" r="2" s="0">
+<Expand/>
+</C>
+<C c="3" r="2" s="0">
+<Expand/>
+</C>
+<C c="4" r="2" s="0">
+<Expand/>
+</C>
+<C c="5" r="2" s="0">
+<Expand/>
+</C>
+<C c="6" r="2" s="0">
+<Expand/>
+</C>
+<C c="7" r="2" s="0">
+<Expand/>
+</C>
+<C c="8" r="2" s="0">
+<Expand/>
+</C>
+<C c="9" r="2" s="0">
+<Expand/>
+</C>
+<C c="10" r="2" s="2">
+<Expand/>
+</C>
+<C c="11" r="2">
+<Expand/>
+</C>
+<C c="12" r="2">
+<Expand/>
+</C>
+<C c="13" r="2">
+<Expand/>
+</C>
+<C c="14" r="2">
+<Expand/>
+</C>
+<C c="15" r="2">
+<Expand/>
+</C>
+<C c="16" r="2">
+<Expand/>
+</C>
+<C c="17" r="2">
+<Expand/>
+</C>
+<C c="18" r="2">
+<Expand/>
+</C>
+<C c="19" r="2">
+<Expand/>
+</C>
+<C c="20" r="2">
+<Expand/>
+</C>
+<C c="21" r="2">
+<Expand/>
+</C>
+<C c="22" r="2">
+<Expand/>
+</C>
+<C c="32" r="2" cs="34" rs="4" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="公司名称"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="66" r="2">
+<Expand/>
+</C>
+<C c="67" r="2">
+<Expand/>
+</C>
+<C c="68" r="2">
+<Expand/>
+</C>
+<C c="69" r="2">
+<Expand/>
+</C>
+<C c="70" r="2">
+<Expand/>
+</C>
+<C c="71" r="2">
+<Expand/>
+</C>
+<C c="72" r="2">
+<Expand/>
+</C>
+<C c="73" r="2">
+<Expand/>
+</C>
+<C c="74" r="2">
+<Expand/>
+</C>
+<C c="75" r="2" s="0">
+<Expand/>
+</C>
+<C c="76" r="2" s="0">
+<Expand/>
+</C>
+<C c="77" r="2" s="0">
+<Expand/>
+</C>
+<C c="78" r="2" s="0">
+<Expand/>
+</C>
+<C c="79" r="2" s="0">
+<Expand/>
+</C>
+<C c="80" r="2" s="0">
+<Expand/>
+</C>
+<C c="81" r="2" s="0">
+<Expand/>
+</C>
+<C c="82" r="2" s="0">
+<Expand/>
+</C>
+<C c="83" r="2" s="0">
+<Expand/>
+</C>
+<C c="84" r="2" s="0">
+<Expand/>
+</C>
+<C c="85" r="2" s="0">
+<Expand/>
+</C>
+<C c="86" r="2" s="0">
+<Expand/>
+</C>
+<C c="87" r="2" s="0">
+<Expand/>
+</C>
+<C c="88" r="2" s="0">
+<Expand/>
+</C>
+<C c="89" r="2" s="0">
+<Expand/>
+</C>
+<C c="90" r="2" s="0">
+<Expand/>
+</C>
+<C c="91" r="2" s="0">
+<Expand/>
+</C>
+<C c="92" r="2" s="0">
+<Expand/>
+</C>
+<C c="93" r="2" s="0">
+<Expand/>
+</C>
+<C c="94" r="2" s="0">
+<Expand/>
+</C>
+<C c="95" r="2" s="0">
+<Expand/>
+</C>
+<C c="96" r="2" s="0">
+<Expand/>
+</C>
+<C c="97" r="2" s="0">
+<Expand/>
+</C>
+<C c="98" r="2" s="0">
+<Expand/>
+</C>
+<C c="99" r="2" s="0">
+<Expand/>
+</C>
+<C c="100" r="2" s="0">
+<Expand/>
+</C>
+<C c="101" r="2" s="0">
+<Expand/>
+</C>
+<C c="0" r="3" s="0">
+<Expand/>
+</C>
+<C c="1" r="3" s="0">
+<Expand/>
+</C>
+<C c="2" r="3" s="0">
+<Expand/>
+</C>
+<C c="3" r="3" s="0">
+<Expand/>
+</C>
+<C c="4" r="3" s="0">
+<Expand/>
+</C>
+<C c="5" r="3" s="0">
+<Expand/>
+</C>
+<C c="6" r="3" s="0">
+<Expand/>
+</C>
+<C c="7" r="3" s="0">
+<Expand/>
+</C>
+<C c="8" r="3" s="0">
+<Expand/>
+</C>
+<C c="9" r="3" s="0">
+<Expand/>
+</C>
+<C c="10" r="3">
+<Expand/>
+</C>
+<C c="11" r="3">
+<Expand/>
+</C>
+<C c="12" r="3">
+<Expand/>
+</C>
+<C c="13" r="3">
+<Expand/>
+</C>
+<C c="14" r="3">
+<Expand/>
+</C>
+<C c="15" r="3">
+<Expand/>
+</C>
+<C c="16" r="3">
+<Expand/>
+</C>
+<C c="17" r="3">
+<Expand/>
+</C>
+<C c="18" r="3">
+<Expand/>
+</C>
+<C c="19" r="3">
+<Expand/>
+</C>
+<C c="20" r="3">
+<Expand/>
+</C>
+<C c="21" r="3">
+<Expand/>
+</C>
+<C c="22" r="3">
+<Expand/>
+</C>
+<C c="66" r="3">
+<Expand/>
+</C>
+<C c="67" r="3">
+<Expand/>
+</C>
+<C c="68" r="3">
+<Expand/>
+</C>
+<C c="69" r="3">
+<Expand/>
+</C>
+<C c="70" r="3">
+<Expand/>
+</C>
+<C c="71" r="3">
+<Expand/>
+</C>
+<C c="72" r="3">
+<Expand/>
+</C>
+<C c="73" r="3">
+<Expand/>
+</C>
+<C c="74" r="3">
+<Expand/>
+</C>
+<C c="75" r="3" s="0">
+<Expand/>
+</C>
+<C c="76" r="3" s="0">
+<Expand/>
+</C>
+<C c="77" r="3" s="0">
+<Expand/>
+</C>
+<C c="78" r="3" s="0">
+<Expand/>
+</C>
+<C c="79" r="3" s="0">
+<Expand/>
+</C>
+<C c="80" r="3" s="0">
+<Expand/>
+</C>
+<C c="81" r="3" s="0">
+<Expand/>
+</C>
+<C c="82" r="3" s="0">
+<Expand/>
+</C>
+<C c="83" r="3" s="0">
+<Expand/>
+</C>
+<C c="84" r="3" s="0">
+<Expand/>
+</C>
+<C c="85" r="3" s="0">
+<Expand/>
+</C>
+<C c="86" r="3" s="0">
+<Expand/>
+</C>
+<C c="87" r="3" s="0">
+<Expand/>
+</C>
+<C c="88" r="3" s="0">
+<Expand/>
+</C>
+<C c="89" r="3" s="0">
+<Expand/>
+</C>
+<C c="90" r="3" s="0">
+<Expand/>
+</C>
+<C c="91" r="3" s="0">
+<Expand/>
+</C>
+<C c="92" r="3" s="0">
+<Expand/>
+</C>
+<C c="93" r="3" s="0">
+<Expand/>
+</C>
+<C c="94" r="3" s="0">
+<Expand/>
+</C>
+<C c="95" r="3" s="0">
+<Expand/>
+</C>
+<C c="96" r="3" s="0">
+<Expand/>
+</C>
+<C c="97" r="3" s="0">
+<Expand/>
+</C>
+<C c="98" r="3" s="0">
+<Expand/>
+</C>
+<C c="99" r="3" s="0">
+<Expand/>
+</C>
+<C c="100" r="3" s="0">
+<Expand/>
+</C>
+<C c="101" r="3" s="0">
+<Expand/>
+</C>
+<C c="0" r="4" s="0">
+<Expand/>
+</C>
+<C c="1" r="4" s="0">
+<Expand/>
+</C>
+<C c="2" r="4" s="0">
+<Expand/>
+</C>
+<C c="3" r="4" s="0">
+<Expand/>
+</C>
+<C c="4" r="4" s="0">
+<Expand/>
+</C>
+<C c="5" r="4" s="0">
+<Expand/>
+</C>
+<C c="6" r="4" s="0">
+<Expand/>
+</C>
+<C c="7" r="4" s="0">
+<Expand/>
+</C>
+<C c="8" r="4" s="0">
+<Expand/>
+</C>
+<C c="9" r="4" s="0">
+<Expand/>
+</C>
+<C c="10" r="4">
+<Expand/>
+</C>
+<C c="11" r="4">
+<Expand/>
+</C>
+<C c="12" r="4">
+<Expand/>
+</C>
+<C c="13" r="4">
+<Expand/>
+</C>
+<C c="14" r="4">
+<Expand/>
+</C>
+<C c="15" r="4">
+<Expand/>
+</C>
+<C c="16" r="4">
+<Expand/>
+</C>
+<C c="17" r="4">
+<Expand/>
+</C>
+<C c="18" r="4">
+<Expand/>
+</C>
+<C c="19" r="4">
+<Expand/>
+</C>
+<C c="20" r="4">
+<Expand/>
+</C>
+<C c="21" r="4">
+<Expand/>
+</C>
+<C c="22" r="4">
+<Expand/>
+</C>
+<C c="66" r="4">
+<Expand/>
+</C>
+<C c="67" r="4">
+<Expand/>
+</C>
+<C c="68" r="4">
+<Expand/>
+</C>
+<C c="69" r="4">
+<Expand/>
+</C>
+<C c="70" r="4">
+<Expand/>
+</C>
+<C c="71" r="4">
+<Expand/>
+</C>
+<C c="72" r="4">
+<Expand/>
+</C>
+<C c="73" r="4">
+<Expand/>
+</C>
+<C c="74" r="4">
+<Expand/>
+</C>
+<C c="75" r="4" s="0">
+<Expand/>
+</C>
+<C c="76" r="4" s="0">
+<Expand/>
+</C>
+<C c="77" r="4" s="0">
+<Expand/>
+</C>
+<C c="78" r="4" s="0">
+<Expand/>
+</C>
+<C c="79" r="4" s="0">
+<Expand/>
+</C>
+<C c="80" r="4" s="0">
+<Expand/>
+</C>
+<C c="81" r="4" s="0">
+<Expand/>
+</C>
+<C c="82" r="4" s="0">
+<Expand/>
+</C>
+<C c="83" r="4" s="0">
+<Expand/>
+</C>
+<C c="84" r="4" s="0">
+<Expand/>
+</C>
+<C c="85" r="4" s="0">
+<Expand/>
+</C>
+<C c="86" r="4" s="0">
+<Expand/>
+</C>
+<C c="87" r="4" s="0">
+<Expand/>
+</C>
+<C c="88" r="4" s="0">
+<Expand/>
+</C>
+<C c="89" r="4" s="0">
+<Expand/>
+</C>
+<C c="90" r="4" s="0">
+<Expand/>
+</C>
+<C c="91" r="4" s="0">
+<Expand/>
+</C>
+<C c="92" r="4" s="0">
+<Expand/>
+</C>
+<C c="93" r="4" s="0">
+<Expand/>
+</C>
+<C c="94" r="4" s="0">
+<Expand/>
+</C>
+<C c="95" r="4" s="0">
+<Expand/>
+</C>
+<C c="96" r="4" s="0">
+<Expand/>
+</C>
+<C c="97" r="4" s="0">
+<Expand/>
+</C>
+<C c="98" r="4" s="0">
+<Expand/>
+</C>
+<C c="99" r="4" s="0">
+<Expand/>
+</C>
+<C c="100" r="4" s="0">
+<Expand/>
+</C>
+<C c="101" r="4" s="0">
+<Expand/>
+</C>
+<C c="0" r="5" s="0">
+<Expand/>
+</C>
+<C c="1" r="5" s="0">
+<Expand/>
+</C>
+<C c="2" r="5" s="0">
+<Expand/>
+</C>
+<C c="3" r="5" s="0">
+<Expand/>
+</C>
+<C c="4" r="5" s="0">
+<Expand/>
+</C>
+<C c="5" r="5" s="0">
+<Expand/>
+</C>
+<C c="6" r="5" s="0">
+<Expand/>
+</C>
+<C c="7" r="5" s="0">
+<Expand/>
+</C>
+<C c="8" r="5" s="0">
+<Expand/>
+</C>
+<C c="9" r="5" s="0">
+<Expand/>
+</C>
+<C c="10" r="5">
+<Expand/>
+</C>
+<C c="11" r="5">
+<Expand/>
+</C>
+<C c="12" r="5">
+<Expand/>
+</C>
+<C c="13" r="5">
+<Expand/>
+</C>
+<C c="14" r="5">
+<Expand/>
+</C>
+<C c="15" r="5">
+<Expand/>
+</C>
+<C c="16" r="5">
+<Expand/>
+</C>
+<C c="17" r="5">
+<Expand/>
+</C>
+<C c="18" r="5">
+<Expand/>
+</C>
+<C c="19" r="5">
+<Expand/>
+</C>
+<C c="20" r="5">
+<Expand/>
+</C>
+<C c="21" r="5">
+<Expand/>
+</C>
+<C c="22" r="5">
+<Expand/>
+</C>
+<C c="66" r="5">
+<Expand/>
+</C>
+<C c="67" r="5">
+<Expand/>
+</C>
+<C c="68" r="5">
+<Expand/>
+</C>
+<C c="69" r="5">
+<Expand/>
+</C>
+<C c="70" r="5">
+<Expand/>
+</C>
+<C c="71" r="5">
+<Expand/>
+</C>
+<C c="72" r="5">
+<Expand/>
+</C>
+<C c="73" r="5">
+<Expand/>
+</C>
+<C c="74" r="5">
+<Expand/>
+</C>
+<C c="75" r="5" s="0">
+<Expand/>
+</C>
+<C c="76" r="5" s="0">
+<Expand/>
+</C>
+<C c="77" r="5" s="0">
+<Expand/>
+</C>
+<C c="78" r="5" s="0">
+<Expand/>
+</C>
+<C c="79" r="5" cs="8" rs="3" s="4">
+<O>
+<![CDATA[会员卡号:]]></O>
+<Expand/>
+</C>
+<C c="87" r="5" cs="16" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="顾客号"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="6" s="0">
+<Expand/>
+</C>
+<C c="1" r="6" s="0">
+<Expand/>
+</C>
+<C c="2" r="6" s="0">
+<Expand/>
+</C>
+<C c="3" r="6" s="0">
+<Expand/>
+</C>
+<C c="4" r="6" s="0">
+<Expand/>
+</C>
+<C c="5" r="6" s="0">
+<Expand/>
+</C>
+<C c="6" r="6" s="0">
+<Expand/>
+</C>
+<C c="7" r="6" s="0">
+<Expand/>
+</C>
+<C c="8" r="6" s="0">
+<Expand/>
+</C>
+<C c="9" r="6" s="0">
+<Expand/>
+</C>
+<C c="10" r="6" s="0">
+<Expand/>
+</C>
+<C c="11" r="6" s="0">
+<Expand/>
+</C>
+<C c="12" r="6" s="0">
+<Expand/>
+</C>
+<C c="13" r="6" s="0">
+<Expand/>
+</C>
+<C c="14" r="6" s="0">
+<Expand/>
+</C>
+<C c="15" r="6" s="0">
+<Expand/>
+</C>
+<C c="16" r="6" s="0">
+<Expand/>
+</C>
+<C c="17" r="6" s="0">
+<Expand/>
+</C>
+<C c="18" r="6" s="0">
+<Expand/>
+</C>
+<C c="19" r="6" s="0">
+<Expand/>
+</C>
+<C c="20" r="6" s="0">
+<Expand/>
+</C>
+<C c="21" r="6" s="0">
+<Expand/>
+</C>
+<C c="22" r="6" s="0">
+<Expand/>
+</C>
+<C c="23" r="6" s="0">
+<Expand/>
+</C>
+<C c="24" r="6" s="0">
+<Expand/>
+</C>
+<C c="25" r="6" s="0">
+<Expand/>
+</C>
+<C c="26" r="6" s="0">
+<Expand/>
+</C>
+<C c="27" r="6" s="0">
+<Expand/>
+</C>
+<C c="28" r="6" s="0">
+<Expand/>
+</C>
+<C c="29" r="6" s="0">
+<Expand/>
+</C>
+<C c="30" r="6" s="0">
+<Expand/>
+</C>
+<C c="31" r="6" s="0">
+<Expand/>
+</C>
+<C c="32" r="6" s="0">
+<Expand/>
+</C>
+<C c="33" r="6" s="0">
+<Expand/>
+</C>
+<C c="34" r="6" s="0">
+<Expand/>
+</C>
+<C c="35" r="6" s="0">
+<Expand/>
+</C>
+<C c="36" r="6" s="0">
+<Expand/>
+</C>
+<C c="37" r="6" s="0">
+<Expand/>
+</C>
+<C c="38" r="6" s="0">
+<Expand/>
+</C>
+<C c="39" r="6" s="0">
+<Expand/>
+</C>
+<C c="40" r="6" s="0">
+<Expand/>
+</C>
+<C c="41" r="6" s="0">
+<Expand/>
+</C>
+<C c="42" r="6" s="0">
+<Expand/>
+</C>
+<C c="43" r="6" s="0">
+<Expand/>
+</C>
+<C c="44" r="6" s="0">
+<Expand/>
+</C>
+<C c="45" r="6" s="0">
+<Expand/>
+</C>
+<C c="46" r="6" s="0">
+<Expand/>
+</C>
+<C c="47" r="6" s="0">
+<Expand/>
+</C>
+<C c="48" r="6" s="0">
+<Expand/>
+</C>
+<C c="49" r="6" s="0">
+<Expand/>
+</C>
+<C c="50" r="6" s="0">
+<Expand/>
+</C>
+<C c="51" r="6" s="0">
+<Expand/>
+</C>
+<C c="52" r="6" s="0">
+<Expand/>
+</C>
+<C c="53" r="6" s="0">
+<Expand/>
+</C>
+<C c="54" r="6" s="0">
+<Expand/>
+</C>
+<C c="55" r="6" s="0">
+<Expand/>
+</C>
+<C c="56" r="6" s="0">
+<Expand/>
+</C>
+<C c="57" r="6" s="0">
+<Expand/>
+</C>
+<C c="58" r="6" s="0">
+<Expand/>
+</C>
+<C c="59" r="6" s="0">
+<Expand/>
+</C>
+<C c="60" r="6" s="0">
+<Expand/>
+</C>
+<C c="61" r="6" s="0">
+<Expand/>
+</C>
+<C c="62" r="6" s="0">
+<Expand/>
+</C>
+<C c="63" r="6" s="0">
+<Expand/>
+</C>
+<C c="64" r="6" s="0">
+<Expand/>
+</C>
+<C c="65" r="6" s="0">
+<Expand/>
+</C>
+<C c="66" r="6" s="0">
+<Expand/>
+</C>
+<C c="67" r="6" s="0">
+<Expand/>
+</C>
+<C c="68" r="6" s="0">
+<Expand/>
+</C>
+<C c="69" r="6" s="0">
+<Expand/>
+</C>
+<C c="70" r="6" s="0">
+<Expand/>
+</C>
+<C c="71" r="6" s="0">
+<Expand/>
+</C>
+<C c="72" r="6" s="0">
+<Expand/>
+</C>
+<C c="73" r="6" s="0">
+<Expand/>
+</C>
+<C c="74" r="6" s="0">
+<Expand/>
+</C>
+<C c="75" r="6" s="0">
+<Expand/>
+</C>
+<C c="76" r="6" s="0">
+<Expand/>
+</C>
+<C c="77" r="6" s="0">
+<Expand/>
+</C>
+<C c="78" r="6" s="0">
+<Expand/>
+</C>
+<C c="0" r="7" s="0">
+<Expand/>
+</C>
+<C c="1" r="7" s="0">
+<Expand/>
+</C>
+<C c="2" r="7" s="0">
+<Expand/>
+</C>
+<C c="3" r="7" cs="5" rs="3" s="2">
+<O>
+<![CDATA[姓名:]]></O>
+<Expand/>
+</C>
+<C c="8" r="7" cs="9" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="顾客姓名"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="17" r="7" cs="5" rs="3" s="2">
+<O>
+<![CDATA[性别:]]></O>
+<Expand/>
+</C>
+<C c="22" r="7" cs="5" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="顾客性别"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="27" r="7" cs="5" rs="3" s="2">
+<O>
+<![CDATA[年龄:]]></O>
+<Expand/>
+</C>
+<C c="32" r="7" cs="5" rs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="年龄"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="37" r="7" cs="5" rs="3">
+<O>
+<![CDATA[职业:]]></O>
+<Expand/>
+</C>
+<C c="42" r="7" cs="7" rs="3" s="6">
+<Expand/>
+</C>
+<C c="49" r="7" cs="8" rs="3">
+<O>
+<![CDATA[配镜时间:]]></O>
+<Expand/>
+</C>
+<C c="57" r="7" cs="20" rs="3" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="销售日期"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="77" r="7" s="0">
+<Expand/>
+</C>
+<C c="78" r="7" s="0">
+<Expand/>
+</C>
+<C c="79" r="9" cs="6" rs="3" s="7">
+<O>
+<![CDATA[销售单:]]></O>
+<Expand/>
+</C>
+<C c="85" r="9" cs="18" rs="3" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="销售单号"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="11" cs="5" rs="3" s="8">
+<O>
+<![CDATA[地址:]]></O>
+<Expand/>
+</C>
+<C c="8" r="11" cs="23" rs="3" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="会员地址"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="31" r="11" cs="8" rs="3">
+<O>
+<![CDATA[联系电话:]]></O>
+<Expand/>
+</C>
+<C c="39" r="11" cs="10" rs="3" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="顾客电话"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="49" r="11" cs="8" rs="3">
+<O>
+<![CDATA[取镜时间:]]></O>
+<Expand/>
+</C>
+<C c="57" r="11" cs="20" rs="3" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="取镜日期"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="16" cs="7" rs="3" s="9">
+<O>
+<![CDATA[处方类别]]></O>
+<Expand/>
+</C>
+<C c="10" r="16" cs="10" rs="3" s="9">
+<O>
+<![CDATA[眼别]]></O>
+<Expand/>
+</C>
+<C c="20" r="16" cs="10" rs="3" s="9">
+<O>
+<![CDATA[球镜]]></O>
+<Expand/>
+</C>
+<C c="30" r="16" cs="10" rs="3" s="9">
+<O>
+<![CDATA[柱镜]]></O>
+<Expand/>
+</C>
+<C c="40" r="16" cs="10" rs="3" s="9">
+<O>
+<![CDATA[轴向]]></O>
+<Expand/>
+</C>
+<C c="50" r="16" cs="10" rs="3" s="9">
+<O>
+<![CDATA[矫正视力]]></O>
+<Expand/>
+</C>
+<C c="60" r="16" cs="10" rs="3" s="9">
+<O>
+<![CDATA[瞳距]]></O>
+<Expand/>
+</C>
+<C c="70" r="16" cs="10" rs="3" s="9">
+<O>
+<![CDATA[ADD]]></O>
+<Expand/>
+</C>
+<C c="80" r="16" cs="10" rs="3" s="9">
+<O>
+<![CDATA[瞳高]]></O>
+<Expand/>
+</C>
+<C c="90" r="16" cs="10" rs="3" s="9">
+<O>
+<![CDATA[棱镜度]]></O>
+<Expand/>
+</C>
+<C c="3" r="19" cs="7" rs="6" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="处方形式名称"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="19" cs="10" rs="3" s="9">
+<O>
+<![CDATA[右眼]]></O>
+<Expand/>
+</C>
+<C c="20" r="19" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼球镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="30" r="19" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼柱镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="40" r="19" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼轴向"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="50" r="19" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼矫视"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="60" r="19" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼瞳距"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="70" r="19" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼add"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="80" r="19" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼瞳高"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="90" r="19" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="右眼棱镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="22" cs="10" rs="3" s="9">
+<O>
+<![CDATA[左眼]]></O>
+<Expand/>
+</C>
+<C c="20" r="22" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼球镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="30" r="22" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼柱镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="40" r="22" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼轴向"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="50" r="22" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼矫视"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="60" r="22" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼瞳距"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="70" r="22" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼add"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="80" r="22" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼瞳高"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="90" r="22" cs="10" rs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="左眼棱镜"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="25" cs="67" rs="27" s="10">
+<O t="SubReport">
+<SubReportAttr extendOwnerParameter="true"/>
+<packee class="com.fr.main.impl.LinkWorkBookTemplate">
+<Path>
+<![CDATA[print_saleschild1_CQDSJY.cpt]]></Path>
+</packee>
+<KVS/>
+</O>
+<Expand/>
+</C>
+<C c="70" r="25" cs="10" rs="7" s="9">
+<O>
+<![CDATA[附加费]]></O>
+<Expand/>
+</C>
+<C c="80" r="25" cs="10" rs="7" s="9">
+<O>
+<![CDATA[验光师]]></O>
+<Expand/>
+</C>
+<C c="90" r="25" cs="10" rs="7" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="验光师姓名"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="101" r="29" cs="2" rs="23">
+<O>
+<![CDATA[第 一 联 存 根]]></O>
+<Expand/>
+</C>
+<C c="70" r="32" cs="10" rs="4" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="金额合计"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="80" r="32" cs="10" rs="4" s="9">
+<O>
+<![CDATA[销  售]]></O>
+<Expand/>
+</C>
+<C c="90" r="32" cs="10" rs="4" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="销售人员ID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="70" r="36" cs="10" rs="4" s="10">
+<Expand/>
+</C>
+<C c="80" r="36" cs="10" rs="4" s="9">
+<O>
+<![CDATA[加  工]]></O>
+<Expand/>
+</C>
+<C c="90" r="36" cs="10" rs="4" s="10">
+<Expand/>
+</C>
+<C c="70" r="40" cs="10" rs="4" s="10">
+<Expand/>
+</C>
+<C c="80" r="40" cs="10" rs="4" s="9">
+<O>
+<![CDATA[质  检]]></O>
+<Expand/>
+</C>
+<C c="90" r="40" cs="10" rs="4" s="10">
+<Expand/>
+</C>
+<C c="70" r="44" cs="10" rs="4" s="10">
+<Expand/>
+</C>
+<C c="80" r="44" cs="10" rs="4" s="9">
+<O>
+<![CDATA[取  件]]></O>
+<Expand/>
+</C>
+<C c="90" r="44" cs="10" rs="4" s="10">
+<Expand/>
+</C>
+<C c="70" r="48" cs="10" rs="4" s="10">
+<Expand/>
+</C>
+<C c="80" r="48" cs="10" rs="4" s="10">
+<Expand/>
+</C>
+<C c="90" r="48" cs="10" rs="4" s="10">
+<Expand/>
+</C>
+<C c="3" r="52" cs="7" rs="7" s="9">
+<O>
+<![CDATA[合计金额(大写)]]></O>
+<Expand/>
+</C>
+<C c="10" r="52" cs="30" rs="7" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="应收金额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[CNMONEY($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="40" r="52" cs="10" rs="7" s="9">
+<O>
+<![CDATA[合计金额:]]></O>
+<Expand/>
+</C>
+<C c="50" r="52" cs="20" rs="7" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="应收金额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[IF($wFlag==1, $$$, IF($wFlag==-1, ($$$ * -1), $$$))]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="70" r="52" cs="4" rs="7" s="10">
+<O>
+<![CDATA[预收金额]]></O>
+<Expand/>
+</C>
+<C c="74" r="52" cs="9" rs="7" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="实缴金额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[IF($wFlag==1, $$$, IF($wFlag==-1, ($$$ * -1), $$$))]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="83" r="52" cs="6" rs="7" s="11">
+<O>
+<![CDATA[  欠款  金额]]></O>
+<Expand/>
+</C>
+<C c="89" r="52" cs="11" rs="7" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="欠款金额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[IF($wFlag==1, $$$, IF($wFlag==-1, ($$$ * -1), $$$))]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="59" cs="7" rs="5" s="9">
+<O>
+<![CDATA[备注:]]></O>
+<Expand/>
+</C>
+<C c="10" r="59" cs="64" rs="5" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="销售备注"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="74" r="59" cs="9" rs="5" s="9">
+<O>
+<![CDATA[ 客户确认  签字]]></O>
+<Expand/>
+</C>
+<C c="83" r="59" cs="17" rs="5" s="10">
+<Expand/>
+</C>
+<C c="4" r="65" cs="94" rs="3">
+<O>
+<![CDATA[地址:重庆市大坪医院门诊四楼验光配镜中心  电话:023-68757778  网址:www.cqeyes.cn  凭单取镜,三月内有效,逾期责任自负]]></O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting>
+<Margin top="122400" left="7200" bottom="122400" right="7200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="true" delayPlaying="true" windowPosition="1" align="0"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="4">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

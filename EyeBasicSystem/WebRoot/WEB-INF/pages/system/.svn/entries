@@ -1,0 +1,118 @@
+10
+
+dir
+15818
+svn://192.168.168.218/EyeBasicSystem/source/EyeBasicSystem/WebRoot/WEB-INF/pages/system
+svn://192.168.168.218/EyeBasicSystem
+
+
+
+2017-01-03T05:37:45.219500Z
+15813
+lxp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+776c666b-7bce-7948-b771-2bd2a928235a
+
+personDiscount
+dir
+
+discountShortcutKeys
+dir
+
+integralset
+dir
+
+personInfo
+dir
+
+workType
+dir
+
+specialRequirements
+dir
+
+roles
+dir
+
+additionalCosts
+dir
+
+systemParameter
+dir
+
+departments
+dir
+
+periodbegin
+dir
+
+brankCard
+dir
+
+registeredCategory
+dir
+
+interest
+dir
+
+maxDiscount
+dir
+
+mac
+dir
+
+smsRecord
+dir
+
+sqlIndexRecreate
+dir
+
+GoodsLevel
+dir
+
+memberManagement
+dir
+
+franchisee
+dir
+
+companyName
+dir
+
+personType
+dir
+
+frameMaterial
+dir
+
+roleDiscount
+dir
+
+barCodeSet
+dir
+
+bank
+dir
+
+personSetOption
+dir
+
+goodsCostDiscount
+dir
+
+technologyType
+dir
+

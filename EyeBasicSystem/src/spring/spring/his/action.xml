@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans default-autowire="byName" default-lazy-init="false" default-dependency-check="none">
+
+	<!-- his连接  begin-->
+		<bean id="hisAction" class="com.pengsheng.eims.his.action.HisAction" scope="prototype"/>
+	<!-- his连接  end-->
+	<!-- 收费确认 begin-->
+		<bean id="hisParamAction" class="com.pengsheng.eims.his.action.HisParamAction" scope="prototype"/>
+	<!-- 收费确认 end-->
+	<!-- HIS日志查询  begin-->
+		<bean id="hisLogPoAction" class="com.pengsheng.eims.his.action.HisLogPoAction" scope="prototype"/>
+	<!-- HIS日志查询  end-->
+	
+</beans>

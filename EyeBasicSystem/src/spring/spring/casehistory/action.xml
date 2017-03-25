@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	
+	<!-- HIS顾客验光信息管理LXP begin-->
+		<bean id="custmerInfoHISAction" class="com.pengsheng.eims.casehistory.action.CustmerInfoHISAction" scope="prototype"/>
+	<!-- HIS顾客验光信息管理LXP end-->
+	
+	<!-- 眼部健康检查 (新)sxh begin-->
+		<bean id="eyesCheckNAction" class="com.pengsheng.eims.casehistory.action.EyesCheckNAction" scope="prototype"/>
+	<!-- 眼部健康检查 (新)sxh end-->
+	
+	<!-- 双眼视功能检查  (新) sxh  begin -->
+	     <bean id="doubleEyeFunNAction" class="com.pengsheng.eims.casehistory.action.DoubleEyeFunNAction" scope="prototype"/>
+	<!-- 双眼视功能检查  (新) sxh  end -->
+	
+	<!-- 屈光检查  (新) sxh   begin -->
+	     <bean id="refractiveNAction" class="com.pengsheng.eims.casehistory.action.RefractiveNAction" scope="prototype"/>
+	<!-- 屈光检查  (新) sxh   end -->
+
+	<!-- 验光基表 (新) sxh begin-->
+		<bean id="optometryBasicNAction" class="com.pengsheng.eims.casehistory.action.OptometryBasicNAction" scope="prototype"/>
+	<!-- 验光基表 (新) sxh end-->
+	
+	<!-- 特殊功能检查 (新) sxh begin-->
+		<bean id="specialCheckNAction" class="com.pengsheng.eims.casehistory.action.SpecialCheckNAction" scope="prototype"/>
+	<!-- 特殊功能检查 (新) sxh end-->
+	
+	<!-- 检查结论 (新) sxh begin-->
+		<bean id="inspectionNAction" class="com.pengsheng.eims.casehistory.action.InspectionNAction" scope="prototype"/>
+	<!-- 检查结论 (新) sxh end-->
+	
+	<!-- 接触镜评估 (新) sxh begin-->
+		<bean id="contactGlassNAction" class="com.pengsheng.eims.casehistory.action.ContactGlassNAction" scope="prototype"/>
+	<!-- 接触镜评估 (新) sxh end-->
+	
+	<!-- 角膜接触镜检查 (新) sxh begin-->
+		<bean id="cornealContactlLensNAction" class="com.pengsheng.eims.casehistory.action.CornealContactlLensNAction" scope="prototype"/>
+	<!-- 角膜接触镜检查 (新) sxh end-->
+	
+	<!-- 验光病例查询 (新) sxh  begin -->
+		<bean id="optometryCaseNAction" class="com.pengsheng.eims.casehistory.action.OptometryCaseNAction" scope="prototype"/>
+	<!-- 验光病例查询 (新) sxh  end -->
+	
+	<!-- 戴镜史 (新) sxh begin-->
+		<bean id="glassesHistoryNAction" class="com.pengsheng.eims.casehistory.action.GlassesHistoryNAction" scope="prototype"/>
+	<!-- 戴镜史 (新) sxh end-->
+	
+	<!-- 爱尔验光拆版 sxh  begin -->
+		<bean id="contactGlassAierAction" class="com.pengsheng.eims.aierhistory.action.ContactGlassAierAction" scope="prototype"/>
+		<bean id="cornealContactlLensAierAction" class="com.pengsheng.eims.aierhistory.action.CornealContactlLensAierAction" scope="prototype"/>
+		<bean id="doubleEyeFunAierAction" class="com.pengsheng.eims.aierhistory.action.DoubleEyeFunAierAction" scope="prototype"/>
+		<bean id="eyesCheckAierAction" class="com.pengsheng.eims.aierhistory.action.EyesCheckAierAction" scope="prototype"/>
+		<bean id="glassesHistoryAierAction" class="com.pengsheng.eims.aierhistory.action.GlassesHistoryAierAction" scope="prototype"/>
+		<bean id="inspectionAierAction" class="com.pengsheng.eims.aierhistory.action.InspectionAierAction" scope="prototype"/>
+		<bean id="optometryBasicAierAction" class="com.pengsheng.eims.aierhistory.action.OptometryBasicAierAction" scope="prototype"/>
+		<bean id="optometryCaseAierAction" class="com.pengsheng.eims.aierhistory.action.OptometryCaseAierAction" scope="prototype"/>
+		<bean id="refractiveAierAction" class="com.pengsheng.eims.aierhistory.action.RefractiveAierAction" scope="prototype"/>
+		<bean id="specialCheckAierAction" class="com.pengsheng.eims.aierhistory.action.SpecialCheckAierAction" scope="prototype"/>
+	<!-- 爱尔验光拆版 sxh  end -->
+</beans>

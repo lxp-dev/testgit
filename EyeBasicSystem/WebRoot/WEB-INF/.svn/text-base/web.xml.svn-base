@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee   http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:spring/**/*.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>contextClass</param-name>
+		<param-value>org.jboss.spring.vfs.context.VFSXmlWebApplicationContext</param-value>
+	</context-param>
+	<!-- 著名 Character Encoding filter -->
+	<context-param>
+		<param-name>rptUrl</param-name>
+		<param-value>http://10.10.20.30/ReportServer/Pages/ReportViewer.aspx?/EyeBasicSystem/</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>pjdUrl</param-name>
+		<param-value>http://192.168.1.6/ReportServer/Pages/ReportViewer.aspx?/EyeBasicSystem/</param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>struts-cleanup</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ActionContextCleanUp</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>struts-cleanup</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<!-- 防止内存泄露 -->
+	<listener>
+		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+	</listener>
+	<servlet>
+		<servlet-name>ReportServer</servlet-name>
+		<servlet-class>com.fr.web.ReportServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ReportServer</servlet-name>
+		<url-pattern>/ReportServer</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>Connector</servlet-name>
+		<servlet-class>net.fckeditor.connector.ConnectorServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Connector</servlet-name>
+		<url-pattern>
+			/fckeditor/editor/filemanager/connectors/*
+		</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>coreServlet</servlet-name>
+		<servlet-class>com.pengsheng.weixin.servlet.CoreServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>coreServlet</servlet-name>
+		<url-pattern>/coreServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>FileUploadServlet</servlet-name>
+		<servlet-class>com.pengsheng.eims.util.FileUploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FileUploadServlet</servlet-name>
+		<url-pattern>/fileUploadServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>QRCodeServlet</servlet-name>
+		<servlet-class>com.pengsheng.weixin.util.QRCodeServlet</servlet-class>
+	</servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>oauth2Servlet</servlet-name>
+    <servlet-class>com.pengsheng.weixin.servlet.Oauth2Servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+		<servlet-name>QRCodeServlet</servlet-name>
+		<url-pattern>/qrservlet</url-pattern>
+	</servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>oauth2Servlet</servlet-name>
+    <url-pattern>/oauth2Servlet</url-pattern>
+  </servlet-mapping>
+	<session-config>
+		<session-timeout>600</session-timeout>
+	</session-config>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+	<login-config>
+		<auth-method>BASIC</auth-method>
+	</login-config>
+	<!--
+		<context-param> <param-name>log4jConfigLocation</param-name>
+		<param-value>/WEB-INF/props/log4j.properties</param-value>
+		</context-param> <context-param>
+		<param-name>log4jRefreshInterval</param-name>
+		<param-value>6000</param-value> </context-param> <listener>
+		<listener-class> org.springframework.web.util.Log4jConfigListener
+		</listener-class> </listener>
+	-->
+</web-app>

@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="brandID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsCategoryID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select distinct cast(B_GI_Sph as numeric (18, 2)) as dsph from dbo.B_GoodsInfo 
+  where B_GI_GoodsCategoryID = '${goodsCategoryID}' and B_GI_isCustomize = '0'
+    and B_GI_SupplierID = '${supplierID}' and B_GI_BrandID = '${brandID}' 
+  order by cast(B_GI_Sph as numeric (18, 2)) desc
+]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="brandID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsCategoryID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="warehouseID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+declare @goodsCategoryID varchar(10),@supplierID varchar(10),@brandID varchar(10),@warehouseID varchar(10)
+set @goodsCategoryID = '${goodsCategoryID}'
+set @supplierID = '${supplierID}'
+set @brandID = '${brandID}'
+set @warehouseID = '${warehouseID}'
+
+select distinct cast(cyl as numeric(18,2)) as cyl from (
+  select sph,cyl,cast(goodsNum as varchar) as goodsNum,cast(C_SA_SA_StockCap as varchar) as C_SA_SA_StockCap,cast(C_SA_SA_StockLower as varchar) as C_SA_SA_StockLower,cast(C_SA_SA_StockRed as varchar) as C_SA_SA_StockRed,
+       (case 
+            when goodsNum <= C_SA_SA_StockRed then 'a'  -- 红色
+            when (goodsNum <= C_SA_SA_StockLower and goodsNum > C_SA_SA_StockRed) then 'b'   -- 紫色
+            when (goodsNum <= C_SA_SA_StockCap and goodsNum > C_SA_SA_StockLower) then 'c'   -- 白色
+            when goodsNum > C_SA_SA_StockCap then 'd'   -- 蓝色
+            else 'c'  -- 白色
+        end) as bgcolor
+  from (
+select B_GI_Sph as sph,B_GI_Cyl as cyl,sum(isnull(goodsNum,0)) as goodsNum,C_SA_SA_StockCap,C_SA_SA_StockLower,C_SA_SA_StockRed
+  from dbo.C_SA_StockAlertSetting left join (
+      select goodsID,stockID,sum(goodsNum) as goodsNum from (
+		  select C_SH_SB_GoodsId as goodsID,C_SH_SB_StockId as stockID,C_SH_SB_GoodsQuantity as goodsNum from C_SH_StorageBeginning
+			  where substring(C_SH_SB_GoodsId,1,1) = @goodsCategoryID and substring(C_SH_SB_GoodsId,3,2) = @supplierID and 
+					substring(C_SH_SB_GoodsId,6,2) = @brandID and C_SH_SB_StockId = @warehouseID
+		  union all
+		  select C_SH_SC_GoodsId as goodsID,C_SH_SC_StockId as stockID,C_SH_SC_GoodsQuantity as goodsNum from C_SH_StorageChange
+			  where substring(C_SH_SC_GoodsId,1,1) = @goodsCategoryID and substring(C_SH_SC_GoodsId,3,2) = @supplierID and 
+					substring(C_SH_SC_GoodsId,6,2) = @brandID and C_SH_SC_StockId = @warehouseID
+      )t1
+         group by goodsID,stockID
+  )t2 on C_SA_SA_GoodsID = goodsID and C_SA_SA_StockID = stockID
+  inner join B_GoodsInfo on C_SA_SA_GoodsID = B_GI_GoodsID
+  where substring(C_SA_SA_GoodsID,1,1) = @goodsCategoryID and C_SA_SA_SupplierID = @supplierID and 
+        C_SA_SA_BrandID = @brandID and C_SA_SA_StockID = @warehouseID and B_GI_isCustomize = '0'
+        and B_GI_GoodsCategoryID in ('3','4')
+  group by B_GI_Sph,B_GI_Cyl,C_SA_SA_StockCap,C_SA_SA_StockLower,C_SA_SA_StockRed
+)t3
+)t4
+  order by cast(cyl as numeric(18,2)) desc
+
+]]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="brandID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsCategoryID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="warehouseID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+declare @goodsCategoryID varchar(10),@supplierID varchar(10),@brandID varchar(10),@warehouseID varchar(10)
+set @goodsCategoryID = '${goodsCategoryID}'
+set @supplierID = '${supplierID}'
+set @brandID = '${brandID}'
+set @warehouseID = '${warehouseID}'
+
+select cast(sph as numeric(18,2)) as sph,cast(cyl as numeric(18,2)) as cyl,('('+goodsNum+')|('+C_SA_SA_StockCap+')|('+C_SA_SA_StockLower+')|('+C_SA_SA_StockRed+')|('+bgcolor+')') as des,bgcolor from (
+  select sph,cyl,cast(goodsNum as varchar) as goodsNum,cast(C_SA_SA_StockCap as varchar) as C_SA_SA_StockCap,cast(C_SA_SA_StockLower as varchar) as C_SA_SA_StockLower,cast(C_SA_SA_StockRed as varchar) as C_SA_SA_StockRed,
+       (case 
+            when goodsNum <= C_SA_SA_StockRed then 'a'  -- 红色
+            when (goodsNum <= C_SA_SA_StockLower and goodsNum > C_SA_SA_StockRed) then 'b'   -- 紫色
+            when (goodsNum <= C_SA_SA_StockCap and goodsNum > C_SA_SA_StockLower) then 'c'   -- 白色
+            when goodsNum > C_SA_SA_StockCap then 'd'   -- 蓝色
+            else 'c'  -- 白色
+        end) as bgcolor
+  from (
+select B_GI_Sph as sph,B_GI_Cyl as cyl,sum(isnull(goodsNum,0)) as goodsNum,C_SA_SA_StockCap,C_SA_SA_StockLower,C_SA_SA_StockRed
+  from dbo.C_SA_StockAlertSetting left join (
+      select goodsID,stockID,sum(goodsNum) as goodsNum from (
+		  select C_SH_SB_GoodsId as goodsID,C_SH_SB_StockId as stockID,C_SH_SB_GoodsQuantity as goodsNum from C_SH_StorageBeginning
+			  where substring(C_SH_SB_GoodsId,1,1) = @goodsCategoryID and substring(C_SH_SB_GoodsId,3,2) = @supplierID and 
+					substring(C_SH_SB_GoodsId,6,2) = @brandID and C_SH_SB_StockId = @warehouseID
+		  union all
+		  select C_SH_SC_GoodsId as goodsID,C_SH_SC_StockId as stockID,C_SH_SC_GoodsQuantity as goodsNum from C_SH_StorageChange
+			  where substring(C_SH_SC_GoodsId,1,1) = @goodsCategoryID and substring(C_SH_SC_GoodsId,3,2) = @supplierID and 
+					substring(C_SH_SC_GoodsId,6,2) = @brandID and C_SH_SC_StockId = @warehouseID
+      )t1
+         group by goodsID,stockID
+  )t2 on C_SA_SA_GoodsID = goodsID and C_SA_SA_StockID = stockID
+  inner join B_GoodsInfo on C_SA_SA_GoodsID = B_GI_GoodsID
+  where substring(C_SA_SA_GoodsID,1,1) = @goodsCategoryID and C_SA_SA_SupplierID = @supplierID and 
+        C_SA_SA_BrandID = @brandID and C_SA_SA_StockID = @warehouseID and B_GI_isCustomize = '0'
+        and B_GI_GoodsCategoryID in ('3','4')
+  group by B_GI_Sph,B_GI_Cyl,C_SA_SA_StockCap,C_SA_SA_StockLower,C_SA_SA_StockRed
+)t3
+)t4
+  order by cast(sph as numeric(18,2)) desc
+
+]]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars/>
+<WebPage isPage="false" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="1"/>
+<FR/>
+<HC F="0" T="1"/>
+<FC/>
+<UPFCR COLUMN="true" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[432000,482400,914400,723900,723900,723900,723900,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[1440000,1440000,3200400,2743200,2743200,2743200,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="2" rs="2" s="0">
+<O>
+<![CDATA[球镜|柱镜]]></O>
+<Expand/>
+</C>
+<C c="2" r="0" rs="2" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cyl"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="1"/>
+</C>
+<C c="0" r="2" cs="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="sph"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="des"/>
+<Condition class="com.fr.data.condition.CommonCondition">
+<CNUMBER>
+<![CDATA[2]]></CNUMBER>
+<CNAME>
+<![CDATA[cyl]]></CNAME>
+<Compare op="0">
+<SimpleDSColumn dsName="ds2" columnName="cyl"/>
+</Compare>
+</Condition>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[红色]]></Name>
+<Condition class="com.fr.data.condition.ObjectCondition">
+<Compare op="10">
+<O>
+<![CDATA[a]]></O>
+</Compare>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ValueHighlightAction">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=left($$$,(len($$$)-4))]]></Attributes>
+</O>
+</HighlightAction>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Background name="ColorBackground" color="-65536"/>
+</HighlightAction>
+</Highlight>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[紫色]]></Name>
+<Condition class="com.fr.data.condition.ObjectCondition">
+<Compare op="10">
+<O>
+<![CDATA[b]]></O>
+</Compare>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ValueHighlightAction">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=left($$$,(len($$$)-4))]]></Attributes>
+</O>
+</HighlightAction>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Background name="ColorBackground" color="-65281"/>
+</HighlightAction>
+</Highlight>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[白色]]></Name>
+<Condition class="com.fr.data.condition.ObjectCondition">
+<Compare op="10">
+<O>
+<![CDATA[c]]></O>
+</Compare>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ValueHighlightAction">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=left($$$,(len($$$)-4))]]></Attributes>
+</O>
+</HighlightAction>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Background name="ColorBackground" color="-1"/>
+</HighlightAction>
+</Highlight>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[蓝色]]></Name>
+<Condition class="com.fr.data.condition.ObjectCondition">
+<Compare op="10">
+<O>
+<![CDATA[d]]></O>
+</Compare>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ValueHighlightAction">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=left($$$,(len($$$)-4))]]></Attributes>
+</O>
+</HighlightAction>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Background name="ColorBackground" color="-16776961"/>
+</HighlightAction>
+</Highlight>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[灰色]]></Name>
+<Condition class="com.fr.data.condition.ListCondition">
+<JoinCondition join="0">
+<Condition class="com.fr.data.condition.ObjectCondition">
+<Compare op="11">
+<O>
+<![CDATA[a]]></O>
+</Compare>
+</Condition>
+</JoinCondition>
+<JoinCondition join="0">
+<Condition class="com.fr.data.condition.ObjectCondition">
+<Compare op="11">
+<O>
+<![CDATA[b]]></O>
+</Compare>
+</Condition>
+</JoinCondition>
+<JoinCondition join="0">
+<Condition class="com.fr.data.condition.ObjectCondition">
+<Compare op="11">
+<O>
+<![CDATA[c]]></O>
+</Compare>
+</Condition>
+</JoinCondition>
+<JoinCondition join="0">
+<Condition class="com.fr.data.condition.ObjectCondition">
+<Compare op="11">
+<O>
+<![CDATA[d]]></O>
+</Compare>
+</Condition>
+</JoinCondition>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ValueHighlightAction">
+<O>
+<![CDATA[]]></O>
+</HighlightAction>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Background name="ColorBackground" color="-4144960"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting>
+<PaperSize width="43200000" height="43200000"/>
+<Margin top="0" left="0" bottom="0" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="ColorBackground" color="-1247749"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<Format class="java.text.DecimalFormat">
+<![CDATA[#0.00]]></Format>
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="ColorBackground" color="-1247749"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="ColorBackground" color="-1247749"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="ColorBackground" color="-1"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

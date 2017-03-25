@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false" default-dependency-check="none">
+	
+	<!-- his连接  begin-->
+	<bean id="hisMgrImpl" class="com.pengsheng.eims.his.mgr.impl.HisMgrImpl" />
+	<bean id="hisMgr" parent="baseTransactionProxy">
+		<property name="target" ref="hisMgrImpl" />
+	</bean>
+	<!-- his连接  end-->
+	
+	<!-- his收费确认  begin-->
+	<bean id="HisParamMgrImpl" class="com.pengsheng.eims.his.mgr.impl.HisParamMgrImpl" />
+	<bean id="hisParamMgr" parent="baseTransactionProxy">
+		<property name="target" ref="HisParamMgrImpl" />
+	</bean>
+	<!-- his收费确认  end-->
+	
+	<!-- his接口日志  begin-->
+	<bean id="HisLogPoMgrImpl" class="com.pengsheng.eims.his.mgr.impl.HisLogPoMgrImpl" />
+	<bean id="hisLogPoMgr" parent="baseTransactionProxy">
+		<property name="target" ref="HisLogPoMgrImpl" />
+	</bean>
+	<!-- his接口日志  end-->
+	
+</beans>

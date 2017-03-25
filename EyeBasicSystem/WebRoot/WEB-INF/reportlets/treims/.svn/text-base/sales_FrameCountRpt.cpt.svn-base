@@ -1,0 +1,868 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="endtime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begin"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT departmentID
+INTO   #salesDepartments
+FROM   Sales_createshopcodetab('${departmentid}')
+
+SELECT B_DP_DepartmentID                 AS ShopCode,
+       B_Departments.B_DP_DepartmentName AS DepartmentName,
+       Isnull(tempAll.SalseValue, 0)     AS SalseValue,
+       Isnull(tempAll.glasscount, 0)     AS glasscount,
+       Isnull(tempAll1.SalseValue, 0)    AS SalseValue1,
+       Isnull(tempAll1.glasscount, 0)    AS glasscount1,
+       Isnull(tempAll2.SalseValue, 0)    AS SalseValue2,
+       Isnull(tempAll2.glasscount, 0)    AS glasscount2,
+       Isnull(tempAll3.SalseValue, 0)    AS SalseValue3,
+       Isnull(tempAll3.glasscount, 0)    AS glasscount3
+FROM   B_Departments
+       --整副*************************************************************************
+       LEFT JOIN (SELECT S_SE_SB_ShopCode                        AS S_SE_SB_ShopCode,
+                         SUM(CAST(SalseValue AS NUMERIC(20, 2))) AS SalseValue,
+                         SUM(glasscount)                         AS glasscount
+                  FROM   (
+                         -- begin  ------------------------------------------------------------------
+                         SELECT S_SE_SB_ShopCode,
+                                COUNT(DISTINCT S_SE_SD_SalesID)                 AS glasscount,
+                                SUM(CAST(S_SE_SD_SalesValue AS NUMERIC(20, 2))) AS SalseValue
+                         FROM   uview_SalesDetail
+                                LEFT JOIN uview_SalesBasic
+                                  ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                     AND S_SE_SD_CommoditiesFlag IN ( '1', '3' )
+								Inner join B_goodsinfo on B_GI_GoodsID = S_SE_SD_SalesItemID
+                         WHERE  S_SE_Sb_SalesID NOT IN(SELECT S_SE_SD_SalesID
+                                                       FROM   uview_SalesDetail
+                                                              LEFT JOIN uview_SalesBasic
+                                                                ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                       WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) = 'ZZ'
+                                                              AND S_SE_SB_ValueFlag = '1'
+                                                              AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                                              AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) >= '${begintime}'
+                                                                     OR Isnull('${begintime}', '') = '' )
+                                                              AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) <= '${endtime}'
+                                                                     OR Isnull('${endtime}', '') = '' )
+                                                              AND ( CONVERT(VARCHAR(7), S_SE_SB_PosDatetime, 23) = '${begin}'
+                                                                     OR Isnull('${begin}', '') = '' )
+                                                       GROUP  BY S_SE_SD_SalesID)
+                                AND S_SE_SB_ValueFlag = '1'
+                                AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) >= '${begintime}'
+                                       OR Isnull('${begintime}', '') = '' )
+                                AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) <= '${endtime}'
+                                       OR Isnull('${endtime}', '') = '' )
+                                AND ( CONVERT(VARCHAR(7), S_SE_SB_PosDatetime, 23) = '${begin}'
+                                       OR Isnull('${begin}', '') = '' )
+                         GROUP  BY S_SE_SB_ShopCode
+                          -- end  ------------------------------------------------------------------
+                          UNION ALL
+                          -- BEGIN 退款 ------------------------------------------------------------------
+                          SELECT S_SE_SB_ShopCode,
+                                 -COUNT(DISTINCT S_SE_SD_SalesID)                 AS glasscount,
+                                 -SUM(CAST(S_SE_SD_SalesValue AS NUMERIC(20, 2))) AS SalseValue
+                          FROM   uview_SalesDetail
+                                 LEFT JOIN uview_SalesBasic
+                                   ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                      AND S_SE_SD_CommoditiesFlag IN ( '1', '3' )
+								 Inner join B_goodsinfo on B_GI_GoodsID = S_SE_SD_SalesItemID
+                          WHERE  S_SE_Sb_SalesID NOT IN(SELECT S_SE_SD_SalesID
+                                                        FROM   uview_SalesDetail
+                                                               LEFT JOIN uview_SalesBasic
+                                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                        WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) = 'ZZ'
+                                                               AND S_SE_SB_WithdrawFlag = '1'-- 退款表示1
+                                                               AND S_SE_SB_ValueFlag = '1'
+                                                               AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                                               AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) >= '${begintime}'
+                                                                      OR Isnull('${begintime}', '') = '' )
+                                                               AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) <= '${endtime}'
+                                                                      OR Isnull('${endtime}', '') = '' )
+                                                               AND ( CONVERT(VARCHAR(7), S_SE_SB_WithdrawDate, 23) = '${begin}'
+                                                                      OR Isnull('${begin}', '') = '' )
+                                                        GROUP  BY S_SE_SD_SalesID)
+                                 AND S_SE_SB_WithdrawFlag = '1'-- 退款表示1
+                                 AND S_SE_SB_ValueFlag = '1'
+                                 AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                 AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) >= '${begintime}'
+                                        OR Isnull('${begintime}', '') = '' )
+                                 AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) <= '${endtime}'
+                                        OR Isnull('${endtime}', '') = '' )
+                                 AND ( CONVERT(VARCHAR(7), S_SE_SB_WithdrawDate, 23) = '${begin}'
+                                        OR Isnull('${begin}', '') = '' )
+                          GROUP  BY S_SE_SB_ShopCode)temp0
+                  GROUP  BY S_SE_SB_ShopCode) tempAll
+         ON B_Departments.B_DP_DepartmentID = tempAll.S_SE_SB_ShopCode
+       --双片***********************************************************************
+       LEFT JOIN (SELECT S_SE_SB_ShopCode                        AS S_SE_SB_ShopCode,
+                         SUM(CAST(SalseValue AS NUMERIC(20, 2))) AS SalseValue,
+                         SUM(glasscount)                         AS glasscount
+                  FROM   (
+                         -- begin  ------------------------------------------------------------------
+                         SELECT S_SE_SB_ShopCode,
+                                SUM(CAST(S_SE_SD_SalesValue AS NUMERIC(20, 2))) AS SalseValue,
+                                COUNT(DISTINCT S_SE_SD_SalesID)                 AS glasscount
+                         FROM   uview_SalesDetail
+                                LEFT JOIN uview_SalesBasic
+                                  ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                     AND S_SE_SD_CommoditiesFlag IN ( '1', '3' )
+								Inner join B_goodsinfo on B_GI_GoodsID = S_SE_SD_SalesItemID
+                         WHERE  S_SE_Sb_SalesID NOT IN(SELECT S_SE_SD_SalesID AS SalesID
+                                                       FROM   uview_SalesDetail
+                                                              LEFT JOIN uview_SalesBasic
+                                                                ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                       WHERE  Substring(S_SE_SD_SalesItemID, 1, 4) = '3.ZZ'
+                                                              AND S_SE_SB_ValueFlag = '1'
+                                                              AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                                              AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) >= '${begintime}'
+                                                                     OR Isnull('${begintime}', '') = '' )
+                                                              AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) <= '${endtime}'
+                                                                     OR Isnull('${endtime}', '') = '' )
+                                                              AND ( CONVERT(VARCHAR(7), S_SE_SB_PosDatetime, 23) = '${begin}'
+                                                                     OR Isnull('${begin}', '') = '' )
+                                                       GROUP  BY S_SE_SD_SalesID)
+                                AND S_SE_Sb_SalesID IN(SELECT S_SE_SD_SalesID AS SalesID
+                                                       FROM   uview_SalesDetail
+                                                              LEFT JOIN uview_SalesBasic
+                                                                ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                       WHERE  Substring(S_SE_SD_SalesItemID, 1, 4) = '1.ZZ'
+                                                              AND S_SE_SB_ValueFlag = '1'
+                                                              AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                                              AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) >= '${begintime}'
+                                                                     OR Isnull('${begintime}', '') = '' )
+                                                              AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) <= '${endtime}'
+                                                                     OR Isnull('${endtime}', '') = '' )
+                                                              AND ( CONVERT(VARCHAR(7), S_SE_SB_PosDatetime, 23) = '${begin}'
+                                                                     OR Isnull('${begin}', '') = '' )
+                                                       GROUP  BY S_SE_SD_SalesID)
+                                AND S_SE_SB_ValueFlag = '1'
+                                AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) >= '${begintime}'
+                                       OR Isnull('${begintime}', '') = '' )
+                                AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) <= '${endtime}'
+                                       OR Isnull('${endtime}', '') = '' )
+                                AND ( CONVERT(VARCHAR(7), S_SE_SB_PosDatetime, 23) = '${begin}'
+                                       OR Isnull('${begin}', '') = '' )
+                         GROUP  BY S_SE_SB_ShopCode
+                          -- end  ------------------------------------------------------------------
+                          UNION ALL
+                          -- BEGIN 退款 ------------------------------------------------------------------
+                          SELECT S_SE_SB_ShopCode,
+                                 -SUM(CAST(S_SE_SD_SalesValue AS NUMERIC(20, 2))) AS SalseValue,
+                                 -COUNT(DISTINCT S_SE_SD_SalesID)                 AS glasscount
+                          FROM   uview_SalesDetail
+                                 LEFT JOIN uview_SalesBasic
+                                   ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                      AND S_SE_SD_CommoditiesFlag IN ( '1', '3' )
+								 Inner join B_goodsinfo on B_GI_GoodsID = S_SE_SD_SalesItemID
+                          WHERE  S_SE_Sb_SalesID NOT IN(SELECT S_SE_SD_SalesID AS SalesID
+                                                        FROM   uview_SalesDetail
+                                                               LEFT JOIN uview_SalesBasic
+                                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                        WHERE  Substring(S_SE_SD_SalesItemID, 1, 4) = '3.ZZ'
+                                                               AND S_SE_SB_WithdrawFlag = '1'-- 退款表示1
+                                                               AND S_SE_SB_ValueFlag = '1'
+                                                               AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                                               AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) >= '${begintime}'
+                                                                      OR Isnull('${begintime}', '') = '' )
+                                                               AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) <= '${endtime}'
+                                                                      OR Isnull('${endtime}', '') = '' )
+                                                               AND ( CONVERT(VARCHAR(7), S_SE_SB_WithdrawDate, 23) = '${begin}'
+                                                                      OR Isnull('${begin}', '') = '' )
+                                                        GROUP  BY S_SE_SD_SalesID)
+                                 AND S_SE_Sb_SalesID IN(SELECT S_SE_SD_SalesID AS SalesID
+                                                        FROM   uview_SalesDetail
+                                                               LEFT JOIN uview_SalesBasic
+                                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                        WHERE  Substring(S_SE_SD_SalesItemID, 1, 4) = '1.ZZ'
+                                                               AND S_SE_SB_ValueFlag = '1'
+                                                               AND S_SE_SB_WithdrawFlag = '1'-- 退款表示1
+                                                               AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                                               AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) >= '${begintime}'
+                                                                      OR Isnull('${begintime}', '') = '' )
+                                                               AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) <= '${endtime}'
+                                                                      OR Isnull('${endtime}', '') = '' )
+                                                               AND ( CONVERT(VARCHAR(7), S_SE_SB_WithdrawDate, 23) = '${begin}'
+                                                                      OR Isnull('${begin}', '') = '' )
+                                                        GROUP  BY S_SE_SD_SalesID)
+                                 AND S_SE_SB_ValueFlag = '1'
+                                 AND S_SE_SB_WithdrawFlag = '1'-- 退款表示1
+                                 AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) >= '${begintime}'
+                                        OR Isnull('${begintime}', '') = '' )
+                                 AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) <= '${endtime}'
+                                        OR Isnull('${endtime}', '') = '' )
+                                 AND ( CONVERT(VARCHAR(7), S_SE_SB_WithdrawDate, 23) = '${begin}'
+                                        OR Isnull('${begin}', '') = '' )
+                          GROUP  BY S_SE_SB_ShopCode
+                         -- end 退款 ------------------------------------------------------------------
+                         ) temp1
+                  GROUP  BY S_SE_SB_ShopCode) tempAll1
+         ON B_Departments.B_DP_DepartmentID = tempAll1.S_SE_SB_ShopCode
+       --单片*********************************************--------------------------------------------
+       LEFT JOIN (SELECT S_SE_SB_ShopCode                        AS S_SE_SB_ShopCode,
+                         SUM(CAST(SalseValue AS NUMERIC(20, 2))) AS SalseValue,
+                         SUM(glasscount)                         AS glasscount
+                  FROM   (
+                         -- begin  ------------------------------------------------------------------
+                         SELECT S_SE_SB_ShopCode,
+                                COUNT(DISTINCT S_SE_SD_SalesID)                 AS glasscount,
+                                SUM(CAST(S_SE_SD_SalesValue AS NUMERIC(20, 2))) AS SalseValue
+                         FROM   uview_SalesDetail
+                                LEFT JOIN uview_SalesBasic
+                                  ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                     AND S_SE_SD_CommoditiesFlag IN ( '1', '3' )
+								Inner join B_goodsinfo on B_GI_GoodsID = S_SE_SD_SalesItemID
+                         WHERE  S_SE_Sb_SalesID IN(SELECT SalesID
+                                                   FROM   (SELECT COUNT(DISTINCT S_SE_SD_SalesID) AS count1,
+                                                                  S_SE_SD_SalesID                 AS SalesID
+                                                           FROM   uview_SalesDetail
+                                                                  LEFT JOIN uview_SalesBasic
+                                                                    ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                           WHERE  Substring(S_SE_SD_SalesItemID, 1, 4) = '3.ZZ'
+                                                                  AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                                                  AND S_SE_SB_ValueFlag = '1'
+                                                                  AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) >= '${begintime}'
+                                                                         OR Isnull('${begintime}', '') = '' )
+                                                                  AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) <= '${endtime}'
+                                                                         OR Isnull('${endtime}', '') = '' )
+                                                                  AND ( CONVERT(VARCHAR(7), S_SE_SB_PosDatetime, 23) = '${begin}'
+                                                                         OR Isnull('${begin}', '') = '' )
+                                                           GROUP  BY S_SE_SD_SalesID)t
+                                                   WHERE  t.count1 = 1)
+                         GROUP  BY S_SE_SB_ShopCode
+                          -- end  ------------------------------------------------------------------
+                          UNION ALL
+                          -- BEGIN 退款 ------------------------------------------------------------------
+                          SELECT S_SE_SB_ShopCode,
+                                 -COUNT(DISTINCT S_SE_SD_SalesID)                 AS glasscount,
+                                 -SUM(CAST(S_SE_SD_SalesValue AS NUMERIC(20, 2))) AS SalseValue
+                          FROM   uview_SalesDetail
+                                 LEFT JOIN uview_SalesBasic
+                                   ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                      AND S_SE_SD_CommoditiesFlag IN ( '1', '3' )
+								 Inner join B_goodsinfo on B_GI_GoodsID = S_SE_SD_SalesItemID
+                          WHERE  S_SE_Sb_SalesID IN(SELECT SalesID
+                                                    FROM   (SELECT COUNT(DISTINCT S_SE_SD_SalesID) AS count1,
+                                                                   S_SE_SD_SalesID                 AS SalesID
+                                                            FROM   uview_SalesDetail
+                                                                   LEFT JOIN uview_SalesBasic
+                                                                     ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                            WHERE  Substring(S_SE_SD_SalesItemID, 1, 4) = '3.ZZ'
+                                                                   AND S_SE_SB_WithdrawFlag = '1'-- 退款表示1
+                                                                   AND S_SE_SB_ValueFlag = '1'
+                                                                   AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                                                   AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) >= '${begintime}'
+                                                                          OR Isnull('${begintime}', '') = '' )
+                                                                   AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) <= '${endtime}'
+                                                                          OR Isnull('${endtime}', '') = '' )
+                                                                   AND ( CONVERT(VARCHAR(7), S_SE_SB_WithdrawDate, 23) = '${begin}'
+                                                                          OR Isnull('${begin}', '') = '' )
+                                                            GROUP  BY S_SE_SD_SalesID)t
+                                                    WHERE  t.count1 = 1)
+                          GROUP  BY S_SE_SB_ShopCode
+                         -- end 退款 ------------------------------------------------------------------
+                         ) temp2
+                  GROUP  BY S_SE_SB_ShopCode) tempAll2
+         ON B_Departments.B_DP_DepartmentID = tempAll2.S_SE_SB_ShopCode
+       --单购镜架***********************************---------------------------------------------
+       LEFT JOIN (SELECT S_SE_SB_ShopCode                        AS S_SE_SB_ShopCode,
+                         SUM(CAST(SalseValue AS NUMERIC(20, 2))) AS SalseValue,
+                         SUM(glasscount)                         AS glasscount
+                  FROM   (SELECT S_SE_SB_ShopCode,
+                                 SUM(S_SE_SD_Number)                             AS glasscount,
+                                 SUM(CAST(S_SE_SD_SalesValue AS NUMERIC(20, 2))) AS SalseValue
+                          FROM   uview_SalesDetail
+                                 LEFT JOIN uview_SalesBasic
+                                   ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                      AND S_SE_SD_CommoditiesFlag IN ( '1', '3' )
+								 Inner join B_goodsinfo on B_GI_GoodsID = S_SE_SD_SalesItemID
+                          WHERE  S_SE_Sb_SalesID IN(SELECT SalesID
+                                                    FROM   (SELECT COUNT(DISTINCT S_SE_SD_SalesID) AS count1,
+                                                                   S_SE_SD_SalesID                 AS SalesID
+                                                            FROM   uview_SalesDetail
+                                                                   LEFT JOIN uview_SalesBasic
+                                                                     ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                            WHERE  Substring(S_SE_SD_SalesItemID, 1, 4) = '3.ZZ'
+                                                                   AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                                                   AND S_SE_SB_ValueFlag = '1'
+                                                                   AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) >= '${begintime}'
+                                                                          OR Isnull('${begintime}', '') = '' )
+                                                                   AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) <= '${endtime}'
+                                                                          OR Isnull('${endtime}', '') = '' )
+                                                                   AND ( CONVERT(VARCHAR(7), S_SE_SB_PosDatetime, 23) = '${begin}'
+                                                                          OR Isnull('${begin}', '') = '' )
+                                                            GROUP  BY S_SE_SD_SalesID)t
+                                                    WHERE  t.count1 = 2)
+                                 AND S_SE_Sb_SalesID IN(SELECT S_SE_SD_SalesID AS SalesID
+                                                        FROM   uview_SalesDetail
+                                                               LEFT JOIN uview_SalesBasic
+                                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                        WHERE  Substring(S_SE_SD_SalesItemID, 1, 4) <> '1.ZZ'
+                                                               AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                                               AND S_SE_SB_ValueFlag = '1'
+                                                               AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) >= '${begintime}'
+                                                                      OR Isnull('${begintime}', '') = '' )
+                                                               AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) <= '${endtime}'
+                                                                      OR Isnull('${endtime}', '') = '' )
+                                                               AND ( CONVERT(VARCHAR(7), S_SE_SB_PosDatetime, 23) = '${begin}'
+                                                                      OR Isnull('${begin}', '') = '' )
+                                                        GROUP  BY S_SE_SD_SalesID)
+                          GROUP  BY S_SE_SB_ShopCode
+                          -- end  ------------------------------------------------------------------
+                          UNION ALL
+                          -- BEGIN 退款 ------------------------------------------------------------------
+                          SELECT S_SE_SB_ShopCode,
+                                 -SUM(S_SE_SD_Number)                             AS glasscount,
+                                 -SUM(CAST(S_SE_SD_SalesValue AS NUMERIC(20, 2))) AS SalseValue
+                          FROM   uview_SalesDetail
+                                 LEFT JOIN uview_SalesBasic
+                                   ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                      AND S_SE_SD_CommoditiesFlag IN ( '1', '3' )
+								 Inner join B_goodsinfo on B_GI_GoodsID = S_SE_SD_SalesItemID
+                          WHERE  S_SE_Sb_SalesID IN(SELECT SalesID
+                                                    FROM   (SELECT COUNT(DISTINCT S_SE_SD_SalesID) AS count1,
+                                                                   S_SE_SD_SalesID                 AS SalesID
+                                                            FROM   uview_SalesDetail
+                                                                   LEFT JOIN uview_SalesBasic
+                                                                     ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                            WHERE  Substring(S_SE_SD_SalesItemID, 1, 4) = '3.ZZ'
+                                                                   AND S_SE_SB_WithdrawFlag = '1'-- 退款表示1
+                                                                   AND S_SE_SB_ValueFlag = '1'
+                                                                   AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                                                   AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) >= '${begintime}'
+                                                                          OR Isnull('${begintime}', '') = '' )
+                                                                   AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) <= '${endtime}'
+                                                                          OR Isnull('${endtime}', '') = '' )
+                                                                   AND ( CONVERT(VARCHAR(7), S_SE_SB_WithdrawDate, 23) = '${begin}'
+                                                                          OR Isnull('${begin}', '') = '' )
+                                                            GROUP  BY S_SE_SD_SalesID)t
+                                                    WHERE  t.count1 = 2)
+                                 AND S_SE_Sb_SalesID IN(SELECT S_SE_SD_SalesID AS SalesID
+                                                        FROM   uview_SalesDetail
+                                                               LEFT JOIN uview_SalesBasic
+                                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                        WHERE  Substring(S_SE_SD_SalesItemID, 1, 4) <> '1.ZZ'
+                                                               AND S_SE_SB_WithdrawFlag = '1'-- 退款表示1
+                                                               AND S_SE_SB_ValueFlag = '1'
+                                                               AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                                               AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) >= '${begintime}'
+                                                                      OR Isnull('${begintime}', '') = '' )
+                                                               AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) <= '${endtime}'
+                                                                      OR Isnull('${endtime}', '') = '' )
+                                                               AND ( CONVERT(VARCHAR(7), S_SE_SB_WithdrawDate, 23) = '${begin}'
+                                                                      OR Isnull('${begin}', '') = '' )
+                                                        GROUP  BY S_SE_SD_SalesID)
+                          GROUP  BY S_SE_SB_ShopCode
+                          UNION ALL
+                          SELECT S_SE_SB_ShopCode,
+                                 SUM(S_SE_SD_Number)                             AS glasscount,
+                                 SUM(CAST(S_SE_SD_SalesValue AS NUMERIC(20, 2))) AS SalseValue
+                          FROM   uview_SalesDetail
+                                 LEFT JOIN uview_SalesBasic
+                                   ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                      AND S_SE_SD_CommoditiesFlag IN ( '1', '3' )
+								 Inner join B_goodsinfo on B_GI_GoodsID = S_SE_SD_SalesItemID
+                          WHERE  S_SE_Sb_SalesID IN(SELECT S_SE_SD_SalesID
+                                                    FROM   uview_SalesDetail
+                                                           LEFT JOIN uview_SalesBasic
+                                                             ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                    WHERE  1 = 1
+                                                           AND S_SE_SB_OrdersType IN ( '5' )
+                                                           AND S_SE_SB_ValueFlag = '1'
+                                                           AND S_SE_SD_CommoditiesFlag = '1'
+                                                           AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) >= '${begintime}'
+                                                                  OR Isnull('${begintime}', '') = '' )
+                                                           AND ( CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) <= '${endtime}'
+                                                                  OR Isnull('${endtime}', '') = '' )
+                                                           AND ( CONVERT(VARCHAR(7), S_SE_SB_PosDatetime, 23) = '${begin}'
+                                                                  OR Isnull('${begin}', '') = '' )
+                                                    GROUP  BY S_SE_SD_SalesID)
+                          GROUP  BY S_SE_SB_ShopCode
+                          UNION ALL
+                          SELECT S_SE_SB_ShopCode,
+                                 -SUM(S_SE_SD_Number)                             AS glasscount,
+                                 -SUM(CAST(S_SE_SD_SalesValue AS NUMERIC(20, 2))) AS SalseValue
+                          FROM   uview_SalesBasic
+                                 LEFT JOIN uview_SalesDetail
+                                   ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                      AND S_SE_SD_CommoditiesFlag IN ( '1', '3' )
+								 Inner join B_goodsinfo on B_GI_GoodsID = S_SE_SD_SalesItemID
+                          WHERE  S_SE_Sb_SalesID IN(SELECT S_SE_SD_SalesID
+                                                    FROM   uview_SalesDetail
+                                                           LEFT JOIN uview_SalesBasic
+                                                             ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                                    WHERE  1 = 1
+                                                           AND S_SE_SB_WithdrawFlag = '1'-- 退款表示1
+                                                           AND S_SE_SB_OrdersType IN ( '5' )
+                                                           AND S_SE_SB_ValueFlag = '1'
+                                                           AND S_SE_SD_CommoditiesFlag = '1'
+                                                           AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) >= '${begintime}'
+                                                                  OR Isnull('${begintime}', '') = '' )
+                                                           AND ( CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 23) <= '${endtime}'
+                                                                  OR Isnull('${endtime}', '') = '' )
+                                                           AND ( CONVERT(VARCHAR(7), S_SE_SB_WithdrawDate, 23) = '${begin}'
+                                                                  OR Isnull('${begin}', '') = '' )
+                                                    GROUP  BY S_SE_SD_SalesID)
+                          GROUP  BY S_SE_SB_ShopCode
+                         -- end 退款 ------------------------------------------------------------------
+                         ) temp3
+                  GROUP  BY S_SE_SB_ShopCode) tempAll3
+         ON B_Departments.B_DP_DepartmentID = tempAll3.S_SE_SB_ShopCode
+WHERE  B_DP_Type = '1'
+       AND ( ( Isnull('${departmentid}', '') <> ''
+               AND B_DP_DepartmentID IN (SELECT departmentID
+                                         FROM   #salesDepartments) )
+              OR Isnull('${departmentid}', '') = '' )
+ORDER  BY B_Departments.B_DP_DepartmentID
+
+DROP TABLE #salesDepartments ]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="4"/>
+<FR/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1028700,1440000,914400,914400,914400,914400,914400,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[3771900,2592000,3600000,2592000,3600000,2592000,3600000,2592000,3600000,2743200,4320000,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="11" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" cs="11" s="1">
+<O>
+<![CDATA[框镜统计表]]></O>
+<Expand/>
+</C>
+<C c="0" r="2" s="2">
+<O>
+<![CDATA[日期：]]></O>
+<Expand/>
+</C>
+<C c="1" r="2" cs="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime + "~" + $endtime]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="3" rs="2" s="3">
+<O>
+<![CDATA[门店]]></O>
+<Expand/>
+</C>
+<C c="1" r="3" cs="2" s="3">
+<O>
+<![CDATA[整副]]></O>
+<Expand/>
+</C>
+<C c="3" r="3" cs="2" s="3">
+<O>
+<![CDATA[双片]]></O>
+<Expand/>
+</C>
+<C c="5" r="3" cs="2" s="3">
+<O>
+<![CDATA[单片]]></O>
+<Expand/>
+</C>
+<C c="7" r="3" cs="2" s="3">
+<O>
+<![CDATA[辅料镜架]]></O>
+<Expand/>
+</C>
+<C c="9" r="3" cs="2" s="4">
+<O>
+<![CDATA[合计]]></O>
+<Expand/>
+</C>
+<C c="1" r="4" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="2" r="4" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="3" r="4" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="4" r="4" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="5" r="4" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="6" r="4" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="7" r="4" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="8" r="4" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="9" r="4" s="4">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="10" r="4" s="4">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="0" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="DepartmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="glasscount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="SalseValue"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="glasscount1"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="SalseValue1"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="glasscount2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="SalseValue2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="glasscount3"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="5" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="SalseValue3"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=b6+d6+f6+h6]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(c6+e6+g6+i6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="6" s="7">
+<O>
+<![CDATA[合计：]]></O>
+<Expand/>
+</C>
+<C c="1" r="6" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(B6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="6" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(C6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="6" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(D6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="6" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(E6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="6" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="6" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(G6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="6" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="6" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(I6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="6" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(j6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="6" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(k6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="7">
+<Expand/>
+</C>
+<C c="3" r="7">
+<Expand dir="1"/>
+</C>
+<C c="0" r="10">
+<O>
+<![CDATA[]]></O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1"/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="108"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

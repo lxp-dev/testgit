@@ -1,0 +1,969 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select S_ME_CI_Name,       --顾客名称
+S_ME_CI_Phone ,            --电话
+S_ME_CI_MemberId,          --会员卡号
+S_SE_SB_SalesID,           --销售单号
+a.personName as posName,   --收银人员
+b.personName as salerName, --销售人员
+c.personName as opterName, --验光人员
+S_SE_SB_PriceSum,          --原价合计
+S_SE_SB_DiscountNum,       --折扣金额  
+S_SE_SB_SalesValue,        --应收金额 
+S_SE_SB_Psalsvalue,
+S_SE_SB_ArrearsValue,
+f.B_DP_DepartmentName as ShopName,   --销售门店  
+f.B_DP_Phone as Phone,               --联系电话
+f.B_DP_Address as bdpaddress,        --取镜地址
+g.S_SE_TM_MaiilAddress as Address ,  --邮寄地址
+f.B_DP_FullName as fullname,
+CONVERT(varchar(16), S_SE_SB_FactPosDatetime, 20) as S_SE_SB_FactPosDatetime,     --收银日期 
+CONVERT(varchar(16), S_SE_SB_TakeGlassData, 20) as S_SE_SB_TakeGlassData, --取镜日期
+case when S_SE_SB_OrdersType='2' then '定做' when S_SE_SB_OrdersType='4' then '定做' else ''  end as S_SE_SB_OrdersType,    --订单类型
+case when S_SE_SB_OrdersType='1' then '配装眼镜' when S_SE_SB_OrdersType='2' then '配装眼镜' else ''  end as S_SE_SB_OrdersType2,    --配装眼镜
+case when S_SE_SB_RecipeType='4' then '曲率' when rtrim(ltrim(S_SE_SB_ADDOD))<>'' then '下加' when rtrim(ltrim(S_SE_SB_ADDOS))<>'' then '下加'  when rtrim(ltrim(S_SE_SB_ArriseGlassOS1))<>'' then '斜视' when rtrim(ltrim(S_SE_SB_ArriseGlassOD1))<>'' then '斜视' else '' end as RecipeType2,    --曲率ADD斜视
+case when S_SE_SB_RecipeType='1' then '远用' when S_SE_SB_RecipeType='2' then '近用' when S_SE_SB_RecipeType='3' then '渐进/双光' when S_SE_SB_RecipeType='4' then '隐形' end as recipeType,
+S_SE_SB_RecipeType,     --处方形式
+d.B_DP_DepartmentName,  --取镜地点
+S_SE_SB_ArriseGlassOD1, --右眼三棱镜
+S_SE_SB_ArriseGlassOS1, --左眼三棱镜 
+S_SE_SB_ADDOD,          --右眼add 
+S_SE_SB_ADDOS,          --左眼add  
+c.S_OP_IP_DignosisRe    --检查结论备注
+ from S_SE_SalesBasic
+inner join S_ME_CustomerInfo on S_SE_SB_CustomerID=S_ME_CI_CustomerID
+left join (select ID,personName from SYS_PersonInfo)a on S_SE_SB_PosID=a.ID
+left join (select ID,personName from SYS_PersonInfo)b on S_SE_SB_SalerID=b.ID
+left join (select ID,personName,i.S_OP_IP_ID,i.S_OP_IP_DignosisRe from SYS_PersonInfo inner join 
+(select S_OP_IP_UserName,S_OP_IP_ID,S_OP_IP_DignosisRe from S_OP_Inspection)i on ID=i.S_OP_IP_UserName)c on c.S_OP_IP_ID=S_SE_SB_InspectionID
+left join (select B_DP_DepartmentID,B_DP_DepartmentName from B_Departments)d on S_SE_SB_Location=d.B_DP_DepartmentID
+left join (select B_DP_DepartmentID,B_DP_DepartmentName,B_DP_Phone,B_DP_Address,B_DP_FullName from B_Departments)f on S_SE_SalesBasic.S_SE_SB_ShopCode=f.B_DP_DepartmentID
+left join (select S_SE_TM_MailID,S_SE_TM_CustomerID,S_SE_TM_CustomerName,S_SE_TM_CustomerPhone,S_SE_TM_MailCompanyName,S_SE_TM_LinkSalesID,S_SE_TM_MaiilAddress from S_SE_ToMail)g on S_SE_SalesBasic.S_SE_SB_SalesID=g.S_SE_TM_LinkSalesID
+left join (select P_CH_CK_SalesId,P_CH_CK_ProcessPersonID from P_CH_Check)h on S_SE_SalesBasic.S_SE_SB_SalesID=h.P_CH_CK_SalesId 
+where S_SE_SB_SalesID='${salesID}' 
+and S_SE_SB_ValueFlag='1'
+AND ((S_SE_SB_CheckoutFlag = '1' AND S_SE_SB_WithdrawFlag <> '1') OR (S_SE_SB_WithdrawFlag = '1' AND S_SE_SB_CheckoutFlag = '0'))
+union all 
+
+select S_ME_CI_Name,       --顾客名称
+S_ME_CI_Phone ,            --电话
+S_ME_CI_MemberId,          --会员卡号
+S_SE_SB_SalesID,           --销售单号
+a.personName as posName,   --收银人员
+b.personName as salerName, --销售人员
+c.personName as opterName, --验光人员
+S_SE_SB_PriceSum,          --原价合计
+S_SE_SB_DiscountNum,       --折扣金额  
+S_SE_SB_SalesValue,        --应收金额 
+S_SE_SB_Psalsvalue,
+S_SE_SB_ArrearsValue,
+f.B_DP_DepartmentName as ShopName,   --销售门店  
+f.B_DP_Phone as Phone,               --联系电话
+f.B_DP_Address as bdpaddress,        --取镜地址
+g.S_SE_TM_MaiilAddress as Address ,  --邮寄地址
+f.B_DP_FullName as fullname,
+CONVERT(varchar(16), S_SE_SB_FactPosDatetime, 20) as S_SE_SB_FactPosDatetime,     --收银日期 
+CONVERT(varchar(16), S_SE_SB_TakeGlassData, 20) as S_SE_SB_TakeGlassData, --取镜日期
+case when S_SE_SB_OrdersType='2' then '定做' when S_SE_SB_OrdersType='4' then '定做' else ''  end as S_SE_SB_OrdersType,    --订单类型
+case when S_SE_SB_OrdersType='1' then '配装眼镜' when S_SE_SB_OrdersType='2' then '配装眼镜' else ''  end as S_SE_SB_OrdersType2,    --配装眼镜
+case when S_SE_SB_RecipeType='4' then '曲率' when rtrim(ltrim(S_SE_SB_ADDOD))<>'' then '下加' when rtrim(ltrim(S_SE_SB_ADDOS))<>'' then '下加'  when rtrim(ltrim(S_SE_SB_ArriseGlassOS1))<>'' then '斜视' when rtrim(ltrim(S_SE_SB_ArriseGlassOD1))<>'' then '斜视' else '' end as RecipeType2,    --曲率ADD斜视
+case when S_SE_SB_RecipeType='1' then '远用' when S_SE_SB_RecipeType='2' then '近用' when S_SE_SB_RecipeType='3' then '渐进/双光' when S_SE_SB_RecipeType='4' then '隐形' end as recipeType,
+S_SE_SB_RecipeType,     --处方形式
+d.B_DP_DepartmentName,  --取镜地点
+S_SE_SB_ArriseGlassOD1, --右眼三棱镜
+S_SE_SB_ArriseGlassOS1, --左眼三棱镜 
+S_SE_SB_ADDOD,          --右眼add 
+S_SE_SB_ADDOS,          --左眼add  
+c.S_OP_IP_DignosisRe    --检查结论备注
+ from S_SE_SalesBasic_Finished
+inner join S_ME_CustomerInfo on S_SE_SB_CustomerID=S_ME_CI_CustomerID
+left join (select ID,personName from SYS_PersonInfo)a on S_SE_SB_PosID=a.ID
+left join (select ID,personName from SYS_PersonInfo)b on S_SE_SB_SalerID=b.ID
+left join (select ID,personName,i.S_OP_IP_ID,i.S_OP_IP_DignosisRe from SYS_PersonInfo inner join 
+(select S_OP_IP_UserName,S_OP_IP_ID,S_OP_IP_DignosisRe from S_OP_Inspection)i on ID=i.S_OP_IP_UserName)c on c.S_OP_IP_ID=S_SE_SB_InspectionID
+left join (select B_DP_DepartmentID,B_DP_DepartmentName from B_Departments)d on S_SE_SB_Location=d.B_DP_DepartmentID
+left join (select B_DP_DepartmentID,B_DP_DepartmentName,B_DP_Phone,B_DP_Address,B_DP_FullName from B_Departments)f on S_SE_SalesBasic_Finished.S_SE_SB_ShopCode=f.B_DP_DepartmentID
+left join (select S_SE_TM_MailID,S_SE_TM_CustomerID,S_SE_TM_CustomerName,S_SE_TM_CustomerPhone,S_SE_TM_MailCompanyName,S_SE_TM_LinkSalesID,S_SE_TM_MaiilAddress from S_SE_ToMail)g on S_SE_SalesBasic_Finished.S_SE_SB_SalesID=g.S_SE_TM_LinkSalesID
+left join (select P_CH_CK_SalesId,P_CH_CK_ProcessPersonID from P_CH_Check)h on S_SE_SalesBasic_Finished.S_SE_SB_SalesID=h.P_CH_CK_SalesId 
+where S_SE_SB_SalesID='${salesID}' 
+and S_SE_SB_ValueFlag='1'
+AND ((S_SE_SB_CheckoutFlag = '1' AND S_SE_SB_WithdrawFlag <> '1') OR (S_SE_SB_WithdrawFlag = '1' AND S_SE_SB_CheckoutFlag = '0'))
+]]></Query>
+</TableData>
+<TableData name="ds2OD" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 
+B_GI_GoodsName AS GoodsName,
+cast(S_SE_SD_Number as varchar(10)) as S_SE_SD_Number,
+S_SE_SD_PriceSum,
+S_SE_SB_BallGlassOD,
+S_SE_SB_PostGlassOD,
+S_SE_SB_AxesOD,
+S_SE_SB_ADDOD,
+S_SE_SB_ArriseGlassOD1,
+S_SE_SB_BasisOD1,
+S_SE_SB_InterHighOD,
+case when S_SE_SB_RecipeType='4' then S_SE_SB_DiameterOD when S_SE_SB_RecipeType='2' then S_SE_SB_InterDistanceOD  else S_SE_SB_InterHighOD  end as S_SE_SB_RecipeType4,--瞳距
+S_SE_SB_InterDistanceOD,
+S_SE_SB_EyeCurvatureOD1,
+case when S_SE_SB_RecipeType='4' then S_SE_SB_EyeCurvatureOD1 when S_SE_SB_ADDOD<>'' then S_SE_SB_ADDOD when S_SE_SB_ArriseGlassOD1<>'' then S_SE_SB_ArriseGlassOD1 else S_SE_SB_BasisOD1  end as S_SE_SB_RecipeType2,
+
+S_SE_SB_DiameterOD 
+from S_SE_SalesDetail
+inner join B_GoodsInfo on S_SE_SD_SalesItemID=B_GI_GoodsID
+inner join S_SE_SalesBasic on S_SE_SB_SalesID=S_SE_SD_SalesID
+where S_SE_SD_SalesID='${salesID}'
+and (S_SE_SD_CommoditiesFlag='3' or S_SE_SD_CommoditiesFlag='4')
+and S_SE_SD_GlassFlag='R'
+and S_SE_SB_ValueFlag='1'
+AND ((S_SE_SB_CheckoutFlag = '1' AND S_SE_SB_WithdrawFlag <> '1') OR (S_SE_SB_WithdrawFlag = '1' AND S_SE_SB_CheckoutFlag = '0'))
+
+union all
+select top 1 
+B_GI_GoodsName AS GoodsName,
+cast(S_SE_SD_Number as varchar(10)) as S_SE_SD_Number,
+S_SE_SD_PriceSum,
+S_SE_SB_BallGlassOD,
+S_SE_SB_PostGlassOD,
+S_SE_SB_AxesOD,
+S_SE_SB_ADDOD,
+S_SE_SB_ArriseGlassOD1,
+S_SE_SB_BasisOD1,
+S_SE_SB_InterHighOD,
+case when S_SE_SB_RecipeType='4' then S_SE_SB_DiameterOD when S_SE_SB_RecipeType='2' then S_SE_SB_InterDistanceOD  else S_SE_SB_InterHighOD  end as S_SE_SB_RecipeType4,--瞳距
+S_SE_SB_InterDistanceOD,
+S_SE_SB_EyeCurvatureOD1,
+case when S_SE_SB_RecipeType='4' then S_SE_SB_EyeCurvatureOD1 when S_SE_SB_ADDOD<>'' then S_SE_SB_ADDOD when S_SE_SB_ArriseGlassOD1<>'' then S_SE_SB_ArriseGlassOD1 else S_SE_SB_BasisOD1  end as S_SE_SB_RecipeType2,
+
+S_SE_SB_DiameterOD 
+from S_SE_SalesDetail_Finished
+inner join B_GoodsInfo on S_SE_SD_SalesItemID=B_GI_GoodsID
+inner join S_SE_SalesBasic_Finished on S_SE_SB_SalesID=S_SE_SD_SalesID
+where S_SE_SD_SalesID='${salesID}'
+and (S_SE_SD_CommoditiesFlag='3' or S_SE_SD_CommoditiesFlag='4')
+and S_SE_SD_GlassFlag='R'
+and S_SE_SB_ValueFlag='1'
+AND ((S_SE_SB_CheckoutFlag = '1' AND S_SE_SB_WithdrawFlag <> '1') OR (S_SE_SB_WithdrawFlag = '1' AND S_SE_SB_CheckoutFlag = '0'))]]></Query>
+</TableData>
+<TableData name="ds2OS" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 
+B_GI_GoodsName AS GoodsName,
+cast(S_SE_SD_Number as varchar(10)) as S_SE_SD_Number,
+S_SE_SD_PriceSum,
+S_SE_SB_BallGlassOS,
+S_SE_SB_PostGlassOS,
+S_SE_SB_AxesOS,
+S_SE_SB_ADDOS,
+S_SE_SB_ArriseGlassOS1,
+S_SE_SB_BasisOS1,
+S_SE_SB_InterHighOS,
+case when S_SE_SB_RecipeType='4' then S_SE_SB_DiameterOS when S_SE_SB_RecipeType='2' then S_SE_SB_InterDistanceOS  else S_SE_SB_InterHighOS  end as S_SE_SB_RecipeType5,--瞳距
+S_SE_SB_InterDistanceOS,
+S_SE_SB_EyeCurvatureOS1,
+case when S_SE_SB_RecipeType='4' then S_SE_SB_EyeCurvatureOS1 when S_SE_SB_ADDOS<>'' then S_SE_SB_ADDOS when S_SE_SB_ArriseGlassOS1<>'' then S_SE_SB_ArriseGlassOS1 else S_SE_SB_BasisOS1  end as S_SE_SB_RecipeType3,
+
+S_SE_SB_DiameterOS 
+from S_SE_SalesDetail
+inner join B_GoodsInfo on S_SE_SD_SalesItemID=B_GI_GoodsID
+inner join S_SE_SalesBasic on S_SE_SB_SalesID=S_SE_SD_SalesID
+where S_SE_SD_SalesID='${salesID}'
+and (S_SE_SD_CommoditiesFlag='3' or S_SE_SD_CommoditiesFlag='4')
+and S_SE_SD_GlassFlag='L'
+and S_SE_SB_ValueFlag='1'
+AND ((S_SE_SB_CheckoutFlag = '1' AND S_SE_SB_WithdrawFlag <> '1') OR (S_SE_SB_WithdrawFlag = '1' AND S_SE_SB_CheckoutFlag = '0'))
+union all 
+select top 1 
+B_GI_GoodsName AS GoodsName,
+cast(S_SE_SD_Number as varchar(10)) as S_SE_SD_Number,
+S_SE_SD_PriceSum,
+S_SE_SB_BallGlassOS,
+S_SE_SB_PostGlassOS,
+S_SE_SB_AxesOS,
+S_SE_SB_ADDOS,
+S_SE_SB_ArriseGlassOS1,
+S_SE_SB_BasisOS1,
+S_SE_SB_InterHighOS,
+case when S_SE_SB_RecipeType='4' then S_SE_SB_DiameterOS when S_SE_SB_RecipeType='2' then S_SE_SB_InterDistanceOS  else S_SE_SB_InterHighOS  end as S_SE_SB_RecipeType5,--瞳距
+S_SE_SB_InterDistanceOS,
+S_SE_SB_EyeCurvatureOS1,
+case when S_SE_SB_RecipeType='4' then S_SE_SB_EyeCurvatureOS1 when S_SE_SB_ADDOS<>'' then S_SE_SB_ADDOS when S_SE_SB_ArriseGlassOS1<>'' then S_SE_SB_ArriseGlassOS1 else S_SE_SB_BasisOS1  end as S_SE_SB_RecipeType3,
+
+S_SE_SB_DiameterOS 
+from S_SE_SalesDetail_Finished
+inner join B_GoodsInfo on S_SE_SD_SalesItemID=B_GI_GoodsID
+inner join S_SE_SalesBasic_Finished on S_SE_SB_SalesID=S_SE_SD_SalesID
+where S_SE_SD_SalesID='${salesID}'
+and (S_SE_SD_CommoditiesFlag='3' or S_SE_SD_CommoditiesFlag='4')
+and S_SE_SD_GlassFlag='L'
+and S_SE_SB_ValueFlag='1'
+AND ((S_SE_SB_CheckoutFlag = '1' AND S_SE_SB_WithdrawFlag <> '1') OR (S_SE_SB_WithdrawFlag = '1' AND S_SE_SB_CheckoutFlag = '0'))]]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select TOP 1 
+(B_GI_GoodsName+'  '+isnull(B_GI_Spec,'')+'    '+isnull(B_GI_Color,'')+'   '+ isnull(F_TT_Name,'')) AS GoodsName,
+cast(S_SE_SD_Number as varchar(10)) as S_SE_SD_Number,
+S_SE_SD_PriceSum 
+from S_SE_SalesDetail
+inner join B_GoodsInfo on S_SE_SD_SalesItemID=B_GI_GoodsID
+inner join S_SE_SalesBasic on S_SE_SB_SalesID=S_SE_SD_SalesID
+left join F_TechnologyType on B_GI_frameProcessCraftType=F_TT_ID
+where S_SE_SD_SalesID='${salesID}' 
+and S_SE_SD_CommoditiesFlag in ('1','6','8')
+and S_SE_SB_ValueFlag='1'
+AND ((S_SE_SB_CheckoutFlag = '1' AND S_SE_SB_WithdrawFlag <> '1') OR (S_SE_SB_WithdrawFlag = '1' AND S_SE_SB_CheckoutFlag = '0'))
+union all 
+select TOP 1 
+(B_GI_GoodsName+'  '+isnull(B_GI_Spec,'')+'    '+isnull(B_GI_Color,'')+'   '+ isnull(F_TT_Name,'')) AS GoodsName,
+cast(S_SE_SD_Number as varchar(10)) as S_SE_SD_Number,
+S_SE_SD_PriceSum 
+from S_SE_SalesDetail_Finished
+inner join B_GoodsInfo on S_SE_SD_SalesItemID=B_GI_GoodsID
+inner join S_SE_SalesBasic_Finished on S_SE_SB_SalesID=S_SE_SD_SalesID
+left join F_TechnologyType on B_GI_frameProcessCraftType=F_TT_ID
+where S_SE_SD_SalesID='${salesID}' 
+and S_SE_SD_CommoditiesFlag in ('1','6','8')
+and S_SE_SB_ValueFlag='1'
+AND ((S_SE_SB_CheckoutFlag = '1' AND S_SE_SB_WithdrawFlag <> '1') OR (S_SE_SB_WithdrawFlag = '1' AND S_SE_SB_CheckoutFlag = '0'))]]></Query>
+</TableData>
+<TableData name="ds4" class="com.fr.data.impl.DBTableData">
+<Parameters/>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select * from dbo.F_CompanyName]]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.FlashPrint">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Utils-Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.SetPrinterOffset">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('SetPrinterOffset')}]]></Text>
+<IconName>
+<![CDATA[setprinteroffset]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="false" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[838200,114300,876300,762000,1028700,1104900,1066800,1066800,1066800,1028700,1066800,1295400,495300,864000,864000,864000,864000,864000,647700,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[1257300,1409700,1600200,495300,2133600,2400300,457200,1333500,1524000,838200,2476500,3238500,2209800,1905000,2133600,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="3" r="1">
+<Expand/>
+</C>
+<C c="4" r="1">
+<Expand/>
+</C>
+<C c="3" r="2" cs="8" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="2" cs="4" s="1">
+<O>
+<![CDATA[  预交定金收据]]></O>
+<Expand/>
+</C>
+<C c="1" r="3" cs="2" s="2">
+<O>
+<![CDATA[销售门店：]]></O>
+<Expand/>
+</C>
+<C c="3" r="3" cs="5" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="ShopName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="3" s="2">
+<Expand/>
+</C>
+<C c="10" r="3" s="2">
+<Expand dir="0"/>
+</C>
+<C c="11" r="3" s="2">
+<Expand/>
+</C>
+<C c="12" r="3" s="2">
+<Expand/>
+</C>
+<C c="13" r="3" s="2">
+<Expand/>
+</C>
+<C c="1" r="4" cs="2" s="4">
+<O>
+<![CDATA[顾客姓名]]></O>
+<Expand/>
+</C>
+<C c="3" r="4" cs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_ME_CI_Name"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="4" cs="2" s="4">
+<O>
+<![CDATA[电话]]></O>
+<Expand/>
+</C>
+<C c="8" r="4" cs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_ME_CI_Phone"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="4" s="4">
+<O>
+<![CDATA[配镜单号]]></O>
+<Expand/>
+</C>
+<C c="12" r="4" cs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_SB_SalesID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="5" s="6">
+<Expand/>
+</C>
+<C c="1" r="5" cs="2" s="4">
+<O>
+<![CDATA[定做/成品]]></O>
+<Expand/>
+</C>
+<C c="3" r="5" cs="2" s="4">
+<O>
+<![CDATA[球镜]]></O>
+<Expand/>
+</C>
+<C c="5" r="5" s="4">
+<O>
+<![CDATA[柱镜]]></O>
+<Expand/>
+</C>
+<C c="6" r="5" cs="2" s="4">
+<O>
+<![CDATA[轴向]]></O>
+<Expand/>
+</C>
+<C c="8" r="5" cs="2" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="RecipeType2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="5" s="4">
+<O>
+<![CDATA[瞳距]]></O>
+<Expand/>
+</C>
+<C c="11" r="5" s="4">
+<O>
+<![CDATA[种类]]></O>
+<Expand/>
+</C>
+<C c="12" r="5" cs="3" s="4">
+<O>
+<![CDATA[金额（元）]]></O>
+<Expand/>
+</C>
+<C c="1" r="6" rs="2" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="recipeType"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="6" s="4">
+<O>
+<![CDATA[右]]></O>
+<Expand/>
+</C>
+<C c="3" r="6" cs="2" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds2OD" columnName="S_SE_SB_BallGlassOD"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="6" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds2OD" columnName="S_SE_SB_PostGlassOD"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="6" cs="2" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds2OD" columnName="S_SE_SB_AxesOD"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="6" cs="2" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds2OD" columnName="S_SE_SB_RecipeType2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="6" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds2OD" columnName="S_SE_SB_RecipeType4"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2OD" columnName="GoodsName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="0"/>
+</C>
+<C c="12" r="6" cs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds2OD" columnName="S_SE_SD_PriceSum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="7" s="4">
+<O>
+<![CDATA[左]]></O>
+<Expand/>
+</C>
+<C c="3" r="7" cs="2" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds2OS" columnName="S_SE_SB_BallGlassOS"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="7" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds2OS" columnName="S_SE_SB_PostGlassOS"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="7" cs="2" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds2OS" columnName="S_SE_SB_AxesOS"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="7" cs="2" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds2OS" columnName="S_SE_SB_RecipeType3"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="7" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds2OS" columnName="S_SE_SB_RecipeType5"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="7" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds2OS" columnName="GoodsName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="0"/>
+</C>
+<C c="12" r="7" cs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds2OS" columnName="S_SE_SD_PriceSum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="8" cs="3" s="4">
+<O>
+<![CDATA[金属架/胶架]]></O>
+<Expand/>
+</C>
+<C c="4" r="8" cs="7" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="GoodsName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="8" s="10">
+<Expand/>
+</C>
+<C c="12" r="8" cs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="S_SE_SD_PriceSum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="9" cs="2" s="4">
+<O>
+<![CDATA[配镜时间]]></O>
+<Expand/>
+</C>
+<C c="3" r="9" cs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_SB_FactPosDatetime"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="9" cs="3" s="4">
+<O>
+<![CDATA[营业员/柜组]]></O>
+<Expand/>
+</C>
+<C c="9" r="9" cs="2" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="salerName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="9" s="4">
+<O>
+<![CDATA[应收金额]]></O>
+<Expand/>
+</C>
+<C c="12" r="9" cs="3" s="11">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_SB_SalesValue"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="10" cs="2" s="4">
+<O>
+<![CDATA[取镜时间]]></O>
+<Expand/>
+</C>
+<C c="3" r="10" cs="3" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_SB_TakeGlassData"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="10" cs="3" s="4">
+<O>
+<![CDATA[预收经手人]]></O>
+<Expand/>
+</C>
+<C c="9" r="10" cs="2" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="posName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="10" s="4">
+<O>
+<![CDATA[预收金额]]></O>
+<Expand/>
+</C>
+<C c="12" r="10" cs="3" s="11">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_SB_Psalsvalue"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="11" cs="2" s="4">
+<O>
+<![CDATA[补缴款时间]]></O>
+<Expand/>
+</C>
+<C c="3" r="11" cs="3" s="10">
+<Expand/>
+</C>
+<C c="6" r="11" cs="3" s="4">
+<O>
+<![CDATA[补收经手人]]></O>
+<Expand/>
+</C>
+<C c="9" r="11" cs="2" s="10">
+<Expand/>
+</C>
+<C c="11" r="11" s="4">
+<O>
+<![CDATA[欠缴金额]]></O>
+<Expand/>
+</C>
+<C c="12" r="11" cs="3" s="11">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_SB_ArrearsValue"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="13" cs="13" s="12">
+<O>
+<![CDATA[注：1）预收定金金额不得低于所配眼镜全部镜片的50%。]]></O>
+<Expand/>
+</C>
+<C c="14" r="13" s="12">
+<Expand/>
+</C>
+<C c="1" r="14" cs="14" s="12">
+<O>
+<![CDATA[    2）顾客在补交齐所欠金额后，需凭此收据换取取镜单取镜。双方需妥善保管本收据。]]></O>
+<Expand/>
+</C>
+<C c="1" r="15" cs="14" s="12">
+<O>
+<![CDATA[    3）根据国家有关法律规定，超多取镜日期三个月，顾客仍未交纳商品全款余额，我中心将]]></O>
+<Expand/>
+</C>
+<C c="1" r="16" cs="14" s="12">
+<O>
+<![CDATA[    不再向顾客交付镜架镜片（自带镜架或镜片除外），定金不予退还。]]></O>
+<Expand/>
+</C>
+<C c="1" r="17" cs="14" s="12">
+<O>
+<![CDATA[    如您同意并遵守本协议，请您签字认可。]]></O>
+<Expand/>
+</C>
+<C c="1" r="18" s="12">
+<Expand/>
+</C>
+<C c="2" r="18" s="12">
+<Expand/>
+</C>
+<C c="3" r="18" s="12">
+<Expand/>
+</C>
+<C c="4" r="18" s="12">
+<Expand/>
+</C>
+<C c="5" r="18" s="12">
+<Expand/>
+</C>
+<C c="6" r="18" s="12">
+<Expand/>
+</C>
+<C c="7" r="18" s="12">
+<Expand/>
+</C>
+<C c="8" r="18" s="12">
+<Expand/>
+</C>
+<C c="9" r="18" s="12">
+<Expand/>
+</C>
+<C c="10" r="18" s="12">
+<Expand/>
+</C>
+<C c="11" r="18" s="12">
+<O>
+<![CDATA[顾客签字：]]></O>
+<Expand/>
+</C>
+<C c="12" r="18" s="13">
+<Expand/>
+</C>
+<C c="13" r="18" s="13">
+<Expand/>
+</C>
+<C c="14" r="18">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0" printBackground="false">
+<PaperSetting>
+<Margin top="0" left="0" bottom="0" right="0"/>
+</PaperSetting>
+<Background name="NullBackground"/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="88"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="112"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="88"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

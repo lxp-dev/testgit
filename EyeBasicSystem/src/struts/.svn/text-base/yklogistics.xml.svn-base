@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+    
+<struts>	
+	<package name="yklogistics" namespace="/" extends="struts-default">
+	
+<!-- 发票管理  Add by SZK-->
+
+	<!-- 初始化发票查询 -->
+    <action name="ykinitInvoiceSel" class="ykinvoiceAction" method="initInvoiceSel">
+		<result name="success">/WEB-INF/pages/yklogistics/invoice/invoice_select.jsp</result>
+	</action>
+	
+	<!-- 根据查询条件查询发票 -->
+	<action name="ykselInvoice" class="ykinvoiceAction" method="selInvoice">
+		<result name="success">/WEB-INF/pages/yklogistics/invoice/invoice_select.jsp</result>
+	</action>
+	
+	<!-- 初始化单据查询 -->
+	<action name="ykinitInvoiceSelectBill" class="ykinvoiceAction" method="initInvoiceSelectBill">
+		<result name="success">/WEB-INF/pages/yklogistics/invoice/invoiceSelectBill.jsp</result>
+	</action>
+	
+	<!-- 单据查询 -->
+	<action name="ykinvoiceSelectBill" class="ykinvoiceAction" method="invoiceSelectBill">
+		<result name="success">/WEB-INF/pages/yklogistics/invoice/invoiceSelectBill.jsp</result>
+	</action>
+	
+	<!-- 单据查询中查看单据 -->
+	<action name="ykinitBillInfoSel" class="ykinvoiceSelectBillAction" method="initBillInfoSel">
+		<result name="success">/WEB-INF/pages/yklogistics/invoiceSelectBill/invoiceSelectBill_details.jsp</result>
+	</action>
+	
+	<!-- 初始化新增发票页面 -->
+	<action name="ykinitInvoiceInsert" class="ykinvoiceAction" method="initInvoiceInsert">
+		<result name="success">/WEB-INF/pages/yklogistics/invoice/invoice_insert.jsp</result>
+	</action>
+	    
+	<!-- 新增发票查询需核销的单据开窗 -->	
+	<action name="ykinitSelectBillSel" class="ykinvoiceSelectBillAction" method="initSelectBillSel">
+		<result name="success">/WEB-INF/pages/yklogistics/invoiceSelectBill/invoiceSelectBill_select.jsp</result>
+	</action>
+	
+	<!-- 新增发票时查询需核销的单据 -->	
+	<action name="ykselectSelectBill" class="ykinvoiceSelectBillAction" method="selectSelectBill">
+		<result name="success">/WEB-INF/pages/yklogistics/invoiceSelectBill/invoiceSelectBill_select.jsp</result>
+	</action>	       
+
+	<action name="ykselBills" class="ykinvoiceAction" method="selBills">
+		<result name="success">/WEB-INF/pages/yklogistics/invoice/invoice_insert.jsp</result>
+	</action>
+			   	    
+	    <action name="ykinvoiceInsert" class="ykinvoiceAction" method="invoiceInsert">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	   
+	    <action name="ykinitInvoiceDetail" class="ykinvoiceAction" method="initInvoiceDetail">
+			<result name="success">/WEB-INF/pages/yklogistics/invoice/invoice_detail.jsp</result>
+	    </action>
+	    
+	    <action name="ykinitInvoiceDelete" class="ykinvoiceAction" method="initInvoiceDelete">
+			<result name="success">/WEB-INF/pages/yklogistics/invoice/invoice_delete.jsp</result>
+	    </action>	    
+	     <action name="ykinvoiceDelete" class="ykinvoiceAction" method="invoiceDelete">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="ykinitInvoiceUpdate" class="ykinvoiceAction" method="initInvoiceUpdate">
+			<result name="success">/WEB-INF/pages/yklogistics/invoice/invoice_update.jsp</result>
+	    </action>
+	     <action name="ykinvoiceUpdate" class="ykinvoiceAction" method="invoiceUpdate">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="ykinitInvoicePrint" class="ykinvoiceAction" method="initInvoicePrint">
+			<result name="success">/WEB-INF/pages/yklogistics/invoice/invoice_print.jsp</result>
+	    </action>
+
+
+	    <action name="ykallAuditOrUnAuditInvoice" class="ykinvoiceAction" method="allAuditOrUnAuditInvoice">
+			<result name="success">/WEB-INF/pages/yklogistics/invoice/invoice_select.jsp</result>
+	    </action>
+	<!-- 发票管理 End by SZK-->
+	
+	
+	<!-- 发票管理选择单据开窗 wanglei start -->
+        <!-- 
+	    <action name="selectInventoryEntry" class="invoiceAction" method="selectInventoryEntry">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	   
+	     --> 
+	<!-- 发票管理选择单据开窗 wanglei end -->
+	
+	<!-- 凭证管理选择单据开窗 wanglei start -->
+		<action name="ykinitSelectBillSels" class="ykproofSelectBillAction" method="initSelectBillSels">
+			<!-- 单据D -->
+			<result name="success">/WEB-INF/pages/yklogistics/proofSelectBill/proofSelectBill_select.jsp</result>
+			
+			<!-- 发票F -->
+			<result name="error">/WEB-INF/pages/yklogistics/proofSelectBill/proofInvoiceSelectBill_select.jsp</result>
+			
+			<!-- 冲回C -->
+			<result name="input">/WEB-INF/pages/yklogistics/proofSelectBill/proofReversalSelectBill_select.jsp</result>
+			
+			<!-- 盘点P -->
+			<result name="none">/WEB-INF/pages/yklogistics/proofSelectBill/proofCheckStorage_select.jsp</result>
+	    </action>
+	    
+	    <!-- 单据D -->
+	    <action name="ykselectSelectBills" class="ykproofSelectBillAction" method="selectSelectBills">
+			<result name="success">/WEB-INF/pages/yklogistics/proofSelectBill/proofSelectBill_select.jsp</result>
+	    </action>
+	    
+	    <!-- 发票F -->
+	    <action name="ykselectSelectInvoice" class="ykproofSelectBillAction" method="selectSelectInvoice">
+			<result name="success">/WEB-INF/pages/yklogistics/proofSelectBill/proofInvoiceSelectBill_select.jsp</result>
+	    </action>
+	    
+	    <!-- 冲回C -->
+	    <action name="ykselectSelectReversal" class="ykproofSelectBillAction" method="selectSelectReversal">
+			<result name="success">/WEB-INF/pages/yklogistics/proofSelectBill/proofReversalSelectBill_select.jsp</result>
+	    </action>
+	    
+	     <!-- 盘点P -->
+	    <action name="ykselectCheckStorageSum" class="ykproofSelectBillAction" method="selectCheckStorageSum">
+			<result name="success">/WEB-INF/pages/yklogistics/proofSelectBill/proofCheckStorage_select.jsp</result>
+	    </action>
+	    
+	    <!-- 详细 -->
+	    <action name="ykinitBillInfoSels" class="ykproofSelectBillAction" method="initBillInfoSels">
+			<result name="success">/WEB-INF/pages/yklogistics/proofSelectBill/proofSelectBill_details.jsp</result>
+	    </action>
+	    
+	    <action name="ykinitInvoiceInfoSel" class="ykproofSelectBillAction" method="initInvoiceInfoSel">
+			<result name="success">/WEB-INF/pages/yklogistics/proofSelectBill/proofInvoiceSelectBill_details.jsp</result>
+	    </action>
+	    
+	    <action name="ykinitReversalInfoSel" class="ykproofSelectBillAction" method="initReversalInfoSel">
+			<result name="success">/WEB-INF/pages/yklogistics/proofSelectBill/proofReversalSelectBill_details.jsp</result>
+	    </action>
+	    
+	    <action name="ykinitCheckStorageSumDetails" class="ykproofSelectBillAction" method="initCheckStorageSumDetails">
+			<result name="success">/WEB-INF/pages/yklogistics/proofSelectBill/proofCheckStorage_details.jsp</result>
+	    </action>
+	    
+	    <!-- 传输 -->
+	    <action name="ykselectProofGoods" class="ykproofSelectBillAction" method="selectProofGoods">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="ykselectInvoiceGoods" class="ykproofSelectBillAction" method="selectInvoiceGoods">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="ykselectReversalGoods" class="ykproofSelectBillAction" method="selectReversalGoods">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 凭证管理选择单据开窗 wanglei end -->
+
+ <!--  凭证管理  Add by SZK  --> 
+  <action name="ykinitVoucherSel" class="ykvoucherAction" method="initVoucherSel">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_select.jsp</result> 
+  </action>
+  <action name="ykinitVoucherTypeByParentID" class="ykvoucherAction" method="initVoucherTypeByParentID" /> 
+  <action name="ykselVoucher" class="ykvoucherAction" method="selVoucher">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_select.jsp</result> 
+  </action>
+  <action name="ykselVoucherDetail" class="ykvoucherAction" method="selVoucherDetail">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_detail.jsp</result> 
+  </action>
+  <action name="ykselReversalDetail" class="ykvoucherAction" method="selReversalDetail">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/reversal_v_detail.jsp</result> 
+  </action>
+  <action name="ykinitVoucherUpdate" class="ykvoucherAction" method="initVoucherUpdate">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_update.jsp</result>
+  </action>
+  <action name="ykupdateVoucher" class="ykvoucherAction" method="updateVoucher">
+    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+  </action>
+  <action name="ykinitVoucherDelete" class="ykvoucherAction" method="initVoucherDelete">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_delete.jsp</result> 
+  </action>
+  <action name="ykdeleteVoucher" class="ykvoucherAction" method="deleteVoucher">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_delete.jsp</result> 
+    <result name="success">/WEB-INF/pages/refresh.jsp</result> 
+  </action>
+  <action name="ykinitVoucherInsert" class="ykvoucherAction" method="initVoucherInsert">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_insert.jsp</result> 
+  </action>
+  <action name="ykinsertVoucher" class="ykvoucherAction" method="insertVoucher">
+    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+  </action>
+  <action name="ykselSupplierOpen" class="windowsAction" method="selSupplierOpen">
+    <result name="success">/WEB-INF/pages/components/supplier/supplier_open.jsp</result> 
+  </action>
+  <action name="ykselectBillGoodsUpdate" class="ykvoucherAction" method="selectBillGoodsUpdate">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_update.jsp</result> 
+  </action>
+  <action name="ykinitSelectBillUpdate" class="ykvoucherAction" method="initSelectBillUpdate">
+    <result name="success">/WEB-INF/pages/yklogistics/proofSelectBill/proofSelectBill_select.jsp</result> 
+  </action>
+  <action name="ykselectBillGoodsInsert" class="ykvoucherAction" method="selectBillGoodsUpdate">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_insert.jsp</result> 
+  </action>
+  <action name="ykselVoucherTally" class="ykvoucherTallyAction" method="selVoucherTally">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_create.jsp</result> 
+  </action>
+  <action name="ykeditVoucherTally" class="ykvoucherTallyAction" method="editVoucherTally">
+    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+  </action>
+  <action name="ykinitInvoiceVoucherInsert" class="ykvoucherAction" method="selectBillGoodsUpdate">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_insert.jsp</result>
+  </action>
+  <action name="ykinitReversalVoucherInsert" class="ykvoucherAction" method="selectBillGoodsUpdate">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_insert.jsp</result>
+  </action>
+  <action name="ykselSubjectOpen" class="ykvoucherTallyAction" method="selSubjectOpen">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/open_subject.jsp</result>
+  </action>
+  <action name="ykselSubject" class="ykvoucherTallyAction" method="selSubject">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/open_subject.jsp</result>
+  </action>
+  <action name="ykinitVoucherPosting" class="ykvoucherAction" method="initVoucherPosting">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_posting.jsp</result>
+  </action>
+  <action name="ykselVoucherPosting" class="ykvoucherAction" method="selVoucherPosting">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_posting.jsp</result>
+  </action>
+  <action name="ykvoucherPosting" class="ykvoucherAction" method="voucherPosting">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_posting.jsp</result>
+  </action>
+  <action name="ykinitSelBill" class="ykvoucherAction" method="initSelBill">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/selBill.jsp</result>
+  </action>
+  <action name="ykselBill" class="ykvoucherAction" method="selBill">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/selBill.jsp</result>
+  </action>
+  <action name="ykinitSelInvoiceAndReversal" class="ykvoucherAction" method="initSelInvoiceAndReversal">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/selInvoiceAndReversal.jsp</result>
+  </action>
+  <action name="ykselInvoiceAndReversal" class="ykvoucherAction" method="selInvoiceAndReversal">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/selInvoiceAndReversal.jsp</result>
+  </action>
+  <action name="ykinitOutStrogeVoucherSel" class="ykoutStrogeVoucherAction" method="initOutStrogeVoucherSel">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_seloutstroge.jsp</result>
+  </action>
+  <action name="ykinitOutStrogeVoucherInsert" class="ykoutStrogeVoucherAction" method="initOutStrogeVoucherInsert">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_insertoutstroge.jsp</result>
+  </action>
+  <action name="ykselSalesBills" class="ykoutStrogeVoucherAction" method="selSalesBills">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_insertoutstroge.jsp</result>
+  </action>
+  
+  <action name="ykinsertOutStrogeVoucher" class="ykoutStrogeVoucherAction" method="insertOutStrogeVoucher">
+    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+  </action>
+  <action name="ykselOutStrogeVoucher" class="ykoutStrogeVoucherAction" method="selOutStrogeVoucher">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_seloutstroge.jsp</result>
+  </action>
+  <action name="ykselOutStrogeVoucherDetail" class="ykoutStrogeVoucherAction" method="selOutStrogeVoucherDetail">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_seloutstrogedetail.jsp</result>
+  </action>
+  
+  <action name="ykinitOutStrogeVoucherUpdate" class="ykoutStrogeVoucherAction" method="initOutStrogeVoucherUpdate">
+    <result name="success">/WEB-INF/pages/yklogistics/voucher/voucher_updateoutstroge.jsp</result>
+  </action>
+  <action name="ykupdateOutStrogeVoucher" class="ykoutStrogeVoucherAction" method="updateOutStrogeVoucher">
+    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+  </action>
+  
+ <!--  凭证管理 End by SZK  --> 
+	
+ <!-- 月末wanglei start -->
+		<action name="ykinitCalSel" class="ykcalAction" method="initCalSel">
+			<result name="success">/WEB-INF/pages/yklogistics/cal/cal_select.jsp</result>
+	    </action>
+	    
+	    <action name="ykrealCalStorage" class="ykcalAction" method="realCalStorage">
+			<result name="success">/WEB-INF/pages/yklogistics/cal/cal_select.jsp</result>
+	    </action>
+	     <action name="ykmoniCalRetrun" class="ykcalAction" method="moniCalRetrun">
+			<result name="success">/WEB-INF/pages/yklogistics/cal/cal_select.jsp</result>
+	    </action>
+	     <action name="ykrealCalReturn" class="ykcalAction" method="realCalReturn">
+			<result name="success">/WEB-INF/pages/yklogistics/cal/cal_select.jsp</result>
+	    </action>
+	     <action name="ykmoniSelect" class="ykcalAction" method="moniSelect">
+			<result name="success">/WEB-INF/pages/yklogistics/cal/calResult_select.jsp</result>
+	    </action>
+	      <action name="ykinitMoniSelect" class="ykcalAction" method="initMoniSelect">
+			<result name="success">/WEB-INF/pages/yklogistics/cal/calResult_select.jsp</result>
+	    </action>
+	    <action name="ykinitSwitchAmount" class="ykvoucherAction" method="initSwitchAmount">
+			<result name="success">/WEB-INF/pages/yklogistics/cal/switchAmount_select.jsp</result>
+	    </action>
+	    <action name="ykinsertSwitchAmount" class="ykvoucherAction" method="insertSwitchAmount">
+			<result name="success">/WEB-INF/pages/yklogistics/cal/switchAmount_select.jsp</result>
+	    </action>
+	    <action name="ykinitBillWhetherSettleAccountsSel" class="ykvoucherAction" method="initBillWhetherSettleAccountsSel">
+			<result name="success">/WEB-INF/pages/yklogistics/cal/whetherBillSettle_select.jsp</result>
+	    </action>
+	    <action name="ykselBillWhetherSettleAccounts" class="ykvoucherAction" method="selBillWhetherSettleAccounts">
+			<result name="success">/WEB-INF/pages/yklogistics/cal/whetherBillSettle_select.jsp</result>
+	    </action>
+	<!-- 月末 wanglei end -->
+	
+<!-- 物流日志   SZK start -->
+    <action name="ykinitLogisticsLog" class="yklogisticsLogAction" method="initLogisticsLog">
+		<result name="success">/WEB-INF/pages/yklogistics/log/logisticsLog_select.jsp</result>
+	</action>
+	<action name="ykselLogisticsLog" class="yklogisticsLogAction" method="selLogisticsLog">
+		<result name="success">/WEB-INF/pages/yklogistics/log/logisticsLog_select.jsp</result>
+	</action>
+<!-- 物流日志   SZK end -->
+	
+	<!-- 初始化查询单据的核销日期 -->	
+	<action name="ykinitInvoiceBillSel" class="ykinvoiceAction" method="initInvoiceBillSel">
+		<result name="success">/WEB-INF/pages/yklogistics/invoice/invoiceBill_select.jsp</result>
+	</action>
+	
+	<!-- 查询单据的核销日期 -->	
+	<action name="ykinvoiceBillSel" class="ykinvoiceAction" method="invoiceBillSel">
+		<result name="success">/WEB-INF/pages/yklogistics/invoice/invoiceBill_select.jsp</result>
+	</action>
+		
+	</package>
+</struts>

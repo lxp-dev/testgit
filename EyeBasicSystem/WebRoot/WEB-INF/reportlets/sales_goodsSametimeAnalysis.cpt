@@ -1,0 +1,5017 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="endtime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select departmentID into #shopCode from sales_createShopCodeTab('${departmentsID}')
+
+select 
+'${begintime}'+'～'+'${endtime}' as printdate,
+B_DP_DepartmentID as DepartmentID,
+B_DP_DepartmentName as DepartmentName,
+isnull(n.GlassesFrameNum,0) as nGlassesFrameNum,		--镜架数量
+isnull(n.GlassesFrameAmount,0.00) as nGlassesFrameAmount,	--镜架金额
+isnull(n.AccessoriesNum,0) as nAccessoriesNum,		--配件数量
+isnull(n.AccessoriesAmount,0.00) as nAccessoriesAmount,		--配件金额
+isnull(n.LensNum,0) as nLensNum,				--镜片数量
+isnull(n.LensAmount,0.00) as nLensAmount,			--镜片金额
+isnull(n.StealthNum,0) as nStealthNum,			--隐形数量
+isnull(n.StealthAmount,0.00) as nStealthAmount,			--隐形金额
+isnull(n.StealthAccNum,0) as nStealthAccNum,			--护理液数量
+isnull(n.StealthAccAmount,0.00) as nStealthAccAmount,		--护理液金额
+isnull(n.SunGlassesNum,0) as nSunGlassesNum,			--太阳镜数量
+isnull(n.SunGlassesAmount,0.00) as nSunGlassesAmount,		--太阳镜金额
+isnull(n.PresbyopicGlassesNum,0) as nPresbyopicGlassesNum,	--老花镜数量
+isnull(n.PresbyopicGlassesAmount,0.00) as nPresbyopicGlassesAmount,--老花镜金额
+isnull(n.OtherGoodsNum,0) as nOtherGoodsNum,			--耗材类数量
+isnull(n.OtherGoodsAmount,0.00) as nOtherGoodsAmount,		--耗材类金额
+isnull(n.VisualOpticsNum,0) as nVisualOpticsNum,		--视光类数量
+isnull(n.VisualOpticsAmount,0.00) as nVisualOpticsAmount,	--视光类金额
+
+isnull(o.GlassesFrameNum,0) as oGlassesFrameNum,		--镜架数量
+isnull(o.GlassesFrameAmount,0.00) as oGlassesFrameAmount,	--镜架金额
+isnull(o.AccessoriesNum,0) as oAccessoriesNum,		--配件数量
+isnull(o.AccessoriesAmount,0.00) as oAccessoriesAmount,		--配件金额
+isnull(o.LensNum,0) as oLensNum,				--镜片数量
+isnull(o.LensAmount,0.00) as oLensAmount,			--镜片金额
+isnull(o.StealthNum,0) as oStealthNum,			--隐形数量
+isnull(o.StealthAmount,0.00) as oStealthAmount,			--隐形金额
+isnull(o.StealthAccNum,0) as oStealthAccNum,			--护理液数量
+isnull(o.StealthAccAmount,0.00) as oStealthAccAmount,		--护理液金额
+isnull(o.SunGlassesNum,0) as oSunGlassesNum,			--太阳镜数量
+isnull(o.SunGlassesAmount,0.00) as oSunGlassesAmount,		--太阳镜金额
+isnull(o.PresbyopicGlassesNum,0) as oPresbyopicGlassesNum,	--老花镜数量
+isnull(o.PresbyopicGlassesAmount,0.00) as oPresbyopicGlassesAmount,--老花镜金额
+isnull(o.OtherGoodsNum,0) as oOtherGoodsNum,			--耗材类数量
+isnull(o.OtherGoodsAmount,0.00) as oOtherGoodsAmount,		--耗材类金额
+isnull(o.VisualOpticsNum,0) as oVisualOpticsNum,		--视光类数量
+isnull(o.VisualOpticsAmount,0.00) as oVisualOpticsAmount	--视光类金额
+from B_Departments
+
+left join(
+select
+R_SD_DCE_ShopCode as ShopCode,
+sum(R_SD_DCE_GlassesFrameNum) as GlassesFrameNum,		--镜架数量
+sum(R_SD_DCE_GlassesFrameAmount) as GlassesFrameAmount,	--镜架金额
+sum(R_SD_DCE_AccessoriesNum) as AccessoriesNum,		--配件数量
+sum(R_SD_DCE_AccessoriesAmount) as AccessoriesAmount,		--配件金额
+sum(R_SD_DCE_LensNum) as LensNum,				--镜片数量
+sum(R_SD_DCE_LensAmount) as LensAmount,			--镜片金额
+sum(R_SD_DCE_stealthNum) as StealthNum,			--隐形数量
+sum(R_SD_DCE_stealthAmount) as StealthAmount,			--隐形金额
+sum(R_SD_DCE_stealthAccNum) as StealthAccNum,			--护理液数量
+sum(R_SD_DCE_stealthAccAmount) as StealthAccAmount,		--护理液金额
+sum(R_SD_DCE_SunGlassesNum) as SunGlassesNum,			--太阳镜数量
+sum(R_SD_DCE_SunGlassesAmount) as SunGlassesAmount,		--太阳镜金额
+sum(R_SD_DCE_PresbyopicGlassesNum) as PresbyopicGlassesNum,	--老花镜数量
+sum(R_SD_DCE_PresbyopicGlassesAmount) as PresbyopicGlassesAmount,--老花镜金额
+sum(R_SD_DCE_OtherGoodsNum) as OtherGoodsNum,			--耗材类数量
+sum(R_SD_DCE_OtherGoodsAmount) as OtherGoodsAmount,		--耗材类金额
+sum(R_SD_DCE_VisualOpticsNum) as VisualOpticsNum,		--视光类数量
+sum(R_SD_DCE_VisualOpticsAmount) as VisualOpticsAmount	--视光类金额
+from R_SD_DayCollectEntry
+where convert(varchar(10),R_SD_DCE_Date,23) >= '${begintime}'
+  and convert(varchar(10),R_SD_DCE_Date,23) <= '${endtime}'
+  and ((isnull('${departmentsID}','')<>'' and R_SD_DCE_ShopCode in (select departmentID from #shopcode )) or (isnull('${departmentsID}','')=''))
+group by R_SD_DCE_ShopCode
+)n on n.ShopCode = B_DP_DepartmentID and B_DP_Type = '1'
+left join(
+select
+R_SD_DCE_ShopCode as ShopCode,
+sum(R_SD_DCE_GlassesFrameNum) as GlassesFrameNum,		--镜架数量
+sum(R_SD_DCE_GlassesFrameAmount) as GlassesFrameAmount,	--镜架金额
+sum(R_SD_DCE_AccessoriesNum) as AccessoriesNum,		--配件数量
+sum(R_SD_DCE_AccessoriesAmount) as AccessoriesAmount,		--配件金额
+sum(R_SD_DCE_LensNum) as LensNum,				--镜片数量
+sum(R_SD_DCE_LensAmount) as LensAmount,			--镜片金额
+sum(R_SD_DCE_stealthNum) as StealthNum,			--隐形数量
+sum(R_SD_DCE_stealthAmount) as StealthAmount,			--隐形金额
+sum(R_SD_DCE_stealthAccNum) as StealthAccNum,			--护理液数量
+sum(R_SD_DCE_stealthAccAmount) as StealthAccAmount,		--护理液金额
+sum(R_SD_DCE_SunGlassesNum) as SunGlassesNum,			--太阳镜数量
+sum(R_SD_DCE_SunGlassesAmount) as SunGlassesAmount,		--太阳镜金额
+sum(R_SD_DCE_PresbyopicGlassesNum) as PresbyopicGlassesNum,	--老花镜数量
+sum(R_SD_DCE_PresbyopicGlassesAmount) as PresbyopicGlassesAmount,--老花镜金额
+sum(R_SD_DCE_OtherGoodsNum) as OtherGoodsNum,			--耗材类数量
+sum(R_SD_DCE_OtherGoodsAmount) as OtherGoodsAmount,		--耗材类金额
+sum(R_SD_DCE_VisualOpticsNum) as VisualOpticsNum,		--视光类数量
+sum(R_SD_DCE_VisualOpticsAmount) as VisualOpticsAmount	--视光类金额
+from R_SD_DayCollectEntry
+where convert(varchar(10),R_SD_DCE_Date,23) >= '${begintime2}'
+  and convert(varchar(10),R_SD_DCE_Date,23) <= '${endtime2}'
+  and ((isnull('${departmentsID}','')<>'' and R_SD_DCE_ShopCode in (select departmentID from #shopcode )) or (isnull('${departmentsID}','')=''))
+group by R_SD_DCE_ShopCode
+)o on o.ShopCode = B_DP_DepartmentID and B_DP_Type = '1'
+  where B_DP_Type = '1'
+  and  ((isnull('${departmentsID}','')<>'' and B_DP_DepartmentID in (select departmentID from #shopcode )) or (isnull('${departmentsID}','')=''))
+
+drop table #shopCode
+
+]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="year"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[declare @year varchar(1000)
+declare @ShopCodeName varchar(1000)
+
+set @year='${year}'
+set @ShopCodeName='${ShopCodeName}']]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.page.First">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-First')}]]></Text>
+<IconName>
+<![CDATA[first]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Previous">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Previous')}]]></Text>
+<IconName>
+<![CDATA[previous]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.PageNavi">
+<WidgetAttr/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Next">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Next')}]]></Text>
+<IconName>
+<![CDATA[next]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Last">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Last')}]]></Text>
+<IconName>
+<![CDATA[last]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.FlashPrint">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Utils-Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.Export">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Export')}]]></Text>
+<IconName>
+<![CDATA[export]]></IconName>
+<Buttons pdf="true" excelP="true" excelO="true" excelS="true" word="true" image="true" html="true"/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.SetPrinterOffset">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('SetPrinterOffset')}]]></Text>
+<IconName>
+<![CDATA[setprinteroffset]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="true" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="6"/>
+<FR/>
+<HC F="0" T="3"/>
+<FC/>
+<UPFCR COLUMN="true" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,432000,914400,914400,914400,914400,914400,914400,914400,914400,432000,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,2781300,2743200,2247900,2880000,2880000,2743200,2880000,2743200,2880000,2743200,2880000,2743200,2880000,2743200,2880000,2743200,2880000,2743200,2880000,2743200,2880000,2743200,0,0,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<Expand/>
+</C>
+<C c="1" r="0" cs="11" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="0" s="0">
+<Expand/>
+</C>
+<C c="15" r="0" s="0">
+<Expand/>
+</C>
+<C c="17" r="0" s="0">
+<Expand/>
+</C>
+<C c="19" r="0" s="0">
+<Expand/>
+</C>
+<C c="21" r="0" s="0">
+<Expand/>
+</C>
+<C c="23" r="0" s="0">
+<Expand/>
+</C>
+<C c="24" r="0" s="0">
+<Expand/>
+</C>
+<C c="0" r="1" s="0">
+<Expand/>
+</C>
+<C c="1" r="1" cs="23" s="1">
+<O>
+<![CDATA[商品销售分析表（按销售同期-商品类别）]]></O>
+<Expand/>
+</C>
+<C c="24" r="1" s="0">
+<Expand/>
+</C>
+<C c="0" r="2" s="2">
+<Expand/>
+</C>
+<C c="1" r="2" s="3">
+<O>
+<![CDATA[本期日期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="2" cs="5" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime + " 至 " + $endtime]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="9" r="2" s="4">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="11" r="2" cs="5" s="3">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="17" r="2" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="19" r="2" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="21" r="2" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="23" r="2" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="24" r="2" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="3" s="2">
+<Expand/>
+</C>
+<C c="1" r="3" s="2">
+<O>
+<![CDATA[同期日期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="3" cs="5" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2 + " 至 " + $endtime2]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="9" r="3" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="11" r="3" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="13" r="3" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="15" r="3" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="17" r="3" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="19" r="3" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="21" r="3" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="23" r="3" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="24" r="3" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="4" s="2">
+<Expand/>
+</C>
+<C c="1" r="4" s="2">
+<O>
+<![CDATA[销售门店：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="4" cs="21" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="24" r="4" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="5" cs="3" rs="2" s="5">
+<O>
+<![CDATA[名称/类别]]></O>
+<Expand/>
+</C>
+<C c="4" r="5" s="5">
+<O>
+<![CDATA[小计]]></O>
+<Expand/>
+</C>
+<C c="5" r="5" cs="2" s="5">
+<O>
+<![CDATA[镜片]]></O>
+<Expand/>
+</C>
+<C c="7" r="5" cs="2" s="5">
+<O>
+<![CDATA[镜架]]></O>
+<Expand/>
+</C>
+<C c="9" r="5" cs="2" s="5">
+<O>
+<![CDATA[隐形]]></O>
+<Expand/>
+</C>
+<C c="11" r="5" cs="2" s="5">
+<O>
+<![CDATA[护理液]]></O>
+<Expand/>
+</C>
+<C c="13" r="5" cs="2" s="5">
+<O>
+<![CDATA[太阳镜]]></O>
+<Expand/>
+</C>
+<C c="15" r="5" cs="2" s="5">
+<O>
+<![CDATA[老花镜]]></O>
+<Expand/>
+</C>
+<C c="17" r="5" cs="2" s="5">
+<O>
+<![CDATA[配件]]></O>
+<Expand/>
+</C>
+<C c="19" r="5" cs="2" s="5">
+<O>
+<![CDATA[耗材]]></O>
+<Expand/>
+</C>
+<C c="21" r="5" cs="2" s="5">
+<O>
+<![CDATA[视光]]></O>
+<Expand/>
+</C>
+<C c="23" r="5">
+<Expand/>
+</C>
+<C c="24" r="5">
+<Expand/>
+</C>
+<C c="4" r="6" s="5">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="5" r="6" s="5">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="6" r="6" s="5">
+<O>
+<![CDATA[占比]]></O>
+<Expand/>
+</C>
+<C c="7" r="6" s="5">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="8" r="6" s="5">
+<O>
+<![CDATA[占比]]></O>
+<Expand/>
+</C>
+<C c="9" r="6" s="5">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="10" r="6" s="5">
+<O>
+<![CDATA[占比]]></O>
+<Expand/>
+</C>
+<C c="11" r="6" s="5">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="12" r="6" s="5">
+<O>
+<![CDATA[占比]]></O>
+<Expand/>
+</C>
+<C c="13" r="6" s="5">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="14" r="6" s="5">
+<O>
+<![CDATA[占比]]></O>
+<Expand/>
+</C>
+<C c="15" r="6" s="5">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="16" r="6" s="5">
+<O>
+<![CDATA[占比]]></O>
+<Expand/>
+</C>
+<C c="17" r="6" s="5">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="18" r="6" s="5">
+<O>
+<![CDATA[占比]]></O>
+<Expand/>
+</C>
+<C c="19" r="6" s="5">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="20" r="6" s="5">
+<O>
+<![CDATA[占比]]></O>
+<Expand/>
+</C>
+<C c="21" r="6" s="5">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="22" r="6" s="5">
+<O>
+<![CDATA[占比]]></O>
+<Expand/>
+</C>
+<C c="1" r="7" rs="8" s="5">
+<O>
+<![CDATA[各店总合计]]></O>
+<Expand/>
+</C>
+<C c="2" r="7" rs="4" s="5">
+<O>
+<![CDATA[销售数]]></O>
+<Expand/>
+</C>
+<C c="3" r="7" s="5">
+<O>
+<![CDATA[本期]]></O>
+<Expand/>
+</C>
+<C c="4" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(X17)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="7" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F17)]]></Attributes>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$shopcode]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[3]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForLen.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&begindate="+begindate+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="6" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(F8 / X8, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="7" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H17)]]></Attributes>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$shopcode]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[1]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForFrame.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&begindate="+begindate+"&logincompanyid="+logincompanyid;
+
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="8" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(H8 / X8, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="7" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(J17)]]></Attributes>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$shopcode]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[4]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForStealth.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&begindate="+begindate+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="10" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(J8 / X8, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="7" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(L17)]]></Attributes>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$shopcode]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[5]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForStealthAccessories.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&begindate="+begindate+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="12" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(L8 / X8, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="7" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(N17)]]></Attributes>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$shopcode]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[6]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForSunLen.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&begindate="+begindate+"&logincompanyid="+logincompanyid;
+
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="14" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(N8 / X8, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="15" r="7" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(P17)]]></Attributes>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$shopcode]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[8]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForGlasses.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&begindate="+begindate+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="16" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(P8 / X8, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="17" r="7" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(R17)]]></Attributes>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$shopcode]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[2]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForAccessories.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&begindate="+begindate+"&logincompanyid="+logincompanyid;
+
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="18" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(R8 / X8, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="19" r="7" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(T17)]]></Attributes>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$shopcode]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[7]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForOtherGoodsBigClass.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&begindate="+begindate+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="20" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(T8 / X8, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="21" r="7" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(V17)]]></Attributes>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$shopcode]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[9]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForVisualOptics.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&begindate="+begindate+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="22" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(V8 / X8, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="23" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(X17)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="24" r="7" s="8">
+<Expand/>
+</C>
+<C c="3" r="8" s="5">
+<O>
+<![CDATA[同期]]></O>
+<Expand/>
+</C>
+<C c="4" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(X18)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F18)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(F9 / X9, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H18)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(H9 / X9, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(J18)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(J9 / X9, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(L18)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(L9 / X9, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(N18)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(N9 / X9, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="15" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(P18)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(P9 / X9, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="17" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(R18)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="18" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(R9 / X9, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="19" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(T18)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="20" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(T9 / X9, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="21" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(V18)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="22" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(V9 / X9, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="23" r="8" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(X18)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="24" r="8" s="8">
+<Expand/>
+</C>
+<C c="3" r="9" s="5">
+<O>
+<![CDATA[增长]]></O>
+<Expand/>
+</C>
+<C c="4" r="9" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=X8 - X9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="9" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F8 - F9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="9" s="10">
+<Expand/>
+</C>
+<C c="7" r="9" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=H8 - H9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="9" s="10">
+<Expand/>
+</C>
+<C c="9" r="9" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=J8 - J9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="9" s="10">
+<Expand/>
+</C>
+<C c="11" r="9" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=L8 - L9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="9" s="10">
+<Expand/>
+</C>
+<C c="13" r="9" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=N8 - N9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="14" r="9" s="10">
+<Expand/>
+</C>
+<C c="15" r="9" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=P8 - P9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="16" r="9" s="10">
+<Expand/>
+</C>
+<C c="17" r="9" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=R8 - R9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="18" r="9" s="10">
+<Expand/>
+</C>
+<C c="19" r="9" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=T8 - T9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="20" r="9" s="10">
+<Expand/>
+</C>
+<C c="21" r="9" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=V8 - V9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="22" r="9" s="10">
+<Expand/>
+</C>
+<C c="23" r="9" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=X8 - X9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="9" s="10">
+<Expand/>
+</C>
+<C c="3" r="10" s="5">
+<O>
+<![CDATA[增长率]]></O>
+<Expand/>
+</C>
+<C c="4" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(X9 = 0, "0.00%", FORMAT((X8 - X9) / X9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F25 = 0, "0.00%", FORMAT((F25 - F25) / F25, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="10" s="10">
+<Expand/>
+</C>
+<C c="7" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H9 = 0, "0.00%", FORMAT((H8 - H9) / H9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="10" s="10">
+<Expand/>
+</C>
+<C c="9" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(J9 = 0, "0.00%", FORMAT((J8 - J9) / J9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="10" s="10">
+<Expand/>
+</C>
+<C c="11" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(L9 = 0, "0.00%", FORMAT((L8 - L9) / L9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="10" s="10">
+<Expand/>
+</C>
+<C c="13" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(N9 = 0, "0.00%", FORMAT((N8 - N9) / N9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="14" r="10" s="10">
+<Expand/>
+</C>
+<C c="15" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(P9 = 0, "0.00%", FORMAT((P8 - P9) / P9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="16" r="10" s="10">
+<Expand/>
+</C>
+<C c="17" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(R9 = 0, "0.00%", FORMAT((R8 - R9) / R9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="18" r="10" s="10">
+<Expand/>
+</C>
+<C c="19" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(T9 = 0, "0.00%", FORMAT((T8 - T9) / T9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="20" r="10" s="10">
+<Expand/>
+</C>
+<C c="21" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(V9 = 0, "0.00%", FORMAT((V8 - V9) / V9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="22" r="10" s="10">
+<Expand/>
+</C>
+<C c="23" r="10" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(X9 = 0, "0.00%", FORMAT((X8 - X9) / X9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="10" s="10">
+<Expand/>
+</C>
+<C c="2" r="11" rs="4" s="5">
+<O>
+<![CDATA[销售额]]></O>
+<Expand/>
+</C>
+<C c="3" r="11" s="5">
+<O>
+<![CDATA[本期]]></O>
+<Expand/>
+</C>
+<C c="4" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(X21))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F21))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(F12 / X12, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(H21))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(H12 / X12, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J21))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(J12 / X12, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(L21))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(L12 / X12, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(N21))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(N12 / X12, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="15" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(P21))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(P12 / X12, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="17" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J21))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="18" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(R12 / X12, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="19" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(T21))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="20" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(T12 / X12, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="21" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(V21))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="22" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(V12 / X12, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="23" r="11" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(X21))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="24" r="11" s="8">
+<Expand/>
+</C>
+<C c="3" r="12" s="5">
+<O>
+<![CDATA[同期]]></O>
+<Expand/>
+</C>
+<C c="4" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(X22))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F22))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(F13 / X13, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(H22))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(H13 / X13, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J22))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(J13 / X13, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(L22))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(L13 / X13, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(N22))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(N13 / X13, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="15" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(P22))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(P13 / X13, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="17" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(R22))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="18" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(R13 / X13, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="19" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(T22))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="20" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(T13 / X13, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="21" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(V22))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="22" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(V13 / X13, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="23" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(X22))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="24" r="12" s="8">
+<Expand/>
+</C>
+<C c="3" r="13" s="5">
+<O>
+<![CDATA[增长]]></O>
+<Expand/>
+</C>
+<C c="4" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=X12 - X13]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F12 - F13]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="13" s="10">
+<Expand/>
+</C>
+<C c="7" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=H12 - H13]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="13" s="10">
+<Expand/>
+</C>
+<C c="9" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=J12 - J13]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="13" s="10">
+<Expand/>
+</C>
+<C c="11" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=L12 - L13]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="13" s="10">
+<Expand/>
+</C>
+<C c="13" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=N12 - N13]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="14" r="13" s="10">
+<Expand/>
+</C>
+<C c="15" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=P12 - P13]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="16" r="13" s="10">
+<Expand/>
+</C>
+<C c="17" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=R12 - R13]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="18" r="13" s="10">
+<Expand/>
+</C>
+<C c="19" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=T12 - T13]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="20" r="13" s="10">
+<Expand/>
+</C>
+<C c="21" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=V12 - V13]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="22" r="13" s="10">
+<Expand/>
+</C>
+<C c="23" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=X12 - X13]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="13" s="10">
+<Expand/>
+</C>
+<C c="3" r="14" s="5">
+<O>
+<![CDATA[增长率]]></O>
+<Expand/>
+</C>
+<C c="4" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(X13 = 0, "0.00%", FORMAT((X12 - X13) / X13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F13 = 0, "0.00%", FORMAT((F12 - F13) / L13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="14" s="10">
+<Expand/>
+</C>
+<C c="7" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H13 = 0, "0.00%", FORMAT((H12 - H13) / H13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="14" s="10">
+<Expand/>
+</C>
+<C c="9" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(J13 = 0, "0.00%", FORMAT((J12 - J13) / J13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="14" s="10">
+<Expand/>
+</C>
+<C c="11" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(L13 = 0, "0.00%", FORMAT((L12 - L13) / L13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="14" s="10">
+<Expand/>
+</C>
+<C c="13" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(N13 = 0, "0.00%", FORMAT((N12 - N13) / N13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="14" r="14" s="10">
+<Expand/>
+</C>
+<C c="15" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(P13 = 0, "0.00%", FORMAT((P12 - P13) / P13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="16" r="14" s="10">
+<Expand/>
+</C>
+<C c="17" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(R13 = 0, "0.00%", FORMAT((R12 - R13) / R13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="18" r="14" s="10">
+<Expand/>
+</C>
+<C c="19" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(T13 = 0, "0.00%", FORMAT((T12 - T13) / T13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="20" r="14" s="10">
+<Expand/>
+</C>
+<C c="21" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(V13 = 0, "0.00%", FORMAT((V12 - V13) / V13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="22" r="14" s="10">
+<Expand/>
+</C>
+<C c="23" r="14" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(X13 = 0, "0.00%", FORMAT((X12 - X13) / X13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="14" s="10">
+<Expand/>
+</C>
+<C c="1" r="15" cs="22">
+<Expand/>
+</C>
+<C c="1" r="16" rs="8" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="DepartmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="16" rs="4" s="5">
+<O>
+<![CDATA[销售数]]></O>
+<Expand/>
+</C>
+<C c="3" r="16" s="5">
+<O>
+<![CDATA[本期]]></O>
+<Expand/>
+</C>
+<C c="4" r="16" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F17 + H17 + J17 + L17 + N17 + P17 + R17 + T17 + V17)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="16" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nLensNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=Y17]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="year"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$year]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[3]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[
+var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForLen.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&begindate="+begindate+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&year="+year+"&isShow="+isShow+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="6" r="16" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(X17 = 0, 0, FORMAT(F17 / X17, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="16" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nGlassesFrameNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=Y17]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[1]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="year"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$year]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[
+var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForFrame.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&begindate="+begindate+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&year="+year+"&isShow="+isShow+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="8" r="16" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(H17 / X17, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="16" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nStealthNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=Y17]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[4]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="year"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$year]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[
+var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForStealth.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&begindate="+begindate+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&year="+year+"&isShow="+isShow+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="10" r="16" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(J17 / X17, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="16" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nStealthAccNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=Y17]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[5]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="year"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$year]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[
+var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForStealthAccessories.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&begindate="+begindate+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&year="+year+"&isShow="+isShow+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="12" r="16" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(L17 / X17, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="16" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nSunGlassesNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=Y17]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[6]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="year"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$year]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[
+var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForSunLen.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&begindate="+begindate+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&year="+year+"&isShow="+isShow+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="14" r="16" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(N17 / X17, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="15" r="16" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nPresbyopicGlassesNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=Y17]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[8]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="year"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$year]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[
+var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForGlasses.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&begindate="+begindate+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&year="+year+"&isShow="+isShow+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="16" r="16" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(P17 / X17, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="17" r="16" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nAccessoriesNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=Y17]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[2]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="year"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$year]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[
+var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForAccessories.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&begindate="+begindate+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&year="+year+"&isShow="+isShow+"&logincompanyid="+logincompanyid;
+
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="18" r="16" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(R17 / X17, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="19" r="16" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nOtherGoodsNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=Y17]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[7]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="year"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$year]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[
+var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForOtherGoodsBigClass.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&begindate="+begindate+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&year="+year+"&isShow="+isShow+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="20" r="16" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(T17 / X17, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="21" r="16" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nVisualOpticsNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=Y17]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[9]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="year"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$year]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[
+var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForVisualOptics.cpt&__bypagesize__=false&isShow="+isShow+"&shopcode="+shopcode+"&begindate="+begindate+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&categoryID="+categoryID+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&year="+year+"&isShow="+isShow+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="22" r="16" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(V17 / X17, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="23" r="16" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F17 + H17 + J17 + L17 + N17 + P17 + R17 + T17 + V17)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="16" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="DepartmentID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="17" s="5">
+<O>
+<![CDATA[同期]]></O>
+<Expand/>
+</C>
+<C c="4" r="17" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F18 + H18 + J18 + L18 + N18 + P18 + R18 + T18 + V18)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="17" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oLensNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="17" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(X18 = 0, "0.00%", FORMAT(F18 / X18, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="17" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oGlassesFrameNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="17" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(H18 / X18, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="17" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oStealthNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="17" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(J18 / X18, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="17" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oStealthAccNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="17" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(L18 / X18, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="17" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oSunGlassesNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="17" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(N18 / X18, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="15" r="17" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oPresbyopicGlassesNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="17" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(P18 / X18, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="17" r="17" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oAccessoriesNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="18" r="17" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(R18 / X18, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="19" r="17" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oOtherGoodsNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="20" r="17" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(T18 / X18, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="21" r="17" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oVisualOpticsNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="22" r="17" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(V18 / X18, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="23" r="17" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F18 + H18 + J18 + L18 + N18 + P18 + R18 + T18 + V18)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="17" s="8">
+<Expand/>
+</C>
+<C c="3" r="18" s="5">
+<O>
+<![CDATA[增长]]></O>
+<Expand/>
+</C>
+<C c="4" r="18" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=X17 - X18]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="18" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F17 - F18]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="18" s="10">
+<Expand/>
+</C>
+<C c="7" r="18" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=H17 - H18]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="18" s="10">
+<Expand/>
+</C>
+<C c="9" r="18" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=J17 - J18]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="18" s="10">
+<Expand/>
+</C>
+<C c="11" r="18" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=L17 - L18]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="18" s="10">
+<Expand/>
+</C>
+<C c="13" r="18" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=N17 - N18]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="14" r="18" s="10">
+<Expand/>
+</C>
+<C c="15" r="18" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=P17 - P18]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="16" r="18" s="10">
+<Expand/>
+</C>
+<C c="17" r="18" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=R17 - R18]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="18" r="18" s="10">
+<Expand/>
+</C>
+<C c="19" r="18" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=T17 - T18]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="20" r="18" s="10">
+<Expand/>
+</C>
+<C c="21" r="18" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=V17 - V18]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="22" r="18" s="10">
+<Expand/>
+</C>
+<C c="23" r="18" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=X17 - X18]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="18" s="10">
+<Expand/>
+</C>
+<C c="3" r="19" s="5">
+<O>
+<![CDATA[增长率]]></O>
+<Expand/>
+</C>
+<C c="4" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(X18 = 0, "0.00%", FORMAT((X17 - X18) / X18, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F18 = 0, "0.00%", FORMAT((F17 - F18) / F18, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="19" s="10">
+<Expand/>
+</C>
+<C c="7" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H18 = 0, "0.00%", FORMAT((H17 - H18) / H18, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="19" s="10">
+<Expand/>
+</C>
+<C c="9" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(J18 = 0, "0.00%", FORMAT((J17 - J18) / J18, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="19" s="10">
+<Expand/>
+</C>
+<C c="11" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(L18 = 0, "0.00%", FORMAT((L17 - L18) / L18, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="19" s="10">
+<Expand/>
+</C>
+<C c="13" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(N18 = 0, "0.00%", FORMAT((N17 - N18) / N18, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="14" r="19" s="10">
+<Expand/>
+</C>
+<C c="15" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(P18 = 0, "0.00%", FORMAT((P17 - P18) / P18, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="16" r="19" s="10">
+<Expand/>
+</C>
+<C c="17" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(R18 = 0, "0.00%", FORMAT((R17 - R18) / R18, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="18" r="19" s="10">
+<Expand/>
+</C>
+<C c="19" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(T18 = 0, "0.00%", FORMAT((T17 - T18) / T18, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="20" r="19" s="10">
+<Expand/>
+</C>
+<C c="21" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(V18 = 0, "0.00%", FORMAT((V17 - V18) / V18, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="22" r="19" s="10">
+<Expand/>
+</C>
+<C c="23" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(X18 = 0, "0.00%", FORMAT((X17 - X18) / X18, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="19" s="10">
+<Expand/>
+</C>
+<C c="2" r="20" rs="4" s="5">
+<O>
+<![CDATA[销售额]]></O>
+<Expand/>
+</C>
+<C c="3" r="20" s="5">
+<O>
+<![CDATA[本期]]></O>
+<Expand/>
+</C>
+<C c="4" r="20" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F21 + H21 + J21 + L21 + N21 + P21 + R21 + T21 + V21))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="20" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nLensAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="20" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(F21 / X21, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="20" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nGlassesFrameAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="20" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(H21 / X21, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="20" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nStealthAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="20" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(J21 / X21, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="20" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nStealthAccAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="20" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(L21 / X21, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="20" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nSunGlassesAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="20" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(N21 / X21, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="15" r="20" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nPresbyopicGlassesAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="20" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(P21 / X21, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="17" r="20" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nAccessoriesAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="18" r="20" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(R21 / X21, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="19" r="20" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nOtherGoodsAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="20" r="20" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(T21 / X21, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="21" r="20" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nVisualOpticsAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="22" r="20" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(V21 / X21, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="23" r="20" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F21 + H21 + J21 + L21 + N21 + P21 + R21 + T21 + V21))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="20" s="8">
+<Expand/>
+</C>
+<C c="3" r="21" s="5">
+<O>
+<![CDATA[同期]]></O>
+<Expand/>
+</C>
+<C c="4" r="21" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F22 + H22 + J22 + L22 + N22 + P22 + R22 + T22 + V22))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="21" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oLensAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="21" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(F22 / X22, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="21" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oGlassesFrameAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="21" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(H22 / X22, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="21" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oStealthAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="21" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(J22 / X22, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="21" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oStealthAccAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="21" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(L22 / X22, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="21" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oSunGlassesAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="21" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(N22 / X22, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="15" r="21" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oPresbyopicGlassesAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="21" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(P22 / X22, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="17" r="21" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oAccessoriesAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="18" r="21" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(R22 / X22, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="19" r="21" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oOtherGoodsAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="20" r="21" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(T22 / X22, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="21" r="21" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="oVisualOpticsAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="22" r="21" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FORMAT(V22 / X22, "0.00%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="23" r="21" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F22 + H22 + J22 + L22 + N22 + P22 + R22 + T22 + V22))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="21" s="8">
+<Expand/>
+</C>
+<C c="3" r="22" s="5">
+<O>
+<![CDATA[增长]]></O>
+<Expand/>
+</C>
+<C c="4" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=X21 - X22]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F21 - F22]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="22" s="10">
+<Expand/>
+</C>
+<C c="7" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=H21 - H22]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="22" s="10">
+<Expand/>
+</C>
+<C c="9" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=J21 - J22]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="22" s="10">
+<Expand/>
+</C>
+<C c="11" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=L21 - L22]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="22" s="10">
+<Expand/>
+</C>
+<C c="13" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=N21 - N22]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="14" r="22" s="10">
+<Expand/>
+</C>
+<C c="15" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=P21 - P22]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="16" r="22" s="10">
+<Expand/>
+</C>
+<C c="17" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=R21 - R22]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="18" r="22" s="10">
+<Expand/>
+</C>
+<C c="19" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=T21 - T22]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="20" r="22" s="10">
+<Expand/>
+</C>
+<C c="21" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=V21 - V22]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="22" r="22" s="10">
+<Expand/>
+</C>
+<C c="23" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=X21 - X22]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="22" s="10">
+<Expand/>
+</C>
+<C c="3" r="23" s="5">
+<O>
+<![CDATA[增长率]]></O>
+<Expand/>
+</C>
+<C c="4" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(X22 = 0, "0.00%", FORMAT((X21 - X22) / X22, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F22 = 0, "0.00%", FORMAT((F21 - F22) / F22, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="23" s="10">
+<Expand/>
+</C>
+<C c="7" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H22 = 0, "0.00%", FORMAT((H21 - H22) / H22, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="23" s="10">
+<Expand/>
+</C>
+<C c="9" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(J22 = 0, "0.00%", FORMAT((J21 - J22) / J22, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="23" s="10">
+<Expand/>
+</C>
+<C c="11" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(L22 = 0, "0.00%", FORMAT((L21 - L22) / L22, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="23" s="10">
+<Expand/>
+</C>
+<C c="13" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(N22 = 0, "0.00%", FORMAT((N21 - N22) / N22, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="14" r="23" s="10">
+<Expand/>
+</C>
+<C c="15" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(P22 = 0, "0.00%", FORMAT((P21 - P22) / P22, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="16" r="23" s="10">
+<Expand/>
+</C>
+<C c="17" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(R22 = 0, "0.00%", FORMAT((R21 - R22) / R22, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="18" r="23" s="10">
+<Expand/>
+</C>
+<C c="19" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(T22 = 0, "0.00%", FORMAT((T21 - T22) / T22, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="20" r="23" s="10">
+<Expand/>
+</C>
+<C c="21" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(V22 = 0, "0.00%", FORMAT((V21 - V22) / V22, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="22" r="23" s="10">
+<Expand/>
+</C>
+<C c="23" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(X22 = 0, "0.00%", FORMAT((X21 - X22) / X22, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="23" s="10">
+<Expand/>
+</C>
+<C c="1" r="24" cs="22" s="11">
+<Expand dir="0" upParentDefault="false" up="D24"/>
+</C>
+<C c="23" r="24" s="12">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80" foreground="-16776961" underline="1"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="ColorBackground" color="-16724737"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="ColorBackground" color="-16724737"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

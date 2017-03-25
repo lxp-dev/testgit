@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	
+	<!-- 散瞳检查 du begin-->
+	<bean id="mydriasisBjtrMgrImpl"
+		class="com.pengsheng.eims.bjtrhistory.mgr.impl.MydriasisBjtrMgrImpl" />
+	<bean id="mydriasisBjtrMgr" parent="baseTransactionProxy">
+		<property name="target" ref="mydriasisBjtrMgrImpl" />
+	</bean>
+	<!-- 散瞳检查 du end-->
+		
+	<!-- 眼部健康检查(新)sxh begin-->
+	<bean id="eyesCheckBjtrMgrImpl"
+		class="com.pengsheng.eims.bjtrhistory.mgr.impl.EyesCheckBjtrMgrImpl" />
+	<bean id="eyesCheckBjtrMgr" parent="baseTransactionProxy">
+		<property name="target" ref="eyesCheckBjtrMgrImpl" />
+	</bean>
+	<!-- 眼部健康检查(新)sxh end-->
+	
+	<!-- 屈光检查(新)sxh   begin -->
+	<bean id="refractiveBjtrMgrImpl"
+		class="com.pengsheng.eims.bjtrhistory.mgr.impl.RefractiveBjtrMgrImpl" />
+	<bean id="refractiveBjtrMgr" parent="baseTransactionProxy">
+		<property name="target" ref="refractiveBjtrMgrImpl" />
+	</bean>
+	<!-- 屈光检查(新)sxh   end  -->
+	
+	<!-- 双眼视功能检查(新)sxh  begin-->
+	<bean id="doubleEyeFunBjtrMgrIpml"
+		class="com.pengsheng.eims.bjtrhistory.mgr.impl.DoubleEyeFunBjtrMgrIpml" />
+	<bean id="doubleEyeFunBjtrMgr" parent="baseTransactionProxy">
+		<property name="target" ref="doubleEyeFunBjtrMgrIpml" />
+	</bean>
+	<!-- 双眼视功能检查(新)sxh  end-->
+	
+	<!-- 验光基表(新)sxh  begin-->
+	<bean id="optometryBasicBjtrMgrImpl" 
+		class="com.pengsheng.eims.bjtrhistory.mgr.impl.OptometryBasicBjtrMgrImp" />
+	<bean id="optometryBasicBjtrMgr" parent="baseTransactionProxy">
+		<property name="target" ref="optometryBasicBjtrMgrImpl" />
+	</bean>
+	<!-- 验光基表(新)sxh  end-->
+	
+	<!-- 特殊功能检查(新)sxh  begin-->
+	<bean id="specialCheckBjtrMgrImpl"
+		class="com.pengsheng.eims.bjtrhistory.mgr.impl.SpecialCheckBjtrMgrImpl" />
+	<bean id="specialCheckBjtrMgr" parent="baseTransactionProxy">
+		<property name="target" ref="specialCheckBjtrMgrImpl" />
+	</bean>
+	<!-- 特殊功能检查(新)sxh  end-->
+	
+	<!-- 检查结论(新)sxh  begin-->
+	<bean id="inspectionBjtrMgrImpl"
+		class="com.pengsheng.eims.bjtrhistory.mgr.impl.InspectionBjtrMrgImpl" />
+	<bean id="inspectionBjtrMgr" parent="baseTransactionProxy">
+		<property name="target" ref="inspectionBjtrMgrImpl" />
+	</bean>
+	<!-- 检查结论(新)sxh  end-->
+	
+	<!-- 接触镜评估(新)sxh  begin-->
+	<bean id="contactGlassBjtrMgrImpl"
+		class="com.pengsheng.eims.bjtrhistory.mgr.impl.ContactGlassBjtrMgrImpl"/>
+	<bean id="contactGlassBjtrMgr" parent="baseTransactionProxy">
+		<property name="target" ref="contactGlassBjtrMgrImpl" />
+	</bean>
+	<!-- 接触镜评估(新)sxh  end-->
+	
+	<!-- 角膜接触镜检查(新)sxh  begin-->
+	<bean id="cornealContactlLensBjtrMgrImpl"
+		class="com.pengsheng.eims.bjtrhistory.mgr.impl.CornealContactlLensBjtrMgrImpl" />
+	<bean id="cornealContactlLensBjtrMgr" parent="baseTransactionProxy">
+		<property name="target" ref="cornealContactlLensBjtrMgrImpl" />
+	</bean>
+	<!-- 角膜接触镜检查(新)sxh  end-->
+	
+	<!-- 验光病例查询(新)sxh  begin -->
+	<bean id="optometryCaseBjtrMgrImpl"
+		class="com.pengsheng.eims.bjtrhistory.mgr.impl.OptometryCaseBjtrMgrImpl" />
+	<bean id="optometryCaseBjtrMgr" parent="baseTransactionProxy">
+		<property name="target" ref="optometryCaseBjtrMgrImpl" />
+	</bean>
+	<!-- 验光病例查询(新)sxh  end -->
+	
+	<!-- 戴镜史(新)sxh  begin-->
+	<bean id="glassesHistoryBjtrMgrImpl"
+		class="com.pengsheng.eims.bjtrhistory.mgr.impl.GlassesHistoryBjtrMgrImpl" />
+	<bean id="glassesHistoryBjtrMgr" parent="baseTransactionProxy">
+		<property name="target" ref="glassesHistoryBjtrMgrImpl" />
+	</bean>
+	<!-- 戴镜史(新)sxh  end-->
+	
+	<!-- 顾客验光新 -->
+	<bean id="customerOptometryBjtrMgrImpl" class="com.pengsheng.eims.bjtrhistory.mgr.impl.CustomerOptometryBjtrMgrImpl" />
+	<bean id="customerOptometryBjtrMgr" parent="baseTransactionProxy">
+		<property name="target" ref="customerOptometryBjtrMgrImpl" />
+	</bean>
+	
+</beans>

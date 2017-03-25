@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	
+	<!-- 发票管理  begin-->
+	<bean id="ykinvoiceMgr" class="com.pengsheng.eims.yklogistics.mgr.impl.InvoiceMgrImpl" />
+	<!-- 发票管理  end-->
+
+	
+	<!-- 发票单据选择开窗 wanglei begin-->
+	<bean id="ykinvoiceSelectBillMgrImpl" class="com.pengsheng.eims.yklogistics.mgr.impl.InvoiceSelectBillMgrImpl" />
+	<bean id="ykinvoiceSelectBillMgr" parent="baseTransactionProxy">
+		<property name="target" ref="ykinvoiceSelectBillMgrImpl" />
+	</bean>
+	<!-- 发票单据选择开窗 wanglei end-->	
+	
+	<!-- 凭证单据选择开窗 wanglei begin-->
+	<bean id="ykproofSelectBillMgrImpl" class="com.pengsheng.eims.yklogistics.mgr.impl.ProofSelectBillMgrImpl" />
+	<bean id="ykproofSelectBillMgr" parent="baseTransactionProxy">
+		<property name="target" ref="ykproofSelectBillMgrImpl" />
+	</bean>
+	<!-- 凭证单据选择开窗 wanglei end-->	
+
+	<!-- 凭证管理  Add by SZK -->
+	<bean id="ykvoucherMgrImpl" class="com.pengsheng.eims.yklogistics.mgr.impl.VoucherMgrImpl" />
+	<bean id="ykvoucherMgr" parent="baseTransactionProxy">
+		<property name="target" ref="ykvoucherMgrImpl" />
+	</bean>
+	<bean id="ykvoucherTallyMgrImpl" class="com.pengsheng.eims.yklogistics.mgr.impl.VoucherTallyMgrImpl" />
+	<bean id="ykvoucherTallyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="ykvoucherTallyMgrImpl" />
+	</bean>
+	<!-- 凭证管理 End by SZK -->
+
+	<!-- 成本计算  begin-->
+	<bean id="ykcalMgr" class="com.pengsheng.eims.yklogistics.mgr.impl.CalMgrImpl" />
+	<!-- 成本计算  end-->
+	
+	<!-- 日志SZK begin-->
+	<bean id="yklogisticsLogMgrImpl" class="com.pengsheng.eims.yklogistics.mgr.impl.LogisticsLogMgrImpl" />
+	<bean id="yklogisticsLogMgr" parent="baseTransactionProxy">
+	    <property name="target" ref="yklogisticsLogMgrImpl" />
+	</bean>
+	<!-- 日志SZK end-->
+</beans>

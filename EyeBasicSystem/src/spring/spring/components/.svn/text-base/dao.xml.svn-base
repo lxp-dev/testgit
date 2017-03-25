@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false" default-dependency-check="none">
+	
+	<!-- 开窗 Add by Liuqian -->
+	<bean id="windowsDao" class="com.pengsheng.eims.components.dao.impl.WindowsDaoImpl"/>
+	<!-- 开窗 End by Liuqian -->
+	
+	<!-- 商品开窗 Add by du -->
+    <bean id="windowGoodsDao" class="com.pengsheng.eims.components.dao.impl.WindowGoodsDaoImpl"/>
+	<!-- 商品开窗 End by du -->	
+	
+	<!-- 单据开窗 Add by du -->
+    <bean id="windowOrderDao" class="com.pengsheng.eims.components.dao.impl.WindowOrderDaoImpl"/>
+	<!-- 单据开窗 End by du -->
+	
+	<!-- 委外订单开窗 Add by du -->
+    <bean id="windowConsignProcessOrderDao" class="com.pengsheng.eims.components.dao.impl.WindowConsignProcessOrderDaoImpl"/>
+	<!-- 委外订单开窗 End by du -->
+	
+	<!-- 隐形商品开窗 Liuqian begin-->
+	<bean id="conLensDao" class="com.pengsheng.eims.components.dao.impl.ConLensDaoImpl" />
+	<!-- 员工打折开窗 Liuqian end -->
+
+	
+	<!-- 特殊将加工要求开窗  Add by qiyue  -->
+	<bean id="specialRequirementsOpenDao" class="com.pengsheng.eims.components.dao.impl.SpecialRequirementsOpenDaoImpl"/>
+	<!--  特殊将加工要求开窗  End by qiyue-->
+	
+	
+	<!-- 不合格品按销售单添加 wanglei -->
+	 <bean id="windowNonconformingSaleOrderDao" class="com.pengsheng.eims.components.dao.impl.WindowNonconformingSaleOrderDaoImpl"/>
+	<!-- 不合格品按销售单添加 wanglei -->
+
+	
+	<!-- 顾客验光  Add by Liuqian -->
+	<bean id="customerOptometryDao" class="com.pengsheng.eims.components.dao.impl.CustomerOptometryDaoImpl" />
+    <!-- 顾客验光  Add by Liuqian -->
+
+	<!-- 顾客验光新2014  Add by mysflying -->
+	<bean id="customerOptometryNDao" class="com.pengsheng.eims.components.dao.impl.CustomerOptometryNDaoImpl" />
+    <!-- 顾客验光  Add by mysflying -->
+        
+    <!-- 顾客验光  Add by Liuqian -->
+	<bean id="windowInspectionDao" class="com.pengsheng.eims.components.dao.impl.WindowInspectionDaoImpl" />
+    <!-- 顾客验光  Add by Liuqian -->
+    
+    <!-- 顾客验光  Add by Liuqian -->
+	<bean id="sellLensDao" class="com.pengsheng.eims.components.dao.impl.SellLensDaoImpl" />
+    <!-- 顾客验光  Add by Liuqian -->
+    
+    <!-- 辅料中隐形辅料开窗  wanglei -->
+	<bean id="contactAccessoriesDao" class="com.pengsheng.eims.components.dao.impl.ContactAccessoriesDaoImpl" />
+    <!-- 辅料中隐形辅料开窗  wanglei -->
+    
+    <!-- 辅料中成品镜(太阳镜、老花镜)开窗  wanglei -->
+	<bean id="windowFinishedGlassesDao" class="com.pengsheng.eims.components.dao.impl.WindowFinishedGlassesDaoImpl" />
+    <!-- 辅料中成品镜(太阳镜、老花镜)开窗  wanglei -->
+    
+    <!-- 辅料中镜架辅料开窗  wanglei -->
+	<bean id="windowFramesAccessoriesDao" class="com.pengsheng.eims.components.dao.impl.WindowFramesAccessoriesDaoImpl" />
+    <!-- 辅料中镜架辅料开窗  wanglei -->
+    
+    <!-- 辅料中其它商品开窗  wanglei -->
+	<bean id="windowOtherGoodsDao" class="com.pengsheng.eims.components.dao.impl.WindowOtherGoodsDaoImpl" />
+    <!-- 辅料中其它商品开窗  wanglei -->
+    
+    <!-- 扫商品条码开窗  wanglei -->
+	<bean id="selectGoodsByGoodsbarcodeDao" class="com.pengsheng.eims.components.dao.impl.SelectGoodsByGoodsbarcodeDaoImpl" />
+    <!-- 扫商品条码开窗  wanglei -->
+    
+    <!-- 员工打折开窗  wanglei -->
+	<bean id="windowPersonDiscountDao" class="com.pengsheng.eims.components.dao.impl.WindowPersonDiscountDaoImpl" />
+    <!-- 员工打折开窗  wanglei -->
+    
+    <!-- 销售镜架开窗 qiyue begin -->
+    <bean id="sellMirrorFrameDao" class="com.pengsheng.eims.components.dao.impl.SellMirrorFrameDaoImpl" />
+    <!-- 销售镜架开窗  qiyue end -->
+    
+    <!-- 配镜单开窗 qiyue begin -->
+    <bean id="salesBasicDao" class="com.pengsheng.eims.components.dao.impl.SalesBasicDaoImpl" />
+    <!-- 配镜单开窗 qiyue end -->
+    
+    <!-- 在途查询开窗 qiyue begin -->
+    <bean id="inTransitDetailsDao" class="com.pengsheng.eims.components.dao.impl.InTransitDetailsDaoImpl" />
+    <!-- 在途查询开窗 qiyue end -->
+    
+    <!-- 误期查询（通知开窗） qiyue begin -->
+    <bean id="delaysReminderInformDao" class="com.pengsheng.eims.components.dao.impl.DelaysReminderInformDaoImpl" />
+    <!-- 误期查询 qiyue end -->
+</beans>

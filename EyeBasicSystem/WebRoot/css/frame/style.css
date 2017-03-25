@@ -1,0 +1,48 @@
+/* 初始样式 */
+body ,html{font-family:"宋体"; line-height:21px; text-align:center; background-color:#ffffff; margin:0 auto; color:#000}
+td{font-size:12px}
+div,form,img,ul,ol,li,p,span {margin:0;padding:0;border:0;}
+ul,li,ol {list-style:none;}
+ul {text-align:left;}
+/* 文字加粗 */
+.fb {font-weight:bold;}
+/* 文字大小 */
+.f12 {font-size:12px;}
+.f14 {font-size:14px;}
+/* 文字颜色 */
+.white{color:#FFF}
+/* 链接 */
+a:link{color:#000; text-decoration:none;}
+a:visited {color:#000; text-decoration:none;}
+a:hover{color:#ff0000; text-decoration:none;}
+a:active {color:#666666; text-decoration:none;}
+/*外边距*/
+.mt-3{ margin-top:3px;}
+.mt-10{ margin-top:10px;}
+/*内边距*/
+.pt-2{padding-top:2px}
+.pl-5{padding-left:5px}
+/* top */
+.topbg{background:url(../../img/frame/index02-eims.jpg) repeat-x; height:69px}
+.menuleft{background:url(../../img/frame/index_03.jpg) repeat-x; height:30px}
+.menuright{background:url(../../img/frame/index_05.jpg) repeat-x; height:30px; color:#FFF}
+.menuright a:link{color:#fff; text-decoration:none}
+.menuright a:visited {color:#fff; text-decoration:none}
+.menuright a:hover{color:#fff; text-decoration:underline}
+/* left */
+.leftmenutop{background:url(../../img/frame/index_15.jpg) ; width:169px; height:29px; color:#09326a}
+.lefttable{border:#b4bbc5 1px solid}
+.leftmenu1 {background:url(../../img/frame/index_18.jpg) ; width:208px; height: 24px; text-align: left;}
+.leftmenu2 {PADDING-LEFT:22px; height: 28px;text-align: left; font-size:12px; border-top:#dedede 1px solid}
+.icon{margin-right:10px!important; float:right; display:block}
+.image{margin-left:10px!important; float:left; display:block}
+/* right */
+.righttable{border:#bbcdd7 1px solid}
+.title1{background:url(../../img/frame/index_07.jpg) repeat-x; height:25px; font-weight:bold}
+.title2{background:url(../../img/frame/index_25.jpg) repeat-x; height:20px; font-weight:bold}
+/* bottom */
+.down_text {COLOR: #ffffff; BACKGROUND-COLOR: #00489f; height:15px; text-align:center}
+.down_text a:link{color:#fff; text-decoration:none}
+.down_text a:visited {color:#fff; text-decoration:none}
+.down_text a:hover{color:#fff; text-decoration:underline}
+

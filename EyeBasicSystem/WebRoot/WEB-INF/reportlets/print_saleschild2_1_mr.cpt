@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[X2013E20140123103852]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT TOP 7
+--------关联商品表,取规格,工艺类型 begin--------------
+CASE
+  WHEN B_GI_GoodsCategoryID = '1' THEN Isnull(B_GI_GoodsName, '') +  Isnull('—' + Rtrim(B_GI_Color), '') + Isnull('—' + Rtrim(F_TT_Name), '')
+  WHEN B_GI_GoodsCategoryID = '6' THEN Isnull(B_GI_GoodsName, '') +  Isnull('—' + Rtrim(B_GI_Color), '') + Isnull('—' + Rtrim(F_TT_Name), '')
+  WHEN B_GI_GoodsCategoryID = '8' THEN Isnull(B_GI_GoodsName, '') +  Isnull('—' + Rtrim(B_GI_SupplierColor), '') + Isnull('—' + Rtrim(F_TT_Name), '')
+  WHEN ( B_GI_GoodsCategoryID = '4'
+          OR B_GI_GoodsCategoryID = '5' )
+       AND F_SP_PrintStealthCheck = '1' THEN ( B_GI_GoodsName + '：' + Isnull(S_SE_SD_Guaranteeperiod, '') )
+  ELSE Isnull(B_GI_GoodsName, '')
+END                                         AS '商品名称',
+--------关联商品表,取规格,工艺类型 end--------------
+Isnull(S_SE_SD_Number, 0)   AS '商品数量',
+Isnull(S_SE_SD_SPrice, 0)                   AS '商品单价',
+Isnull(S_SE_SD_PriceSum, 0) AS '商品原价',
+Isnull(S_SE_SD_SalesValue, 0)               AS '商品应收金额',
+Isnull(S_SE_SB_SalesValue, 0)               AS '商品总计金额',
+Isnull(B_GI_UnitId, 0)                      AS '计量单位',
+S_SE_SD_DiscountRate                        AS '折扣率',
+B_UT_unitName                               AS '计量单位名称',
+B_GI_Spec                                   AS '商品规格'
+FROM   F_SystemParameter,
+       S_SE_SalesBasic
+       INNER JOIN S_SE_SalesDetail
+         ON S_SE_SB_SalesID = S_SE_SD_SalesID
+       -------关联商品表,取规格,工艺类型 add by zk begin------------
+       LEFT JOIN B_GoodsInfo
+         ON B_GI_GoodsID = S_SE_SalesDetail.S_SE_SD_SalesItemID
+left join B_Unit on B_UT_id=B_GI_UnitId
+       LEFT JOIN F_TechnologyType
+         ON B_GoodsInfo.B_GI_frameProcessCraftType = F_TechnologyType.F_TT_ID
+-------关联商品表,取规格,工艺类型 add by zk enb------------
+WHERE  S_SE_SB_SalesID = '${salesID}'
+       AND S_SE_SB_ValueFlag = '1'
+       
+union all 
+SELECT TOP 7
+--------关联商品表,取规格,工艺类型 begin--------------
+CASE
+  WHEN B_GI_GoodsCategoryID = '1' THEN Isnull(B_GI_GoodsName, '') +  Isnull('—' + Rtrim(B_GI_Color), '') + Isnull('—' + Rtrim(F_TT_Name), '')
+  WHEN B_GI_GoodsCategoryID = '6' THEN Isnull(B_GI_GoodsName, '') +  Isnull('—' + Rtrim(B_GI_Color), '') + Isnull('—' + Rtrim(F_TT_Name), '')
+  WHEN B_GI_GoodsCategoryID = '8' THEN Isnull(B_GI_GoodsName, '') +  Isnull('—' + Rtrim(B_GI_SupplierColor), '') + Isnull('—' + Rtrim(F_TT_Name), '')
+  WHEN ( B_GI_GoodsCategoryID = '4'
+          OR B_GI_GoodsCategoryID = '5' )
+       AND F_SP_PrintStealthCheck = '1' THEN ( B_GI_GoodsName + '：' + Isnull(S_SE_SD_Guaranteeperiod, '') )
+  ELSE Isnull(B_GI_GoodsName, '')
+END                                         AS '商品名称',
+--------关联商品表,取规格,工艺类型 end--------------
+Isnull(S_SE_SD_Number, 0)   AS '商品数量',
+Isnull(S_SE_SD_SPrice, 0)                   AS '商品单价',
+Isnull(S_SE_SD_PriceSum, 0) AS '商品原价',
+Isnull(S_SE_SD_SalesValue, 0)               AS '商品应收金额',
+Isnull(S_SE_SB_SalesValue, 0)               AS '商品总计金额',
+Isnull(B_GI_UnitId, 0)                      AS '计量单位',
+S_SE_SD_DiscountRate                        AS '折扣率',
+B_UT_unitName                               AS '计量单位名称',
+B_GI_Spec                                   AS '商品规格'
+FROM   F_SystemParameter,
+       S_SE_SalesBasic_Finished
+       INNER JOIN S_SE_SalesDetail_Finished
+         ON S_SE_SB_SalesID = S_SE_SD_SalesID
+       -------关联商品表,取规格,工艺类型 add by zk begin------------
+       LEFT JOIN B_GoodsInfo
+         ON B_GI_GoodsID = S_SE_SalesDetail_Finished.S_SE_SD_SalesItemID
+left join B_Unit on B_UT_id=B_GI_UnitId
+       LEFT JOIN F_TechnologyType
+         ON B_GoodsInfo.B_GI_frameProcessCraftType = F_TechnologyType.F_TT_ID
+-------关联商品表,取规格,工艺类型 add by zk enb------------
+WHERE  S_SE_SB_SalesID = '${salesID}'
+       AND S_SE_SB_ValueFlag = '1'
+       ]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[838200,800100,762000,800100,838200,838200,723900,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[7162800,7772400,1752600,1828800,2438400,2057400,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="商品名称"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Scope val="1"/>
+<Background name="ColorBackground"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<CellInsertPolicy/>
+<Expand dir="0"/>
+</C>
+<C c="1" r="0" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="商品规格"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Scope val="1"/>
+<Background name="ColorBackground"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="2" r="0" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="计量单位名称"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Scope val="1"/>
+<Background name="ColorBackground"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="3" r="0" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="商品数量"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[IF($wFlag==1, $$$, IF($wFlag==-1, ($$$ * -1), $$$))]]></Result>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Scope val="1"/>
+<Background name="ColorBackground"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="4" r="0" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="商品单价"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Scope val="1"/>
+<Background name="ColorBackground"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="5" r="0" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="折扣率"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="2">
+<Expand dir="0"/>
+</C>
+<C c="1" r="3">
+<Expand dir="0"/>
+</C>
+<C c="0" r="7">
+<Expand dir="0"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0" printBackground="false">
+<PaperSetting>
+<PaperSize width="34560000" height="8640000"/>
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+<Background name="NullBackground"/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<Format class="com.fr.base.CoreDecimalFormat">
+<![CDATA[###0.00]]></Format>
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

@@ -1,0 +1,1009 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[pjd]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT S_SE_SB_SalesID                                                   AS '配镜单号',
+       S_ME_CI_MemberId                                                  AS '会员ID',
+       S_ME_CI_Name                                                      AS '会员姓名',
+       S_ME_CI_Phone                                                     AS '会员电话',     
+       personName			                                           AS '退费收银员',
+       CONVERT(VARCHAR(16), S_SE_SB_FactWithdrawDate, 20)                    AS '退费日期',
+       CONVERT(VARCHAR(16), S_SE_SB_TakeGlassData, 20)                   AS '取镜日期',
+       S_SE_SB_PriceSum                                                  AS '原价金额',
+       CAST(( S_SE_SB_PriceSum - S_SE_SB_SalesValue ) AS NUMERIC(18, 2)) AS '折扣价格',
+       S_SE_SB_SalesValue                                                AS '应收金额',
+       S_SE_SB_Psalsvalue                                                AS '实收金额',       
+       CASE Isnull(S_SE_TM_UUID, '')
+         WHEN '' THEN '否'
+         ELSE '是'
+       END                                                               AS '是否邮寄'       
+FROM   S_SE_SalesBasic_Finished
+       LEFT JOIN SYS_PersonInfo sp
+         ON sp.ID = S_SE_SB_WithdrawPersonID
+       LEFT JOIN dbo.S_ME_CustomerInfo
+         ON S_ME_CI_CustomerID = S_SE_SB_CustomerID
+       LEFT JOIN (SELECT TOP 1 *
+                  FROM   S_SE_ToMail
+                  WHERE  S_SE_TM_LinkSalesID = '${salesid}') mail
+         ON S_SE_SB_SalesID = mail.S_SE_TM_LinkSalesID
+WHERE  S_SE_SB_SalesID ='${salesid}']]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[pjd]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select  isnull(sum(CAST(S_SE_SL_Price AS DECIMAL(18, 2))),0) as 退款现金
+ from S_SE_SalesLog
+where S_SE_SL_SalesID = '${salesid}'
+and S_SE_SL_PaymentType ='4' and S_SE_SL_ConsumptionID='1']]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[pjd]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select  isnull(sum(CAST(S_SE_SL_Price AS DECIMAL(18, 2))),0) as 退款银行卡
+ from S_SE_SalesLog
+where S_SE_SL_SalesID = '${salesid}'
+and S_SE_SL_PaymentType ='4' and S_SE_SL_ConsumptionID='3']]></Query>
+</TableData>
+<TableData name="ds4" class="com.fr.data.impl.DBTableData">
+<Parameters/>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[pjd]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 F_CN_ReportShowName from F_CompanyName]]></Query>
+</TableData>
+<TableData name="ds5" class="com.fr.data.impl.DBTableData">
+<Parameters/>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[pjd]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select * from (
+SELECT S_SE_SD_CommoditiesFlag,
+       S_SE_SD_SalesItemName,
+       SUM(S_SE_SD_Number)   AS num,
+       SUM(S_SE_SD_PriceSum) AS pricesum
+FROM   (SELECT S_SE_SD_SalesItemName,
+               S_SE_SD_Number,
+               S_SE_SD_PriceSum,
+               ( CASE
+                   WHEN S_SE_SD_CommoditiesFlag = '3' THEN '1.1'
+                   WHEN S_SE_SD_CommoditiesFlag = '4' THEN '1.2'
+                   ELSE S_SE_SD_CommoditiesFlag
+                 END ) AS S_SE_SD_CommoditiesFlag
+        FROM   uview_SalesDetail
+        WHERE  S_SE_SD_SalesID = '${salesid}') t
+GROUP  BY S_SE_SD_SalesItemName,
+          S_SE_SD_CommoditiesFlag
+union all
+SELECT 
+	'fjf' as S_SE_SD_CommoditiesFlag,
+	S_SE_CostsName as S_SE_SD_SalesItemName,
+	S_SE_Number as num,
+	S_SE_Amount AS pricesum
+FROM   (SELECT S_SE_CostsName,
+				S_SE_Number,
+               ( S_SE_Amount * CAST(Isnull(S_SE_Number, 0) AS NUMERIC) ) AS S_SE_Amount
+        FROM   S_SE_AdditionalCDetail
+               INNER JOIN S_SE_SalesBasic
+                 ON S_SE_SB_SalesID = S_SE_SalesID
+        WHERE  S_SE_SalesID = '${salesid}'
+               AND S_SE_SB_ValueFlag = '1'
+        UNION ALL
+        SELECT S_SE_CostsName,
+				S_SE_Number,
+               ( S_SE_Amount * CAST(Isnull(S_SE_Number, 0) AS NUMERIC) ) AS S_SE_Amount
+        FROM   S_SE_AdditionalCDetail
+               INNER JOIN S_SE_SalesBasic_Finished
+                 ON S_SE_SB_SalesID = S_SE_SalesID
+        WHERE  S_SE_SalesID = '${salesid}'
+               AND S_SE_SB_ValueFlag = '1')t 
+) t1
+ORDER  BY S_SE_SD_CommoditiesFlag ]]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.FlashPrint">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Utils-Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.SetPrinterOffset">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('SetPrinterOffset')}]]></Text>
+<IconName>
+<![CDATA[setprinteroffset]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="false" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1981200,762000,723900,864000,723900,723900,723900,723900,864000,723900,723900,864000,723900,723900,723900,723900,723900,723900,864000,723900,723900,723900,723900,723900,723900,723900,723900,723900,1943100,914400,876300,864000,723900,723900,723900,723900,864000,723900,723900,864000,723900,723900,723900,723900,723900,723900,864000,723900,723900,723900,723900,723900,723900,723900,723900,723900,723900,723900,723900,762000,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[144000,2880000,2880000,1296000,2592000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1440000,1104900,2743200,1333500,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="1" r="0" cs="4">
+<O t="Image">
+<IM>
+<![CDATA[lO<9(kN.ld@UNU%p%320!n%8qbeXK/_jPt^"0"%O(WVVp>AnEuE]A"^'Y[4j2s3el]A41bRoHt
+&Pd[5:*Xd\U%6]A[$K8:$AcZka/e4c+rg6Aq=(]AN_OZY$k/=:5>IPQE"HSi#\[eJj6to@ctBp
+k-[bk)?gee#L5(>38ND3X$lhqkS/?]A4BX',Hs7(c1_1Q1<1Ua0eq`!)oY&+0MJAK^bcXiYG6
+5'>~
+]]></IM>
+</O>
+<Expand/>
+</C>
+<C c="1" r="1" cs="4" s="0">
+<O>
+<![CDATA[天津市眼科医院验光配镜中心]]></O>
+<Expand/>
+</C>
+<C c="0" r="2" s="1">
+<Expand/>
+</C>
+<C c="1" r="2" cs="4" s="2">
+<O>
+<![CDATA[欢迎光临]]></O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="4" s="1">
+<Expand/>
+</C>
+<C c="1" r="4" s="3">
+<O>
+<![CDATA[配镜单号:]]></O>
+<Expand/>
+</C>
+<C c="2" r="4" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="配镜单号"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="5" s="1">
+<Expand/>
+</C>
+<C c="1" r="5" s="3">
+<O>
+<![CDATA[会员ID:]]></O>
+<Expand/>
+</C>
+<C c="2" r="5" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="会员ID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="6" s="1">
+<Expand/>
+</C>
+<C c="1" r="6" s="3">
+<O>
+<![CDATA[会员姓名:]]></O>
+<Expand/>
+</C>
+<C c="2" r="6" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="会员姓名"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="7" s="1">
+<Expand/>
+</C>
+<C c="1" r="7" s="3">
+<O>
+<![CDATA[会员电话:]]></O>
+<Expand/>
+</C>
+<C c="2" r="7" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="会员电话"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="9" cs="2" s="4">
+<O>
+<![CDATA[商品名称]]></O>
+<Expand/>
+</C>
+<C c="3" r="9" s="4">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="4" r="9" s="4">
+<O>
+<![CDATA[原价合计]]></O>
+<Expand/>
+</C>
+<C c="1" r="10" cs="2" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="S_SE_SD_SalesItemName"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="10" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="num"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA['-'+$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="10" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="pricesum"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA['-'+$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="12" s="1">
+<Expand/>
+</C>
+<C c="1" r="12" s="3">
+<O>
+<![CDATA[原价金额:]]></O>
+<Expand/>
+</C>
+<C c="2" r="12" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="原价金额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA['-'+$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="13" s="1">
+<Expand/>
+</C>
+<C c="1" r="13" s="3">
+<O>
+<![CDATA[折扣金额:]]></O>
+<Expand/>
+</C>
+<C c="2" r="13" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="折扣价格"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA['-'+$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="14" s="1">
+<Expand/>
+</C>
+<C c="1" r="14" s="3">
+<O>
+<![CDATA[应收金额:]]></O>
+<Expand/>
+</C>
+<C c="2" r="14" cs="3" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[='-'+FuncOne(ABS(C17 + C18))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="15" s="1">
+<Expand/>
+</C>
+<C c="1" r="15" s="1">
+<O>
+<![CDATA[退款金额]]></O>
+<Expand/>
+</C>
+<C c="2" r="15" s="1">
+<Expand/>
+</C>
+<C c="4" r="15" s="1">
+<Expand/>
+</C>
+<C c="0" r="16" s="1">
+<Expand/>
+</C>
+<C c="1" r="16" s="1">
+<O>
+<![CDATA[    刷卡:]]></O>
+<Expand/>
+</C>
+<C c="2" r="16" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="退款银行卡"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$*-1)]]></Result>
+<Parameters/>
+</O>
+<CellPageAttr/>
+<CellInsertPolicy>
+<InsertPolicy>
+<![CDATA[default]]></InsertPolicy>
+<O t="D">
+<![CDATA[0.0]]></O>
+</CellInsertPolicy>
+<Expand dir="0"/>
+</C>
+<C c="0" r="17" s="1">
+<Expand/>
+</C>
+<C c="1" r="17" s="1">
+<O>
+<![CDATA[    现金:]]></O>
+<Expand/>
+</C>
+<C c="2" r="17" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="退款现金"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$*-1)]]></Result>
+<Parameters/>
+</O>
+<CellPageAttr/>
+<CellInsertPolicy>
+<InsertPolicy>
+<![CDATA[default]]></InsertPolicy>
+<O t="D">
+<![CDATA[0.0]]></O>
+</CellInsertPolicy>
+<Expand dir="0"/>
+</C>
+<C c="0" r="18" s="1">
+<Expand/>
+</C>
+<C c="1" r="18" s="1">
+<Expand/>
+</C>
+<C c="2" r="18" s="1">
+<Expand/>
+</C>
+<C c="4" r="18" s="1">
+<Expand/>
+</C>
+<C c="0" r="19" s="1">
+<Expand/>
+</C>
+<C c="1" r="19" s="1">
+<O>
+<![CDATA[发票标识:]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[B18 = "0"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="19" cs="3" s="3">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[B18 = "0"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="0" r="20" s="1">
+<Expand/>
+</C>
+<C c="1" r="20" s="1">
+<O>
+<![CDATA[邮寄:]]></O>
+<Expand/>
+</C>
+<C c="2" r="20" cs="3" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="是否邮寄"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="21" s="1">
+<Expand/>
+</C>
+<C c="1" r="21" s="3">
+<O>
+<![CDATA[收银日期:]]></O>
+<Expand/>
+</C>
+<C c="2" r="21" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="退费日期"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="22" s="1">
+<Expand/>
+</C>
+<C c="1" r="22" s="3">
+<O>
+<![CDATA[收银员:]]></O>
+<Expand/>
+</C>
+<C c="2" r="22" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="退费收银员"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="23" s="1">
+<Expand/>
+</C>
+<C c="1" r="23" cs="4" s="3">
+<O>
+<![CDATA[-------------------------------]]></O>
+<Expand/>
+</C>
+<C c="0" r="24" s="1">
+<Expand/>
+</C>
+<C c="1" r="24" s="3">
+<O>
+<![CDATA[取镜日期:]]></O>
+<Expand/>
+</C>
+<C c="2" r="24" cs="3" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="取镜日期"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="25" s="1">
+<Expand/>
+</C>
+<C c="1" r="25" cs="4" s="1">
+<O>
+<![CDATA[退款联]]></O>
+<Expand/>
+</C>
+<C c="0" r="26" s="1">
+<Expand/>
+</C>
+<C c="1" r="26" s="1">
+<Expand/>
+</C>
+<C c="2" r="26" s="1">
+<Expand/>
+</C>
+<C c="4" r="26" s="1">
+<Expand/>
+</C>
+<C c="0" r="27" s="1">
+<Expand/>
+</C>
+<C c="1" r="27" cs="4" s="3">
+<O>
+<![CDATA[-------------------------------]]></O>
+<Expand/>
+</C>
+<C c="0" r="28" cs="5">
+<O t="Image">
+<IM>
+<![CDATA[lO<9(kN.ld@UNU%p%320!n%8qbeXK/_jPt^"0"%O(WVVp>AnEuE]A"^'Y[4j2s3el]A41bRoHt
+&Pd[5:*Xd\U%6]A[$K8:$AcZka/e4c+rg6Aq=(]AN_OZY$k/=:5>IPQE"HSi#\[eJj6to@ctBp
+k-[bk)?gee#L5(>38ND3X$lhqkS/?]A4BX',Hs7(c1_1Q1<1Ua0eq`!)oY&+0MJAK^bcXiYG6
+5'>~
+]]></IM>
+</O>
+<Expand/>
+</C>
+<C c="1" r="29" cs="4" s="0">
+<O>
+<![CDATA[天津市眼科医院验光配镜中心]]></O>
+<Expand/>
+</C>
+<C c="0" r="30" s="7">
+<Expand/>
+</C>
+<C c="1" r="30" cs="4" s="2">
+<O>
+<![CDATA[欢迎光临]]></O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="32" s="3">
+<O>
+<![CDATA[配镜单号:]]></O>
+<Expand/>
+</C>
+<C c="2" r="32" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="配镜单号"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="33" s="3">
+<O>
+<![CDATA[会员ID:]]></O>
+<Expand/>
+</C>
+<C c="2" r="33" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="会员ID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="34" s="3">
+<O>
+<![CDATA[会员姓名:]]></O>
+<Expand/>
+</C>
+<C c="2" r="34" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="会员姓名"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="35" s="3">
+<O>
+<![CDATA[会员电话:]]></O>
+<Expand/>
+</C>
+<C c="2" r="35" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="会员电话"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="37" cs="2" s="4">
+<O>
+<![CDATA[商品名称]]></O>
+<Expand/>
+</C>
+<C c="3" r="37" s="4">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="4" r="37" s="4">
+<O>
+<![CDATA[原价合计]]></O>
+<Expand/>
+</C>
+<C c="1" r="38" cs="2" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="S_SE_SD_SalesItemName"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="38" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="num"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA['-'+$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="38" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="pricesum"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA['-'+$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="40" s="3">
+<O>
+<![CDATA[原价金额:]]></O>
+<Expand/>
+</C>
+<C c="2" r="40" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="原价金额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA['-'+$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="41" s="3">
+<O>
+<![CDATA[折扣金额:]]></O>
+<Expand/>
+</C>
+<C c="2" r="41" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="折扣价格"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA['-'+$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="42" s="3">
+<O>
+<![CDATA[应收金额:]]></O>
+<Expand/>
+</C>
+<C c="2" r="42" cs="3" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[='-'+FuncOne(ABS(C17 + C18))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="43" s="1">
+<O>
+<![CDATA[退款金额]]></O>
+<Expand/>
+</C>
+<C c="2" r="43" s="1">
+<Expand dir="1"/>
+</C>
+<C c="4" r="43" s="1">
+<Expand/>
+</C>
+<C c="1" r="44" s="1">
+<O>
+<![CDATA[    刷卡:]]></O>
+<Expand/>
+</C>
+<C c="2" r="44" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="退款银行卡"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$*-1)]]></Result>
+<Parameters/>
+</O>
+<CellPageAttr/>
+<CellInsertPolicy>
+<InsertPolicy>
+<![CDATA[default]]></InsertPolicy>
+<O t="D">
+<![CDATA[0.0]]></O>
+</CellInsertPolicy>
+<Expand dir="0"/>
+</C>
+<C c="1" r="45" s="1">
+<O>
+<![CDATA[    现金:]]></O>
+<Expand/>
+</C>
+<C c="2" r="45" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="退款现金"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$*-1)]]></Result>
+<Parameters/>
+</O>
+<CellPageAttr/>
+<CellInsertPolicy>
+<InsertPolicy>
+<![CDATA[default]]></InsertPolicy>
+<O t="D">
+<![CDATA[0.0]]></O>
+</CellInsertPolicy>
+<Expand dir="0"/>
+</C>
+<C c="1" r="46" s="1">
+<Expand/>
+</C>
+<C c="2" r="46" s="1">
+<Expand/>
+</C>
+<C c="4" r="46" s="1">
+<Expand/>
+</C>
+<C c="1" r="47" s="1">
+<O>
+<![CDATA[发票标识:]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[B18 = "0"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="47" cs="3" s="3">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[B18 = "0"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="1" r="48" s="1">
+<O>
+<![CDATA[邮寄:]]></O>
+<Expand/>
+</C>
+<C c="2" r="48" cs="3" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="是否邮寄"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="49" s="3">
+<O>
+<![CDATA[收银日期:]]></O>
+<Expand/>
+</C>
+<C c="2" r="49" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="退费日期"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="50" s="3">
+<O>
+<![CDATA[收银员:]]></O>
+<Expand/>
+</C>
+<C c="2" r="50" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="退费收银员"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="51" s="1">
+<Expand/>
+</C>
+<C c="1" r="51" cs="4" s="3">
+<O>
+<![CDATA[-------------------------------]]></O>
+<Expand/>
+</C>
+<C c="1" r="52" s="3">
+<O>
+<![CDATA[取镜日期:]]></O>
+<Expand/>
+</C>
+<C c="2" r="52" cs="3" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="取镜日期"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="53" cs="4" s="1">
+<O>
+<![CDATA[银台留存]]></O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting>
+<PaperSize width="10800000" height="57600000"/>
+<Margin top="0" left="0" bottom="0" right="0"/>
+</PaperSetting>
+<Background name="NullBackground"/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="true" delayPlaying="true" windowPosition="1" align="0"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="104"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="0" size="88"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="0" size="104"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="0" size="88"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="0" size="88"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" vertical_alignment="1" imageLayout="1">
+<FRFont name="黑体" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" vertical_alignment="1" imageLayout="1">
+<FRFont name="黑体" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

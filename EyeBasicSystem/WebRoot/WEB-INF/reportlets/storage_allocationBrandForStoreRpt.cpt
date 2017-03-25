@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="billid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select
+C_SHA_Allocation.C_SHA_A_billID as cshaabillid,--单据编号
+d.B_DP_DepartmentName as cshaaoutdepartmentname,--申请部门名称
+a.personName as cshaacreatepersonname,--制单人姓名
+CONVERT(VARCHAR(10),C_SHA_Allocation.C_SHA_A_billDate,23)  as cshaabilldate,--制单日期
+b.personName as cshaaauditpersonname,--审核人姓名
+c.personName as cshaaconsigneename,--收货人姓名
+
+CONVERT(VARCHAR(10),C_SHA_Allocation.C_SHA_A_consignDate,23)   as cshaaconsigndate,--收货日期
+C_SHA_Allocation.C_SHA_A_createPerson as cshaacreateperson,--制单人
+C_SHA_Allocation.C_SHA_A_auditPerson as cshaaauditperson,--审核人
+
+CONVERT(VARCHAR(10),C_SHA_Allocation.C_SHA_A_auditDate,23)   as cshaaauditdate,--审核日期
+C_SHA_Allocation.C_SHA_A_auditState as cshaaauditstate,--审核状态
+C_SHA_Allocation.C_SHA_A_consignState as cshaaconsignstate,--收货状态
+C_SHA_Allocation.C_SHA_A_outStockId as cshaaoutstockid,--发出部门仓位ID
+C_SHA_Allocation.C_SHA_A_inStockId as cshaainstockid,--接收仓位ID
+C_SHA_Allocation.C_SHA_A_remark as cshaaremark,--备注
+C_SHA_Allocation.C_SHA_A_inDepartmentId as cshaaindepartmentid,--接收部门ID
+C_SHA_Allocation.C_SHA_A_outDepartmentId as cshaaoutdepartmentid,--申请部门
+e.B_WH_warehouseName as cshaaoutstockname,--发出仓位名称
+f.B_WH_warehouseName as cshaainstockname  --接收仓位名称
+from C_SHA_Allocation
+inner join (select B_DP_DepartmentID,B_DP_DepartmentName from B_Departments)d on C_SHA_Allocation.C_SHA_A_outDepartmentId=d.B_DP_DepartmentID 
+left join (select ID,personName from SYS_PersonInfo)a on C_SHA_Allocation.C_SHA_A_createPerson=a.ID 
+left join (select ID,personName from SYS_PersonInfo)b on C_SHA_Allocation.C_SHA_A_auditPerson=b.ID 
+left join (select ID,personName from SYS_PersonInfo)c on C_SHA_Allocation.C_SHA_A_consignee=c.ID
+left join (select B_WH_ID,B_WH_warehouseName from B_Warehouse)e on C_SHA_Allocation.C_SHA_A_outStockId=e.B_WH_ID 
+left join (select B_WH_ID,B_WH_warehouseName from B_Warehouse)f on C_SHA_Allocation.C_SHA_A_inStockId=f.B_WH_ID 
+where C_SHA_Allocation.C_SHA_A_billID = '${billid}']]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="billid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT C_SHA_AllocationEntry.C_SHA_AE_billId                   AS cshaaebillid,--单据编号
+       SUM(C_SHA_AllocationEntry.C_SHA_AE_allocationQuantity)  AS cshaaeallocationquantity,--调拨数量
+       Substring(C_SHA_AllocationEntry.C_SHA_AE_goodsId, 1, 7) AS cshaaegoodsid,--商品代码
+       B_BD_brandName                                          AS cshaaegoodsname,--商品名称
+       B_WH_warehouseName                                      AS cshaaoutstockname,--发出仓位名称
+       SUM(C_SHA_AllocationEntry.C_SHA_AE_requirementQuantity) AS cshaaerequirementquantity,--需求数量
+       B_GoodsInfo.B_GI_RetailPrice							   AS cshaaecostprice,--零售价
+       C_SHA_AE_WholesalePrice as wholesaleprice,		 --批发单价
+       sum(C_SHA_AE_WholesalePriceAmount) as WholesalePriceAmount,--批发合计
+       B_UT_unitName                                           AS unitName --单位
+FROM   C_SHA_AllocationEntry
+       INNER JOIN B_GoodsInfo
+         ON C_SHA_AllocationEntry.C_SHA_AE_goodsId = B_GoodsInfo.B_GI_GoodsID
+       INNER JOIN B_Brand
+         ON B_Brand.B_BD_ID = B_GoodsInfo.B_GI_BrandID
+            AND B_GoodsInfo.B_GI_SupplierID = B_BD_SupplierID
+       INNER JOIN (SELECT B_UT_id,
+                          B_UT_unitName
+                   FROM   B_Unit)a
+         ON B_GoodsInfo.B_GI_UnitId = a.B_UT_id
+       INNER JOIN (SELECT B_WH_ID,
+                          B_WH_warehouseName
+                   FROM   B_Warehouse)e
+         ON C_SHA_AllocationEntry.C_SHA_A_outStockId = e.B_WH_ID
+WHERE  C_SHA_AE_billId = '${billid}'
+GROUP  BY Substring(C_SHA_AllocationEntry.C_SHA_AE_goodsId, 1, 7),
+          B_BD_brandName,
+          B_WH_warehouseName,
+          B_UT_unitName,
+          C_SHA_AllocationEntry.C_SHA_AE_billId,B_GoodsInfo.B_GI_RetailPrice,			C_SHA_AE_WholesalePrice]]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+</TableDataMap>
+<ReportExportAttr>
+<ExcelExportAttr hideColumn="false" hideRow="false"/>
+<PDFExportAttr/>
+<HTMLExportAttr/>
+</ReportExportAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="5" T="5"/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1028700,1104900,914400,914400,914400,914400,914400,914400,914400,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[952500,2705100,1943100,2933700,2857500,1485900,2247900,2438400,2514600,2743200,4381500,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="1" r="0" cs="10" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="1" cs="10" s="1">
+<O>
+<![CDATA[商品调拨单表]]></O>
+<Expand/>
+</C>
+<C c="1" r="2" s="2">
+<O>
+<![CDATA[调拨单号：]]></O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="2" cs="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cshaabillid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="2" s="4">
+<O>
+<![CDATA[调拨日期：]]></O>
+<Expand/>
+</C>
+<C c="5" r="2" cs="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cshaabilldate"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="2" s="4">
+<O>
+<![CDATA[制单人:]]></O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="2" cs="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cshaacreatepersonname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="3" s="2">
+<O>
+<![CDATA[调出仓位：]]></O>
+<Expand/>
+</C>
+<C c="2" r="3" cs="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cshaaoutstockname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="3" s="4">
+<O>
+<![CDATA[调入仓位：]]></O>
+<Expand/>
+</C>
+<C c="5" r="3" cs="3" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cshaainstockname"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="3" s="4">
+<O>
+<![CDATA[审核人:]]></O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="3" cs="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cshaaauditpersonname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="4" s="2">
+<O>
+<![CDATA[备注：]]></O>
+<Expand/>
+</C>
+<C c="2" r="4" cs="9" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cshaaremark"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="5" cs="2" s="6">
+<O>
+<![CDATA[品种代码]]></O>
+<Expand/>
+</C>
+<C c="3" r="5" cs="2" s="6">
+<O>
+<![CDATA[品种名称]]></O>
+<Expand/>
+</C>
+<C c="5" r="5" s="6">
+<O>
+<![CDATA[单位]]></O>
+<Expand/>
+</C>
+<C c="6" r="5" s="6">
+<O>
+<![CDATA[调拨数]]></O>
+<Expand/>
+</C>
+<C c="7" r="5" s="6">
+<O>
+<![CDATA[零售价格]]></O>
+<Expand/>
+</C>
+<C c="8" r="5" s="7">
+<O>
+<![CDATA[批发单价]]></O>
+<Expand/>
+</C>
+<C c="9" r="5" s="7">
+<O>
+<![CDATA[批发小计]]></O>
+<Expand/>
+</C>
+<C c="10" r="5" s="6">
+<O>
+<![CDATA[发出仓位]]></O>
+<Expand/>
+</C>
+<C c="1" r="6" cs="2" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cshaaegoodsid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="6" cs="2" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cshaaegoodsname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="6" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="unitName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="6" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cshaaeallocationquantity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="6" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cshaaecostprice"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="6" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="wholesaleprice"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="6" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="WholesalePriceAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="6" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="cshaaoutstockname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="7" cs="5" s="11">
+<O>
+<![CDATA[合计：]]></O>
+<Expand/>
+</C>
+<C c="6" r="7" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(G7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="7" s="12">
+<Expand/>
+</C>
+<C c="8" r="7" s="12">
+<Expand/>
+</C>
+<C c="9" r="7" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(J7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="7" s="13">
+<Expand/>
+</C>
+<C c="1" r="8" s="14">
+<Expand/>
+</C>
+<C c="2" r="8" cs="2" s="15">
+<O>
+<![CDATA[配送人：]]></O>
+<Expand/>
+</C>
+<C c="4" r="8" s="14">
+<Expand/>
+</C>
+<C c="6" r="8" cs="2" s="15">
+<O>
+<![CDATA[收货人：]]></O>
+<Expand/>
+</C>
+<C c="10" r="8" s="14">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting>
+<PaperSize width="30240000" height="41760000"/>
+<Margin top="1152000" left="718560" bottom="1152000" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="120"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="微软雅黑" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="微软雅黑" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="微软雅黑" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="1" size="80"/>
+<Background name="ColorBackground" color="-1"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="微软雅黑" style="1" size="88"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

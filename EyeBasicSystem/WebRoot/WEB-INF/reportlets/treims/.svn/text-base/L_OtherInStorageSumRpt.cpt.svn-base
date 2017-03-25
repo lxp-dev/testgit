@@ -1,0 +1,843 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="salestype"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[exec L_OtherInStorageSum '${begDate}','${endDate}','${departmentID}','${categoryid}','${supplierid}','${salestype}']]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="3"/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1524000,914400,914400,914400,914400,952500,914400,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[0,1524000,1638300,2057400,3657600,1371600,1714500,1371600,1981200,1371600,1790700,1447800,1943100,1371600,1866900,1447800,1790700,1371600,1828800,1600200,1943100,1714500,1943100,1524000,1752600,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="1" r="0" cs="24" s="0">
+<O>
+<![CDATA[其他入库汇总表]]></O>
+<Expand/>
+</C>
+<C c="1" r="1" s="1">
+<O>
+<![CDATA[期间:]]></O>
+<Expand/>
+</C>
+<C c="2" r="1" cs="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="date"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="19" r="1" cs="2" s="2">
+<O>
+<![CDATA[打印日期:]]></O>
+<Expand/>
+</C>
+<C c="21" r="1" cs="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=TODAY()]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="1" r="2" cs="2" rs="2" s="3">
+<O>
+<![CDATA[门店]]></O>
+<Expand/>
+</C>
+<C c="3" r="2" rs="2" s="3">
+<O>
+<![CDATA[制造商编号]]></O>
+<Expand/>
+</C>
+<C c="4" r="2" rs="2" s="3">
+<O>
+<![CDATA[制造商名称]]></O>
+<Expand/>
+</C>
+<C c="5" r="2" cs="2" s="3">
+<O>
+<![CDATA[镜架]]></O>
+<Expand/>
+</C>
+<C c="7" r="2" cs="2" s="3">
+<O>
+<![CDATA[配件]]></O>
+<Expand/>
+</C>
+<C c="9" r="2" cs="2" s="3">
+<O>
+<![CDATA[镜片]]></O>
+<Expand/>
+</C>
+<C c="11" r="2" cs="2" s="3">
+<O>
+<![CDATA[隐形]]></O>
+<Expand/>
+</C>
+<C c="13" r="2" cs="2" s="3">
+<O>
+<![CDATA[护理液]]></O>
+<Expand/>
+</C>
+<C c="15" r="2" cs="2" s="3">
+<O>
+<![CDATA[太阳镜]]></O>
+<Expand/>
+</C>
+<C c="17" r="2" cs="2" s="3">
+<O>
+<![CDATA[耗材]]></O>
+<Expand/>
+</C>
+<C c="19" r="2" cs="2" s="3">
+<O>
+<![CDATA[老花镜]]></O>
+<Expand/>
+</C>
+<C c="21" r="2" cs="2" s="3">
+<O>
+<![CDATA[视光]]></O>
+<Expand/>
+</C>
+<C c="23" r="2" cs="2" s="3">
+<O>
+<![CDATA[合计]]></O>
+<Expand/>
+</C>
+<C c="5" r="3" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="6" r="3" s="3">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="7" r="3" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="8" r="3" s="3">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="9" r="3" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="10" r="3" s="3">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="11" r="3" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="12" r="3" s="3">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="13" r="3" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="14" r="3" s="3">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="15" r="3" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="16" r="3" s="3">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="17" r="3" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="18" r="3" s="3">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="19" r="3" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="20" r="3" s="3">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="21" r="3" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="22" r="3" s="3">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="23" r="3" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="24" r="3" s="3">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="0" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="departmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0" extendable="1"/>
+</C>
+<C c="1" r="4" cs="2" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="departmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0" extendable="1"/>
+</C>
+<C c="3" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="supplierid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="4" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="suppliername"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsQuantity1"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0" extendable="1"/>
+</C>
+<C c="6" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="notTaxRateAmount1"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsQuantity2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="notTaxRateAmount2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsQuantity3"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="notTaxRateAmount3"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsQuantity4"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="notTaxRateAmount4"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsQuantity5"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="notTaxRateAmount5"/>
+<Complex/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="15" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsQuantity6"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="notTaxRateAmount6"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="17" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsQuantity7"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="18" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="notTaxRateAmount7"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="19" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsQuantity8"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="20" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="notTaxRateAmount8"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="21" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsQuantity9"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="22" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="notTaxRateAmount9"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="23" r="4" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F5, H5, J5, L5, N5, P5, R5,T5,V5)]]></Attributes>
+</O>
+<Expand extendable="1"/>
+</C>
+<C c="24" r="4" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(G5, I5, K5, M5, O5, Q5, S5,U5,W5))]]></Attributes>
+</O>
+<Expand extendable="1"/>
+</C>
+<C c="1" r="5" cs="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="departmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="5" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F5)]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="6" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(G5))]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="7" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H5)]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="8" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(I5))]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="9" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(J5)]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="10" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(K5))]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="11" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(L5)]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="12" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(M5))]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="13" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(N5)]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="14" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(O5))]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="15" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(P5)]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="16" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(Q5))]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="17" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(R5)]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="18" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(S5))]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="19" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(T5)]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="20" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(U5))]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="21" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(V5)]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="22" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(W5))]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="23" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(X5)]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="24" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(Y5))]]></Attributes>
+</O>
+<Expand dir="0" extendable="1" leftParentDefault="false" left="A5"/>
+</C>
+<C c="1" r="6" cs="4" s="6">
+<O>
+<![CDATA[合计]]></O>
+<Expand/>
+</C>
+<C c="5" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(G6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(I6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(J6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(K6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(L6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(M6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(N6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="14" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(O6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="15" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(P6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="16" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(Q6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="17" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(R6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="18" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(S6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="19" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(T6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="20" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(U6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="21" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(V6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="22" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(W6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="23" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(X6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(Y6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<PaperSize width="30240000" height="47520000"/>
+<Margin top="969264" left="2743200" bottom="969264" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="120"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="88"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

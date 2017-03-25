@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false" default-dependency-check="none">
+	<!-- module ajax liuqian begin-->
+		<bean id="ajaxModuleAction" class="com.pengsheng.eims.module.action.AjaxModuleAction" scope="prototype"/>
+	<!-- module ajax liuqian end-->
+</beans>

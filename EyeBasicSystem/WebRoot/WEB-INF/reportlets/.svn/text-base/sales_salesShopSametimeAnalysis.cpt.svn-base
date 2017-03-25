@@ -1,0 +1,3100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="endtime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="salesCost"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime2"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="beginTime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="beginTime2"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endTime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT departmentID
+INTO   #shopCode
+FROM   Sales_createshopcodetab('${departmentsID}')
+
+SELECT '${begintime}' + '～' + '${endtime}' AS printdate,
+       t.DepartmentID                      AS DepartmentID,
+       t.DepartmentName                    AS DepartmentName,
+       bt1.*,
+       bt2.*
+FROM  (SELECT B_DP_DepartmentID   AS DepartmentID,
+              B_DP_DepartmentName AS DepartmentName
+       FROM   B_Departments
+       WHERE  ( ( Isnull('${departmentsID}', '') <> ''
+                  AND B_DP_DepartmentID IN (SELECT departmentID
+                                            FROM   #shopcode) )
+                 OR ( Isnull('${departmentsID}', '') = '' ) )
+              AND B_DP_Type = '1')t
+      LEFT JOIN(SELECT bq.ShopCode AS ShopCode,
+                       bq.框镜处方数    AS 框镜处方数,
+                       bq.隐形处方数    AS 隐形处方数,
+                       bq.框镜销售数    AS 框镜销售数,
+                       bq.隐形销售数    AS 隐形销售数,
+                       bq.辅料销售数    AS 辅料销售数,
+                       bq.框镜销售额    AS 框镜销售额,
+                       bq.隐形销售额    AS 隐形销售额,
+                       bq.辅料销售额    AS 辅料销售额,
+                       bq1.成本      AS 框镜成本,
+                       bq2.成本      AS 隐形成本,
+                       bq3.成本      AS 辅料成本
+                FROM  (SELECT R_SD_DC_ShopCode             AS ShopCode,
+                              SUM(R_SD_DC_FramePutIn)      AS 框镜处方数,
+                              SUM(R_SD_DC_StealthPutIn)    AS 隐形处方数,
+                              SUM(R_SD_DC_FrameNum)        AS 框镜销售数,
+                              SUM(R_SD_DC_StealthNum)      AS 隐形销售数,
+                              SUM(R_SD_DC_AccessoryNum)    AS 辅料销售数,
+                              SUM(R_SD_DC_FrameAmount)     AS 框镜销售额,
+                              SUM(R_SD_DC_StealthAmount)   AS 隐形销售额,
+                              SUM(R_SD_DC_AccessoryAmount) AS 辅料销售额
+                       FROM   R_SD_DayCollect
+                       WHERE  ( ( Isnull('${departmentsID}', '') <> ''
+                                  AND R_SD_DC_ShopCode IN (SELECT departmentID
+                                                           FROM   #shopcode) )
+                                 OR ( Isnull('${departmentsID}', '') = '' ) )
+                              AND ( ( Isnull('${beginTime}', '') <> ''
+                                      AND CONVERT(VARCHAR(10), R_SD_DC_Date, 120) >= '${beginTime}' )
+                                     OR Isnull('${beginTime}', '') = '' )
+                              AND ( ( Isnull('${endTime}', '') <> ''
+                                      AND CONVERT(VARCHAR(10), R_SD_DC_Date, 120) <= '${endTime}' )
+                                     OR Isnull('${endTime}', '') = '' )
+                       GROUP  BY R_SD_DC_ShopCode)bq
+                      LEFT JOIN(SELECT ShopCode,
+                                       SUM(成本) AS 成本
+                                FROM   (SELECT S_SE_SB_ShopCode AS ShopCode,
+                                               ( CASE
+                                                   WHEN Isnull('${salesCost}', '') = '1' THEN Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '2' THEN Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '3' THEN Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                                   ELSE Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                 END )          AS 成本
+                                        FROM   uview_SalesDetail
+                                               INNER JOIN uview_SalesBasic
+                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                               INNER JOIN B_GoodsInfo
+                                                 ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                        WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) <> 'ZZ'
+                                               AND S_SE_SB_ValueFlag = '1'
+                                               AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                               AND ( ( Isnull('${departmentsID}', '') <> ''
+                                                       AND uview_SalesBasic.S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                                                FROM   #shopcode) )
+                                                      OR ( Isnull('${departmentsID}', '') = '' ) )
+                                               AND ( ( Isnull('${beginTime}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) >= '${beginTime}' )
+                                                      OR Isnull('${beginTime}', '') = '' )
+                                               AND ( ( Isnull('${endTime}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) <= '${endTime}' )
+                                                      OR Isnull('${endTime}', '') = '' )
+                                        GROUP  BY S_SE_SB_ShopCode
+                                        UNION ALL
+                                        SELECT S_SE_SB_ShopCode AS ShopCode,
+                                               ( CASE
+                                                   WHEN Isnull('${salesCost}', '') = '1' THEN -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '2' THEN -Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '3' THEN -Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                                   ELSE -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                 END )          AS 成本
+                                        FROM   uview_SalesDetail
+                                               INNER JOIN uview_SalesBasic
+                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                               INNER JOIN B_GoodsInfo
+                                                 ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                        WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) <> 'ZZ'
+                                               AND S_SE_SB_ValueFlag = '1'
+                                               AND S_SE_SB_WithdrawFlag = '1'
+                                               AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                               AND ( ( Isnull('${departmentsID}', '') <> ''
+                                                       AND uview_SalesBasic.S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                                                FROM   #shopcode) )
+                                                      OR ( Isnull('${departmentsID}', '') = '' ) )
+                                               AND ( ( Isnull('${beginTime}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) >= '${beginTime}' )
+                                                      OR Isnull('${beginTime}', '') = '' )
+                                               AND ( ( Isnull('${endTime}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) <= '${endTime}' )
+                                                      OR Isnull('${endTime}', '') = '' )
+                                        GROUP  BY S_SE_SB_ShopCode)t1
+                                GROUP  BY ShopCode)bq1
+                        ON bq.ShopCode = bq1.ShopCode
+                      LEFT JOIN(SELECT ShopCode,
+                                       SUM(成本) AS 成本
+                                FROM   (SELECT S_SE_SB_ShopCode AS ShopCode,
+                                               ( CASE
+                                                   WHEN Isnull('${salesCost}', '') = '1' THEN Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '2' THEN Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '3' THEN Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                                   ELSE Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                 END )          AS 成本
+                                        FROM   uview_SalesDetail
+                                               INNER JOIN uview_SalesBasic
+                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                               INNER JOIN B_GoodsInfo
+                                                 ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                        WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) <> 'ZZ'
+                                               AND S_SE_SB_ValueFlag = '1'
+                                               AND S_SE_SB_OrdersType IN ( '3', '4' )
+                                               AND ( ( Isnull('${departmentsID}', '') <> ''
+                                                       AND uview_SalesBasic.S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                                                FROM   #shopcode) )
+                                                      OR ( Isnull('${departmentsID}', '') = '' ) )
+                                               AND ( ( Isnull('${beginTime}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) >= '${beginTime}' )
+                                                      OR Isnull('${beginTime}', '') = '' )
+                                               AND ( ( Isnull('${endTime}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) <= '${endTime}' )
+                                                      OR Isnull('${endTime}', '') = '' )
+                                        GROUP  BY S_SE_SB_ShopCode
+                                        UNION ALL
+                                        SELECT S_SE_SB_ShopCode AS ShopCode,
+                                               ( CASE
+                                                   WHEN Isnull('${salesCost}', '') = '1' THEN -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '2' THEN -Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '3' THEN -Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                                   ELSE -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                 END )          AS 成本
+                                        FROM   uview_SalesDetail
+                                               INNER JOIN uview_SalesBasic
+                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                               INNER JOIN B_GoodsInfo
+                                                 ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                        WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) <> 'ZZ'
+                                               AND S_SE_SB_ValueFlag = '1'
+                                               AND S_SE_SB_WithdrawFlag = '1'
+                                               AND S_SE_SB_OrdersType IN ( '3', '4' )
+                                               AND ( ( Isnull('${departmentsID}', '') <> ''
+                                                       AND uview_SalesBasic.S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                                                FROM   #shopcode) )
+                                                      OR ( Isnull('${departmentsID}', '') = '' ) )
+                                               AND ( ( Isnull('${beginTime}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) >= '${beginTime}' )
+                                                      OR Isnull('${beginTime}', '') = '' )
+                                               AND ( ( Isnull('${endTime}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) <= '${endTime}' )
+                                                      OR Isnull('${endTime}', '') = '' )
+                                        GROUP  BY S_SE_SB_ShopCode)t1
+                                GROUP  BY ShopCode)bq2
+                        ON bq.ShopCode = bq2.ShopCode
+                      LEFT JOIN(SELECT ShopCode,
+                                       SUM(成本) AS 成本
+                                FROM   (SELECT S_SE_SB_ShopCode AS ShopCode,
+                                               ( CASE
+                                                   WHEN Isnull('${salesCost}', '') = '1' THEN Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '2' THEN Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '3' THEN Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                                   ELSE Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                 END )          AS 成本
+                                        FROM   uview_SalesDetail
+                                               INNER JOIN uview_SalesBasic
+                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                               INNER JOIN B_GoodsInfo
+                                                 ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                        WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) <> 'ZZ'
+                                               AND S_SE_SB_ValueFlag = '1'
+                                               AND S_SE_SB_OrdersType IN ( '5' )
+                                               AND ( ( Isnull('${departmentsID}', '') <> ''
+                                                       AND uview_SalesBasic.S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                                                FROM   #shopcode) )
+                                                      OR ( Isnull('${departmentsID}', '') = '' ) )
+                                               AND ( ( Isnull('${beginTime}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) >= '${beginTime}' )
+                                                      OR Isnull('${beginTime}', '') = '' )
+                                               AND ( ( Isnull('${endTime}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) <= '${endTime}' )
+                                                      OR Isnull('${endTime}', '') = '' )
+                                        GROUP  BY S_SE_SB_ShopCode
+                                        UNION ALL
+                                        SELECT S_SE_SB_ShopCode AS ShopCode,
+                                               ( CASE
+                                                   WHEN Isnull('${salesCost}', '') = '1' THEN -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '2' THEN -Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '3' THEN -Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                                   ELSE -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                 END )          AS 成本
+                                        FROM   uview_SalesDetail
+                                               INNER JOIN uview_SalesBasic
+                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                               INNER JOIN B_GoodsInfo
+                                                 ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                        WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) <> 'ZZ'
+                                               AND S_SE_SB_ValueFlag = '1'
+                                               AND S_SE_SB_WithdrawFlag = '1'
+                                               AND S_SE_SB_OrdersType IN ( '5' )
+                                               AND ( ( Isnull('${departmentsID}', '') <> ''
+                                                       AND uview_SalesBasic.S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                                                FROM   #shopcode) )
+                                                      OR ( Isnull('${departmentsID}', '') = '' ) )
+                                               AND ( ( Isnull('${beginTime}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) >= '${beginTime}' )
+                                                      OR Isnull('${beginTime}', '') = '' )
+                                               AND ( ( Isnull('${endTime}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) <= '${endTime}' )
+                                                      OR Isnull('${endTime}', '') = '' )
+                                        GROUP  BY S_SE_SB_ShopCode)t1
+                                GROUP  BY ShopCode)bq3
+                        ON bq.ShopCode = bq3.ShopCode)bt1
+        ON t.DepartmentID = bt1.ShopCode
+      --同期
+      LEFT JOIN(SELECT bq.ShopCode AS ShopCode2,
+                       bq.框镜处方数    AS 框镜处方数2,
+                       bq.隐形处方数    AS 隐形处方数2,
+                       bq.框镜销售数    AS 框镜销售数2,
+                       bq.隐形销售数    AS 隐形销售数2,
+                       bq.辅料销售数    AS 辅料销售数2,
+                       bq.框镜销售额    AS 框镜销售额2,
+                       bq.隐形销售额    AS 隐形销售额2,
+                       bq.辅料销售额    AS 辅料销售额2,
+                       bq1.成本      AS 框镜成本2,
+                       bq2.成本      AS 隐形成本2,
+                       bq3.成本      AS 辅料成本2
+                FROM  (SELECT R_SD_DC_ShopCode             AS ShopCode,
+                              SUM(R_SD_DC_FramePutIn)      AS 框镜处方数,
+                              SUM(R_SD_DC_StealthPutIn)    AS 隐形处方数,
+                              SUM(R_SD_DC_FrameNum)        AS 框镜销售数,
+                              SUM(R_SD_DC_StealthNum)      AS 隐形销售数,
+                              SUM(R_SD_DC_AccessoryNum)    AS 辅料销售数,
+                              SUM(R_SD_DC_FrameAmount)     AS 框镜销售额,
+                              SUM(R_SD_DC_StealthAmount)   AS 隐形销售额,
+                              SUM(R_SD_DC_AccessoryAmount) AS 辅料销售额
+                       FROM   R_SD_DayCollect
+                       WHERE  ( ( Isnull('${departmentsID}', '') <> ''
+                                  AND R_SD_DC_ShopCode IN (SELECT departmentID
+                                                           FROM   #shopcode) )
+                                 OR ( Isnull('${departmentsID}', '') = '' ) )
+                              AND ( ( Isnull('${beginTime2}', '') <> ''
+                                      AND CONVERT(VARCHAR(10), R_SD_DC_Date, 120) >= '${beginTime2}' )
+                                     OR Isnull('${beginTime2}', '') = '' )
+                              AND ( ( Isnull('${endTime2}', '') <> ''
+                                      AND CONVERT(VARCHAR(10), R_SD_DC_Date, 120) <= '${endTime2}' )
+                                     OR Isnull('${endTime2}', '') = '' )
+                       GROUP  BY R_SD_DC_ShopCode)bq
+                      LEFT JOIN(SELECT ShopCode,
+                                       SUM(成本) AS 成本
+                                FROM   (SELECT S_SE_SB_ShopCode AS ShopCode,
+                                               ( CASE
+                                                   WHEN Isnull('${salesCost}', '') = '1' THEN Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '2' THEN Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '3' THEN Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                                   ELSE Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                 END )          AS 成本
+                                        FROM   uview_SalesDetail
+                                               INNER JOIN uview_SalesBasic
+                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                               INNER JOIN B_GoodsInfo
+                                                 ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                        WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) <> 'ZZ'
+                                               AND S_SE_SB_ValueFlag = '1'
+                                               AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                               AND ( ( Isnull('${departmentsID}', '') <> ''
+                                                       AND uview_SalesBasic.S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                                                FROM   #shopcode) )
+                                                      OR ( Isnull('${departmentsID}', '') = '' ) )
+                                               AND ( ( Isnull('${beginTime2}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) >= '${beginTime2}' )
+                                                      OR Isnull('${beginTime2}', '') = '' )
+                                               AND ( ( Isnull('${endTime2}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) <= '${endTime2}' )
+                                                      OR Isnull('${endTime2}', '') = '' )
+                                        GROUP  BY S_SE_SB_ShopCode
+                                        UNION ALL
+                                        SELECT S_SE_SB_ShopCode AS ShopCode,
+                                               ( CASE
+                                                   WHEN Isnull('${salesCost}', '') = '1' THEN -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '2' THEN -Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '3' THEN -Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                                   ELSE -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                 END )          AS 成本
+                                        FROM   uview_SalesDetail
+                                               INNER JOIN uview_SalesBasic
+                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                               INNER JOIN B_GoodsInfo
+                                                 ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                        WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) <> 'ZZ'
+                                               AND S_SE_SB_ValueFlag = '1'
+                                               AND S_SE_SB_WithdrawFlag = '1'
+                                               AND S_SE_SB_OrdersType IN ( '1', '2' )
+                                               AND ( ( Isnull('${departmentsID}', '') <> ''
+                                                       AND uview_SalesBasic.S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                                                FROM   #shopcode) )
+                                                      OR ( Isnull('${departmentsID}', '') = '' ) )
+                                               AND ( ( Isnull('${beginTime2}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) >= '${beginTime2}' )
+                                                      OR Isnull('${beginTime2}', '') = '' )
+                                               AND ( ( Isnull('${endTime2}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) <= '${endTime2}' )
+                                                      OR Isnull('${endTime2}', '') = '' )
+                                        GROUP  BY S_SE_SB_ShopCode)t1
+                                GROUP  BY ShopCode)bq1
+                        ON bq.ShopCode = bq1.ShopCode
+                      LEFT JOIN(SELECT ShopCode,
+                                       SUM(成本) AS 成本
+                                FROM   (SELECT S_SE_SB_ShopCode AS ShopCode,
+                                               ( CASE
+                                                   WHEN Isnull('${salesCost}', '') = '1' THEN Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '2' THEN Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '3' THEN Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                                   ELSE Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                 END )          AS 成本
+                                        FROM   uview_SalesDetail
+                                               INNER JOIN uview_SalesBasic
+                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                               INNER JOIN B_GoodsInfo
+                                                 ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                        WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) <> 'ZZ'
+                                               AND S_SE_SB_ValueFlag = '1'
+                                               AND S_SE_SB_OrdersType IN ( '3', '4' )
+                                               AND ( ( Isnull('${departmentsID}', '') <> ''
+                                                       AND uview_SalesBasic.S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                                                FROM   #shopcode) )
+                                                      OR ( Isnull('${departmentsID}', '') = '' ) )
+                                               AND ( ( Isnull('${beginTime2}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) >= '${beginTime2}' )
+                                                      OR Isnull('${beginTime2}', '') = '' )
+                                               AND ( ( Isnull('${endTime2}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) <= '${endTime2}' )
+                                                      OR Isnull('${endTime2}', '') = '' )
+                                        GROUP  BY S_SE_SB_ShopCode
+                                        UNION ALL
+                                        SELECT S_SE_SB_ShopCode AS ShopCode,
+                                               ( CASE
+                                                   WHEN Isnull('${salesCost}', '') = '1' THEN -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '2' THEN -Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '3' THEN -Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                                   ELSE -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                 END )          AS 成本
+                                        FROM   uview_SalesDetail
+                                               INNER JOIN uview_SalesBasic
+                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                               INNER JOIN B_GoodsInfo
+                                                 ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                        WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) <> 'ZZ'
+                                               AND S_SE_SB_ValueFlag = '1'
+                                               AND S_SE_SB_WithdrawFlag = '1'
+                                               AND S_SE_SB_OrdersType IN ( '3', '4' )
+                                               AND ( ( Isnull('${departmentsID}', '') <> ''
+                                                       AND uview_SalesBasic.S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                                                FROM   #shopcode) )
+                                                      OR ( Isnull('${departmentsID}', '') = '' ) )
+                                               AND ( ( Isnull('${beginTime2}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) >= '${beginTime2}' )
+                                                      OR Isnull('${beginTime2}', '') = '' )
+                                               AND ( ( Isnull('${endTime2}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) <= '${endTime2}' )
+                                                      OR Isnull('${endTime2}', '') = '' )
+                                        GROUP  BY S_SE_SB_ShopCode)t1
+                                GROUP  BY ShopCode)bq2
+                        ON bq.ShopCode = bq2.ShopCode
+                      LEFT JOIN(SELECT ShopCode,
+                                       SUM(成本) AS 成本
+                                FROM   (SELECT S_SE_SB_ShopCode AS ShopCode,
+                                               ( CASE
+                                                   WHEN Isnull('${salesCost}', '') = '1' THEN Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '2' THEN Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '3' THEN Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                                   ELSE Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                 END )          AS 成本
+                                        FROM   uview_SalesDetail
+                                               INNER JOIN uview_SalesBasic
+                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                               INNER JOIN B_GoodsInfo
+                                                 ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                        WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) <> 'ZZ'
+                                               AND S_SE_SB_ValueFlag = '1'
+                                               AND S_SE_SB_OrdersType IN ( '5' )
+                                               AND ( ( Isnull('${departmentsID}', '') <> ''
+                                                       AND uview_SalesBasic.S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                                                FROM   #shopcode) )
+                                                      OR ( Isnull('${departmentsID}', '') = '' ) )
+                                               AND ( ( Isnull('${beginTime2}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) >= '${beginTime2}' )
+                                                      OR Isnull('${beginTime2}', '') = '' )
+                                               AND ( ( Isnull('${endTime2}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) <= '${endTime2}' )
+                                                      OR Isnull('${endTime2}', '') = '' )
+                                        GROUP  BY S_SE_SB_ShopCode
+                                        UNION ALL
+                                        SELECT S_SE_SB_ShopCode AS ShopCode,
+                                               ( CASE
+                                                   WHEN Isnull('${salesCost}', '') = '1' THEN -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '2' THEN -Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0)
+                                                   WHEN Isnull('${salesCost}', '') = '3' THEN -Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                                   ELSE -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0)
+                                                 END )          AS 成本
+                                        FROM   uview_SalesDetail
+                                               INNER JOIN uview_SalesBasic
+                                                 ON S_SE_SD_SalesID = S_SE_Sb_SalesID
+                                               INNER JOIN B_GoodsInfo
+                                                 ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                        WHERE  Substring(S_SE_SD_SalesItemID, 3, 2) <> 'ZZ'
+                                               AND S_SE_SB_ValueFlag = '1'
+                                               AND S_SE_SB_WithdrawFlag = '1'
+                                               AND S_SE_SB_OrdersType IN ( '5' )
+                                               AND ( ( Isnull('${departmentsID}', '') <> ''
+                                                       AND uview_SalesBasic.S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                                                FROM   #shopcode) )
+                                                      OR ( Isnull('${departmentsID}', '') = '' ) )
+                                               AND ( ( Isnull('${beginTime2}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) >= '${beginTime2}' )
+                                                      OR Isnull('${beginTime2}', '') = '' )
+                                               AND ( ( Isnull('${endTime2}', '') <> ''
+                                                       AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) <= '${endTime2}' )
+                                                      OR Isnull('${endTime2}', '') = '' )
+                                        GROUP  BY S_SE_SB_ShopCode)t1
+                                GROUP  BY ShopCode)bq3
+                        ON bq.ShopCode = bq3.ShopCode)bt2
+        ON t.DepartmentID = bt2.ShopCode2
+
+DROP TABLE #shopCode ]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="year"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[declare @year varchar(1000)
+declare @ShopCodeName varchar(1000)
+
+set @year='${year}'
+set @ShopCodeName='${ShopCodeName}']]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.page.First">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-First')}]]></Text>
+<IconName>
+<![CDATA[first]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Previous">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Previous')}]]></Text>
+<IconName>
+<![CDATA[previous]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.PageNavi">
+<WidgetAttr/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Next">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Next')}]]></Text>
+<IconName>
+<![CDATA[next]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Last">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Last')}]]></Text>
+<IconName>
+<![CDATA[last]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.FlashPrint">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Utils-Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.Export">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Export')}]]></Text>
+<IconName>
+<![CDATA[export]]></IconName>
+<Buttons pdf="true" excelP="true" excelO="true" excelS="true" word="true" image="true" html="true"/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.SetPrinterOffset">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('SetPrinterOffset')}]]></Text>
+<IconName>
+<![CDATA[setprinteroffset]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="true" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="6"/>
+<FR/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,432000,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,432000,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,2880000,2880000,3600000,2880000,2880000,2880000,2880000,2880000,2880000,2880000,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<Expand/>
+</C>
+<C c="1" r="0" cs="9" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" s="0">
+<Expand/>
+</C>
+<C c="1" r="1" cs="9" s="1">
+<O>
+<![CDATA[商品销售分析表（按销售同期-门店）]]></O>
+<Expand/>
+</C>
+<C c="0" r="2" s="2">
+<Expand/>
+</C>
+<C c="1" r="2" s="3">
+<O>
+<![CDATA[本期日期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="2" s="4">
+<Expand/>
+</C>
+<C c="3" r="2" cs="5" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime + " 至 " + $endtime]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="9" r="2" s="5">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="3" s="2">
+<Expand/>
+</C>
+<C c="1" r="3" s="3">
+<O>
+<![CDATA[同期日期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="3" s="4">
+<Expand/>
+</C>
+<C c="3" r="3" cs="5" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime + " 至 " + $endtime]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="9" r="3" s="5">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="4" s="2">
+<Expand/>
+</C>
+<C c="1" r="4" s="2">
+<O>
+<![CDATA[销售门店：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="4" s="4">
+<Expand/>
+</C>
+<C c="3" r="4" cs="7" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$ShopCodeName]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="5" s="6">
+<Expand/>
+</C>
+<C c="1" r="5" cs="3" rs="2" s="7">
+<O>
+<![CDATA[名称/类型]]></O>
+<Expand/>
+</C>
+<C c="4" r="5" s="7">
+<O>
+<![CDATA[小计]]></O>
+<Expand/>
+</C>
+<C c="5" r="5" cs="2" s="7">
+<O>
+<![CDATA[框镜]]></O>
+<Expand/>
+</C>
+<C c="7" r="5" cs="2" s="7">
+<O>
+<![CDATA[隐形]]></O>
+<Expand/>
+</C>
+<C c="9" r="5" cs="2" s="7">
+<O>
+<![CDATA[辅料]]></O>
+<Expand/>
+</C>
+<C c="0" r="6" s="6">
+<Expand/>
+</C>
+<C c="4" r="6" s="7">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="5" r="6" s="7">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="6" r="6" s="7">
+<O>
+<![CDATA[占比]]></O>
+<Expand/>
+</C>
+<C c="7" r="6" s="7">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="8" r="6" s="7">
+<O>
+<![CDATA[占比]]></O>
+<Expand/>
+</C>
+<C c="9" r="6" s="7">
+<O>
+<![CDATA[数量/金额]]></O>
+<Expand/>
+</C>
+<C c="10" r="6" s="7">
+<O>
+<![CDATA[占比]]></O>
+<Expand/>
+</C>
+<C c="1" r="7" rs="18" s="8">
+<O>
+<![CDATA[各店总合计]]></O>
+<Expand/>
+</C>
+<C c="2" r="7" rs="4" s="7">
+<O>
+<![CDATA[验光]]></O>
+<Expand/>
+</C>
+<C c="3" r="7" s="8">
+<O>
+<![CDATA[本期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$ygs <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="7" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F8 + H8)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="7" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F27)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="7" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E8 = 0, "0.00%", FORMAT(F8 / E8, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="7" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H27)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="7" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E8 = 0, "0.00%", FORMAT(H8 / E8, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="7" s="9">
+<Expand/>
+</C>
+<C c="10" r="7" s="10">
+<Expand/>
+</C>
+<C c="3" r="8" s="8">
+<O>
+<![CDATA[同期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$ygs <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="8" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F9 + H9)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="8" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F28)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="8" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E9 = 0, "0.00%", FORMAT(F9 / E9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="8" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H28)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="8" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E9 = 0, "0.00%", FORMAT(H9 / E9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="8" s="9">
+<Expand/>
+</C>
+<C c="10" r="8" s="10">
+<Expand/>
+</C>
+<C c="3" r="9" s="8">
+<O>
+<![CDATA[增长]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$ygs <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="9" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=E8 - E9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="9" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F8 - F9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="9" s="11">
+<Expand/>
+</C>
+<C c="7" r="9" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=H8 - H9]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="9" s="11">
+<Expand/>
+</C>
+<C c="9" r="9" s="11">
+<Expand/>
+</C>
+<C c="10" r="9" s="11">
+<Expand/>
+</C>
+<C c="3" r="10" s="8">
+<O>
+<![CDATA[增长率]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$ygs <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="10" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E9 = 0, "0.00%", FORMAT((E8 - E9) / E9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="10" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F9 = 0, "0.00%", FORMAT((F8 - F9) / F9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="10" s="11">
+<Expand/>
+</C>
+<C c="7" r="10" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H9 = 0, "0.00%", FORMAT((H8 - H9) / H9, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="10" s="11">
+<Expand/>
+</C>
+<C c="9" r="10" s="11">
+<Expand/>
+</C>
+<C c="10" r="10" s="11">
+<Expand/>
+</C>
+<C c="2" r="11" rs="4" s="7">
+<O>
+<![CDATA[销售数]]></O>
+<Expand/>
+</C>
+<C c="3" r="11" s="8">
+<O>
+<![CDATA[本期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sss <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="11" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F12 + H12 + J12)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="11" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F31)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="11" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E12 = 0, "0.00%", FORMAT(F12 / E12, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="11" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H31)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="11" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E12 = 0, "0.00%", FORMAT(H12 / E12, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="11" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(J31)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="11" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E12 = 0, "0.00%", FORMAT(J12 / E12, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="12" s="8">
+<O>
+<![CDATA[同期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sss <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="12" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F13 + H13 + J13)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="12" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F32)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="12" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E13 = 0, "0.00%", FORMAT(F13 / E13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="12" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H32)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="12" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E13 = 0, "0.00%", FORMAT(H13 / E13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="12" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(J32)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="12" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E13 = 0, "0.00%", FORMAT(J13 / E13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="13" s="8">
+<O>
+<![CDATA[增长]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sss <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="13" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(E12 - E13)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="13" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(F12 - F13)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="13" s="11">
+<Expand/>
+</C>
+<C c="7" r="13" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(H12 - H13)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="13" s="11">
+<Expand/>
+</C>
+<C c="9" r="13" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(J12 - J13)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="13" s="11">
+<Expand/>
+</C>
+<C c="3" r="14" s="8">
+<O>
+<![CDATA[增长率]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sss <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="14" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E13 = 0, "0.00%", FORMAT((E12 - E13) / E13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="14" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F13 = 0, "0.00%", FORMAT((F12 - F13) / F13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="14" s="11">
+<Expand/>
+</C>
+<C c="7" r="14" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H13 = 0, "0.00%", FORMAT((H12 - H13) / H13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="14" s="11">
+<Expand/>
+</C>
+<C c="9" r="14" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(J13 = 0, "0.00%", FORMAT((J12 - J13) / J13, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="14" s="11">
+<Expand/>
+</C>
+<C c="2" r="15" rs="4" s="7">
+<O>
+<![CDATA[销售额]]></O>
+<Expand/>
+</C>
+<C c="3" r="15" s="8">
+<O>
+<![CDATA[本期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sse <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="15" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F16 + H16 + J16))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="15" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F35))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="15" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E16 = 0.00, "0.00%", FORMAT(F16 / E16, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="15" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(H35))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="15" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E16 = 0.00, "0.00%", FORMAT(H16 / E16, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="15" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J35))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="15" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E16 = 0.00, "0.00%", FORMAT(J16 / E16, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="16" s="8">
+<O>
+<![CDATA[同期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sse <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="16" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F17 + H17 + J17))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="16" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F36))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="16" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E17 = 0.00, "0.00%", FORMAT(F17 / E17, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="16" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(H36))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="16" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E17 = 0.00, "0.00%", FORMAT(H17 / E17, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="16" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J36))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="16" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E17 = 0.00, "0.00%", FORMAT(J17 / E17, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="17" s="8">
+<O>
+<![CDATA[增长]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sse <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="17" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(E16 - E17)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="17" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(F16 - F17)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="17" s="11">
+<Expand/>
+</C>
+<C c="7" r="17" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(H16 - H17)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="17" s="11">
+<Expand/>
+</C>
+<C c="9" r="17" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(J16 - J17)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="17" s="11">
+<Expand/>
+</C>
+<C c="3" r="18" s="8">
+<O>
+<![CDATA[增长率]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sse <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="18" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E17 = 0, "0.00%", FORMAT((E16 - E17) / E17, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="18" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F17 = 0, "0.00%", FORMAT((F16 - F17) / F17, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="18" s="11">
+<Expand/>
+</C>
+<C c="7" r="18" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H17 = 0, "0.00%", FORMAT((H16 - H17) / H17, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="18" s="11">
+<Expand/>
+</C>
+<C c="9" r="18" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(J17 = 0, "0.00%", FORMAT((J16 - J17) / J17, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="18" s="11">
+<Expand/>
+</C>
+<C c="2" r="19" rs="2" s="7">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="3" r="19" s="12">
+<O>
+<![CDATA[本期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$cb <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F20 + H20 + J20))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F39))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="19" s="10">
+<Expand/>
+</C>
+<C c="7" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(H39))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="19" s="10">
+<Expand/>
+</C>
+<C c="9" r="19" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J39))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="19" s="10">
+<Expand/>
+</C>
+<C c="3" r="20" s="12">
+<O>
+<![CDATA[同期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$cb <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="20" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F21 + H21 + J21))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="20" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F40))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="20" s="10">
+<Expand/>
+</C>
+<C c="7" r="20" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(H40))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="20" s="10">
+<Expand/>
+</C>
+<C c="9" r="20" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J40))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="20" s="10">
+<Expand/>
+</C>
+<C c="2" r="21" rs="2" s="7">
+<O>
+<![CDATA[毛利]]></O>
+<Expand/>
+</C>
+<C c="3" r="21" s="12">
+<O>
+<![CDATA[本期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$ml <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="21" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(E16 - E20)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="21" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(F16 - F20)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="21" s="10">
+<Expand/>
+</C>
+<C c="7" r="21" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(H16 - H20)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="21" s="10">
+<Expand/>
+</C>
+<C c="9" r="21" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(J16 - J20)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="21" s="10">
+<Expand/>
+</C>
+<C c="3" r="22" s="12">
+<O>
+<![CDATA[同期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$ml <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(E17 - E21)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(F17 - F21)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="22" s="10">
+<Expand/>
+</C>
+<C c="7" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(H17 - H21)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="22" s="10">
+<Expand/>
+</C>
+<C c="9" r="22" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(J17 - J21)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="22" s="10">
+<Expand/>
+</C>
+<C c="2" r="23" rs="2" s="7">
+<O>
+<![CDATA[毛利率]]></O>
+<Expand/>
+</C>
+<C c="3" r="23" s="12">
+<O>
+<![CDATA[本期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$mll <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E16 = 0, "0.00%", FORMAT(E22 / E16, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F16 = 0, "0.00%", FORMAT(F22 / F16, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="23" s="10">
+<Expand/>
+</C>
+<C c="7" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H16 = 0, "0.00%", FORMAT(H22 / H16, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="23" s="10">
+<Expand/>
+</C>
+<C c="9" r="23" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(J16 = 0, "0.00%", FORMAT(J22 / J16, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="23" s="10">
+<Expand/>
+</C>
+<C c="3" r="24" s="12">
+<O>
+<![CDATA[同期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$mll <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="24" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E17 = 0, "0.00%", FORMAT(E23 / E17, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="24" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F17 = 0, "0.00%", FORMAT(F23 / F17, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="24" s="10">
+<Expand/>
+</C>
+<C c="7" r="24" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H17 = 0, "0.00%", FORMAT(H23 / H17, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="24" s="10">
+<Expand/>
+</C>
+<C c="9" r="24" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(J17 = 0, "0.00%", FORMAT(J23 / J17, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="24" s="10">
+<Expand/>
+</C>
+<C c="1" r="25" cs="10">
+<Expand/>
+</C>
+<C c="1" r="26" rs="18" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="DepartmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="26" rs="4" s="7">
+<O>
+<![CDATA[验光]]></O>
+<Expand/>
+</C>
+<C c="3" r="26" s="7">
+<O>
+<![CDATA[本期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$ygs <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="26" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F27 + H27)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="26" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="框镜处方数"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="6" r="26" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E27 = 0, "0.00%", FORMAT(F27 / E27, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="26" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="隐形处方数"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="8" r="26" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E27 = 0, "0.00%", FORMAT(H27 / E27, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="26" s="9">
+<Expand/>
+</C>
+<C c="10" r="26" s="10">
+<Expand/>
+</C>
+<C c="3" r="27" s="7">
+<O>
+<![CDATA[同期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$ygs <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="27" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F28 + H28)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="27" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="框镜处方数2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="6" r="27" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E28 = 0, "0.00%", FORMAT(F28 / E28, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="27" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="隐形处方数2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="8" r="27" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E28 = 0, "0.00%", FORMAT(H28 / E28, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="27" s="9">
+<Expand/>
+</C>
+<C c="10" r="27" s="10">
+<Expand/>
+</C>
+<C c="3" r="28" s="7">
+<O>
+<![CDATA[增长]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$ygs <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="28" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=E27 - E28]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="28" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F27 - F28]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="28" s="11">
+<Expand/>
+</C>
+<C c="7" r="28" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=H27 - H28]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="28" s="11">
+<Expand/>
+</C>
+<C c="9" r="28" s="11">
+<Expand/>
+</C>
+<C c="10" r="28" s="11">
+<Expand/>
+</C>
+<C c="3" r="29" s="7">
+<O>
+<![CDATA[增长率]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$ygs <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="29" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E28 = 0, "0.00%", FORMAT((E27 - E28) / E28, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="29" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F28 = 0, "0.00%", FORMAT((F27 - F28) / F28, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="29" s="11">
+<Expand/>
+</C>
+<C c="7" r="29" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H28 = 0, "0.00%", FORMAT((H27 - H28) / H28, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="29" s="11">
+<Expand/>
+</C>
+<C c="9" r="29" s="11">
+<Expand/>
+</C>
+<C c="10" r="29" s="11">
+<Expand/>
+</C>
+<C c="2" r="30" rs="4" s="7">
+<O>
+<![CDATA[销售数]]></O>
+<Expand/>
+</C>
+<C c="3" r="30" s="7">
+<O>
+<![CDATA[本期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sss <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="30" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F31 + H31 + J31)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="30" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="框镜销售数"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="6" r="30" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E31 = 0, "0.00%", FORMAT(F31 / E31, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="30" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="隐形销售数"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="8" r="30" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E31 = 0, "0.00%", FORMAT(H31 / E31, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="30" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="辅料销售数"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="10" r="30" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E31 = 0, "0.00%", FORMAT(J31 / E31, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="31" s="7">
+<O>
+<![CDATA[同期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sss <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="31" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F32 + H32 + J32)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="31" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="框镜销售数2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="6" r="31" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E32 = 0, "0.00%", FORMAT(F32 / E32, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="31" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="隐形销售数2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="8" r="31" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E32 = 0, "0.00%", FORMAT(H32 / E32, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="31" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="辅料销售数2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="10" r="31" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E32 = 0, "0.00%", FORMAT(J32 / E32, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="32" s="7">
+<O>
+<![CDATA[增长]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sss <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="32" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=E31 - E32]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="32" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F31 - F32]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="32" s="11">
+<Expand/>
+</C>
+<C c="7" r="32" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=H31 - H32]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="32" s="11">
+<Expand/>
+</C>
+<C c="9" r="32" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=J31 - J32]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="32" s="11">
+<Expand/>
+</C>
+<C c="3" r="33" s="7">
+<O>
+<![CDATA[增长率]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$ygs <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="33" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E32 = 0, "0.00%", FORMAT((E31 - E32) / E32, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="33" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F32 = 0, "0.00%", FORMAT((F31 - F32) / F32, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="33" s="11">
+<Expand/>
+</C>
+<C c="7" r="33" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H32 = 0, "0.00%", FORMAT((H31 - H32) / H32, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="33" s="11">
+<Expand/>
+</C>
+<C c="9" r="33" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(J32 = 0, "0.00%", FORMAT((J31 - J32) / J32, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="33" s="11">
+<Expand/>
+</C>
+<C c="2" r="34" rs="4" s="7">
+<O>
+<![CDATA[销售额]]></O>
+<Expand/>
+</C>
+<C c="3" r="34" s="7">
+<O>
+<![CDATA[本期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sse <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="34" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F35 + H35 + J35))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="34" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="框镜销售额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="6" r="34" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E35 = 0.00, "0.00%", FORMAT(F35 / E35, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="34" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="隐形销售额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="8" r="34" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E35 = 0.00, "0.00%", FORMAT(H35 / E35, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="34" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="辅料销售额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="10" r="34" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E35 = 0.00, "0.00%", FORMAT(J35 / E35, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="35" s="7">
+<O>
+<![CDATA[同期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sse <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="35" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F36 + H36 + J36))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="35" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="框镜销售额2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="6" r="35" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E36 = 0.00, "0.00%", FORMAT(F36 / E36, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="35" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="隐形销售额2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="8" r="35" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E36 = 0.00, "0.00%", FORMAT(H36 / E36, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="35" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="辅料销售额2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="10" r="35" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E36 = 0.00, "0.00%", FORMAT(J36 / E36, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="36" s="7">
+<O>
+<![CDATA[增长]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sse <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="36" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(E35 - E36)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="36" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(F35 - F36)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="36" s="11">
+<Expand/>
+</C>
+<C c="7" r="36" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(H35 - H36)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="36" s="11">
+<Expand/>
+</C>
+<C c="9" r="36" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(J35 - J36)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="36" s="11">
+<Expand/>
+</C>
+<C c="3" r="37" s="7">
+<O>
+<![CDATA[增长率]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$sse <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="37" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E36 = 0, "0.00%", FORMAT((E35 - E36) / E36, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="37" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F36 = 0, "0.00%", FORMAT((F35 - F36) / F36, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="37" s="11">
+<Expand/>
+</C>
+<C c="7" r="37" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H36 = 0, "0.00%", FORMAT((H35 - H36) / H36, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="37" s="11">
+<Expand/>
+</C>
+<C c="9" r="37" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(J36 = 0, "0.00%", FORMAT((J35 - J36) / J36, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="37" s="11">
+<Expand/>
+</C>
+<C c="2" r="38" rs="2" s="7">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="3" r="38" s="7">
+<O>
+<![CDATA[本期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$cb <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="38" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F39 + H39 + J39))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="38" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="框镜成本"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="6" r="38" s="10">
+<Expand/>
+</C>
+<C c="7" r="38" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="隐形成本"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="8" r="38" s="10">
+<Expand/>
+</C>
+<C c="9" r="38" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="辅料成本"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="10" r="38" s="10">
+<Expand/>
+</C>
+<C c="3" r="39" s="7">
+<O>
+<![CDATA[同期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$cb <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="39" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F40 + H40 + J40))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="39" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="框镜成本2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="6" r="39" s="10">
+<Expand/>
+</C>
+<C c="7" r="39" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="隐形成本2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="8" r="39" s="10">
+<Expand/>
+</C>
+<C c="9" r="39" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="辅料成本2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="10" r="39" s="10">
+<Expand/>
+</C>
+<C c="2" r="40" rs="2" s="7">
+<O>
+<![CDATA[毛利]]></O>
+<Expand/>
+</C>
+<C c="3" r="40" s="7">
+<O>
+<![CDATA[本期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$ml <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="40" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(E35 - E39)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="40" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(F35 - F39)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="40" s="10">
+<Expand/>
+</C>
+<C c="7" r="40" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(H35 - H39)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="40" s="10">
+<Expand/>
+</C>
+<C c="9" r="40" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(J35 - J39)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="40" s="10">
+<Expand/>
+</C>
+<C c="3" r="41" s="7">
+<O>
+<![CDATA[同期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$ml <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="41" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(E36 - E40)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="41" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(F36 - F40)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="41" s="10">
+<Expand/>
+</C>
+<C c="7" r="41" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(H36 - H40)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="41" s="10">
+<Expand/>
+</C>
+<C c="9" r="41" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(J36 - J40)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="41" s="10">
+<Expand/>
+</C>
+<C c="2" r="42" rs="2" s="7">
+<O>
+<![CDATA[毛利率]]></O>
+<Expand/>
+</C>
+<C c="3" r="42" s="7">
+<O>
+<![CDATA[本期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$mll <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="42" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E35 = 0, "0.00%", FORMAT(E41 / E35, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="42" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F35 = 0, "0.00%", FORMAT(F41 / F35, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="42" s="10">
+<Expand/>
+</C>
+<C c="7" r="42" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H35 = 0, "0.00%", FORMAT(H41 / H35, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="42" s="10">
+<Expand/>
+</C>
+<C c="9" r="42" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(J35 = 0, "0.00%", FORMAT(J41 / J35, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="42" s="10">
+<Expand/>
+</C>
+<C c="3" r="43" s="7">
+<O>
+<![CDATA[同期]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$mll <> "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="43" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(E36 = 0, "0.00%", FORMAT(E42 / E36, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="43" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(F36 = 0, "0.00%", FORMAT(F42 / F36, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="43" s="10">
+<Expand/>
+</C>
+<C c="7" r="43" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(H36 = 0, "0.00%", FORMAT(H42 / H36, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="43" s="10">
+<Expand/>
+</C>
+<C c="9" r="43" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(J36 = 0, "0.00%", FORMAT(J42 / J36, "0.00%"))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="43" s="10">
+<Expand/>
+</C>
+<C c="1" r="44" cs="10" s="13">
+<Expand dir="0" upParentDefault="false" up="D44"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="ColorBackground" color="-14839298"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="宋体" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

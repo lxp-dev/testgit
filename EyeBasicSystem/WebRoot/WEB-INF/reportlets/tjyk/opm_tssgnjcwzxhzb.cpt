@@ -1,0 +1,747 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 F_CN_ReportShowName from F_CompanyName
+   where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 ('门店名称:' + B_DP_DepartmentName + '    查询日期:' + '${bgnDate}' + ' ～ '+'${endDate}') as queryData from B_Departments where B_DP_DepartmentID='${shopCode}'
+]]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+
+declare @bgnDate varchar(10),@endDate varchar(10),@shopCode varchar(10)
+
+set @bgnDate = '${bgnDate}'
+set @endDate = '${endDate}'
+set @shopCode = '${shopCode}'
+
+select  isnull(S_OP_HC_Checker,'') as jcr,
+        S_OP_HC_OptometryID as jcdh,
+		-- 眼轴
+		S_OP_HC_EyeAxisOD,
+		S_OP_HC_EyeAxisOS,
+        -- 角膜曲率（SK）
+		S_OP_HC_CorneaCurvatureODS1,
+		S_OP_HC_CorneaCurvatureOSS1,
+		-- 角膜曲率（FK）
+		S_OP_HC_CorneaCurvatureODF1,
+		S_OP_HC_CorneaCurvatureOSF1,
+		-- 角膜厚度
+		S_OP_HC_CornealThicknessOD,
+		S_OP_HC_CornealThicknessOS,
+		-- SK
+		S_OP_HC_TopographySKOD,
+		S_OP_HC_TopographySKOS,
+		-- FK
+		S_OP_HC_TopographyFKOD,
+		S_OP_HC_TopographyFKOS,
+		-- SAI
+		S_OP_HC_TopographySAIOD,
+		S_OP_HC_TopographySAIOS,
+		-- SRI
+		S_OP_HC_TopographySRIOD,
+		S_OP_HC_TopographySRIOS,
+		-- 分级
+		S_OP_HC_TearFilmGradeOD1,
+		S_OP_HC_TearFilmGradeOS1,
+		-- schirme5
+		S_OP_HC_Schirme5OD,
+		S_OP_HC_Schirme5OS,
+		-- BUT
+		S_OP_HC_BU7OD,
+		S_OP_HC_BU7OS,
+		-- 细胞密度
+		S_OP_HC_ThicknessOD,
+		S_OP_HC_ThicknessOS,
+		-- 平均细胞面积
+		S_OP_HC_AreaOD,
+		S_OP_HC_AreaOS,
+		-- 六边形细胞比例
+		S_OP_HC_ScaleOD,
+		S_OP_HC_ScaleOS,
+		-- 变异系数
+		S_OP_HC_VariationOD,
+		S_OP_HC_VariationOS
+  into #jcinfo
+  from S_OP_HealthCheck inner join S_OP_Optometry on S_OP_OY_OptometryID = S_OP_HC_OptometryID
+  where convert(varchar(10),S_OP_HC_checkTime,120) >= @bgnDate
+        and convert(varchar(10),S_OP_HC_checkTime,120) <= @endDate
+        and S_OP_OY_ShopCode = @shopCode
+
+
+select isnull(S_OP_IP_UserName,'') as jcr,
+       S_OP_IP_OptometryID as jcdh,
+       -- 眼睛健康评估   屈光不正    近视眼
+       S_OP_IP_NearEye,
+       -- 眼睛健康评估   屈光不正    远视眼
+       S_OP_IP_FarEye,
+       -- 眼睛健康评估   屈光不正    散光
+       S_OP_IP_Astigmia,
+       -- 眼睛健康评估   双眼视功能评估
+       S_OP_IP_Estimate,
+       -- 建议矫正方案   框架眼镜
+       S_OP_IP_GlassTypes,
+       -- 建议矫正方案   角膜接触镜
+       S_OP_IP_TouchGlass,
+       -- 建议矫正方案   视觉训练
+       S_OP_IP_TrainTypes
+  into #jcjlinfo
+  from S_OP_Inspection inner join S_OP_Optometry on S_OP_OY_OptometryID = S_OP_IP_OptometryID
+  where convert(varchar(10),S_OP_IP_CheckDate,120) >= @bgnDate
+        and convert(varchar(10),S_OP_IP_CheckDate,120) <= @endDate
+        and S_OP_OY_ShopCode = @shopCode
+
+select m.jcr,m.personName,isnull(yzs,0) as yzs,isnull(qls,'') as qls,
+       isnull(jmdxts,'') as jmdxts,isnull(lms,'') as lms,isnull(buts,'') as buts,
+       isnull(schirmes,'') as schirmes,isnull(jmnpxbjss,'') as jmnpxbjss,
+       isnull(jmhds,'') as jmhds,isnull(jkpgs,'') as jkpgs,isnull(jzfas,'') as jzfas
+
+  from (
+	select distinct jcr,personName
+	  from #jcinfo left join SYS_PersonInfo on jcr = id
+    union 
+	select distinct jcr,personName
+	  from #jcjlinfo left join SYS_PersonInfo on jcr = id
+  )m
+
+-- 眼轴
+  left join (
+    select jcr,count(jcdh) as yzs 
+	  from #jcinfo
+      where isnull(S_OP_HC_EyeAxisOD,'') <> '' and isnull(S_OP_HC_EyeAxisOS,'') <> ''
+            and isnumeric(S_OP_HC_EyeAxisOD) > 0 and isnumeric(S_OP_HC_EyeAxisOS) > 0
+            and cast(S_OP_HC_EyeAxisOD as float) >= 15 and cast(S_OP_HC_EyeAxisOD as float) <= 40
+            and cast(S_OP_HC_EyeAxisOS as float) >= 15 and cast(S_OP_HC_EyeAxisOS as float) <= 40
+      group by jcr
+  )yz on m.jcr = yz.jcr
+
+-- 曲率
+  left join (
+    select jcr,count(jcdh) as qls 
+	  from #jcinfo
+      where isnull(S_OP_HC_CorneaCurvatureODS1,'') <> '' 
+            and isnull(S_OP_HC_CorneaCurvatureOSS1,'') <> '' 
+            and isnull(S_OP_HC_CorneaCurvatureODF1,'') <> ''
+            and isnull(S_OP_HC_CorneaCurvatureOSF1,'') <> ''
+
+            and isnumeric(S_OP_HC_CorneaCurvatureODS1) > 0
+            and isnumeric(S_OP_HC_CorneaCurvatureOSS1) > 0
+            and isnumeric(S_OP_HC_CorneaCurvatureODF1) > 0
+            and isnumeric(S_OP_HC_CorneaCurvatureOSF1) > 0
+
+            and cast(S_OP_HC_CorneaCurvatureODS1 as float) >= 30 and cast(S_OP_HC_CorneaCurvatureODS1 as float) <= 65
+            and cast(S_OP_HC_CorneaCurvatureOSS1 as float) >= 30 and cast(S_OP_HC_CorneaCurvatureOSS1 as float) <= 65
+            and cast(S_OP_HC_CorneaCurvatureODF1 as float) >= 30 and cast(S_OP_HC_CorneaCurvatureODF1 as float) <= 65
+            and cast(S_OP_HC_CorneaCurvatureOSF1 as float) >= 30 and cast(S_OP_HC_CorneaCurvatureOSF1 as float) <= 65
+
+      group by jcr
+  )ql on m.jcr = ql.jcr
+
+-- 角膜地形图
+  left join (
+    select jcr,count(jcdh) as jmdxts 
+	  from #jcinfo
+      where isnull(S_OP_HC_TopographyFKOD,'') <> '' and isnull(S_OP_HC_TopographyFKOS,'') <> ''
+            and isnull(S_OP_HC_TopographySKOD,'') <> '' and isnull(S_OP_HC_TopographySKOS,'') <> ''
+            and isnull(S_OP_HC_TopographySAIOS,'') <> '' and isnull(S_OP_HC_TopographySAIOD,'') <> ''
+            and isnull(S_OP_HC_TopographySRIOD,'') <> '' and isnull(S_OP_HC_TopographySRIOS,'') <> ''
+
+            and isnumeric(S_OP_HC_TopographyFKOD) > 0 and isnumeric(S_OP_HC_TopographyFKOS) > 0
+            and isnumeric(S_OP_HC_TopographySKOD) > 0 and isnumeric(S_OP_HC_TopographySKOS) > 0
+            and isnumeric(S_OP_HC_TopographySAIOS) > 0 and isnumeric(S_OP_HC_TopographySAIOD) > 0
+            and isnumeric(S_OP_HC_TopographySRIOD) > 0 and isnumeric(S_OP_HC_TopographySRIOS) > 0
+
+            and cast(S_OP_HC_TopographyFKOD as float) >= 30 and cast(S_OP_HC_TopographyFKOD as float) <= 65
+            and cast(S_OP_HC_TopographyFKOS as float) >= 30 and cast(S_OP_HC_TopographyFKOS as float) <= 65
+            and cast(S_OP_HC_TopographySKOD as float) >= 30 and cast(S_OP_HC_TopographySKOD as float) <= 65
+            and cast(S_OP_HC_TopographySKOS as float) >= 30 and cast(S_OP_HC_TopographySKOS as float) <= 65
+            and cast(S_OP_HC_TopographySAIOS as float) >= 0 and cast(S_OP_HC_TopographySAIOS as float) <= 10
+            and cast(S_OP_HC_TopographySAIOD as float) >= 0 and cast(S_OP_HC_TopographySAIOD as float) <= 10
+            and cast(S_OP_HC_TopographySRIOD as float) >= 0 and cast(S_OP_HC_TopographySRIOD as float) <= 10
+            and cast(S_OP_HC_TopographySRIOS as float) >= 0 and cast(S_OP_HC_TopographySRIOS as float) <= 10
+      group by jcr
+  )jmdxt on m.jcr = jmdxt.jcr
+
+-- 泪膜
+  left join (
+    select jcr,count(jcdh) as lms 
+	  from #jcinfo
+      where isnull(S_OP_HC_TearFilmGradeOD1,'') <> '' and isnull(S_OP_HC_TearFilmGradeOS1,'') <> ''
+      group by jcr
+  )lm on m.jcr = lm.jcr
+
+-- BUT
+  left join (
+    select jcr,count(jcdh) as buts
+	  from #jcinfo
+      where isnull(S_OP_HC_BU7OD,'') <> '' and isnull(S_OP_HC_BU7OS,'') <> ''
+            and isnumeric(S_OP_HC_BU7OD) > 0 and isnumeric(S_OP_HC_BU7OS) > 0
+            and cast(S_OP_HC_BU7OD as float) >= 0 and cast(S_OP_HC_BU7OD as float) <= 30
+            and cast(S_OP_HC_BU7OS as float) >= 0 and cast(S_OP_HC_BU7OS as float) <= 30
+      group by jcr
+  )but on m.jcr = but.jcr
+
+-- schirme
+  left join (
+    select jcr,count(jcdh) as schirmes 
+	  from #jcinfo
+      where isnull(S_OP_HC_Schirme5OD,'') <> '' and isnull(S_OP_HC_Schirme5OS,'') <> ''
+            and isnumeric(S_OP_HC_Schirme5OD) > 0 and isnumeric(S_OP_HC_Schirme5OS) > 0
+            and cast(S_OP_HC_Schirme5OD as float) >= 0 and cast(S_OP_HC_Schirme5OD as float) <= 30
+            and cast(S_OP_HC_Schirme5OS as float) >= 0 and cast(S_OP_HC_Schirme5OS as float) <= 30
+      group by jcr
+  )schirme5 on m.jcr = schirme5.jcr
+
+-- 角膜内皮细胞计数
+  left join (
+    select jcr,count(jcdh) as jmnpxbjss
+	  from #jcinfo
+      where isnull(S_OP_HC_ThicknessOD,'') <> '' and isnull(S_OP_HC_ThicknessOS,'') <> ''
+            and isnull(S_OP_HC_AreaOD,'') <> '' and isnull(S_OP_HC_AreaOS,'') <> ''
+            and isnull(S_OP_HC_ScaleOD,'') <> '' and isnull(S_OP_HC_ScaleOS,'') <> ''
+            and isnull(S_OP_HC_VariationOD,'') <> '' and isnull(S_OP_HC_VariationOS,'') <> ''
+
+            and isnumeric(S_OP_HC_ThicknessOD) > 0 and isnumeric(S_OP_HC_ThicknessOS) > 0
+            and isnumeric(S_OP_HC_AreaOD) > 0 and isnumeric(S_OP_HC_AreaOS) > 0
+            and isnumeric(S_OP_HC_ScaleOD) > 0 and isnumeric(S_OP_HC_ScaleOS) > 0
+            and isnumeric(S_OP_HC_VariationOD) > 0 and isnumeric(S_OP_HC_VariationOS) > 0
+
+            and cast(S_OP_HC_ThicknessOD as float) >= 600 and cast(S_OP_HC_ThicknessOD as float) <= 4500
+            and cast(S_OP_HC_ThicknessOS as float) >= 600 and cast(S_OP_HC_ThicknessOS as float) <= 4500
+
+            and cast(S_OP_HC_AreaOD as float) >= 100 and cast(S_OP_HC_AreaOD as float) <= 600
+            and cast(S_OP_HC_AreaOS as float) >= 100 and cast(S_OP_HC_AreaOS as float) <= 600
+
+            and cast(S_OP_HC_ScaleOD as float) >= 1 and cast(S_OP_HC_ScaleOD as float) <= 100
+            and cast(S_OP_HC_ScaleOS as float) >= 1 and cast(S_OP_HC_ScaleOS as float) <= 100
+            and cast(S_OP_HC_VariationOD as float) >= 1 and cast(S_OP_HC_VariationOD as float) <= 100
+            and cast(S_OP_HC_VariationOS as float) >= 1 and cast(S_OP_HC_VariationOS as float) <= 100
+      group by jcr
+  )jmnpxbjs on m.jcr = jmnpxbjs.jcr
+
+-- 角膜厚度
+  left join (
+    select jcr,count(jcdh) as jmhds 
+	  from #jcinfo
+      where isnull(S_OP_HC_CornealThicknessOD,'') <> '' and isnull(S_OP_HC_CornealThicknessOS,'') <> ''
+            and isnumeric(S_OP_HC_CornealThicknessOD) > 0 and isnumeric(S_OP_HC_CornealThicknessOS) > 0
+            and cast(S_OP_HC_CornealThicknessOD as float) >= 300 and cast(S_OP_HC_CornealThicknessOD as float) <= 700
+            and cast(S_OP_HC_CornealThicknessOS as float) >= 300 and cast(S_OP_HC_CornealThicknessOS as float) <= 700
+      group by jcr
+  )jmhd on m.jcr = jmhd.jcr
+
+-- 健康评估
+  left join (
+    select jcr,count(jcdh) as jkpgs
+	  from #jcjlinfo
+      where isnull(S_OP_IP_NearEye,'') <> '' or isnull(S_OP_IP_FarEye,'') <> ''
+            or isnull(S_OP_IP_Astigmia,'') <> '' or isnull(S_OP_IP_Estimate,'') <> ''
+      group by jcr
+  )jkpg on m.jcr = jkpg.jcr
+
+-- 矫正方案
+  left join (
+    select jcr,count(jcdh) as jzfas
+	  from #jcjlinfo
+      where isnull(S_OP_IP_GlassTypes,'') <> '' or isnull(S_OP_IP_TouchGlass,'') <> ''
+            or isnull(S_OP_IP_TrainTypes,'') <> ''
+      group by jcr
+  )jzfa on m.jcr = jzfa.jcr
+
+-- 按工号排序
+ order by m.jcr
+
+
+drop table #jcinfo
+drop table #jcjlinfo
+
+
+]]></Query>
+</TableData>
+</TableDataMap>
+<ReportExportAttr>
+<ExcelExportAttr hideColumn="false" hideRow="false"/>
+<PDFExportAttr/>
+<HTMLExportAttr/>
+</ReportExportAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="3"/>
+<FR F="6" T="6"/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,1219200,914400,914400,914400,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,2895600,2736000,2736000,2933700,2736000,2736000,2736000,2971800,2736000,2736000,2736000,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="1" r="0" cs="11" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="1" cs="11" s="1">
+<O>
+<![CDATA[视光相关检查完整性报表]]></O>
+<Expand/>
+</C>
+<C c="1" r="2" cs="11" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="queryData"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="3" s="3">
+<O>
+<![CDATA[验光师]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="2" r="3" s="3">
+<O>
+<![CDATA[眼轴]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="3" r="3" s="3">
+<O>
+<![CDATA[曲率]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="4" r="3" s="3">
+<O>
+<![CDATA[角膜地形图]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="5" r="3" s="3">
+<O>
+<![CDATA[泪膜]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="6" r="3" s="3">
+<O>
+<![CDATA[BUT]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="7" r="3" s="3">
+<O>
+<![CDATA[schirme]]></O>
+<Expand/>
+</C>
+<C c="8" r="3" s="3">
+<O>
+<![CDATA[角膜内皮细胞计数]]></O>
+<Expand/>
+</C>
+<C c="9" r="3" s="3">
+<O>
+<![CDATA[角膜厚度]]></O>
+<Expand/>
+</C>
+<C c="10" r="3" s="3">
+<O>
+<![CDATA[健康评估]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand upParentDefault="false"/>
+</C>
+<C c="11" r="3" s="3">
+<O>
+<![CDATA[矫正方案]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand upParentDefault="false"/>
+</C>
+<C c="1" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="personName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="yzs"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="qls"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="jmdxts"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="lms"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="buts"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="schirmes"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="jmnpxbjss"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="jmhds"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="jkpgs"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="jzfas"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="5" s="5">
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="2" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(C5)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="3" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(D5)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(E5)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F5)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(G5)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H5)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(I5)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(J5)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(K5)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="5" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(L5)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="1" r="6" cs="2" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="打印日期：" + today()]]></Attributes>
+</O>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="3" r="6" s="7">
+<Expand/>
+</C>
+<C c="4" r="6" s="7">
+<Expand/>
+</C>
+<C c="5" r="6" s="7">
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="7" r="6">
+<Expand/>
+</C>
+<C c="8" r="6" cs="4" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="页次:第 " + $$page_number + " 页/共 " + $$totalPage_number + " 页"]]></Attributes>
+</O>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="0" bottom="986400" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

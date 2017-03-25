@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="billID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT M_TE_ID                                                    AS cstieid,
+       M_TE_GoodsId                                               AS cstiegoodsid,
+       B_GoodsInfo.B_GI_ViewGoodsName                             AS cstiegoodsname,
+       M_TE_GoodsQuantity                                         AS cstiegoodsquantity,
+       B_GoodsInfo.B_GI_Spec                                      AS cstiespec,
+       M_TE_NotTaxRate                                            AS cstienottaxrate,
+       M_TE_NotTaxRateAmount                                      AS cstienottaxrateamount,
+       M_TE_TaxRate                                               AS cstietaxrate,
+       M_TE_CostPrice                                             AS cstiecostprice,
+       M_TE_CostPriceAmount                                       AS cstiecostpriceamount,
+       M_TE_TaxAmount                                             AS cstietaxamount,
+       Isnull(M_TE_OutStockId, M_TE_InStockId)                    AS cstieoutstockid,
+       B_WH_warehouseName                                         AS cstioutstockname,
+       B_WH_warehouseName                                         AS cstiinstockname,
+       M_TE_BarCode                                               AS cstiebarcode,
+       M_TE_WarehousingDate                                       AS cstiewarehousingdate,
+       Isnull(M_TE_OutStorageFlag, '')                            AS cstieoutstorageflag,
+       Isnull(kucun.GoodsQuantity, 0) + Isnull(zaitu.GoodsNum, 0) AS cstiemaxquantity,
+       kucun.guaranteeperiod                                      AS cstieguaranteeperiod,
+       kucun.batch                                                AS cstiebatch
+FROM   M_TracEntry
+       LEFT JOIN (SELECT C_SH_SL_GoodsBarCode                  AS GoodsBarCode,
+                         Isnull(SUM(C_SH_Sl_GoodsQuantity), 0) AS GoodsQuantity,
+                         C_SH_Sl_StockId                       AS StockId,
+                         ''                                    AS guaranteeperiod,
+                         ''                                    AS batch
+                  FROM   C_SH_StorageLog
+                  WHERE  1 = 1
+                         AND C_SH_SL_StockId = (SELECT TOP 1 M_TE_OutStockId
+                                                FROM   M_TracEntry
+                                                WHERE  M_TE_BillID = '${billID}')
+                  GROUP  BY C_SH_SL_GoodsBarCode,
+                            C_SH_Sl_StockId) kucun
+         ON M_TE_BarCode = kucun.GoodsBarCode
+       LEFT JOIN (SELECT C_SH_TSE_GoodsBarCode             AS GoodsBarCode,
+                         Isnull(SUM(C_SH_TSE_GoodsNum), 0) AS GoodsNum
+                  FROM   C_SH_InTransitStorageEntry
+                  WHERE  1 = 1
+                         AND C_SH_TSE_OUTStockID = (SELECT TOP 1 M_TE_OutStockId
+                                                    FROM   M_TracEntry
+                                                    WHERE  M_TE_BillID = '${billID}')
+                  GROUP  BY C_SH_TSE_GoodsBarCode)zaitu
+         ON M_TE_BarCode = zaitu.GoodsBarCode
+       INNER JOIN B_GoodsInfo
+         ON M_TracEntry.M_TE_GoodsId = B_GoodsInfo.B_GI_GoodsID
+       LEFT JOIN B_Warehouse
+         ON B_WH_ID = Isnull(M_TE_OutStockId, M_TE_InStockId)
+WHERE  M_TE_BillID = '${billID}' ]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1143000,1008000,1008000,1008000,723900,723900,723900,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[4953000,6400800,1714500,2324100,3009900,1943100,2743200,2743200,7734300,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="9" s="0">
+<O>
+<![CDATA[客户调货模板（非效期商品）]]></O>
+<Expand/>
+</C>
+<C c="9" r="0">
+<Expand/>
+</C>
+<C c="10" r="0">
+<Expand/>
+</C>
+<C c="11" r="0">
+<Expand/>
+</C>
+<C c="12" r="0">
+<Expand/>
+</C>
+<C c="0" r="1" s="1">
+<O>
+<![CDATA[商品代码]]></O>
+<Expand/>
+</C>
+<C c="1" r="1" s="1">
+<O>
+<![CDATA[商品名称]]></O>
+<Expand/>
+</C>
+<C c="2" r="1" s="1">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="3" r="1" s="1">
+<O>
+<![CDATA[单位成本]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowCost != 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="1" s="1">
+<O>
+<![CDATA[成本合计]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowCost != 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="1" s="1">
+<O>
+<![CDATA[税率]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowCost != 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="6" r="1" s="1">
+<O>
+<![CDATA[批发单价]]></O>
+<Expand/>
+</C>
+<C c="7" r="1" s="1">
+<O>
+<![CDATA[批发金额]]></O>
+<Expand/>
+</C>
+<C c="8" r="1" s="1">
+<O>
+<![CDATA[商品条码]]></O>
+<Expand/>
+</C>
+<C c="9" r="1" s="2">
+<Expand/>
+</C>
+<C c="10" r="1" s="2">
+<Expand/>
+</C>
+<C c="11" r="1" s="2">
+<Expand/>
+</C>
+<C c="12" r="1" s="2">
+<Expand/>
+</C>
+<C c="0" r="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cstiegoodsid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cstiegoodsname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cstiegoodsquantity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cstienottaxrate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowCost != 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="4" r="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cstienottaxrateamount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowCost != 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="5" r="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cstietaxrate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowCost != 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="6" r="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cstiecostprice"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cstiecostpriceamount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="cstiebarcode"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="2" s="4">
+<Expand/>
+</C>
+<C c="10" r="2" s="4">
+<Expand/>
+</C>
+<C c="11" r="2" s="4">
+<Expand/>
+</C>
+<C c="12" r="2" s="4">
+<Expand/>
+</C>
+<C c="0" r="3" cs="2" s="5">
+<O>
+<![CDATA[合计：]]></O>
+<Expand/>
+</C>
+<C c="2" r="3" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(c3)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="3" s="3">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowCost != 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="3" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(E3)]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowCost != 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="3" s="3">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowCost != 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="6" r="3" s="3">
+<Expand/>
+</C>
+<C c="7" r="3" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H3)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="3" s="3">
+<Expand/>
+</C>
+<C c="9" r="3" s="4">
+<Expand/>
+</C>
+<C c="10" r="3" s="4">
+<Expand/>
+</C>
+<C c="11" r="3" s="4">
+<Expand/>
+</C>
+<C c="12" r="3" s="4">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="120"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+
+
+	<!-- 微信  begin-->
+	<bean id="weiXinServiceMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinServiceMgrImpl"/>
+  	
+	<bean id="weiXinServiceMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinServiceMgrImpl"/>
+	</bean>
+	<!-- 微信  end-->
+
+    <!-- 微信配置管理  begin-->
+	<bean id="configurationMgrImpl" class="com.pengsheng.weixin.mgr.impl.ConfigurationMgrImpl"/>
+  	
+	<bean id="configurationMgr" parent="baseTransactionProxy">
+		<property name="target" ref="configurationMgrImpl"/>
+	</bean>
+	<!-- 微信配置管理  end-->
+	
+	<!-- 微信菜单配置  begin-->
+    <bean id="weiXinMenuConfigMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinMenuConfigMgrImpl"/> 	
+
+	<bean id="weiXinMenuConfigMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinMenuConfigMgrImpl"/>
+	</bean>
+	<!-- 微信菜单配置  end-->
+	
+    <!-- 微信数据配置  begin-->
+	<bean id="weiXinDataConfigMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinDataConfigMgrImpl"/>
+  	
+	<bean id="weiXinDataConfigMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinDataConfigMgrImpl"/>
+	</bean>
+	<!-- 微信数据配置  end-->
+	
+	<!-- 微信用户注册部门配置  begin-->
+	<bean id="weiXinRegisterDepartmentMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinRegisterDepartmentMgrImpl"/>
+  	
+	<bean id="weiXinRegisterDepartmentMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinRegisterDepartmentMgrImpl"/>
+	</bean>
+	<!-- 微信用户注册部门配置  end-->
+		
+	<!-- 自动回复管理  begin-->
+    <bean id="weiXinAutoReplyMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinAutoReplyMgrImpl"/> 	
+	
+	<bean id="weiXinAutoReplyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinAutoReplyMgrImpl"/>
+	</bean>
+	<!-- 自动回复管理  end-->
+	
+	<!-- 文章类型管理  begin-->
+    <bean id="weiXinCmsTypeMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinCmsTypeMgrImpl"/> 	
+	
+	<bean id="weiXinCmsTypeMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinCmsTypeMgrImpl"/>
+	</bean>
+	<!-- 文章类型管理  end-->
+	
+	<!-- 文章管理  begin-->
+	<bean id="weiXinCmsContentMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinCmsContentMgrImpl"/>
+  	
+	<bean id="weiXinCmsContentMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinCmsContentMgrImpl"/>
+	</bean>
+	<!-- 文章管理  end-->
+
+	<!-- 微信积分兑换查询  begin-->
+	<bean id="weiXinIntegralSelectMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinIntegralSelectMgrImpl"/>
+  	
+	<bean id="weiXinIntegralSelectMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinIntegralSelectMgrImpl"/>
+	</bean>
+	<!-- 微信积分兑换查询  end-->
+	
+	<!-- 附近门店维护 Liuqian begin-->
+	<bean id="weiXinDepartmentsMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinDepartmentsMgrImpl"/> 	
+	
+	<bean id="weiXinDepartmentsMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinDepartmentsMgrImpl"/>
+	</bean>
+	<!-- 附近门店维护 Liuqian end-->
+	
+	<!-- 优惠卷维护 Liuqian begin-->
+	<bean id="weiXinDaijinquanMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinDaijinquanMgrImpl"/> 	
+	
+	<bean id="weiXinDaijinquanMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinDaijinquanMgrImpl"/>
+	</bean>
+	<!-- 优惠卷维护 Liuqian end-->
+	
+	<!-- 幸运抽奖 Liuqian begin-->
+	<bean id="weiXinLuckDrawSetMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinLuckDrawSetMgrImpl"/> 	
+	
+	<bean id="weiXinLuckDrawSetMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinLuckDrawSetMgrImpl"/>
+	</bean>
+	<!-- 幸运抽奖 Liuqian end-->
+	
+	<!-- 验光师  begin-->
+	<bean id="weiXinDoctorMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinDoctorMgrImpl"/>
+  	
+	<bean id="weiXinDoctorMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinDoctorMgrImpl"/>
+	</bean>
+	<!-- 验光师  end-->
+	
+	<!-- 预约管理  begin-->
+	<bean id="weiXinOptometryAppointmentMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinOptometryAppointmentMgrImpl"/>
+  	
+	<bean id="weiXinOptometryAppointmentMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinOptometryAppointmentMgrImpl"/>
+	</bean>
+	<!-- 预约管理  end-->
+	
+	<!-- 每日签到  begin-->
+    <bean id="weiXinDailyAttendanceMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinDailyAttendanceMgrImpl"/> 	
+	
+	<bean id="weiXinDailyAttendanceMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinDailyAttendanceMgrImpl"/>
+	</bean>
+	<!-- 每日签到  end-->
+	
+	<!-- 验光师评价  begin-->
+    <bean id="weiXinDoctorAppraisalMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinDoctorAppraisalMgrImpl"/> 	
+	
+	<bean id="weiXinDoctorAppraisalMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinDoctorAppraisalMgrImpl"/>
+	</bean>
+	<!-- 验光师评价  end-->	
+	
+		
+	<!-- 邀请好友  begin-->
+    <bean id="weiXinInviteFriendMgrImpl" class="com.pengsheng.weixin.mgr.impl.WeiXinInviteFriendMgrImpl"/> 	
+	
+	<bean id="weiXinInviteFriendMgr" parent="baseTransactionProxy">
+		<property name="target" ref="weiXinInviteFriendMgrImpl"/>
+	</bean>
+	<!-- 邀请好友  end-->	
+</beans>

@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+    
+<struts>	
+	<package name="aierhistory" namespace="/" extends="struts-default">
+	
+	<!-- HIS顾客验光信息管理LXP begin-->
+		<action name="updateOptometryStatus" class="custmerInfoHISAction" method="updateOptometryStatus">
+		  <result name="success" type="chain">initOptometryBasicSelAier</result>
+		</action>	
+	<!-- HIS顾客验光信息管理LXP end-->	
+
+
+	<!-- 眼部健康检查 (新)sxh begin-->	
+		<action name="initEyesCheckSelAier" class="eyesCheckAierAction" method="initEyesCheckSelN">
+		  <result name="success">/WEB-INF/pages/aierhistory/eyesCheckN/eyesCheck_select.jsp</result>
+		  <result name="eyescSel" type="redirectAction">selEyesCheckAier?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+		</action>	
+		<action name="selEyesCheckAier" class="eyesCheckAierAction" method="selEyesCheckN">
+		  <result name="success">/WEB-INF/pages/aierhistory/eyesCheckN/eyesCheck_select.jsp</result>
+		</action>
+		<action name="initEyesCheckInsertAier" class="eyesCheckAierAction" method="initEyesCheckInsertN">
+		  <result name="success">/WEB-INF/pages/aierhistory/eyesCheckN/eyesCheck_insert.jsp</result>
+		</action>
+		<action name="selEyesCheckForCustomerAier" class="eyesCheckAierAction" method="selEyesCheckForCustomerN">
+		  <result name="success">/WEB-INF/pages/aierhistory/eyesCheckN/eyesCheck_insert.jsp</result>
+		</action>	
+		<action name="insertEyesCheckAier" class="eyesCheckAierAction" method="insertEyesCheckN">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>	
+		<action name="detailEyesCheckAier" class="eyesCheckAierAction" method="detailEyesCheckN">
+		  <result name="success">/WEB-INF/pages/aierhistory/eyesCheckN/eyesCheck_detail.jsp</result>
+		</action>
+		<action name="detailEyesCheckAierForRefractiveAier" class="eyesCheckAierAction" method="detailEyesCheckAierForRefractiveN">
+		  <result name="success">/WEB-INF/pages/aierhistory/eyesCheckN/eyesCheck_detail.jsp</result>
+		</action>
+	<!-- 眼部健康检查(新) sxh end--> 
+	
+	<!-- 验光基表(新) sxh begin -->
+		<action name="initOptometryBasicSelAier" class="optometryBasicAierAction" method="initOptometryBasicSelN">
+		  <result name="success">/WEB-INF/pages/aierhistory/optometryBasicN/optometryBasic_select.jsp</result>
+		</action>
+		
+		<action name="initOptometryBasicDeleteAier" class="optometryBasicAierAction" method="initOptometryBasicDeleteN">
+		  <result name="success">/WEB-INF/pages/aierhistory/optometryBasicN/optometryBasic_delete.jsp</result>
+		</action>
+		
+		<action name="deleteOptometryBasicAier" class="optometryBasicAierAction" method="deleteOptometryBasicN">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+	<!-- 验光基表(新) sxh end-->
+	
+	<!-- 屈光检查(新) sxh  begin-->
+		<action name="initRefractiveInsertAier" class="refractiveAierAction" method="initRefractiveInsertN">
+		  <result name="success">/WEB-INF/pages/aierhistory/refractiveN/refractive_insert.jsp</result>
+		 
+		</action>
+		
+		<action name="refractiveInsertAier" class="refractiveAierAction" method="refractiveInsertN">
+		  <result name="success" type="chain">initRefractiveUpdateAier</result>
+		  <param name="refractivePo"></param>
+		  <param name="customerInfoPo"></param>
+		  <result name="RuleSubmit">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="initRefractiveUpdateAier" class="refractiveAierAction" method="initRefractiveUpdateN">
+		  <result name="success">/WEB-INF/pages/aierhistory/refractiveN/refractive_update.jsp</result>
+		  <result name="insert">/WEB-INF/pages/aierhistory/refractiveN/refractive_insert.jsp</result>
+		</action>
+		<action name="refractiveUpdateAier" class="refractiveAierAction" method="refractiveUpdateN">
+		  <result name="success">/WEB-INF/pages/aierhistory/refractiveN/refractive_update.jsp</result>
+		</action>
+		<action name="refractiveCopyAier" class="refractiveAierAction" method="refractiveCopyN">
+		  <result name="success">/WEB-INF/pages/aierhistory/refractiveN/refractive_copy.jsp</result>
+		</action>
+		<action name="initRefractiveSelectAier" class="refractiveAierAction" method="initRefractiveSelectN">
+		  <result name="success">/WEB-INF/pages/aierhistory/refractiveN/refractive_select.jsp</result>
+		</action>
+		<action name="refractiveToolAier" class="refractiveAierAction" method="refractiveToolN">
+		  <result name="refractivei" type="chain">initRefractiveInsertAier</result>
+		  <result name="refractiveu" type="chain">initRefractiveUpdateAier</result>
+		  <result name="refractivecopy" type="chain">refractiveCopyAier</result>
+		  <param name="refractivePo"></param>
+		  <param name="optometryPo"></param>
+		  <param name="customerInfoPo"></param>
+		</action>
+	<!-- 屈光检查(新) sxh end-->
+	
+	<!-- 双眼视功能检查(新) sxh  begin-->
+		<action name="initDoubleEyeFunSelAier" class="doubleEyeFunAierAction" method="initDoubleEyeFunSelN">
+		  <result name="success">/WEB-INF/pages/aierhistory/doubleEyeFunN/doubleEyeFun_insert.jsp</result>
+		</action>
+		<action name="insertDoubleEyeFunAier" class="doubleEyeFunAierAction" method="insertDoubleEyeFunN">
+		  <result name="success" type="chain">initDoubleEyeFunUpdateAier</result>
+		  <param name="optometryPo"></param>
+		</action>
+		<action name="initDoubleEyeFunUpdateAier" class="doubleEyeFunAierAction" method="initDoubleEyeFunUpdateN">
+		  <result name="success">/WEB-INF/pages/aierhistory/doubleEyeFunN/doubleEyeFun_update.jsp</result>
+		</action>
+		<action name="updateDoubleEyeFunAier" class="doubleEyeFunAierAction" method="updateDoubleEyeFunN">
+		  <result name="success">/WEB-INF/pages/aierhistory/doubleEyeFunN/doubleEyeFun_update.jsp</result>
+		</action>
+		<action name="selectDoubleEyeFunAier" class="doubleEyeFunAierAction" method="selectDoubleEyeFunN">
+		  <result name="success">/WEB-INF/pages/aierhistory/doubleEyeFunN/doubleEyeFun_select.jsp</result>
+		</action>
+		<action name="doubleEyeFunToolAier" class="doubleEyeFunAierAction" method="doubleEyeFunToolN">
+		  <result name="doubleeyefuni" type="chain">initDoubleEyeFunSelAier</result>
+		  <result name="doubleeyefunu" type="chain">initDoubleEyeFunUpdateAier</result>
+		   <param name="optometryPo"></param>
+		</action>
+	<!-- 双眼视功能检查(新) sxh  end-->
+	
+	<!-- 特殊功能检查 (新) sxh  begin-->
+		<action name="initSpecialCheckInsertAier" class="specialCheckAierAction" method="initSpecialCheckInsertN">
+		  <result name="success">/WEB-INF/pages/aierhistory/specialCheckN/specialCheck_insert.jsp</result>
+		</action>
+		
+		<action name="insertSpecialCheckAier" class="specialCheckAierAction" method="insertSpecialCheckN">
+		  <result name="success" type="chain">initSpecialCheckUpdateAier</result>
+		  <param name="optometryPo"></param>
+		  <param name="customerInfoPo"></param>
+		</action>
+		
+		<action name="selectSpecialCheckAier" class="specialCheckAierAction" method="selectSpecialCheckN">
+		  <result name="success">/WEB-INF/pages/aierhistory/specialCheckN/specialCheck_select.jsp</result>
+		</action>
+		
+		<action name="initSpecialCheckUpdateAier" class="specialCheckAierAction" method="initSpecialCheckUpdateN">
+		  <result name="success">/WEB-INF/pages/aierhistory/specialCheckN/specialCheck_update.jsp</result>
+		</action>
+		
+		<action name="updateSpecialCheckAier" class="specialCheckAierAction" method="updateSpecialCheckN">
+		  <result name="success">/WEB-INF/pages/aierhistory/specialCheckN/specialCheck_update.jsp</result>
+		</action>
+		
+		<action name="specialCheckToolAier" class="specialCheckAierAction" method="specialCheckToolN">
+		  <result name="specialchecki" type="chain">initSpecialCheckInsertAier</result>
+		  <result name="specialchecku" type="chain">initSpecialCheckUpdateAier</result>
+		  <param name="inspectionPo"></param>
+		  <param name="optometryPo"></param>
+		  <param name="customerInfoPo"></param>
+		</action>
+		
+		<action name="initFixingInterfaceInsertAier" class="specialCheckAierAction" method="initFixingInterfaceInsertN">
+		  <result name="success">/WEB-INF/pages/aierhistory/fixinginterface/fixingInterface_insert.jsp</result>
+		</action>
+			
+		<action name="fixingInterfaceToolAier" class="specialCheckAierAction" method="fixingInterfaceToolN">
+		  <result name="fixingInterfacei" type="chain">initFixingInterfaceInsertAier</result>
+		</action>
+		
+		<action name="insertFixingInterfaceAier" class="specialCheckAierAction" method="insertFixingInterfaceN">
+		  <result name="success" type="chain">initFixingInterfaceInsertAier</result>
+		</action>
+		
+		<action name="selectFixingInterfaceAier" class="specialCheckAierAction" method="initFixingInterfaceInsertN">
+		  <result name="success">/WEB-INF/pages/aierhistory/fixinginterface/fixingInterface_select.jsp</result>
+		</action>
+				
+	<!-- 特殊功能检查 (新) sxh end-->
+	
+	<!-- 戴镜史 (新) sxh  begin-->
+		<action name="selectGlassesHistoryAier" class="glassesHistoryAierAction" method="selectGlassesHistoryN">
+		  <result name="success">/WEB-INF/pages/aierhistory/glassesHistoryN/glassesHistory_update.jsp</result>
+		</action>
+		
+		<action name="updateGlassesHistoryAier" class="glassesHistoryAierAction" method="updateGlassesHistoryN">
+		  <result name="success">/WEB-INF/pages/aierhistory/glassesHistoryN/glassesHistory_update.jsp</result>
+		</action>
+	<!-- 戴镜史 (新) sxh  end-->
+	
+	<!-- 检查结论(新) sxh begin-->
+		<action name="initInspectionInsertAier" class="inspectionAierAction" method="initInspectionInsertN">
+		  <result name="success">/WEB-INF/pages/aierhistory/inspectionN/inspection_insert.jsp</result>
+		 
+		</action>
+		
+		<action name="inspectionInsertAier" class="inspectionAierAction" method="inspectionInsertN">
+		  <result name="success">/WEB-INF/pages/aierhistory/inspectionN/inspectionDetailsOpen_insert.jsp</result>
+		</action>
+		<action name="initInspectionUpdateAier" class="inspectionAierAction" method="initInspectionUpdateN">
+		  <result name="success">/WEB-INF/pages/aierhistory/inspectionN/inspection_update.jsp</result>
+		</action>
+		
+		<action name="inspectionInsertDetailsOpenAier" class="inspectionAierAction" method="inspectionInsertDetailsOpenN">
+		  <result name="success" type="chain">initInspectionUpdateAier</result>
+		  <param name="inspectionPo"></param>
+		  <param name="customerInfoPo"></param>
+		  <result name="RuleSubmit">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="inspectionUpdateAier" class="inspectionAierAction" method="inspectionUpdateN">
+		  <result name="success">/WEB-INF/pages/aierhistory/inspectionN/inspectionDetailsOpen_insert.jsp</result>
+		</action>
+		
+		<action name="inspectionCopyAier" class="inspectionAierAction" method="inspectionCopyN">
+		  <result name="success">/WEB-INF/pages/aierhistory/inspectionN/inspection_copy.jsp</result>
+		</action>
+		
+		<action name="inspectionDeleteAier" class="inspectionAierAction" method="inspectionDeleteN">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="initInspectionSelectAier" class="inspectionAierAction" method="initInspectionSelectN">
+		  <result name="success">/WEB-INF/pages/aierhistory/inspectionN/inspection_select.jsp</result>
+		</action>
+		
+		
+		<action name="inspectionToolAier" class="inspectionAierAction" method="inspectionToolN">
+		  <result name="inspectioni" type="chain">initInspectionInsertAier</result>
+		  <result name="inspectionu" type="chain">initInspectionUpdateAier</result>
+		  <result name="inspectioncopy" type="chain">inspectionCopyAier</result>
+		  <param name="inspectionPo"></param>
+		  <param name="optometryPo"></param>
+		  <param name="customerInfoPo"></param>
+		</action>
+		
+		<action name="inspectionPrintAier" class="inspectionAierAction" method="inspectionPrintN">
+
+		</action>
+	<!-- 检查结论(新) sxh end-->
+	
+	<!-- 接触镜评估(新) sxh begin-->
+		<action name="initContactGlassInsertAier" class="contactGlassAierAction" method="initContactGlassInsertN">
+		  <result name="success">/WEB-INF/pages/aierhistory/contactGlassN/contactGlass_insert.jsp</result>
+		</action>
+		<action name="contactGlassInsertAier" class="contactGlassAierAction" method="contactGlassInsertN">
+		  <result name="success" type="chain">initContactGlassUpdateAier</result>
+		  <result name="RuleSubmit">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="initContactGlassUpdateAier" class="contactGlassAierAction" method="initContactGlassUpdateN">
+		  <result name="success">/WEB-INF/pages/aierhistory/contactGlassN/contactGlass_update.jsp</result>
+		</action>
+		
+		<action name="contactGlassInsertDetailsOpenAier" class="contactGlassAierAction" method="contactGlassInsertDetailsOpenN">
+		  <result name="success" type="chain">initContactGlassUpdateAier</result>
+		  <param name="inspectionPo"></param>
+		  <param name="customerInfoPo"></param>
+		  <result name="RuleSubmit">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="contactGlassUpdateAier" class="contactGlassAierAction" method="contactGlassUpdateN">		 
+		  <result name="success" type="chain">initContactGlassUpdateAier</result>
+		  <result name="RuleSubmit">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="contactGlassCopyAier" class="contactGlassAierAction" method="contactGlassCopyN">
+		  <result name="success">/WEB-INF/pages/aierhistory/contactGlassN/contactGlass_copy.jsp</result>
+		</action>
+		
+		<action name="contactGlassDeleteAier" class="contactGlassAierAction" method="contactGlassDeleteN">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="initContactGlassSelectAier" class="contactGlassAierAction" method="initContactGlassSelectN">
+		  <result name="success">/WEB-INF/pages/aierhistory/contactGlassN/contactGlass_select.jsp</result>
+		</action>
+		
+		
+		<action name="contactGlassToolAier" class="contactGlassAierAction" method="contactGlassToolN">
+		  <result name="contactGlassioui" type="chain">initContactGlassInsertAier</result>
+		  <result name="contactGlassiouu" type="chain">initContactGlassUpdateAier</result>	  
+		  <param name="contactGlassPo"></param>
+		  <param name="optometryPo"></param>
+		  <param name="customerInfoPo"></param>
+		</action>
+	<!-- 接触镜评估(新) sxh end-->
+	
+	<!-- 角膜接触镜复查(新) sxh begin-->
+		<action name="initCornealContactlLensInsertAier" class="cornealContactlLensAierAction" method="initCornealContactlLensInsertN">
+		  <result name="success">/WEB-INF/pages/aierhistory/cornealContactlLensN/cornealContactlLens_insert.jsp</result>
+		</action>
+		
+		<action name="cornealContactlLensInsertAier" class="cornealContactlLensAierAction" method="cornealContactlLensInsertN">
+		  <result name="success">/WEB-INF/pages/aierhistory/cornealContactlLensN/cornealContactlLens_update.jsp</result>
+		</action>
+		<action name="initCornealContactlLensUpdateAier" class="cornealContactlLensAierAction" method="initCornealContactlLensUpdateN">
+		  <result name="success">/WEB-INF/pages/aierhistory/cornealContactlLensN/cornealContactlLens_update.jsp</result>
+		</action>
+		
+		<action name="cornealContactlLensInsertDetailsOpenAier" class="cornealContactlLensAierAction" method="cornealContactlLensInsertDetailsOpenN">
+		  <result name="success" type="chain">initCornealContactlLensUpdateAier</result>
+		  <param name="cornealContactlLensPo"></param>
+		  <param name="customerInfoPo"></param>
+		  <result name="RuleSubmit">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="cornealContactlLensUpdateAier" class="cornealContactlLensAierAction" method="cornealContactlLensUpdateN">
+		  <result name="success">/WEB-INF/pages/aierhistory/cornealContactlLensN/cornealContactlLens_update.jsp</result>
+		</action>
+		
+		<action name="cornealContactlLensCopyAier" class="cornealContactlLensAierAction" method="cornealContactlLensCopyN">
+		  <result name="success">/WEB-INF/pages/aierhistory/cornealContactlLensN/cornealContactlLens_copy.jsp</result>
+		</action>
+		
+		<action name="cornealContactlLensDeleteAier" class="cornealContactlLensAierAction" method="cornealContactlLensDeleteN">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="initCornealContactlLensSelectAier" class="cornealContactlLensAierAction" method="initCornealContactlLensSelectN">
+		  <result name="success">/WEB-INF/pages/aierhistory/cornealContactlLensN/cornealContactlLens_select.jsp</result>
+		</action>
+		
+		<action name="cornealContactlLensToolAier" class="cornealContactlLensAierAction" method="cornealContactlLensToolN">
+		  <result name="cornealContactlLensi" type="chain">initCornealContactlLensInsertAier</result>
+		  <result name="cornealContactlLensu" type="chain">initCornealContactlLensUpdateAier</result>
+		  <result name="cornealContactlLenscopy" type="chain">cornealContactlLensCopyAier</result>
+		  <param name="cornealContactlLensPo"></param>
+		  <param name="optometryPo"></param>
+		  <param name="customerInfoPo"></param>
+		</action>
+		
+		<action name="cornealContactlLensPrintAier" class="cornealContactlLensAierAction" method="cornealContactlLensPrintN">
+
+		</action>
+	<!-- 角膜接触镜复查(新) sxh end-->
+	
+	<!-- 验光病例查询(新) sxh begin -->
+	<action name="initOptometryCaseSelAier" class="optometryCaseAierAction" method="initOptometryCaseSelN">
+	  <result name="success">/WEB-INF/pages/aierhistory/optometryCase/optometryCase_select.jsp</result>
+	  <result name="optomeSel" type="redirectAction">optometryCaseSelAier?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	</action>
+	<action name="optometryCaseSelAier" class="optometryCaseAierAction" method="optometryCaseSelN">
+	  <result name="success">/WEB-INF/pages/aierhistory/optometryCase/optometryCase_select.jsp</result>
+	</action>
+	<!-- 验光病例查询(新) sxh end -->
+	</package>
+</struts>

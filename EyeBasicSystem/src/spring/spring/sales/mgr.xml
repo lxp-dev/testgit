@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	<!-- 散瞳检查 du begin-->
+	<bean id="mydriasisMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.MydriasisMgrImpl" />
+	<bean id="mydriasisMgr" parent="baseTransactionProxy">
+		<property name="target" ref="mydriasisMgrImpl" />
+	</bean>
+	<!-- 散瞳检查 du end-->
+	<!-- 眼部健康检查 du begin-->
+	<bean id="eyesCheckMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.EyesCheckMgrImpl" />
+	<bean id="eyesCheckMgr" parent="baseTransactionProxy">
+		<property name="target" ref="eyesCheckMgrImpl" />
+	</bean>
+	<!-- 眼部健康检查 du end-->
+	
+	<!-- 屈光检查  begin -->
+	<bean id="refractiveMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.RefractiveMgrImpl" />
+	<bean id="refractiveMgr" parent="baseTransactionProxy">
+		<property name="target" ref="refractiveMgrImpl" />
+	</bean>
+	<!-- 屈光检查   end  -->
+	
+	<!-- 双眼视功能检查 qiyue  begin-->
+	<bean id="doubleEyeFunMgrIpml"
+		class="com.pengsheng.eims.sales.mgr.impl.DoubleEyeFunMgrIpml" />
+	<bean id="doubleEyeFunMgr" parent="baseTransactionProxy">
+		<property name="target" ref="doubleEyeFunMgrIpml" />
+	</bean>
+	<!-- 双眼视功能检查 end-->
+
+	<!-- 验光基表 Liuqian begin-->
+	<bean id="optometryBasicMgrImpl" 
+		class="com.pengsheng.eims.sales.mgr.impl.OptometryBasicMgrImp" />
+	<bean id="optometryBasicMgr" parent="baseTransactionProxy">
+		<property name="target" ref="optometryBasicMgrImpl" />
+	</bean>
+	<!-- 验光基表 Liuqian end-->
+	
+	<!-- 特殊功能检查 wanglei begin-->
+	<bean id="specialCheckMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.SpecialCheckMgrImpl" />
+	<bean id="specialCheckMgr" parent="baseTransactionProxy">
+		<property name="target" ref="specialCheckMgrImpl" />
+	</bean>
+	<!-- 特殊功能检查 wanglei end-->
+	
+	<!-- 检查结论 sb begin-->
+	<bean id="inspectionMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.InspectionMrgImpl" />
+	<bean id="inspectionMgr" parent="baseTransactionProxy">
+		<property name="target" ref="inspectionMgrImpl" />
+	</bean>
+	<!-- 检查结论 sb end-->
+	
+	<!-- 戴镜史 wanglei begin-->
+	<bean id="glassesHistoryMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.GlassesHistoryMgrImpl" />
+	<bean id="glassesHistoryMgr" parent="baseTransactionProxy">
+		<property name="target" ref="glassesHistoryMgrImpl" />
+	</bean>
+	<!-- 戴镜史 wanglei end-->
+	
+	<!-- 框镜销售 Liuqian begin-->
+	<bean id="frameSalesMgrImpl" 
+		class="com.pengsheng.eims.sales.mgr.impl.FrameSalesMgrImpl" />
+	<bean id="frameSalesMgr" parent="baseTransactionProxy">
+		<property name="target" ref="frameSalesMgrImpl" />
+	</bean>
+	<!-- 框镜销售 Liuqian end-->
+	
+	<!-- 打印处方 qiyue begin -->
+	<bean id="printPrescriptionMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.PrintPrescriptionMgrImpl" />
+	<bean id="printPrescriptionMgr" parent="baseTransactionProxy">
+		<property name="target" ref="printPrescriptionMgrImpl" />
+	</bean>
+	<!-- 打印处方 qiyue end -->
+	
+	<!-- 打印挂号单 qiyue begin -->
+	<bean id="printRegistrationMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.PrintRegistrationMgrImpl" />
+	<bean id="printRegistrationMgr" parent="baseTransactionProxy">
+		<property name="target" ref="printRegistrationMgrImpl" />
+	</bean>
+	<!-- 打印挂号单 qiyue end -->
+	
+	<!-- 打印配镜单 wanglei begin -->
+	<bean id="putOptometryOrderMgrImpl"	class="com.pengsheng.eims.sales.mgr.impl.PutOptometryOrderMgrImpl" />
+	<bean id="putOptometryOrderMgr" parent="baseTransactionProxy">
+		<property name="target" ref="putOptometryOrderMgrImpl" />
+	</bean>
+	<!-- 打印配镜单 wanglei end -->
+	
+	<!-- 门店取镜 wanglei begin -->
+	<bean id="shopCodeTakeMgrImpl"	class="com.pengsheng.eims.sales.mgr.impl.ShopCodeTakeMgrImpl" />
+	<bean id="shopCodeTakeMgr" parent="baseTransactionProxy">
+		<property name="target" ref="shopCodeTakeMgrImpl" />
+	</bean>
+	<!-- 门店取镜 wanglei end -->
+	
+	<!-- 顾客取镜 wanglei begin -->
+	<bean id="customerTakeMgrImpl"	class="com.pengsheng.eims.sales.mgr.impl.CustomerTakeMgrImpl" />
+	<bean id="customerTakeMgr" parent="baseTransactionProxy">
+		<property name="target" ref="customerTakeMgrImpl" />
+	</bean>
+	<!-- 顾客取镜 wanglei end -->
+	
+	<!-- 门店配送 qiyue begin -->
+	<bean id="doorStoreDeliveryMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.DoorStoreDeliveryMgrImpl" />
+	<bean id="doorStoreDeliveryMgr" parent="baseTransactionProxy">
+		<property name="target" ref="doorStoreDeliveryMgrImpl" />
+	</bean>
+	<!-- 门店配送 qiyue end -->
+	
+	<!-- 隐形订做片配送 qiyue begin -->
+	<bean id="invisibleDistributionMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.InvisibleDistributionMgrImpl" />
+	<bean id="invisibleDistributionMgr" parent="baseTransactionProxy">
+		<property name="target" ref="invisibleDistributionMgrImpl" />
+	</bean>
+	<!-- 隐形订做片配送 qiyue end -->
+	
+	<!-- 加工配送 qiyue begin -->
+	<bean id="processDistributionMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.ProcessDistributionMgrImpl" />
+	<bean id="processDistributionMgr" parent="baseTransactionProxy">
+		<property name="target" ref="processDistributionMgrImpl" />
+	</bean>
+	<!-- 加工配送  qiyue end -->
+	
+	<!-- 挂号 Liuqian begin -->
+	<bean id="registeredMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.RegisteredMgrImpl" />
+	<bean id="registeredMgr" parent="baseTransactionProxy">
+		<property name="target" ref="registeredMgrImpl" />
+	</bean>
+	<!-- 挂号 Liuqian end -->
+	
+	<!-- 附加费用  begin -->
+	<bean id="additionalCDetailMgrImpl"	class="com.pengsheng.eims.sales.mgr.impl.AdditionalCDetailMgrImpl" />
+	<bean id="additionalCDetailMgr" parent="baseTransactionProxy">
+		<property name="target" ref="additionalCDetailMgrImpl" />
+	</bean>
+	<!-- 附加费用   end -->
+	
+	<!-- 特殊加工要求  begin -->
+	<bean id="specialPDetailMgrImpl"	class="com.pengsheng.eims.sales.mgr.impl.SpecialPDetailMgrImpl" />
+	<bean id="specialPDetailMgr" parent="baseTransactionProxy">
+		<property name="target" ref="specialPDetailMgrImpl" />
+	</bean>
+	<!-- 附加费用   end -->
+	
+	<!-- 病历信息 qiyue begin -->
+	<bean id="optometryInformationMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.OptometryInformationMgrImpl" />
+	<bean id="optometryInformationMgr" parent="baseTransactionProxy">
+		<property name="target" ref="optometryInformationMgrImpl" />
+	</bean>
+	<!-- 病历信息  qiyue end -->
+	
+	<!-- 销售信息 qiyue begin -->
+	<bean id="venditionInformationMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.VenditionInformationMgrImpl" />
+	<bean id="venditionInformationMgr" parent="baseTransactionProxy">
+		<property name="target" ref="venditionInformationMgrImpl" />
+	</bean>
+	<!-- 销售信息  qiyue end -->
+	
+	<!-- 刷卡记录 qiyue begin -->
+	<bean id="registerCardMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.RegisterCardMgrImpl" />
+	<bean id="registerCardMgr" parent="baseTransactionProxy">
+		<property name="target" ref="registerCardMgrImpl" />
+	</bean>
+	<!-- 刷卡记录  qiyue end -->
+	
+	<!-- 误期管理 qiyue begin -->
+	<bean id="delaysReminderMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.DelaysReminderMgrImpl" />
+	<bean id="delaysReminderMgr" parent="baseTransactionProxy">
+		<property name="target" ref="delaysReminderMgrImpl" />
+	</bean>
+	<!-- 误期管理 qiyue end -->
+	
+	<!-- 结款管理 Liuqian begin -->
+	<bean id="guitarManagementMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.GuitarManagementMgrImpl" />
+	<bean id="guitarManagementMgr" parent="baseTransactionProxy">
+		<property name="target" ref="guitarManagementMgrImpl" />
+	</bean>
+	<!-- 结款管理 Liuqian end -->
+	
+	<!-- 隐形销售  canying123 begin -->
+	<bean id="conSalesMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.ConSalesMgrImpl" />
+	<bean id="conSalesMgr" parent="baseTransactionProxy">
+		<property name="target" ref="conSalesMgrImpl" />
+	</bean>
+	<!-- 隐形销售  canying123 end -->
+	
+		
+	<!-- 辅料销售  canying123 begin -->
+	<bean id="accSalesMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.AccSalesMgrImpl" />
+	<bean id="accSalesMgr" parent="baseTransactionProxy">
+		<property name="target" ref="accSalesMgrImpl" />
+	</bean>
+	<!-- 隐形销售  canying123 end -->
+	
+	<!-- 欠费  canying123 begin -->
+	<bean id="arrearsMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.ArrearsMgrImpl" />
+	<bean id="arrearsMgr" parent="baseTransactionProxy">
+		<property name="target" ref="arrearsMgrImpl" />
+	</bean>
+	<!-- 欠费  canying123 end -->
+	
+	<!--退差价  canying123 begin -->
+	<bean id="diffPriceMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.DiffPriceMgrImpl" />
+	<bean id="diffPriceMgr" parent="baseTransactionProxy">
+		<property name="target" ref="diffPriceMgrImpl" />
+	</bean>
+	<!--退差价    canying123 end -->
+	
+	<!-- 欠款管理  Liuqian begin-->
+	<bean id="refundMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.RefundMgrImpl" />
+	<bean id="refundMgr" parent="baseTransactionProxy">
+		<property name="target" ref="refundMgrImpl" />
+	</bean>
+	<!-- 欠款管理  Liuqian end-->
+	
+	<!-- 刷卡机费  特殊费用 Liuqian begin-->
+	<bean id="cardBillingMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.CardBillingMgrImpl" />
+	<bean id="cardBillingMgr" parent="baseTransactionProxy">
+		<property name="target" ref="cardBillingMgrImpl" />
+	</bean>
+	<!-- 刷卡机费  特殊费用  Liuqian end-->
+	
+	<!-- 客户刷卡计费功能 qiyue begin -->
+	<bean id="creditCardAccountFeesMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.CreditCardAccountFeesMgrImpl" />
+	<bean id="creditCardAccountFeesMgr" parent="baseTransactionProxy">
+		<property name="target" ref="creditCardAccountFeesMgrImpl" />
+	</bean>
+	<!-- 客户刷卡计费功能  qiyue end -->
+	
+	<!-- 验光病例查询sxh begin -->
+	<bean id="optometryCaseMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.OptometryCaseMgrImpl" />
+	<bean id="optometryCaseMgr" parent="baseTransactionProxy">
+		<property name="target" ref="optometryCaseMgrImpl" />
+	</bean>
+	<!-- 验光病例查询sxh end -->
+	
+	<!-- 邮寄 sxh begin -->
+	<bean id="toMailMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.ToMailMgrImpl" />
+	<bean id="toMailMgr" parent="baseTransactionProxy">
+		<property name="target" ref="toMailMgrImpl" />
+	</bean>
+	<!-- 邮寄 sxh end -->
+	
+	<!-- 顾客投诉 sxh begin -->
+		<bean id="customerComplainMgrImpl" class="com.pengsheng.eims.sales.mgr.impl.CustomerComplainMgrImpl" />
+		<bean id="customerComplainMgr" parent="baseTransactionProxy">
+			<property name="target" ref="customerComplainMgrImpl" />
+		</bean>
+	<!-- 顾客投诉 sxh end -->
+	<!-- 套餐维护  szk begin -->
+	<bean id="setMealMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.SetMealMgrImpl" />
+	<bean id="setMealMgr" parent="baseTransactionProxy">
+		<property name="target" ref="setMealMgrImpl" />
+	</bean>
+	<!-- 套餐维护  szk end -->
+	
+	
+	<!-- 商品成本折扣维护  szk begin -->
+	<bean id="goodsCostDiscountMgrImpl"
+		class="com.pengsheng.eims.sales.mgr.impl.GoodsCostDiscountMgrImpl" />
+	<bean id="goodsCostDiscountMgr" parent="baseTransactionProxy">
+		<property name="target" ref="goodsCostDiscountMgrImpl" />
+	</bean>
+	<!-- 商品成本折扣维护  szk end -->
+	
+	<!-- 顾客投诉 sxh begin -->
+		<bean id="integralAddandSubMgrImpl" class="com.pengsheng.eims.sales.mgr.impl.IntegralAddandSubMgrImpl" />
+		<bean id="integralAddandSubMgr" parent="baseTransactionProxy">
+			<property name="target" ref="integralAddandSubMgrImpl" />
+		</bean>
+	<!-- 顾客投诉 sxh end -->	
+	
+	<!-- 门店预销售设置  ZK  begin-->
+	<bean id="preSalesMgr" class="com.pengsheng.eims.sales.mgr.impl.PreSalesMgrImpl" />
+	<!-- 门店预销售设置  ZK  end-->
+	
+	<!-- 代金券  begin -->
+	<bean id="cashCouponMgrImpl" class="com.pengsheng.eims.sales.mgr.impl.CashCouponMgrImpl" />
+	<bean id="cashCouponMgr" parent="baseTransactionProxy">
+		<property name="target" ref="cashCouponMgrImpl" />
+	</bean>
+	<!-- 代金券 end -->
+	
+	<!-- 打印包装单  begin -->
+	<bean id="packingListMgrImpl"	class="com.pengsheng.eims.sales.mgr.impl.PackingListMgrImpl" />
+	<bean id="packingListMgr" parent="baseTransactionProxy">
+		<property name="target" ref="packingListMgrImpl" />
+	</bean>
+	<!-- 打印包装单  end -->
+	
+</beans>

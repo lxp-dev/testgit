@@ -1,0 +1,193 @@
+10
+
+dir
+15818
+svn://192.168.168.218/EyeBasicSystem/source/EyeBasicSystem/WebRoot/WEB-INF/pages/storage
+svn://192.168.168.218/EyeBasicSystem
+
+
+
+2017-01-03T03:36:14.649836Z
+15811
+SZK
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+776c666b-7bce-7948-b771-2bd2a928235a
+
+procurementReceipt
+dir
+
+procurementOrders
+dir
+
+wholeApply
+dir
+
+allocation
+dir
+
+spectaclesMaterials
+dir
+
+financialSettlement
+dir
+
+spectaclesMaterialsFinish
+dir
+
+nonconformingSummary
+dir
+
+allocationsettlement
+dir
+
+systemclear
+dir
+
+storageDelaysReminder
+dir
+
+otherReceipt
+dir
+
+recordWorkingTime
+dir
+
+startWorking
+dir
+
+consignProcessOrderStatus
+dir
+
+adjustmentPrice
+dir
+
+checkStorage
+dir
+
+ordersStatusReturn
+dir
+
+otherDatabaseManagement
+dir
+
+salesReturn
+dir
+
+storeReceipt
+dir
+
+brandprice
+dir
+
+otherOut
+dir
+
+inTransit
+dir
+
+otherDatabaseSettlement
+dir
+
+workingCheck
+dir
+
+returnMerchandiseManagement
+dir
+
+overagelosses
+dir
+
+nonconformingTR
+dir
+
+consignProcessWait
+dir
+
+outsourcingdelivery
+dir
+
+procurementOrdersStatus
+dir
+
+returnMerchandiseSettlement
+dir
+
+procurementwait
+dir
+
+storeGoods
+dir
+
+printWorkingCheck
+dir
+
+consignProcessOrder
+dir
+
+allocationSend
+dir
+
+glassesCheck
+dir
+
+salesOut
+dir
+
+adcostPrice
+dir
+
+procurementCheck
+dir
+
+otherReceiptSettlement
+dir
+
+procurementReturn
+dir
+
+consignProcessSettlement
+dir
+
+consignProcessTake
+dir
+
+wholesalePrice
+dir
+
+samplingCheck
+dir
+
+stockAlertSetting
+dir
+
+stockSearch
+dir
+
+consignProcessDeliver
+dir
+
+printBarcode
+dir
+
+nonconforming
+dir
+
+reAllocation
+dir
+
+takeOut
+dir
+

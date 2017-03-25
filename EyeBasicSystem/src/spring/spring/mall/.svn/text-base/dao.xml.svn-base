@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+
+	<!-- 商城商品类型维护  begin-->
+		<bean id="mallTypeLargeDao" class="com.pengsheng.mall.dao.impl.MallTypeLargeDaoImpl"></bean>
+	<!-- 商城商品类型维护  begin-->
+
+	<!-- 商城商品信息维护  begin-->
+		<bean id="mallTypeSmallDao" class="com.pengsheng.mall.dao.impl.MallTypeSmallDaoImpl"></bean>
+	<!-- 商城商品信息维护  end-->		
+	
+	<!-- 商城商品品种维护  begin-->
+		<bean id="mallBrandDao" class="com.pengsheng.mall.dao.impl.MallBrandDaoImpl"></bean>
+	<!-- 商城商品品种维护  end-->		
+	
+	<!-- 商城商品区域维护  begin-->
+		<bean id="mallAreaDao" class="com.pengsheng.mall.dao.impl.MallAreaDaoImpl"></bean>
+	<!-- 商城商品区域维护  end-->		
+	
+	<!-- 商城购物车维护  begin-->
+		<bean id="mallShoppingCartDao" class="com.pengsheng.mall.dao.impl.MallShoppingCartDaoImpl"></bean>
+	<!-- 商城购物车维护  end-->
+		
+	<!-- 商城收藏夹维护  begin-->
+		<bean id="mallShoppingFavoriteDao" class="com.pengsheng.mall.dao.impl.MallShoppingFavoriteDaoImpl"></bean>
+	<!-- 商城收藏夹维护  end-->
+		
+	<!-- 商城订单维护  begin-->
+		<bean id="mallShoppingOrderDao" class="com.pengsheng.mall.dao.impl.MallShoppingOrderDaoImpl"></bean>
+	<!-- 商城订单维护  end-->			
+</beans>

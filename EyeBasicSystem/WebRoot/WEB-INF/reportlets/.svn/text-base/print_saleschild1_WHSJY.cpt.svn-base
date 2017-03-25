@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[X011120130610060215]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+SELECT S_SE_SD_SalesItemID AS '商品代码',
+CASE
+  WHEN B_GI_GoodsCategoryID = '1' THEN Isnull(B_GI_GoodsName, '') + Isnull('  —' + Rtrim(B_GI_Spec), '') + Isnull('—' + Rtrim(B_GI_Color), '') + Isnull(Rtrim(F_TT_Name), '')
+  WHEN B_GI_GoodsCategoryID = '6' THEN Isnull(B_GI_GoodsName, '') + Isnull('  —' + Rtrim(B_GI_Spec), '') + Isnull('—' + Rtrim(B_GI_Color), '')
+  WHEN B_GI_GoodsCategoryID = '8' THEN Isnull(B_GI_GoodsName, '') + Isnull('  —' + Rtrim(B_GI_Spec), '') + Isnull('—' + Rtrim(B_GI_SupplierColor), '') 
+
+ ELSE Isnull(B_GI_GoodsName, '')
+END                                         AS '商品名称',
+       CASE
+         WHEN S_SE_SD_CommoditiesFlag = '3' THEN B_GI_Spec + '-' + B_GI_Color + '-' + B_GI_FrameSize
+         WHEN S_SE_SD_CommoditiesFlag = '6' THEN B_GI_Spec + '-' + B_GI_Color + '-' + B_GI_FrameSize
+         ELSE B_GI_Spec
+       END                 AS '商品规格',
+       CASE
+         WHEN S_SE_SD_CommoditiesFlag = '2' THEN '99'
+         ELSE S_SE_SD_CommoditiesFlag
+       END                 AS '排序',
+       B_UT_unitName       AS '单位名称',
+       S_SE_SD_Number      AS '商品数量',
+[S_SE_SD_SPrice]A AS '商品单价',
+       S_SE_SD_SalesValue  AS '应收金额'
+
+FROM   F_SystemParameter,S_SE_SalesDetail
+       INNER JOIN S_SE_SalesBasic
+         ON S_SE_SB_SalesID = S_SE_SD_SalesID
+       LEFT JOIN B_GoodsInfo
+         ON B_GI_GoodsID = S_SE_SD_SalesItemID
+       LEFT JOIN B_Unit
+         ON B_GI_UnitId = B_UT_id
+	   LEFT JOIN S_SM_SetMeal
+		 ON S_SM_SM_ID = S_SE_SD_Setmealid
+       left join F_TechnologyType
+         on B_GI_frameProcessCraftType = F_TT_ID
+WHERE  S_SE_SD_SalesID = 
+'${salesid}'
+
+union all 
+
+SELECT S_SE_SD_SalesItemID AS '商品代码',
+CASE
+  WHEN B_GI_GoodsCategoryID = '1' THEN Isnull(B_GI_GoodsName, '') + Isnull('  —' + Rtrim(B_GI_Spec), '') + Isnull('—' + Rtrim(B_GI_Color), '')+ Isnull(Rtrim(F_TT_Name), '')
+  WHEN B_GI_GoodsCategoryID = '6' THEN Isnull(B_GI_GoodsName, '') + Isnull('  —' + Rtrim(B_GI_Spec), '') + Isnull('—' + Rtrim(B_GI_Color), '')
+  WHEN B_GI_GoodsCategoryID = '8' THEN Isnull(B_GI_GoodsName, '') + Isnull('  —' + Rtrim(B_GI_Spec), '') + Isnull('—' + Rtrim(B_GI_SupplierColor), '') 
+
+ ELSE Isnull(B_GI_GoodsName, '')
+END                                         AS '商品名称',
+       CASE
+         WHEN S_SE_SD_CommoditiesFlag = '3' THEN B_GI_Spec + '-' + B_GI_Color + '-' + B_GI_FrameSize
+         WHEN S_SE_SD_CommoditiesFlag = '6' THEN B_GI_Spec + '-' + B_GI_Color + '-' + B_GI_FrameSize
+         ELSE B_GI_Spec
+       END                 AS '商品规格',
+       CASE
+         WHEN S_SE_SD_CommoditiesFlag = '2' THEN '99'
+         ELSE S_SE_SD_CommoditiesFlag
+       END                 AS '排序',
+       B_UT_unitName       AS '单位名称',
+       S_SE_SD_Number      AS '商品数量',
+[S_SE_SD_SPrice]A AS '商品单价',
+       S_SE_SD_SalesValue  AS '应收金额'
+
+FROM   F_SystemParameter,S_SE_SalesDetail_Finished
+       INNER JOIN S_SE_SalesBasic_Finished
+         ON S_SE_SB_SalesID = S_SE_SD_SalesID
+       LEFT JOIN B_GoodsInfo
+         ON B_GI_GoodsID = S_SE_SD_SalesItemID
+       LEFT JOIN B_Unit
+         ON B_GI_UnitId = B_UT_id
+	   LEFT JOIN S_SM_SetMeal
+		 ON S_SM_SM_ID = S_SE_SD_Setmealid
+left join F_TechnologyType
+         on B_GI_frameProcessCraftType = F_TT_ID
+WHERE  S_SE_SD_SalesID = 
+'${salesid}'
+ORDER BY [排序]A]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT [S_SE_SB_SalesID]A AS '配镜单号'
+      ,[S_SE_SB_SalesRemark]A AS '销售备注'
+  FROM [S_SE_SalesBasic]A
+
+WHERE [S_SE_SB_SalesID]A = '${salesid}'
+union all 
+SELECT [S_SE_SB_SalesID]A AS '配镜单号'
+      ,[S_SE_SB_SalesRemark]A AS '销售备注'
+  FROM [S_SE_SalesBasic_Finished]A
+
+WHERE [S_SE_SB_SalesID]A = '${salesid}']]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[619200,619200,619200,619200,619200,619200,619200,619200,619200,619200,619200,619200,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[5616000,9563100,2448000,2448000,2448000,2743200,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<O>
+<![CDATA[商品代码]]></O>
+<Expand/>
+</C>
+<C c="1" r="0" s="1">
+<O>
+<![CDATA[全称/规格]]></O>
+<Expand/>
+</C>
+<C c="2" r="0" s="1">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="3" r="0" s="1">
+<O>
+<![CDATA[单价]]></O>
+<Expand/>
+</C>
+<C c="4" r="0" s="2">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="0" r="1" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="商品代码"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="1" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="商品名称"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Scope val="1"/>
+<Background name="ColorBackground"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="2" r="1" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="商品数量"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[IF($wFlag==1, $$$, IF($wFlag==-1, ($$$ * -1), $$$))]]></Result>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Scope val="1"/>
+<Background name="ColorBackground"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="3" r="1" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="商品单价"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ForegroundHighlightAction">
+<Scope val="1"/>
+<Foreground color="-16777216"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="4" r="1" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="应收金额"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[IF($wFlag==1, $$$, IF($wFlag==-1, ($$$ * -1), $$$))]]></Result>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.BackgroundHighlightAction">
+<Scope val="1"/>
+<Background name="ColorBackground"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="0" r="2" s="7">
+<Expand/>
+</C>
+<C c="1" r="2" s="8">
+<Expand/>
+</C>
+<C c="2" r="2" s="8">
+<Expand/>
+</C>
+<C c="3" r="2" s="8">
+<Expand/>
+</C>
+<C c="4" r="2" s="9">
+<Expand/>
+</C>
+<C c="0" r="3" s="7">
+<Expand/>
+</C>
+<C c="1" r="3" s="8">
+<Expand/>
+</C>
+<C c="2" r="3" s="8">
+<Expand/>
+</C>
+<C c="3" r="3" s="8">
+<Expand/>
+</C>
+<C c="4" r="3" s="9">
+<Expand/>
+</C>
+<C c="0" r="4" s="7">
+<Expand/>
+</C>
+<C c="1" r="4" s="8">
+<Expand/>
+</C>
+<C c="2" r="4" s="8">
+<Expand/>
+</C>
+<C c="3" r="4" s="8">
+<Expand/>
+</C>
+<C c="4" r="4" s="9">
+<Expand/>
+</C>
+<C c="0" r="5" s="10">
+<Expand/>
+</C>
+<C c="1" r="5" s="11">
+<Expand/>
+</C>
+<C c="2" r="5" s="11">
+<Expand/>
+</C>
+<C c="3" r="5" s="11">
+<Expand/>
+</C>
+<C c="4" r="5" s="12">
+<Expand/>
+</C>
+<C c="0" r="6" s="10">
+<Expand/>
+</C>
+<C c="1" r="6" s="11">
+<Expand/>
+</C>
+<C c="2" r="6" s="11">
+<Expand/>
+</C>
+<C c="3" r="6" s="11">
+<Expand/>
+</C>
+<C c="4" r="6" s="12">
+<Expand/>
+</C>
+<C c="0" r="7" s="13">
+<Expand/>
+</C>
+<C c="1" r="7" s="14">
+<Expand/>
+</C>
+<C c="2" r="7" s="14">
+<Expand/>
+</C>
+<C c="3" r="7" s="14">
+<Expand/>
+</C>
+<C c="4" r="7" s="15">
+<Expand/>
+</C>
+<C c="0" r="8" s="7">
+<Expand/>
+</C>
+<C c="1" r="8" s="8">
+<Expand/>
+</C>
+<C c="2" r="8" s="8">
+<Expand/>
+</C>
+<C c="3" r="8" s="8">
+<Expand/>
+</C>
+<C c="4" r="8" s="9">
+<Expand/>
+</C>
+<C c="0" r="9" s="16">
+<Expand/>
+</C>
+<C c="1" r="9" s="17">
+<Expand/>
+</C>
+<C c="2" r="9" s="17">
+<Expand/>
+</C>
+<C c="3" r="9" s="17">
+<Expand/>
+</C>
+<C c="4" r="9" s="18">
+<Expand/>
+</C>
+<C c="0" r="10">
+<Expand/>
+</C>
+<C c="1" r="10">
+<Expand/>
+</C>
+<C c="2" r="10">
+<Expand/>
+</C>
+<C c="3" r="10">
+<Expand/>
+</C>
+<C c="4" r="10">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0" printBackground="false">
+<PaperSetting>
+<PaperSize width="34560000" height="8640000"/>
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+<Background name="NullBackground"/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+<Left style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" vertical_alignment="1" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" vertical_alignment="1" imageLayout="1">
+<Format class="com.fr.base.CoreDecimalFormat">
+<![CDATA[###0.00]]></Format>
+<FRFont name="微软雅黑" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Bottom style="1"/>
+<Left style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Left style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Left style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

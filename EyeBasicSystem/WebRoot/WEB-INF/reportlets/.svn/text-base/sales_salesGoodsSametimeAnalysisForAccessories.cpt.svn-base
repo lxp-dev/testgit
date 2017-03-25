@@ -1,0 +1,1881 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+--------------------------------------太阳镜类--------------------------------------------
+
+select departmentID into #shopCode from sales_createShopCodeTab('${shopcode}')
+
+select '${begindate}'+'～'+'${enddate}' as printdate,
+case  tt.AccessoriesType when '1' then '框镜配件' when '2' then '隐形配件' else ''  end  as AccessoriesClass,tt.AccessoriesType as AccessoriesType,
+tt.R_SD_DSE_ShopCode as shopCode,tt.B_DP_DepartmentName as departmentName,
+isnull(t1.GoodsAmount1,0.00) as GoodsAmount1,isnull(t1.GoodsNum1,0) as GoodsNum1,
+isnull(t2.GoodsAmount2,0.00) as GoodsAmount2,isnull(t2.GoodsNum2,0) as GoodsNum2 from
+(select B_GI_AccessoriesType as AccessoriesType,R_SD_DSE_ShopCode,B_DP_DepartmentName from
+(
+
+select B_GI_AccessoriesType,R_SD_DSE_ShopCode,B_DP_DepartmentName
+from  R_RC_DaySalesEntry
+left join B_GoodsInfo on R_RC_DSE_GoodsID=B_GI_GoodsID
+inner join B_Departments on  R_SD_DSE_ShopCode=B_DP_DepartmentID
+where 1=1
+and ((isnull('${shopcode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${shopcode}','')=''))
+and ((isnull('${begindate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)>='${begindate}') or (isnull('${begindate}','')=''))
+and ((isnull('${enddate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)<='${enddate}') or (isnull('${enddate}','')=''))
+and R_RC_DSE_GoodsCategoryID='2'
+and R_SD_DSE_SalesType='1' 
+
+
+union all
+
+
+select B_GI_AccessoriesType,R_SD_DSE_ShopCode,B_DP_DepartmentName
+from  R_RC_DaySalesEntry 
+left join B_GoodsInfo on R_RC_DSE_GoodsID=B_GI_GoodsID
+inner join B_Departments on  R_SD_DSE_ShopCode=B_DP_DepartmentID
+where 1=1
+and ((isnull('${shopcode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${shopcode}','')=''))
+and ((isnull('${begindate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)>='${begindate}') or (isnull('${begindate}','')=''))
+and ((isnull('${enddate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)<='${enddate}') or (isnull('${enddate}','')=''))
+and R_RC_DSE_GoodsCategoryID='2'
+and R_SD_DSE_SalesType='2')t
+group by  B_GI_AccessoriesType,R_SD_DSE_ShopCode,B_DP_DepartmentName
+
+
+)tt
+left join(
+
+
+select B_GI_AccessoriesType as AccessoriesType,
+sum(R_SD_DSE_GoodsAmount) as GoodsAmount1,sum(R_SD_DSE_GoodsNum) as GoodsNum1,
+R_SD_DSE_ShopCode,B_DP_DepartmentName
+from  R_RC_DaySalesEntry 
+left join B_GoodsInfo on R_RC_DSE_GoodsID=B_GI_GoodsID
+inner join B_Departments on  R_SD_DSE_ShopCode=B_DP_DepartmentID
+where 1=1
+and ((isnull('${shopcode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${shopcode}','')=''))
+and ((isnull('${begindate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)>='${begindate}') or (isnull('${begindate}','')=''))
+and ((isnull('${enddate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)<='${enddate}') or (isnull('${enddate}','')=''))
+and R_RC_DSE_GoodsCategoryID='2'
+and R_SD_DSE_SalesType='1'
+group by  B_GI_AccessoriesType,R_SD_DSE_ShopCode,B_DP_DepartmentName
+
+
+)t1 on tt.AccessoriesType=t1.AccessoriesType and tt.R_SD_DSE_ShopCode=t1.R_SD_DSE_ShopCode
+left join(
+
+
+select B_GI_AccessoriesType as AccessoriesType,
+sum(R_SD_DSE_GoodsAmount) as GoodsAmount2,sum(R_SD_DSE_GoodsNum) as GoodsNum2,
+R_SD_DSE_ShopCode,B_DP_DepartmentName
+from  R_RC_DaySalesEntry 
+left join B_GoodsInfo on R_RC_DSE_GoodsID=B_GI_GoodsID
+inner join B_Departments on  R_SD_DSE_ShopCode=B_DP_DepartmentID
+where 1=1
+and ((isnull('${shopcode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #shopCode )) or (isnull('${shopcode}','')=''))
+and ((isnull('${begindate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)>='${begindate}') or (isnull('${begindate}','')=''))
+and ((isnull('${enddate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)<='${enddate}') or (isnull('${enddate}','')=''))
+and R_RC_DSE_GoodsCategoryID='2'
+and R_SD_DSE_SalesType='2'
+group by  B_GI_AccessoriesType,R_SD_DSE_ShopCode,B_DP_DepartmentName
+
+
+
+)t2 on tt.AccessoriesType = t2.AccessoriesType and tt.R_SD_DSE_ShopCode=t2.R_SD_DSE_ShopCode
+
+order by tt.AccessoriesType
+drop table #shopCode]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="shopcode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select departmentID into #shopCode from sales_createShopCodeTab('${shopcode}')
+select t.DepartmentID as DepartmentID,t.DepartmentName as DepartmentName,t.AgeArea as AgeArea,
+isnull(t1.GoodsNum1,0) as GoodsNum1,isnull(t1.SalesValue1,0.00) as SalesValue1,isnull(t1.passengersNum1,0) as passengersNum1,
+isnull(t2.GoodsNum2,0) as GoodsNum2,isnull(t2.SalesValue2,0.00) as SalesValue2,isnull(t2.passengersNum2,0) as passengersNum2
+from(select DepartmentID,DepartmentName,GoodsCategoryID,AgeArea
+from(select R_DS_CA_DepartmentID as DepartmentID,
+B_DP_DepartmentName as DepartmentName,
+R_DS_CA_GoodsCategoryID as GoodsCategoryID,
+R_DS_CA_AgeArea as AgeArea
+ from R_DS_CA_CustomerFlow
+inner join B_Departments on R_DS_CA_DepartmentID=B_DP_DepartmentID
+where 1=1
+and ((isnull('${begindate}','')<>'' and convert(varchar(10),R_DS_CA_Date,120)>='${begindate}') or (isnull('${begindate}','')=''))
+and ((isnull('${enddate}','')<>'' and convert(varchar(10),R_DS_CA_Date,120)<='${enddate}') or (isnull('${enddate}','')=''))
+and ((isnull('${shopcode}','')<>'' and R_DS_CA_DepartmentID in (select departmentID from #shopCode )) or (isnull('${shopcode}','')=''))
+and R_DS_CA_PosType='1'
+and R_DS_CA_GoodsCategoryID='${categoryID}'
+and R_DS_CA_AgeArea in(select B_CG_AgesMin+'-'+B_CG_AgesMax as ageGroup
+from B_CustomerAgeGroup
+where B_CG_GoodsCategory='${categoryID}')
+union all
+select R_DS_CA_DepartmentID as DepartmentID,
+B_DP_DepartmentName as DepartmentName,
+R_DS_CA_GoodsCategoryID as GoodsCategoryID,
+R_DS_CA_AgeArea as AgeArea
+ from R_DS_CA_CustomerFlow
+inner join B_Departments on R_DS_CA_DepartmentID=B_DP_DepartmentID
+where 1=1
+and ((isnull('${begindate}','')<>'' and convert(varchar(10),R_DS_CA_Date,120)>='${begindate}') or (isnull('${begindate}','')=''))
+and ((isnull('${enddate}','')<>'' and convert(varchar(10),R_DS_CA_Date,120)<='${enddate}') or (isnull('${enddate}','')=''))
+and ((isnull('${shopcode}','')<>'' and R_DS_CA_DepartmentID in (select departmentID from #shopCode )) or (isnull('${shopcode}','')=''))
+and R_DS_CA_PosType='2'
+and R_DS_CA_GoodsCategoryID='${categoryID}'
+and R_DS_CA_AgeArea in(select B_CG_AgesMin+'-'+B_CG_AgesMax as ageGroup
+from B_CustomerAgeGroup
+where B_CG_GoodsCategory='${categoryID}')
+group by R_DS_CA_DepartmentID,R_DS_CA_GoodsCategoryID,R_DS_CA_AgeArea,B_DP_DepartmentName
+)tt group by DepartmentID,DepartmentName,GoodsCategoryID,AgeArea
+)t left join
+(select R_DS_CA_DepartmentID as DepartmentID,
+B_DP_DepartmentName as DepartmentName,
+R_DS_CA_GoodsCategoryID as GoodsCategoryID,
+R_DS_CA_AgeArea as AgeArea,
+sum(R_DS_CA_GoodsNum)as GoodsNum1,
+sum(R_DS_CA_SalesValue) as SalesValue1,
+sum(R_DS_CA_PassengersNum) as passengersNum1
+ from R_DS_CA_CustomerFlow
+inner join B_Departments on R_DS_CA_DepartmentID=B_DP_DepartmentID
+where 1=1
+and ((isnull('${begindate}','')<>'' and convert(varchar(10),R_DS_CA_Date,120)>='${begindate}') or (isnull('${begindate}','')=''))
+and ((isnull('${enddate}','')<>'' and convert(varchar(10),R_DS_CA_Date,120)<='${enddate}') or (isnull('${enddate}','')=''))
+and ((isnull('${shopcode}','')<>'' and R_DS_CA_DepartmentID in (select departmentID from #shopCode )) or (isnull('${shopcode}','')=''))
+and R_DS_CA_PosType='1'
+and R_DS_CA_GoodsCategoryID='${categoryID}'
+and R_DS_CA_AgeArea in(select B_CG_AgesMin+'-'+B_CG_AgesMax as ageGroup
+from B_CustomerAgeGroup
+where B_CG_GoodsCategory='${categoryID}')
+group by R_DS_CA_DepartmentID,R_DS_CA_GoodsCategoryID,R_DS_CA_AgeArea,B_DP_DepartmentName
+)t1 on t.DepartmentID=t1.DepartmentID  and t.AgeArea=t1.AgeArea
+left join
+(select R_DS_CA_DepartmentID as DepartmentID,
+B_DP_DepartmentName as DepartmentName,
+R_DS_CA_GoodsCategoryID as GoodsCategoryID,
+R_DS_CA_AgeArea as AgeArea,
+sum(R_DS_CA_GoodsNum)as GoodsNum2,
+sum(R_DS_CA_SalesValue) as SalesValue2,
+sum(R_DS_CA_PassengersNum) as passengersNum2
+ from R_DS_CA_CustomerFlow
+inner join B_Departments on R_DS_CA_DepartmentID=B_DP_DepartmentID
+where 1=1
+and ((isnull('${begindate}','')<>'' and convert(varchar(10),R_DS_CA_Date,120)>='${begindate}') or (isnull('${begindate}','')=''))
+and ((isnull('${enddate}','')<>'' and convert(varchar(10),R_DS_CA_Date,120)<='${enddate}') or (isnull('${enddate}','')=''))
+and ((isnull('${shopcode}','')<>'' and R_DS_CA_DepartmentID in (select departmentID from #shopCode )) or (isnull('${shopcode}','')=''))
+and R_DS_CA_PosType='2'
+and R_DS_CA_GoodsCategoryID='${categoryID}'
+and R_DS_CA_AgeArea in(select B_CG_AgesMin+'-'+B_CG_AgesMax as ageGroup
+from B_CustomerAgeGroup
+where B_CG_GoodsCategory='${categoryID}')
+group by R_DS_CA_DepartmentID,R_DS_CA_GoodsCategoryID,R_DS_CA_AgeArea,B_DP_DepartmentName
+)t2 on t.DepartmentID=t2.DepartmentID  and t.AgeArea=t2.AgeArea
+order by AgeArea,DepartmentID
+drop table #shopCode]]></Query>
+</TableData>
+<TableData name="ds4" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="shopcode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+
+
+
+select dptid,goodsCategory,posdate,goodsnum,goodsamount,billcount,birthday,sex,postype as postype into #customertemp from (
+
+select dptid,goodsCategory,posdate,goodsnum,goodsamount,count(distinct billid) as billcount,birthday,sex,'1' as postype from (
+select S_SE_SB_ShopCode as dptid,substring(S_SE_SD_SalesItemID,1,1) as goodsCategory,convert(varchar(10),S_SE_SB_PosDatetime,120) as posdate,
+       sum(S_SE_SD_Number) as goodsnum,sum(S_SE_SD_SalesValue) as goodsamount,S_SE_SB_SalesID as billid,
+       (year(getdate())-year(S_ME_CI_Birthday)) as birthday,S_ME_CI_Sex as sex
+  from S_SE_SalesBasic inner join S_SE_SalesDetail on S_SE_SB_SalesID=S_SE_SD_SalesID
+       inner join S_ME_CustomerInfo on S_SE_SB_CustomerID=S_ME_CI_CustomerID 
+  where S_SE_SB_ValueFlag='1' and convert(varchar(10),S_SE_SB_PosDatetime,120)>='${begindate}'
+        and convert(varchar(10),S_SE_SB_PosDatetime,120)<='${enddate}'
+  group by S_SE_SB_ShopCode,substring(S_SE_SD_SalesItemID,1,1),convert(varchar(10),S_SE_SB_PosDatetime,120),
+           S_SE_SB_SalesID,S_ME_CI_Birthday,S_ME_CI_Sex
+)temp
+  group by dptid,goodsCategory,posdate,goodsnum,goodsamount,birthday,sex
+union all
+select dptid,goodsCategory,posdate,-goodsnum,-goodsamount,-count(distinct billid) as billcount,birthday,sex,'2' as postype from (
+select S_SE_SB_ShopCode as dptid,substring(S_SE_SD_SalesItemID,1,1) as goodsCategory,convert(varchar(10),S_SE_SB_WithdrawDate,120) as posdate,
+       sum(S_SE_SD_Number) as goodsnum,sum(S_SE_SD_SalesValue) as goodsamount,S_SE_SB_SalesID as billid,
+       (year(getdate())-year(S_ME_CI_Birthday)) as birthday,S_ME_CI_Sex as sex
+  from S_SE_SalesBasic inner join S_SE_SalesDetail on S_SE_SB_SalesID=S_SE_SD_SalesID
+       inner join S_ME_CustomerInfo on S_SE_SB_CustomerID=S_ME_CI_CustomerID 
+  where S_SE_SB_ValueFlag='1' and S_SE_SB_WithdrawFlag='1'
+        and convert(varchar(10),S_SE_SB_WithdrawDate,120)>='${begindate}'
+        and convert(varchar(10),S_SE_SB_WithdrawDate,120)<='${enddate}'
+  group by S_SE_SB_ShopCode,substring(S_SE_SD_SalesItemID,1,1),convert(varchar(10),S_SE_SB_WithdrawDate,120),
+           S_SE_SB_SalesID,S_ME_CI_Birthday,S_ME_CI_Sex
+)temp
+  group by dptid,goodsCategory,posdate,goodsnum,goodsamount,birthday,sex
+
+)temp
+
+        select t.dptid,B_DP_DepartmentName as DepartmentName,case t.sex when '1' then '男' else '女' end   as sex ,
+        isnull(t.zcount,0) as zcount,isnull(t1.scount,0) as scount,isnull(t2.tcount,0) as tcount  
+    from(          
+          select dptid,sex as sex,sum(billcount) as zcount from #customertemp
+          where  goodsCategory='${categoryID}'
+                and (('${shopcode}'<>'' and dptid='${shopcode}') or ('${shopcode}'=''))
+          group by dptid,sex
+        )t 
+        left join(
+          select dptid,sex as sex,sum(billcount) as scount from #customertemp
+          where  goodsCategory='${categoryID}'
+                and (('${shopcode}'<>'' and dptid='${shopcode}') or ('${shopcode}'=''))
+                and postype='1'
+          group by dptid,sex          
+        )t1 on t.dptid=t1.dptid and t.sex=t1.sex
+        left join(
+          select dptid,sex as sex,sum(billcount) as tcount from #customertemp
+          where  goodsCategory='${categoryID}'
+                and (('${shopcode}'<>'' and dptid='${shopcode}') or ('${shopcode}'=''))
+                and postype='2'
+          group by dptid,sex          
+        )t2 on t.dptid=t2.dptid and t.sex=t2.sex
+        inner join B_Departments on t.dptid=B_DP_DepartmentID
+        order by sex
+
+
+DROP TABLE #customertemp
+
+]]></Query>
+</TableData>
+<TableData name="ds5" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="categoryID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="shopcode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[exec ageAreaSum '${begindate}','${enddate}','${shopcode}','${categoryID}']]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.page.First">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-First')}]]></Text>
+<IconName>
+<![CDATA[first]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Previous">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Previous')}]]></Text>
+<IconName>
+<![CDATA[previous]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.PageNavi">
+<WidgetAttr/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Next">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Next')}]]></Text>
+<IconName>
+<![CDATA[next]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Last">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Last')}]]></Text>
+<IconName>
+<![CDATA[last]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.FlashPrint">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Utils-Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.Export">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Export')}]]></Text>
+<IconName>
+<![CDATA[export]]></IconName>
+<Buttons pdf="true" excelP="true" excelO="true" excelS="true" word="true" image="true" html="true"/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.SetPrinterOffset">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('SetPrinterOffset')}]]></Text>
+<IconName>
+<![CDATA[setprinteroffset]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="true" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="5"/>
+<FR/>
+<HC F="3" T="3"/>
+<FC/>
+<UPFCR COLUMN="true" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,952500,144000,914400,914400,914400,914400,914400,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[0,0,576000,5219700,4320000,4320000,4320000,4320000,4320000,4267200,0,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="11" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" s="1">
+<Expand/>
+</C>
+<C c="1" r="1" s="2">
+<Expand/>
+</C>
+<C c="2" r="1" s="2">
+<Expand/>
+</C>
+<C c="3" r="1" cs="7" s="3">
+<O>
+<![CDATA[销售产品同期综合对比分析（按配件）]]></O>
+<Expand/>
+</C>
+<C c="10" r="1" s="2">
+<Expand/>
+</C>
+<C c="3" r="2" s="4">
+<NameJavaScriptGroup>
+<NameJavaScript name="网络报表1">
+<JavaScript class="com.fr.base.js.ReportletHyperlink">
+<JavaScript class="com.fr.base.js.ReportletHyperlink">
+<Parameters/>
+<TargetFrame>
+<![CDATA[_self]]></TargetFrame>
+<Features width="600" height="400"/>
+<ReportletName extendParameters="true">
+<![CDATA[/sales_salesGoodsSametimeAnalysis.cpt&__bypagesize__=false]]></ReportletName>
+</JavaScript>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand/>
+</C>
+<C c="0" r="3" s="5">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="3" s="5">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="3" s="5">
+<Expand/>
+</C>
+<C c="3" r="3" s="6">
+<O>
+<![CDATA[日期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="3" cs="4" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="printdate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="8" r="3" s="6">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="9" r="3" s="6">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="10" r="3" s="5">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="4" s="8">
+<Expand/>
+</C>
+<C c="1" r="4" s="8">
+<Expand/>
+</C>
+<C c="2" r="4" s="8">
+<Expand/>
+</C>
+<C c="3" r="4" rs="2" s="9">
+<O>
+<![CDATA[配件类型]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="4" r="4" rs="2" s="10">
+<O>
+<![CDATA[销售数量]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[1]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[2]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand/>
+</C>
+<C c="5" r="4" rs="2" s="10">
+<O>
+<![CDATA[退货数量]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[3]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[4]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand/>
+</C>
+<C c="6" r="4" rs="2" s="10">
+<O>
+<![CDATA[小计]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[5]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[6]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand/>
+</C>
+<C c="7" r="4" cs="4" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="departmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="1"/>
+</C>
+<C c="0" r="5" s="8">
+<Expand/>
+</C>
+<C c="1" r="5" s="8">
+<Expand/>
+</C>
+<C c="2" r="5" s="8">
+<Expand/>
+</C>
+<C c="7" r="5" s="9">
+<O>
+<![CDATA[销售数量]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="8" r="5" s="9">
+<O>
+<![CDATA[退款数量]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="9" r="5" s="9">
+<O>
+<![CDATA[实售数量]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="10" r="5" s="11">
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="1" r="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="AccessoriesType"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0" order="2">
+<SortFormula>
+<![CDATA[SWITCH($order, "1", -TODOUBLE(E7), "2", TODOUBLE(E7), "3", -TODOUBLE(F7), "4", TODOUBLE(F7), "5", -TODOUBLE(G7), "6", TODOUBLE(G7))]]></SortFormula>
+</Expand>
+</C>
+<C c="3" r="6" s="12">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="AccessoriesClass"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="6" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="6" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(I7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="6" s="13">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(J7)]]></Attributes>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="yshopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$shopcode]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$shopcode]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="AccessoriesType"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForAccessoriesBrand.cpt&__bypagesize__=false&isShow="+isShow+"&begindate="+begindate+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2id="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&yshopcode="+yshopcode+"&shopcode="+shopcode+"&isShow="+isShow+"&AccessoriesType="+AccessoriesType+"&logincompanyid="+logincompanyid;
+openWindowForReport(DataURL);
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand/>
+</C>
+<C c="7" r="6" s="12">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="GoodsNum1"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="6" s="12">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="GoodsNum2"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="6" s="13">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=H7 + I7]]></Attributes>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=K7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime2"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentsID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentsID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endtime"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endtime]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="AccessoriesType"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B7]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=sales_salesGoodsSametimeAnalysisForAccessoriesBrand.cpt&__bypagesize__=false&isShow="+isShow+"&begindate="+begindate+"&enddate="+enddate+"&begintime2="+begintime2+"&endtime2id="+endtime2+"&departmentsID="+departmentsID+"&begintime="+begintime+"&endtime="+endtime+"&shopcode="+shopcode+"&isShow="+isShow+"&AccessoriesType="+AccessoriesType+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="10" r="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="shopCode"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="7" s="14">
+<Expand/>
+</C>
+<C c="3" r="7" s="15">
+<O>
+<![CDATA[合计：]]></O>
+<Expand/>
+</C>
+<C c="4" r="7" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(E7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="7" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="7" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(G7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="7" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H7)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="7" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(I7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="7" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(J7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="7" s="14">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<Report class="com.fr.report.WorkSheet" name="sheet2">
+<ReportPageAttr>
+<HR F="0" T="4"/>
+<FR/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,914400,914400,914400,914400,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,3600000,4320000,4320000,4320000,3600000,3600000,3600000,0,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="16">
+<Expand/>
+</C>
+<C c="1" r="0" cs="8" s="17">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" s="16">
+<Expand/>
+</C>
+<C c="1" r="1" cs="8" s="1">
+<O>
+<![CDATA[销售产品同期综合对比分析(按顾客年龄段)]]></O>
+<Expand/>
+</C>
+<C c="0" r="2" s="5">
+<Expand/>
+</C>
+<C c="1" r="2" s="6">
+<O>
+<![CDATA[日期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="2" cs="4" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime + " 至 " + $endtime]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="2" s="6">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="7" r="2" s="6">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="8" r="2" s="5">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="3" s="18">
+<Expand/>
+</C>
+<C c="1" r="3" rs="2" s="9">
+<O>
+<![CDATA[年龄段]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="2" r="3" rs="2" s="9">
+<O>
+<![CDATA[销售客流数小计]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="3" r="3" rs="2" s="9">
+<O>
+<![CDATA[退款客流数小计]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="4" r="3" rs="2" s="9">
+<O>
+<![CDATA[实际客流数小计]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="5" r="3" cs="4" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="dptname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="1"/>
+</C>
+<C c="0" r="4" s="18">
+<Expand/>
+</C>
+<C c="5" r="4" s="9">
+<O>
+<![CDATA[销售客流数]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="6" r="4" s="9">
+<O>
+<![CDATA[退款客流数]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="7" r="4" s="9">
+<O>
+<![CDATA[实际客流数]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="8" r="4" s="19">
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="1" r="5" s="12">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="qujian"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="5" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="5" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(G6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="5" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="5" s="12">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="scount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="5" s="12">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="tcount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="5" s="12">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="zcount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="DepartmentID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="6" s="15">
+<O>
+<![CDATA[合计：]]></O>
+<Expand/>
+</C>
+<C c="2" r="6" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(C6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="6" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(D6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="6" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(E6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="6" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F6)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="6" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(G6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="6" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="6" s="14">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<Report class="com.fr.report.WorkSheet" name="sheet3">
+<ReportPageAttr>
+<HR F="0" T="4"/>
+<FR/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,914400,914400,914400,914400,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,3600000,4320000,4320000,4320000,3600000,3600000,3600000,0,0,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="16">
+<Expand/>
+</C>
+<C c="1" r="0" cs="8" s="17">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="0" s="16">
+<Expand/>
+</C>
+<C c="0" r="1" s="16">
+<Expand/>
+</C>
+<C c="1" r="1" cs="8" s="1">
+<O>
+<![CDATA[销售产品同期综合对比分析(按顾客性别)]]></O>
+<Expand/>
+</C>
+<C c="9" r="1" s="16">
+<Expand/>
+</C>
+<C c="0" r="2" s="5">
+<Expand/>
+</C>
+<C c="1" r="2" s="6">
+<O>
+<![CDATA[日期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="2" cs="4" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime + " 至 " + $endtime]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="2" s="6">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="7" r="2" s="6">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="8" r="2" s="5">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="9" r="2" s="5">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="3" s="18">
+<Expand/>
+</C>
+<C c="1" r="3" rs="2" s="9">
+<O>
+<![CDATA[性别]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="2" r="3" rs="2" s="9">
+<O>
+<![CDATA[销售客流数小计]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="3" r="3" rs="2" s="9">
+<O>
+<![CDATA[退款客流数小计]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="4" r="3" rs="2" s="9">
+<O>
+<![CDATA[实际客流数小计]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="5" r="3" cs="5" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="DepartmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="1"/>
+</C>
+<C c="0" r="4" s="18">
+<Expand/>
+</C>
+<C c="5" r="4" s="9">
+<O>
+<![CDATA[销售客流数]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="6" r="4" s="9">
+<O>
+<![CDATA[退款客流数]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="7" r="4" s="9">
+<O>
+<![CDATA[实际客流数]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="8" r="4" s="19">
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="9" r="4" s="18">
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="1" r="5" s="12">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="sex"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="5" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="5" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(G6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="5" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="5" s="12">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="scount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="5" s="12">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="tcount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="5" s="12">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="zcount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="6" s="15">
+<O>
+<![CDATA[合计：]]></O>
+<Expand/>
+</C>
+<C c="2" r="6" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(C6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="6" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(D6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="6" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(E6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="6" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F6)]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="6" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(G6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="6" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(H6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="6" s="14">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="120"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72" foreground="-16776961" underline="1"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80" foreground="-16776961" underline="1"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72" foreground="-16776961" underline="1"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

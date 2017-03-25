@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+
+	<!-- 发票管理  begin-->
+	<bean id="invoiceDao" class="com.pengsheng.eims.logistics.dao.impl.InvoiceDaoImpl" />
+	<!-- 发票管理  Liuqian end-->
+
+	
+	<!-- 发票单据选择开窗 wanglei begin-->
+	<bean id="invoiceSelectBillDao" class="com.pengsheng.eims.logistics.dao.impl.InvoiceSelectBillDaoImpl" />
+	<!-- 发票单据选择开窗 wanglei end-->
+
+	<!-- 凭证单据选择开窗 wanglei begin-->
+	<bean id="proofSelectBillDao" class="com.pengsheng.eims.logistics.dao.impl.ProofSelectBillDaoImpl" />
+	<!-- 凭证单据选择开窗 wanglei end-->
+
+	
+	<!-- 凭证管理 Add by SZK -->
+	<bean id="voucherDao" class="com.pengsheng.eims.logistics.dao.impl.VoucherDaoImpl"/>
+	<bean id="voucherTallyDao" class="com.pengsheng.eims.logistics.dao.impl.VoucherTallyDaoImpl"/>
+	<!-- 凭证管理 End by SZK -->
+
+	
+	<!-- 成本计算  begin-->
+	<bean id="calDao" class="com.pengsheng.eims.logistics.dao.impl.CalDaoImpl" />
+	<!-- 成本计算 end-->
+	
+	<!-- 日志SZK begin-->
+	<bean id="logisticsLogDao" class="com.pengsheng.eims.logistics.dao.impl.LogisticsLogDaoImpl" />
+	<!-- 日志SZK end-->
+
+	<!-- 付款单 begin-->
+	<bean id="payMentBillDao" class="com.pengsheng.eims.logistics.dao.impl.PayMentBillDaoImpl" />
+	<!-- 付款单 end-->
+
+	<!-- 凭证模板 begin-->
+	<bean id="voucherTemplateDao" class="com.pengsheng.eims.logistics.dao.impl.VoucherTemplateDaoImpl" />
+	<!-- 凭证模板 SZK end-->
+	
+	<!-- 收款单 begin-->
+	<bean id="receiptMentBillDao" class="com.pengsheng.eims.logistics.dao.impl.ReceiptMentBillDaoImpl" />
+	<!-- 收款单 end-->
+	
+</beans>

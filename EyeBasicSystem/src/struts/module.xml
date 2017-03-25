@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="module" namespace="/" extends="json-default">
+	<!-- 
+		<global-results>	        
+		   <result name="error">/error.jsp</result>
+		</global-results>	
+	    <global-exception-mappings>   
+	       <exception-mapping exception="java.lang.Exception" result="error"></exception-mapping>   
+	    </global-exception-mappings> 
+	 -->
+	     
+		<!-- 取所有人员 Liuqian  begin -->
+		<action name="selPersonInfoAll" class="ajaxModuleAction" method="selPersonInfoAll">
+			<result name="success" type="json" />
+		</action>
+		<!-- 取所有人员 Liuqian end -->
+
+		<!-- 取所有制造商 SZK  begin -->
+		<action name="selSupplierInfoAll" class="ajaxModuleAction" method="selSupplierInfoAll">
+			<result name="success" type="json" />
+		</action>
+		
+		<action name="ajaxSelBrandList" class="ajaxModuleAction" method="ajaxSelBrandList">
+			<result name="success" type="json" />
+		</action>
+		
+		<!-- 取所有制造商 SZK end -->
+		<action name="getPersonRepeat" class="ajaxModuleAction" method="getPersonRepeat">
+			<result name="success" type="json" />
+		</action>
+		<action name="getDuokefuTypeAjax" class="configurationAction" method="getDuokefuTypeAjax">
+			<result type="json">  
+	           <param name="root">configurationPo</param>  
+	        </result>  
+		</action>		
+	</package>
+</struts>

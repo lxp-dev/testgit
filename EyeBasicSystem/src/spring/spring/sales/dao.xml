@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	<!-- 散瞳检查 du begin-->
+		<bean id="mydriasisDao" class="com.pengsheng.eims.sales.dao.impl.MydriasisDaoImpl" />
+	<!-- 散瞳检查 du end-->
+	<!-- 眼部健康检查 du begin-->
+		<bean id="eyesCheckDao" class="com.pengsheng.eims.sales.dao.impl.EyesCheckDaoImpl" />
+	<!-- 眼部健康检查 du end-->
+	
+	<!-- 屈光检查  begin -->
+	     <bean id="refractiveDao" class="com.pengsheng.eims.sales.dao.impl.RefractiveDaoImpl"/>
+	<!-- 屈光检查   end  -->
+	
+	<!-- 双眼视功能检查 qiyue begin -->
+		<bean id="doubleEyeFunDao" class="com.pengsheng.eims.sales.dao.impl.DoubleEyeFunDaoImpl" />
+	<!-- 双眼视功能检查 end -->
+
+	<!-- 验光基表 Liuqian begin-->
+	<bean id="optometryBasicDao" class="com.pengsheng.eims.sales.dao.impl.OptometryBasicDaoImpl" />
+	<!-- 验光基表 Liuqian end-->
+	
+	<!-- 特殊功能检查 wanglei begin-->
+		<bean id="specialCheckDao" class="com.pengsheng.eims.sales.dao.impl.SpecialCheckDaoImpl" />
+	<!-- 特殊功能检查 wanglei end-->
+
+	<!-- 检查结论  sb  begin-->
+		<bean id="inspectionDao" class="com.pengsheng.eims.sales.dao.impl.InspectionDaoImpl" />
+	<!-- 检查结论 sb   end-->
+	
+	<!-- 戴镜史 wanglei begin-->
+		<bean id="glassesHistoryDao" class="com.pengsheng.eims.sales.dao.impl.GlassesHistoryDaoImpl" />
+	<!-- 戴镜史 wanglei end-->
+	
+	<!-- 框镜销售 Liuqian begin-->
+	<bean id="frameSalesDao" class="com.pengsheng.eims.sales.dao.impl.FrameSalesDaoImpl" />
+	<!-- 框镜销售 Liuqian end-->
+	
+	<!-- 打印处方 qyue begin -->
+	 	<bean id="printPrescriptionDao" class="com.pengsheng.eims.sales.dao.impl.PrintPrescriptionDaoImpl" />
+	<!-- 打印处方 qyue end -->
+	
+	<!-- 打印挂号单 qyue begin -->
+	 	<bean id="printRegistrationDao" class="com.pengsheng.eims.sales.dao.impl.PrintRegistrationDaoImpl" />
+	<!-- 打印挂号单 qyue end -->
+	
+	<!-- 打印配镜单 wanglei begin -->
+	 	<bean id="putOptometryOrderDao" class="com.pengsheng.eims.sales.dao.impl.PutOptometryOrderDaoImpl" />
+	<!-- 打印配镜单 wanglei end -->
+	
+	<!-- 门店取镜 wanglei begin -->
+	 	<bean id="shopCodeTakeDao" class="com.pengsheng.eims.sales.dao.impl.ShopCodeTakeDaoImpl" />
+	<!-- 门店取镜 wanglei end -->
+	
+	<!-- 顾客取镜 wanglei begin -->
+	 	<bean id="customerTakeDao" class="com.pengsheng.eims.sales.dao.impl.CustomerTakeDaoImpl" />
+	<!-- 顾客取镜 wanglei end -->
+	
+	<!-- 门店配送 qyue begin -->
+		<bean id="doorStoreDeliveryDao" class="com.pengsheng.eims.sales.dao.impl.DoorStoreDeliveryDaoImpl" />
+	<!-- 门店配送qyue end -->
+	
+	<!-- 隐形订做片配送 qyue begin -->
+		<bean id="invisibleDistributionDao" class="com.pengsheng.eims.sales.dao.impl.InvisibleDistributionDaoImpl" />
+	<!-- 隐形订做片配送 qyue end -->
+	
+	<!-- 加工配送 qyue begin -->
+		<bean id="processDistributionDao" class="com.pengsheng.eims.sales.dao.impl.ProcessDistributionDaoImpl" />
+	<!-- 加工配送 qyue end -->
+	
+	<!-- 挂号 Liuqian begin -->
+		<bean id="registeredDao" class="com.pengsheng.eims.sales.dao.impl.RegisteredDaoImpl" />
+	<!-- 挂号 Liuqian end -->
+
+	<!-- 附加费用 begin -->
+		<bean id="specialPDetailDao" class="com.pengsheng.eims.sales.dao.impl.SpecialPDetailDaoImpl" />
+	<!--  附加费用 end -->
+	
+	<!--  特殊加工要求 begin -->
+		<bean id="additionalCDetailDao" class="com.pengsheng.eims.sales.dao.impl.AdditionalCDetailDaoImpl" />
+	<!--   特殊加工要求 end -->
+
+	<!-- 病历信息 qyue begin -->
+		<bean id="optometryInformationDao" class="com.pengsheng.eims.sales.dao.impl.OptometryInformationDaoImpl" />
+	<!-- 病历信息 qyue end -->
+	
+	<!-- 销售信息 qyue begin -->
+		<bean id="venditionInformationDao" class="com.pengsheng.eims.sales.dao.impl.VenditionInformationDaoImpl" />
+	<!-- 销售信息 qyue end -->
+	
+	<!-- 刷卡记录 qyue begin -->
+		<bean id="registerCardDao" class="com.pengsheng.eims.sales.dao.impl.RegisterCardDaoImpl" />
+	<!-- 刷卡记录 qyue end -->
+	
+	<!-- 误期管理 qiyue begin -->
+		<bean id="delaysReminderDao" class="com.pengsheng.eims.sales.dao.impl.DelaysReminderDaoImpl" />
+	<!-- 误期管理 qiyue end -->
+
+	<!-- 结款管理 Liuqian begin -->
+		<bean id="guitarManagementDao" class="com.pengsheng.eims.sales.dao.impl.GuitarManagementDaoImpl" />
+	<!-- 结款管理 Liuqian end -->
+	
+	<!-- 隐形销售canying123 begin -->
+		<bean id="conSalesDao" class="com.pengsheng.eims.sales.dao.impl.ConSalesDaoImpl" />
+	<!-- 隐形销售canying123 end -->
+	
+	<!-- 辅料销售canying123 begin -->
+		<bean id="accSalesDao" class="com.pengsheng.eims.sales.dao.impl.AccSalesDaoImpl" />
+	<!-- 辅料销售canying123 end -->
+	
+	<!-- 欠费canying123 begin -->
+		<bean id="arrearsDao" class="com.pengsheng.eims.sales.dao.impl.ArrearsDaoImpl" />
+	<!-- 欠费canying123 end -->
+	
+	<!-- 退差价canying123 begin -->
+		<bean id="diffPriceDao" class="com.pengsheng.eims.sales.dao.impl.DiffPriceDaoImpl" />
+	<!-- 退差价canying123 end -->
+	
+	<!-- 欠款管理  Liuqian begin-->
+	     <bean id="refundDao" class="com.pengsheng.eims.sales.dao.impl.RefunDaoImpl"/>
+	<!-- 欠款管理  Liuqian end-->
+	
+	<!-- 欠款管理  Liuqian begin-->
+	     <bean id="cardBillingDao" class="com.pengsheng.eims.sales.dao.impl.CardBillingDaoImpl"/>
+	<!-- 欠款管理  Liuqian end-->
+
+	<!-- 客户刷卡计费功能 qiyue begin -->
+		<bean id="creditCardAccountFeesDao" class="com.pengsheng.eims.sales.dao.impl.CreditCardAccountFeesDaoImpl" />
+	<!-- 客户刷卡计费功能 qiyue end -->
+	
+	<!-- 验光病例查询 sxh begin -->
+		<bean id="optometryCaseDao" class="com.pengsheng.eims.sales.dao.impl.OptometryCaseDaoImpl" />
+	<!-- 验光病例查询 sxh end -->
+	
+	<!-- 邮寄 sxh begin -->
+		<bean id="toMailDao" class="com.pengsheng.eims.sales.dao.impl.ToMailDaoImpl" />
+	<!-- 邮寄 sxh end -->
+	
+	<!-- 顾客投诉 sxh begin -->
+		<bean id="customerComplainDao" class="com.pengsheng.eims.sales.dao.impl.CustomerComplainDaoImpl" />
+	<!-- 顾客投诉 sxh end -->
+	
+	<!-- 套餐维护 szk begin -->
+		<bean id="setMealDao" class="com.pengsheng.eims.sales.dao.impl.SetMealDaoImpl" />
+	<!-- 套餐维护 szk end -->
+	
+	<!-- 商品折扣成本维护 szk begin -->
+		<bean id="goodsCostDiscountDao" class="com.pengsheng.eims.sales.dao.impl.GoodsCostDiscountDaoImpl" />
+	<!-- 商品折扣成本维护 szk end -->
+	
+	<!-- 顾客投诉 sxh begin -->
+		<bean id="integralAddandSubDao" class="com.pengsheng.eims.sales.dao.impl.IntegralAddandSubDaoImpl" />
+	<!-- 顾客投诉 sxh end -->	
+	
+	<!-- 门店预销售设置         ZK begin-->
+	<bean id="preSalesDao" class="com.pengsheng.eims.sales.dao.impl.PreSalesDaoImpl" />
+	<!-- 门店预销售设置         ZK begin-->
+	
+	<!-- 代金券  begin -->
+		<bean id="cashCouponDao" class="com.pengsheng.eims.sales.dao.impl.CashCouponDaoImpl" />
+	<!-- 代金券 end -->
+	
+	<!-- 打印配镜单  begin -->
+	 	<bean id="packingListDao" class="com.pengsheng.eims.sales.dao.impl.PackingListDaoImpl" />
+	<!-- 打印配镜单  end -->
+	
+</beans>

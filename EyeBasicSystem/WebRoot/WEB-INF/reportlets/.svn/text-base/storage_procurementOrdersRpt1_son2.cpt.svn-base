@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="poID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT convert(varchar(10),C_ST_P_AUDITDATE,23) C_ST_P_AUDITDATE,convert(varchar(10),C_ST_P_CREATEDATE,23) C_ST_P_CREATEDATE,
+(SELECT PERSONNAME FROM SYS_PERSONINFO WHERE ID=C_ST_P_CreatePerson) CreatePersonName,
+(SELECT PERSONNAME FROM SYS_PERSONINFO WHERE ID=C_ST_P_AUDITPerson) AuditPersonName,
+B_DP_DepartmentName,
+B_GI_GOODSNAME,B_SP_SUPPLIERNAME,C_ST_P_ID,convert(varchar(10),C_ST_P_BillDate,23) C_ST_P_BillDate,C_ST_PE_OrderNumber,b_gi_brandid,C_ST_P_Remark
+,degree.sphDegreeNoDot,degree.cylDegreeNoDot,B_GI_SPH,b_gi_cyl FROM C_ST_Po 
+left join C_SHA_Status on C_SHA_StatusOrderID=C_ST_P_ID
+left join B_Departments on C_SHA_StatusDepartmentID = B_DP_DepartmentID
+INNER JOIN C_sT_POENTRY
+ON C_ST_P_ID=C_ST_PE_PurchaseOrderID
+INNER JOIN B_GOODSINFO
+ON B_GI_GOODSID=C_ST_PE_goodsID
+INNER JOIN B_SUPPLIER
+ON B_SP_ID=B_GI_SUPPLIERID
+RIGHT OUTER JOIN
+          (SELECT sph.degreeTypeName AS sphName, CAST(sph.degree AS DECIMAL(10, 2)) 
+               AS sphDegree, CAST(sph.degreeNoDot AS DECIMAL(10, 2)) 
+               AS sphDegreeNoDot, cyl.degreeTypeName AS cylName,
+               CAST(cyl.degree AS DECIMAL(10, 2)) AS cylDegree, 
+               CAST(cyl.degreeNoDot AS DECIMAL(10, 2)) AS cylDegreeNoDot
+         FROM (SELECT degree, degreeTypeName, degreeNoDot
+                 FROM B_glassesDegreeScope
+                 WHERE (degreeType = '0')) AS sph CROSS JOIN
+                   (SELECT degree, degreeTypeName, degreeNoDot
+                  FROM B_glassesDegreeScope
+                  WHERE (degreeType = '1')) AS cyl) AS degree ON 
+      B_GOODSINFO.B_GI_Sph = degree.sphDegree AND 
+      isnull(B_GOODSINFO.B_GI_Cyl, 0) = isnull(degree.cylDegree, 0)
+WHERE C_ST_P_ID='${poID}' ORDER BY degree.sphDegreeNoDot desc, degree.cylDegreeNoDot]]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters/>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select * from dbo.F_CompanyName]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="poID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 C_ST_P_TakeAddress as F_SP_TakeAddress,C_ST_P_TakePerson as F_SP_TakePerson,C_ST_P_TakePhone as F_SP_TakePhone,C_ST_P_TakeFax as F_SP_TakePortraiture from C_ST_PO where C_ST_P_ID='${poID}'
+]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[762000,762000,762000,762000,762000,762000,723900,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[2781300,5562600,2667000,4495800,1752600,4495800,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<O>
+<![CDATA[备注：]]></O>
+<Expand extendable="1"/>
+</C>
+<C c="1" r="0" cs="2">
+<O>
+<![CDATA[此批订货请于   月   日前送达。]]></O>
+<Expand extendable="1"/>
+</C>
+<C c="3" r="0" s="0">
+<O>
+<![CDATA[实际收货日期：]]></O>
+<Expand extendable="1"/>
+</C>
+<C c="5" r="0">
+<Expand/>
+</C>
+<C c="6" r="0">
+<Expand/>
+</C>
+<C c="0" r="1" s="0">
+<O>
+<![CDATA[制单日期：]]></O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="1" r="1">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_P_CREATEDATE"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="2" r="1" s="0">
+<O>
+<![CDATA[制单人：]]></O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="3" r="1">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="CreatePersonName"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="5" r="1">
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="6" r="1">
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="0" r="2" s="0">
+<O>
+<![CDATA[审核人：]]></O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="1" r="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="AuditPersonName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="2" r="2" s="0">
+<O>
+<![CDATA[审核日期：]]></O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="3" r="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_P_AUDITDATE"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="5" r="2">
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="6" r="2">
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="0" r="3" s="0">
+<O>
+<![CDATA[收货地址：]]></O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="1" r="3" cs="6">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_SP_TakeAddress"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="0" r="4" s="0">
+<O>
+<![CDATA[联系人：]]></O>
+<Expand/>
+</C>
+<C c="1" r="4">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_SP_TakePerson"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="4" s="0">
+<O>
+<![CDATA[联系电话：]]></O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="3" r="4">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_SP_TakePhone"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="4" r="4" s="0">
+<O>
+<![CDATA[传真：]]></O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="5" r="4" cs="2">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_SP_TakePortraiture"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="0" r="5" s="0">
+<O>
+<![CDATA[申请部门：]]></O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="1" r="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_DP_DepartmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="2" r="5" s="0">
+<O>
+<![CDATA[所需材料：]]></O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+<C c="3" r="5" cs="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_P_Remark"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand extendable="3" upParentDefault="false"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="0" left="0" bottom="0" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

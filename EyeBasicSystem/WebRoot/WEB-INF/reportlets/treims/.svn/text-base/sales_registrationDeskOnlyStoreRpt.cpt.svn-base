@@ -1,0 +1,1268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[01]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begDate"/>
+<O>
+<![CDATA[2014-08-05]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[2014-08-05]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+if ('${begDate}'<convert(varchar(10),getdate(),120))
+begin
+
+
+if ('${endDate}'<convert(varchar(10),getdate(),120))
+begin
+
+select ('${begDate}'+'--'+'${endDate}') as queryDate,departmentName as departmentName,displayName as displayName, 
+	ysfs as ysfs,
+	ygfje as ygfje,
+	tygfs as tygfs,
+	tygfje as tygfje,
+	fyfs as fyfs,
+	fyfje as fyfje,
+	tfyfs as tfyfs,
+	tfyfje as tfyfje,
+	ydzxfs as ydzxfs,
+	ydzxfje as ydzxfje,tydzxfs as tydzxfs,tydzxfje as tydzxfje,
+	sggtyis,sggtyije,sggters,sggterje,
+	tsggtyis,tsggtyije,tsggters,tsggterje ,
+    sgnjcs,sgnjcje,tsgnjcs,tsgnjcje
+
+from (
+
+select R_RD_OS_personName as displayName,R_RD_OS_DepartmentName as departmentName, 
+	sum(R_RD_OS_ygfNumber) as ysfs,
+	sum(R_RD_OS_ygfMoney) as ygfje,
+	sum(R_RD_OS_ygftNumber) as tygfs,
+	sum(R_RD_OS_ygftMoney) as tygfje,
+	sum(R_RD_OS_fyNumber) as fyfs,
+	sum(R_RD_OS_fyMoney) as fyfje,
+	sum(R_RD_OS_fytNumber) as tfyfs,
+	sum(R_RD_OS_fytMoney) as tfyfje,
+	sum(R_RD_OS_ydzxtNumber) as ydzxfs,
+	sum(R_RD_OS_ydzxtMoney) as ydzxfje,
+	sum(R_RD_OS_tydzxtNumber) as tydzxfs,
+	sum(R_RD_OS_tydzxtMoney) as tydzxfje,
+	sum(R_RD_OS_sggtyiNumber) as sggtyis,
+	sum(R_RD_OS_sggtyiMoney) as sggtyije,
+	sum(R_RD_OS_sggterNumber) as sggters,
+	sum(R_RD_OS_sggterMoney) as sggterje,
+	sum(R_RD_OS_tsggtyiNumber) as tsggtyis,
+	sum(R_RD_OS_tsggtyiMoney) as tsggtyije,
+	sum(R_RD_OS_tsggterNumber) as tsggters,
+	sum(R_RD_OS_tsggterMoney) as tsggterje,
+	sum(R_RD_OS_sgnjcNumber) as sgnjcs,
+	sum(R_RD_OS_sgnjcMoney) as sgnjcje,
+	sum(R_RD_OS_tsgnjcNumber) as tsgnjcs,
+	sum(R_RD_OS_tsgnjcMoney) as tsgnjcje
+
+  from R_registrationDeskOnlyStore
+  where R_RD_OS_DepartmentId='${shopCode}' and R_RD_OS_Date>='${begDate}' and R_RD_OS_Date<='${endDate}'
+  group by R_RD_OS_personName,R_RD_OS_DepartmentName
+)temp
+  where isnull(ysfs,0) > 0 or isnull(ygfje,0) >0 or isnull(tygfs,0) >0 or isnull(tygfje,0) > 0 or isnull(fyfs,0) >0 
+  or isnull(fyfje,0)  >0 or isnull(tfyfs,0) >0 or isnull(tfyfje,0) >0 or isnull(ydzxfs,0) >0 or isnull(ydzxfje,0) >0 
+  or isnull(tydzxfs,0) >0 or isnull(tydzxfje,0) >0 
+      or isnull(sggtyis,0) <>0 or isnull(sggtyije,0) <>0 or isnull(sggters,0) <>0 or isnull(sggterje,0) <>0 
+      or isnull(tsggtyis,0) <>0 or isnull(tsggtyije,0) <>0 or isnull(tsggters,0) <>0 or isnull(tsggterje,0) <>0
+      or isnull(sgnjcs,0) <>0 or isnull(sgnjcje,0) <>0 or isnull(tsgnjcs,0) <>0 or isnull(tsgnjcje,0) <>0
+end
+else
+begin
+
+
+select ('${begDate}'+'--'+'${endDate}') as queryDate,
+    departmentName as departmentName,displayName as displayName, 
+	sum(ysfs) as ysfs,
+	sum(ygfje) as ygfje,
+	sum(tygfs) as tygfs,
+	sum(tygfje) as tygfje,
+	sum(fyfs) as fyfs,
+	sum(fyfje) as fyfje,
+	sum(tfyfs) as tfyfs,
+	sum(tfyfje) as tfyfje,
+	sum(ydzxfs) as ydzxfs,
+    sum(ydzxfje) as ydzxfje,
+	sum(tydzxfs) as tydzxfs,
+    sum(tydzxfje) as tydzxfje,
+	sum(sggtyis) as sggtyis,
+    sum(sggtyije) as sggtyije,
+    sum(sggters) as sggters,
+    sum(sggterje) as sggterje,
+	sum(tsggtyis) as tsggtyis,
+    sum(tsggtyije) as tsggtyije,
+    sum(tsggters) as tsggters,
+    sum(tsggterje) as tsggterje,
+	sum(sgnjcs) as sgnjcs,
+	sum(sgnjcje) as sgnjcje,
+	sum(tsgnjcs) as tsgnjcs,
+	sum(tsgnjcje) as tsgnjcje
+
+ from (
+
+select departmentName as departmentName,displayName as displayName, 
+	ysfs as ysfs,
+	ygfje as ygfje,
+	tygfs as tygfs,
+	tygfje as tygfje,
+	fyfs as fyfs,
+	fyfje as fyfje,
+	tfyfs as tfyfs,
+	tfyfje as tfyfje,
+	ydzxfs as ydzxfs,
+	ydzxfje as ydzxfje,tydzxfs as tydzxfs,tydzxfje as tydzxfje,
+	sggtyis,sggtyije,sggters,sggterje,
+	tsggtyis,tsggtyije,tsggters,tsggterje,
+    sgnjcs,sgnjcje,tsgnjcs,tsgnjcje
+from (
+
+select R_RD_OS_DepartmentName as departmentName,R_RD_OS_personName as displayName, 
+	sum(R_RD_OS_ygfNumber) as ysfs,
+	sum(R_RD_OS_ygfMoney) as ygfje,
+	sum(R_RD_OS_ygftNumber) as tygfs,
+	sum(R_RD_OS_ygftMoney) as tygfje,
+	sum(R_RD_OS_fyNumber) as fyfs,
+	sum(R_RD_OS_fyMoney) as fyfje,
+	sum(R_RD_OS_fytNumber) as tfyfs,
+	sum(R_RD_OS_fytMoney) as tfyfje,
+	sum(R_RD_OS_ydzxtNumber) as ydzxfs,
+	sum(R_RD_OS_ydzxtMoney) as ydzxfje,
+	sum(R_RD_OS_tydzxtNumber) as tydzxfs,
+	sum(R_RD_OS_tydzxtMoney) as tydzxfje,
+	sum(R_RD_OS_sggtyiNumber) as sggtyis,
+	sum(R_RD_OS_sggtyiMoney) as sggtyije,
+	sum(R_RD_OS_sggterNumber) as sggters,
+	sum(R_RD_OS_sggterMoney) as sggterje,
+	sum(R_RD_OS_tsggtyiNumber) as tsggtyis,
+	sum(R_RD_OS_tsggtyiMoney) as tsggtyije,
+	sum(R_RD_OS_tsggterNumber) as tsggters,
+	sum(R_RD_OS_tsggterMoney) as tsggterje,
+	sum(R_RD_OS_sgnjcNumber) as sgnjcs,
+	sum(R_RD_OS_sgnjcMoney) as sgnjcje,
+	sum(R_RD_OS_tsgnjcNumber) as tsgnjcs,
+	sum(R_RD_OS_tsgnjcMoney) as tsgnjcje
+  from R_registrationDeskOnlyStore
+  where R_RD_OS_DepartmentId='${shopCode}' and R_RD_OS_Date>='${begDate}' and R_RD_OS_Date<=convert(char(10), dateadd(day,-1,'${endDate}'),120)
+  group by R_RD_OS_DepartmentName,R_RD_OS_personName
+)temp
+  where isnull(ysfs,0) > 0 or isnull(ygfje,0) >0 or isnull(tygfs,0) >0 or isnull(tygfje,0) > 0 or isnull(fyfs,0) >0 
+  or isnull(fyfje,0)  >0 or isnull(tfyfs,0) >0 or isnull(tfyfje,0) >0 or isnull(ydzxfs,0) >0 or isnull(ydzxfje,0) >0 
+  or isnull(tydzxfs,0) >0 or isnull(tydzxfje,0) >0 
+      or isnull(sggtyis,0) <>0 or isnull(sggtyije,0) <>0 or isnull(sggters,0) <>0 or isnull(sggterje,0) <>0 
+      or isnull(tsggtyis,0) <>0 or isnull(tsggtyije,0) <>0 or isnull(tsggters,0) <>0 or isnull(tsggterje,0) <>0
+      or isnull(sgnjcs,0) <>0 or isnull(sgnjcje,0) <>0 or isnull(tsgnjcs,0) <>0 or isnull(tsgnjcje,0) <>0
+
+union all
+select departmentName as departmentName,displayName as displayName,isnull(ysfs,0) as ysfs,
+isnull(ygfje,0) as ygfje,isnull(tygfs,0) as tygfs,isnull(tygfje,0) as tygfje,isnull(fyfs,0) as fyfs,
+isnull(fyfje,0) as fyfje,isnull(tfyfs,0) as tfyfs,isnull(tfyfje,0) as tfyfje,isnull(ydzxfs,0) as ydzxfs,
+isnull(ydzxfje,0) as ydzxfje,isnull(tydzxfs,0) as tydzxfs,isnull(tydzxfje,0) as tydzxfje,
+isnull(sggtyis,0) as sggtyis,isnull(sggtyije,0) as sggtyije,
+isnull(sggters,0) as sggters,isnull(sggterje,0) as sggterje,
+isnull(tsggtyis,0) as tsggtyis,isnull(tsggtyije,0) as tsggtyije,
+isnull(tsggters,0) as tsggters,isnull(tsggterje,0) as tsggterje,
+isnull(sgnjcs,0) as sgnjcs,isnull(sgnjcje,0) as sgnjcje,
+isnull(tsgnjcs,0) as tsgnjcs,isnull(tsgnjcje,0) as tsgnjcje
+ 
+from (
+select distinct (S_CR_RD_Casher+':'+personName) as displayName,S_CR_RD_Casher as casherID,personName as casherName,
+  (select top 1 B_DP_DepartmentName from B_Departments where B_DP_DepartmentID='${shopCode}') as departmentName,S_CR_RD_RegisteredID as registeredID
+  from S_CR_RegisteredDetails left join SYS_PersonInfo on S_CR_RD_Casher=id
+  where S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+)temp
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as ysfs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as ygfje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='11' -- 验光费
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )ygf on casherID=ygf.S_CR_RD_Casher and registeredID = ygf.S_CR_RD_RegisteredID
+
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as tygfs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as tygfje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='22' -- 退验光费
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )tygf on casherID=tygf.S_CR_RD_Casher and registeredID = tygf.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as fyfs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as fyfje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='02' -- 复验费
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )fyf on casherID=fyf.S_CR_RD_Casher and registeredID = fyf.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as tfyfs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as tfyfje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='13' -- 退复验费
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )tfyf on casherID=tfyf.S_CR_RD_Casher and registeredID = tfyf.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as ydzxfs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as ydzxfje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='23' -- 眼底照相
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )ydzxf on casherID=ydzxf.S_CR_RD_Casher and registeredID = ydzxf.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as tydzxfs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as tydzxfje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='24' -- 退眼底照相
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )tydzxf on casherID=tydzxf.S_CR_RD_Casher and registeredID = tydzxf.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as sggtyis, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as sggtyije
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='31' -- 视功能套一
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )sggtyi on casherID=sggtyi.S_CR_RD_Casher and registeredID = sggtyi.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as sggters, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as sggterje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='33' -- 视功能套二
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )sggter on casherID=sggter.S_CR_RD_Casher and registeredID = sggter.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as tsggtyis, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as tsggtyije
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='031' -- 退视功能套一
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )tsggtyi on casherID=tsggtyi.S_CR_RD_Casher and registeredID = tsggtyi.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as tsggters, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as tsggterje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='033' -- 退视功能套二
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )tsggter on casherID=tsggter.S_CR_RD_Casher and registeredID = tsggter.S_CR_RD_RegisteredID
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as sgnjcs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as sgnjcje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='32' -- 视功能检查70
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )sgnjc on casherID=sgnjc.S_CR_RD_Casher and registeredID = sgnjc.S_CR_RD_RegisteredID
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as tsgnjcs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as tsgnjcje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='032' -- 退视功能检查70
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )tsgnjc on casherID=tsgnjc.S_CR_RD_Casher and registeredID = tsgnjc.S_CR_RD_RegisteredID
+
+  where isnull(ysfs,0) > 0 or isnull(ygfje,0) >0 or isnull(tygfs,0) >0 or isnull(tygfje,0) > 0 or isnull(fyfs,0) >0 or isnull(fyfje,0)  >0 or isnull(tfyfs,0) >0 or isnull(tfyfje,0) >0 or isnull(ydzxfs,0) >0 or isnull(ydzxfje,0) >0 
+      or isnull(tydzxfs,0) >0 or isnull(tydzxfje,0) >0 
+      or isnull(sggtyis,0) <>0 or isnull(sggtyije,0) <>0 or isnull(sggters,0) <>0 or isnull(sggterje,0) <>0 
+      or isnull(tsggtyis,0) <>0 or isnull(tsggtyije,0) <>0 or isnull(tsggters,0) <>0 or isnull(tsggterje,0) <>0
+      or isnull(sgnjcs,0) <>0 or isnull(sgnjcje,0) <>0 or isnull(tsgnjcs,0) <>0 or isnull(tsgnjcje,0) <>0
+)temp
+group by departmentName,displayName
+
+end
+
+end
+else
+begin
+
+select ('${begDate}'+'--'+'${endDate}') as queryDate,departmentName as departmentName,displayName as displayName,
+sum(isnull(ysfs,0)) as ysfs,
+sum(isnull(ygfje,0)) as ygfje,sum(isnull(tygfs,0)) as tygfs,sum(isnull(tygfje,0)) as tygfje,sum(isnull(fyfs,0)) as fyfs,
+sum(isnull(fyfje,0)) as fyfje,sum(isnull(tfyfs,0)) as tfyfs,sum(isnull(tfyfje,0)) as tfyfje,sum(isnull(ydzxfs,0)) as ydzxfs,
+sum(isnull(ydzxfje,0)) as ydzxfje,sum(isnull(tydzxfs,0)) as tydzxfs,sum(isnull(tydzxfje,0)) as tydzxfje,
+sum(isnull(sggtyis,0)) as sggtyis,sum(isnull(sggtyije,0)) as sggtyije,
+sum(isnull(sggters,0)) as sggters,sum(isnull(sggterje,0)) as sggterje,
+sum(isnull(tsggtyis,0)) as tsggtyis,sum(isnull(tsggtyije,0)) as tsggtyije,
+sum(isnull(tsggters,0)) as tsggters,sum(isnull(tsggterje,0)) as tsggterje,
+sum(sgnjcs) as sgnjcs,	sum(sgnjcje) as sgnjcje,	sum(tsgnjcs) as tsgnjcs,	sum(tsgnjcje) as tsgnjcje
+ 
+from (
+select distinct (S_CR_RD_Casher+':'+personName) as displayName,S_CR_RD_Casher as casherID,personName as casherName,
+  (select top 1 B_DP_DepartmentName from B_Departments where B_DP_DepartmentID='${shopCode}') as departmentName,S_CR_RD_RegisteredID as registeredID
+  from S_CR_RegisteredDetails left join SYS_PersonInfo on S_CR_RD_Casher=id
+  where S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+)temp
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as ysfs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as ygfje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='11' -- 验光费
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )ygf on casherID=ygf.S_CR_RD_Casher and registeredID = ygf.S_CR_RD_RegisteredID
+
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as tygfs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as tygfje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='22' -- 退验光费
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )tygf on casherID=tygf.S_CR_RD_Casher and registeredID = tygf.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as fyfs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as fyfje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='02' -- 复验费
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )fyf on casherID=fyf.S_CR_RD_Casher and registeredID = fyf.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as tfyfs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as tfyfje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='13' -- 退复验费
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )tfyf on casherID=tfyf.S_CR_RD_Casher and registeredID = tfyf.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as ydzxfs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as ydzxfje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='23' -- 眼底照相
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )ydzxf on casherID=ydzxf.S_CR_RD_Casher and registeredID = ydzxf.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as tydzxfs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as tydzxfje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='24' -- 退眼底照相
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )tydzxf on casherID=tydzxf.S_CR_RD_Casher and registeredID = tydzxf.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as sggtyis, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as sggtyije
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='31' -- 视功能套一
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )sggtyi on casherID=sggtyi.S_CR_RD_Casher and registeredID = sggtyi.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as sggters, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as sggterje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='33' -- 视功能套二
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )sggter on casherID=sggter.S_CR_RD_Casher and registeredID = sggter.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as tsggtyis, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as tsggtyije
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='031' -- 退视功能套一
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )tsggtyi on casherID=tsggtyi.S_CR_RD_Casher and registeredID = tsggtyi.S_CR_RD_RegisteredID
+
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as tsggters, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as tsggterje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='033' -- 退视功能套二
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )tsggter on casherID=tsggter.S_CR_RD_Casher and registeredID = tsggter.S_CR_RD_RegisteredID
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as sgnjcs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as sgnjcje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='32' -- 视功能检查70
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )sgnjc on casherID=sgnjc.S_CR_RD_Casher and registeredID = sgnjc.S_CR_RD_RegisteredID
+   left join (
+		select S_CR_RD_Casher,S_CR_RD_RegisteredID,count(S_CR_RD_ID) as tsgnjcs, cast((count(S_CR_RD_ID)*S_CR_RD_Money) as numeric(18,2)) as tsgnjcje
+		  from S_CR_RegisteredDetails inner join F_RegisteredCategory on S_CR_RD_RegisteredID=F_RC_ID
+		  where S_CR_RD_RegisteredID='032' -- 退视功能检查70
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)>=convert(varchar(10),getdate(),120)
+			   and convert(varchar(10),S_CR_RD_CasherDate,120)<=convert(varchar(10),getdate(),120)
+               and S_CR_RD_Flag='1' and S_CR_RD_ShopCode='${shopCode}'
+		  group by S_CR_RD_Casher,S_CR_RD_Money,S_CR_RD_RegisteredID
+   )tsgnjc on casherID=tsgnjc.S_CR_RD_Casher and registeredID = tsgnjc.S_CR_RD_RegisteredID
+
+where isnull(ysfs,0) > 0 or isnull(ygfje,0) >0 or isnull(tygfs,0) >0 or isnull(tygfje,0) > 0 or isnull(fyfs,0) >0 or isnull(fyfje,0)  >0 or isnull(tfyfs,0) >0 or isnull(tfyfje,0) >0 or isnull(ydzxfs,0) >0 or isnull(ydzxfje,0) >0 
+      or isnull(tydzxfs,0) >0 or isnull(tydzxfje,0) >0 
+      or isnull(sggtyis,0) <>0 or isnull(sggtyije,0) <>0 or isnull(sggters,0) <>0 or isnull(sggterje,0) <>0 
+      or isnull(tsggtyis,0) <>0 or isnull(tsggtyije,0) <>0 or isnull(tsggters,0) <>0 or isnull(tsggterje,0) <>0
+      or isnull(sgnjcs,0) <>0 or isnull(sgnjcje,0) <>0 or isnull(tsgnjcs,0) <>0 or isnull(tsgnjcje,0) <>0
+group by departmentName,displayName
+
+end
+
+]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="4" T="5"/>
+<FR F="9" T="9"/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1143000,723900,723900,990600,1409700,1371600,1181100,1028700,495300,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[2304000,1584000,1584000,1584000,1584000,1584000,1584000,1584000,1584000,1584000,1584000,1584000,1584000,1584000,1584000,1872000,1872000,1584000,1584000,1872000,1872000,1872000,1872000,2016000,2016000,2476500,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="5" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" cs="26" rs="2" s="1">
+<O>
+<![CDATA[挂号台工作量统计（单店）]]></O>
+<Expand/>
+</C>
+<C c="0" r="3" s="2">
+<O>
+<![CDATA[日期：]]></O>
+<Expand/>
+</C>
+<C c="1" r="3" cs="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="queryDate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="3" cs="2" s="2">
+<O>
+<![CDATA[部门名称：]]></O>
+<Expand/>
+</C>
+<C c="6" r="3" cs="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="departmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="3">
+<Expand dir="0"/>
+</C>
+<C c="10" r="3">
+<Expand/>
+</C>
+<C c="25" r="3">
+<Expand/>
+</C>
+<C c="0" r="4" rs="2" s="3">
+<O>
+<![CDATA[收款人]]></O>
+<Expand/>
+</C>
+<C c="1" r="4" cs="2" s="3">
+<O>
+<![CDATA[验光费]]></O>
+<Expand/>
+</C>
+<C c="3" r="4" cs="2" s="3">
+<O>
+<![CDATA[退验光费]]></O>
+<Expand/>
+</C>
+<C c="5" r="4" cs="2" s="3">
+<O>
+<![CDATA[复验费]]></O>
+<Expand/>
+</C>
+<C c="7" r="4" cs="2" s="3">
+<O>
+<![CDATA[退复验费]]></O>
+<Expand/>
+</C>
+<C c="9" r="4" cs="2" s="3">
+<O>
+<![CDATA[眼底照相]]></O>
+<Expand/>
+</C>
+<C c="11" r="4" cs="2" s="3">
+<O>
+<![CDATA[退眼底照相]]></O>
+<Expand/>
+</C>
+<C c="13" r="4" cs="2" s="3">
+<O>
+<![CDATA[视功能套一]]></O>
+<Expand/>
+</C>
+<C c="15" r="4" cs="2" s="3">
+<O>
+<![CDATA[退视功能套一]]></O>
+<Expand/>
+</C>
+<C c="17" r="4" cs="2" s="3">
+<O>
+<![CDATA[视功能套二]]></O>
+<Expand/>
+</C>
+<C c="19" r="4" cs="2" s="3">
+<O>
+<![CDATA[退视功能套二]]></O>
+<Expand/>
+</C>
+<C c="21" r="4" cs="2" s="3">
+<O>
+<![CDATA[视功能检查70]]></O>
+<Expand/>
+</C>
+<C c="23" r="4" cs="2" s="3">
+<O>
+<![CDATA[退视功能检查70]]></O>
+<Expand/>
+</C>
+<C c="25" r="4" rs="2" s="4">
+<O>
+<![CDATA[小计]]></O>
+<Expand/>
+</C>
+<C c="1" r="5" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="2" r="5" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="3" r="5" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="4" r="5" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="5" r="5" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="6" r="5" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="7" r="5" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="8" r="5" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="9" r="5" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="10" r="5" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="11" r="5" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="12" r="5" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="13" r="5" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="14" r="5" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="15" r="5" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="16" r="5" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="17" r="5" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="18" r="5" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="19" r="5" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="20" r="5" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="21" r="5" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="22" r="5" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="23" r="5" s="3">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="24" r="5" s="3">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="0" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="displayName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="ysfs"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="ygfje"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="tygfs"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="tygfje"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="fyfs"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="fyfje"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="tfyfs"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="tfyfje"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="ydzxfs"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="ydzxfje"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="tydzxfs"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="tydzxfje"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="sggtyis"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="sggtyije"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="15" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="tsggtyis"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="tsggtyije"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="17" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="sggters"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="18" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="sggterje"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="19" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="tsggters"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="20" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="tsggterje"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="21" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="sgnjcs"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="22" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="sgnjcje"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="23" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="tsgnjcs"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="24" r="6" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="tsgnjcje"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="25" r="6" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(C7, E7, G7, I7, K7, M7, O7, Q7, S7, U7,W7,Y7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="7" s="6">
+<O>
+<![CDATA[总合计：]]></O>
+<Expand/>
+</C>
+<C c="1" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(B7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(C7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(D7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="4" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(E7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(F7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(G7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(H7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(I7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(J7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(K7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(L7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(M7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(N7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="14" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(O7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="15" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(P7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="16" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(Q7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="17" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(R7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="18" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(S7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="19" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(T7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="20" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(U7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="21" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(V7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="22" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(W7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="23" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(X7)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="24" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(Y7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="25" r="7" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(Z7))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="9" s="7">
+<O>
+<![CDATA[打印日期：]]></O>
+<Expand/>
+</C>
+<C c="1" r="9" cs="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=today()]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="8" r="9" cs="18" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="页次:第 " + $$page_number + " 页/共 " + $$totalPage_number + " 页"]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<PaperSize width="30241036" height="47520014"/>
+<Margin top="987552" left="0" bottom="987552" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="108"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="88"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

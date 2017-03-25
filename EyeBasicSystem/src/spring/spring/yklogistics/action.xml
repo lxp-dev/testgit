@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false" default-dependency-check="none">
+
+	<!-- 发票核销   begin-->
+		<bean id="ykinvoiceAction" class="com.pengsheng.eims.yklogistics.action.InvoiceAction" scope="prototype"/>
+	<!-- 发票核销   end-->
+
+
+	<!-- 发票单据选择开窗  wanglei begin-->
+		<bean id="ykinvoiceSelectBillAction" class="com.pengsheng.eims.yklogistics.action.InvoiceSelectBillAction" scope="prototype"/>
+	<!-- 发票单据选择开窗  wanglei end-->
+	
+	<!-- 凭证单据选择开窗  wanglei begin-->
+		<bean id="ykproofSelectBillAction" class="com.pengsheng.eims.yklogistics.action.ProofSelectBillAction" scope="prototype"/>
+	<!-- 凭证单据选择开窗  wanglei end-->
+	
+
+	<!-- 凭证管理  SZK begin-->
+	    <bean id="ykvoucherAction" class="com.pengsheng.eims.yklogistics.action.VoucherAction" scope="prototype"/>
+	    <bean id="ykvoucherTallyAction" class="com.pengsheng.eims.yklogistics.action.VoucherTallyAction" scope="prototype"/>
+	    <bean id="ykoutStrogeVoucherAction" class="com.pengsheng.eims.yklogistics.action.OutStrogeVoucherAction" scope="prototype"/>
+	<!-- 凭证管理  SZK end-->
+
+	<!-- 凭证单据选择开窗  wanglei begin-->
+		<bean id="ykcalAction" class="com.pengsheng.eims.yklogistics.action.CalAction" scope="prototype"/>
+	<!-- 凭证单据选择开窗  wanglei end-->
+	
+    <!-- 物流日志   SZK begin -->
+    <bean id="yklogisticsLogAction" class="com.pengsheng.eims.yklogistics.action.LogisticsLogAction" scope="prototype"/>    
+    <!-- 物流日志   SZK end -->
+</beans>

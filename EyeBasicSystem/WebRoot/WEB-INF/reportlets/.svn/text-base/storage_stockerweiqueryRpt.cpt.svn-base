@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="spec"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="cylup"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="sphup"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="useType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="isSales"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="framesize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="isMutiLuminosity"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="sphul"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsBarCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="refractive"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="eyeGlassMaterialType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="brandID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsCategoryID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="color"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="stealthClass"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="cylul"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="isClose"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+declare @goodsCategoryID varchar(50),@supplierID varchar(50),@brandID varchar(50),@isClose varchar(50),
+        @isSales varchar(50),@goodsBarCode varchar(50),@goodsID varchar(50),@goodsName varchar(300),
+        @spec varchar(50),@color varchar(50),@framesize varchar(50),
+        @eyeGlassMaterialType varchar(50),@refractive varchar(50),@isMutiLuminosity varchar(50),
+        @sphul varchar(50),@sphup varchar(50),@cylul varchar(50),@cylup varchar(50),
+        @useType varchar(50),@stealthClass varchar(50)
+
+set @goodsCategoryID='${goodsCategoryID}'
+set @supplierID='${supplierID}'
+set @brandID='${brandID}'
+set @isClose='${isClose}'
+set @isSales='${isSales}'
+set @goodsBarCode='${goodsBarCode}'
+set @goodsID='${goodsID}'
+set @goodsName='${goodsName}'
+set @spec='${spec}'
+set @color='${color}'
+set @framesize='${framesize}'
+set @eyeGlassMaterialType='${eyeGlassMaterialType}'
+set @refractive='${refractive}'
+set @isMutiLuminosity='${isMutiLuminosity}'
+set @sphul='${sphul}'
+set @sphup='${sphup}'
+set @cylul='${cylul}'
+set @cylup='${cylup}'
+set @useType='${useType}'
+set @stealthClass='${stealthClass}'
+
+select goodsID,B_GI_GoodsName as goodsName,B_GC_GoodsCategoryName as goodsCategoryName,
+       B_SP_SupplierName as supplierName,B_WH_warehouseName as stockName,goodsNum,stockID,
+       (case B_GI_GoodsCategoryID
+            when '1' then (B_GC_GoodsCategoryName+' '+B_SP_SupplierName+' ' + B_GI_GoodsName + ' 型号:' + isnull(B_GI_Spec,'') + ' 颜色:' + isnull(B_GI_Color,'') + ' 尺寸:' + isnull(B_GI_FrameSize,''))
+            when '2' then (B_GC_GoodsCategoryName+' '+B_SP_SupplierName+' ' + B_GI_GoodsName)
+            when '3' then (B_GC_GoodsCategoryName+' '+B_SP_SupplierName+' ' + B_GI_GoodsName + ' DS:' + isnull(B_GI_Sph,'') + ' DC:' + isnull(B_GI_Cyl,''))
+            when '4' then (B_GC_GoodsCategoryName+' '+B_SP_SupplierName+' ' + B_GI_GoodsName + ' DS:' + isnull(B_GI_Sph,'') + ' DC:' + isnull(B_GI_Cyl,''))
+            when '5' then (B_GC_GoodsCategoryName+' '+B_SP_SupplierName+' ' + B_GI_GoodsName)
+            when '6' then (B_GC_GoodsCategoryName+' '+B_SP_SupplierName+' ' + B_GI_GoodsName + ' 型号:' + isnull(B_GI_Spec,'') + ' 颜色:' + isnull(B_GI_Color,'') + ' 尺寸:' + isnull(B_GI_FrameSize,''))
+            when '7' then (B_GC_GoodsCategoryName+' '+B_SP_SupplierName+' ' + B_GI_GoodsName)
+            when '8' then (B_GC_GoodsCategoryName+' '+B_SP_SupplierName+' ' + B_GI_GoodsName + ' 型号:' + isnull(B_GI_Spec,'') + ' 颜色:' + isnull(B_GI_Color,'') + ' 尺寸:' + isnull(B_GI_FrameSize,''))
+            when '9' then (B_GC_GoodsCategoryName+' '+B_SP_SupplierName+' ' + B_GI_GoodsName)
+         else '' 
+        end) as goodsDetail,'${goodsStyle}' as goodsStyle
+    from (
+	select C_SH_SB_GoodsId as goodsID,C_SH_SB_StockId as stockID,
+		   sum(C_SH_SB_GoodsQuantity) as goodsNum
+	  from C_SH_StorageBeginning
+      group by C_SH_SB_GoodsId,C_SH_SB_StockId
+	union all
+	select C_SH_SC_GoodsId as goodsID,C_SH_SC_StockId as stockID,
+		   sum(C_SH_SC_GoodsQuantity) as goodsNum
+	  from C_SH_StorageChange   
+      group by C_SH_SC_GoodsId,C_SH_SC_StockId
+)temp inner join B_GoodsInfo on goodsID=B_GI_GoodsID
+      inner join B_Brand on B_BD_ID=B_GI_BrandID and B_BD_SupplierID=B_GI_SupplierID
+      inner join B_Supplier on B_SP_ID=B_GI_SupplierID
+      inner join B_GoodsCategory on B_GC_ID=B_GI_GoodsCategoryID
+      inner join B_Warehouse on stockID=B_WH_ID
+where B_GI_SupplierID<>'ZZ'
+      and ((isnull(@goodsCategoryID,'')<>'' and B_GI_GoodsCategoryID=@goodsCategoryID) or isnull(@goodsCategoryID,'')='')
+      and ((isnull(@supplierID,'')<>'' and B_GI_SupplierID=@supplierID) or isnull(@supplierID,'')='')
+      and ((isnull(@brandID,'')<>'' and B_GI_BrandID=@brandID) or isnull(@brandID,'')='')
+      and ((isnull(@isClose,'')<>'' and B_WH_IsClosed=@isClose) or isnull(@isClose,'')='')
+      and ((isnull(@isSales,'')<>'' and B_GI_Flag=@isSales) or isnull(@isSales,'')='')
+      and ((isnull(@goodsID,'')<>'' and B_GI_GoodsID like '%' + @goodsID + '%') or isnull(@goodsID,'')='')
+      and ((isnull(@goodsName,'')<>'' and B_GI_GoodsName like '%' + @goodsName + '%') or isnull(@goodsName,'')='')
+      and ((isnull(@spec,'')<>'' and B_GI_Spec like '%' + @spec + '%') or isnull(@spec,'')='')
+      and ((isnull(@color,'')<>'' and B_GI_Color like '%' + @color + '%') or isnull(@color,'')='')
+      and ((isnull(@framesize,'')<>'' and B_GI_FrameSize like '%' + @framesize + '%') or isnull(@framesize,'')='')
+      and ((isnull(@eyeGlassMaterialType,'')<>'' and B_GI_EyeGlassMaterialType=@eyeGlassMaterialType) or isnull(@eyeGlassMaterialType,'')='')
+      and ((isnull(@refractive,'')<>'' and B_GI_Refractive=@refractive) or isnull(@refractive,'')='')
+      and ((isnull(@isMutiLuminosity,'')<>'' and B_GI_isMutiLuminosity=@isMutiLuminosity) or isnull(@isMutiLuminosity,'')='')
+      and ((isnull(@sphul,'')<>'' and cast(B_GI_Sph as float)<=cast(@sphul as float)) or isnull(@sphul,'')='')
+      and ((isnull(@sphup,'')<>'' and cast(B_GI_Sph as float)>=cast(@sphup as float)) or isnull(@sphup,'')='')
+      and ((isnull(@cylul,'')<>'' and cast(B_GI_Cyl as float)<=cast(@cylul as float)) or isnull(@cylul,'')='')
+      and ((isnull(@cylup,'')<>'' and cast(B_GI_Cyl as float)>=cast(@cylup as float)) or isnull(@cylup,'')='')
+      and ((isnull(@useType,'')<>'' and B_GI_UseType=@useType) or isnull(@useType,'')='')
+      and ((isnull(@stealthClass,'')<>'' and B_GI_StealthClass=@stealthClass) or isnull(@stealthClass,'')='')
+      and ((isnull(@goodsBarCode,'')<>'' and B_GI_GoodsBarCode like '%' + @goodsBarCode + '%') or isnull(@goodsBarCode,'')='')
+ order by goodsID]]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.page.First">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-First')}]]></Text>
+<IconName>
+<![CDATA[first]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Previous">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Previous')}]]></Text>
+<IconName>
+<![CDATA[previous]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.PageNavi">
+<WidgetAttr/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Next">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Next')}]]></Text>
+<IconName>
+<![CDATA[next]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Last">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Last')}]]></Text>
+<IconName>
+<![CDATA[last]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="false" isShowAsImage="false" isAutoScale="true" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet3">
+<ReportPageAttr>
+<HR F="0" T="0"/>
+<FR/>
+<HC F="0" T="0"/>
+<FC/>
+<UPFCR COLUMN="true" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,723900,723900,723900,723900,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[7848600,9410700,4838700,9791700,17259300,4076700,0,3924300,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" s="0">
+<O>
+<![CDATA[商品代码]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="1" r="0" s="0">
+<O>
+<![CDATA[商品名称]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="2" r="0" s="0">
+<O>
+<![CDATA[商品类型]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="3" r="0" s="0">
+<O>
+<![CDATA[制造商]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="4" r="0" s="0">
+<O>
+<![CDATA[商品详细]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="5" r="0" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="stockName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="1"/>
+</C>
+<C c="6" r="0">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="stockID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="1"/>
+</C>
+<C c="7" r="0" s="0">
+<O>
+<![CDATA[商品合计：]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="0" r="1" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="0"/>
+</C>
+<C c="1" r="1" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$goodsStyle = '2']]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="2" r="1" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsCategoryName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$goodsStyle = '2']]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="3" r="1" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="supplierName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$goodsStyle = '2']]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="4" r="1" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsDetail"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$goodsStyle = '1']]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="5" r="1" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript1">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="bgigoodsid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=A2]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="bgiwarehouseid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=G1]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<Content>
+<![CDATA[parent.showStockDetails(bgigoodsid,bgiwarehouseid)+"&logincompanyid="+logincompanyid;]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand leftParentDefault="false" left="A2" upParentDefault="false" up="G1"/>
+</C>
+<C c="6" r="1">
+<Expand/>
+</C>
+<C c="7" r="1" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(F2)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="2" s="0">
+<O>
+<![CDATA[仓位合计：]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="1" r="2" s="2">
+<Expand/>
+</C>
+<C c="2" r="2" s="2">
+<Expand/>
+</C>
+<C c="3" r="2" s="2">
+<Expand/>
+</C>
+<C c="4" r="2" s="2">
+<Expand/>
+</C>
+<C c="5" r="2" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(F2)]]></Attributes>
+</O>
+<Expand upParentDefault="false" up="G1"/>
+</C>
+<C c="6" r="2">
+<Expand/>
+</C>
+<C c="7" r="2" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(H2)]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<Format class="java.text.DecimalFormat">
+<![CDATA[#0.00]]></Format>
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72" foreground="-16776961" underline="1"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

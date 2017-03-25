@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false" default-dependency-check="none">
+	<!-- 采购退货管理 moyongsheng  begin-->
+		<bean id="procurementReturnAction" class="com.pengsheng.eims.storage.action.ProcurementReturnAction" scope="prototype"/>
+	<!-- 采购退货管理 moyongsheng  end-->			
+
+	<!-- 销售出库管理 moyongsheng  begin-->
+		<bean id="salesOutAction" class="com.pengsheng.eims.storage.action.SalesOutAction" scope="prototype"/>
+	<!-- 销售出库管理 moyongsheng  end-->	
+	
+	<!-- 领用出库管理 moyongsheng  begin-->
+		<bean id="takeOutAction" class="com.pengsheng.eims.storage.action.TakeOutAction" scope="prototype"/>
+	<!-- 领用出库管理 moyongsheng  end-->	
+		
+	<!-- 收货财务结算 moyongsheng  begin-->
+		<bean id="financialSettlementAction" class="com.pengsheng.eims.storage.action.FinancialSettlementAction" scope="prototype"/>
+	<!-- 收货财务结算 moyongsheng  end-->			
+		
+	<!-- 采购订单 Liuqian  begin-->
+	<bean id="procurementOrdersAction" class="com.pengsheng.eims.storage.action.ProcurementOrdersAction" scope="prototype"/>
+	<!-- 采购订单 Liuqian  end-->
+	
+	<!-- 采购收货 Add by du -->
+	<bean id="procurementReceiptAction" class="com.pengsheng.eims.storage.action.ProcurementReceiptAction" scope="prototype"/>
+	<!-- 采购收货 End by du -->
+	
+	<!-- 其他入库 Add by Moyongsheng -->
+	<bean id="otherReceiptAction" class="com.pengsheng.eims.storage.action.OtherReceiptAction" scope="prototype"/>
+	<!-- 其他入库 End by Moyongsheng -->	
+	
+	
+	<!-- 其他入库 结算 begin qiyue-->
+	<bean id="otherReceiptSettlementAction" class="com.pengsheng.eims.storage.action.OtherReceiptSettlementAction" scope="prototype"/>
+	<!-- 其他入库 结算  -->	
+	
+		
+	<!-- 库存查询 Add by du -->
+	<bean id="stockSearchAction" class="com.pengsheng.eims.storage.action.StockSearchAction" scope="prototype"/>
+	<!-- 库存查询 End by du -->
+	
+	<!-- 委外订做 Add by Liuqian -->
+	<bean id="consignProcessOrderAction" class="com.pengsheng.eims.storage.action.ConsignProcessOrderAction" scope="prototype"/>
+	<!-- 委外订做 End by Liuqian -->	
+
+	<!-- 委外收货 wanglei begin -->
+		<bean id="consignProcessTakeAction" class="com.pengsheng.eims.storage.action.ConsignProcessTakeAction" scope="prototype"/>
+	<!-- 委外收货 wanglei end -->
+	
+	<!-- 委外收货 结算Add by qiyue -->
+	<bean id="consignProcessSettlementAction" class="com.pengsheng.eims.storage.action.ConsignProcessSettlementAction" scope="prototype"/>
+	<!-- 委外收货结算 End by qiyue -->
+	
+	<!-- 商品调拨申请管理 Add by liujing -->
+	<bean id="allocationApplyAction" class="com.pengsheng.eims.storage.action.AllocationApplyAction" scope="prototype"/>
+	<!-- 商品调拨申请管理 End by liujing -->
+	
+	<!-- 商品调拨申请管理 Add by liujing 2013-07-30-->
+	<bean id="allocationApplyForAppAction" class="com.pengsheng.eims.storage.action.AllocationApplyForAppAction" scope="prototype"/>
+	<!-- 商品调拨申请管理 End by liujing 2013-07-30-->
+	
+	<!-- 客户批发调货申请管理 Add by sxh -->
+	<bean id="wholeApplyForAppAction" class="com.pengsheng.eims.storage.action.WholeApplyForAppAction" scope="prototype"/>
+	<!-- 客户批发调货申请管理 End by sxh -->
+	
+	<!-- 商品调拨管理 Add by du -->
+	<bean id="allocationAction" class="com.pengsheng.eims.storage.action.AllocationAction" scope="prototype"/>
+	<!-- 商品调拨管理 End by du -->
+	
+	<!-- 盘点 Add by Liuqian -->
+	<bean id="checkStorageAction" class="com.pengsheng.eims.storage.action.CheckStorageAction" scope="prototype"/>	
+	<!-- 盘点 Add by Liuqian -->
+	
+	<!-- 盘盈盘亏 Add by Liuqian -->
+	<bean id="overagelossesAction" class="com.pengsheng.eims.storage.action.OveragelossesAction" scope="prototype"/>	
+	<!-- 盘盈盘亏 Add by Liuqian -->
+				
+	<!-- 不合格品单管理 Add by moyongsheng -->
+	<bean id="nonconformingAction" class="com.pengsheng.eims.storage.action.NonconformingAction" scope="prototype"/>
+	<!-- 不合格品单管理 End by moyongsheng -->
+	
+	<!-- 其它出库 Add by du -->
+	<bean id="otherOutAction" class="com.pengsheng.eims.storage.action.OtherOutAction" scope="prototype"/>
+	<!-- 其它出库 End by du -->
+	
+	<!-- 委外送货 Add by du -->
+	<bean id="consignProcessDeliverAction" class="com.pengsheng.eims.storage.action.ConsignProcessDeliverAction" scope="prototype"/>
+	<!-- 委外送货 End by du -->	
+	
+	<!-- 待采购收货的订单查询 wanglei start -->
+	<bean id="procurementWaitAction" class="com.pengsheng.eims.storage.action.ProcurementWaitAction" scope="prototype"/>
+	<!-- 待采购收货的订单查询 wanglei end -->
+	
+	<!-- 待委外采购收货的订单查询 wanglei start -->
+	<bean id="consignProcessWaitAction" class="com.pengsheng.eims.storage.action.ConsignProcessWaitAction" scope="prototype"/>
+	<!-- 待委外采购收货的订单查询 wanglei end -->
+	
+	<!--调价管理 sb -->
+	<bean id="adjustmentPriceAction" class="com.pengsheng.eims.storage.action.AdjustmentPriceAction" scope="prototype"/>
+	<!--调价管理 sb-->
+	
+	<!-- 库存预警设置 Liuqian start -->
+	<bean id="stockAlertSettingAction" class="com.pengsheng.eims.storage.action.StockAlertSettingAction" scope="prototype"/>
+	<!-- 库存预警设置 Liuqian end -->
+	
+	<!-- 误期查询 qiyue begin -->
+	<bean id="storageDelaysReminderAction" class="com.pengsheng.eims.storage.action.StorageDelaysReminderAction" scope="prototype"/>
+	<!-- 误期查询 qiyue end -->
+	
+	<!-- 在途查询 qiyue begin -->
+	<bean id="inTransitAction" class="com.pengsheng.eims.storage.action.InTransitAction" scope="prototype"/>
+	<!-- 在途查询  qiyue end -->
+	
+
+	
+	<!-- 配镜发料 wanglei begin -->
+		 <bean id="spectaclesMaterialsAction" class="com.pengsheng.eims.storage.action.SpectaclesMaterialsAction" scope="prototype"/>
+	<!-- 配镜发料 wanglei end -->
+
+
+
+
+	<!-- 配镜已发料 wanglei begin -->
+		 <bean id="spectaclesMaterialsFinishAction" class="com.pengsheng.eims.storage.action.SpectaclesMaterialsFinishAction" scope="prototype"/>
+	<!-- 配镜已发料 wanglei end -->
+	
+	<!-- 加工检验 wanglei begin -->
+		 <bean id="workingCheckAction" class="com.pengsheng.eims.storage.action.WorkingCheckAction" scope="prototype"/>
+	<!-- 加工检验 wanglei end -->
+	
+	<!-- 加工检验单打印 wanglei begin -->
+		 <bean id="printWorkingCheckAction" class="com.pengsheng.eims.storage.action.PrintWorkingCheckAction" scope="prototype"/>
+	<!-- 加工检验单打印 wanglei end -->
+	
+	<!-- 记录加工时间 wanglei begin -->
+		 <bean id="recordWorkingTimeAction" class="com.pengsheng.eims.storage.action.RecordWorkingTimeAction" scope="prototype"/>
+	<!-- 记录加工时间 wanglei end -->
+	
+	<!-- 订单系统-订单状态查询 wanglei begin -->
+		 <bean id="procurementOrdersStatusAction" class="com.pengsheng.eims.storage.action.ProcurementOrdersStatusAction" scope="prototype"/>
+	<!-- 订单系统-订单状态查询 wanglei end -->
+	
+	<!-- 订单系统-委外订单状态查询 wanglei begin -->
+		 <bean id="consignProcessOrderStatusAction" class="com.pengsheng.eims.storage.action.ConsignProcessOrderStatusAction" scope="prototype"/>
+	<!-- 订单系统-委外订单状态查询 wanglei end -->
+	
+	<!-- 订单系统-商品退货状态查询 wanglei begin -->
+		 <bean id="ordersStatusReturnAction" class="com.pengsheng.eims.storage.action.OrdersStatusReturnAction" scope="prototype"/>
+	<!-- 订单系统-商品退货状态查询 wanglei end -->
+	
+	
+	<!-- 采购商品退货管理 qiyue begin -->
+		<bean id="returnMerchandiseManagementAction" class="com.pengsheng.eims.storage.action.ReturnMerchandiseManagementAction" scope="prototype"/>
+	<!-- 采购商品退货管理 qiyue end -->
+	
+	<!-- 采购商品退货结算 qiyue begin -->
+		<bean id="returnMerchandiseSettlementAction" class="com.pengsheng.eims.storage.action.ReturnMerchandiseSettlementAction" scope="prototype"/>
+	<!-- 采购商品退货结算 qiyue end -->
+	
+	<!-- 其它出库  qiyue begin -->
+		<bean id="otherDatabaseManagementAction" class="com.pengsheng.eims.storage.action.OtherDatabaseManagementAction" scope="prototype"/>
+	<!-- 其它出库 qiyue end -->
+	
+	<!-- 其它出库 结算 qiyue begin -->
+		<bean id="otherDatabaseSettlementAction" class="com.pengsheng.eims.storage.action.OtherDatabaseSettlementAction" scope="prototype"/>
+	<!-- 其它出库 结算 qiyue end -->
+	<bean id="smsAction" class="com.pengsheng.eims.storage.action.SmsAction" scope="prototype"/>
+	
+	<!--  wanglei begin -->
+		<bean id="reAllocationAction" class="com.pengsheng.eims.storage.action.ReAllocationAction" scope="prototype"/>
+	<!--  wanglei end -->
+	<!-- 条码打印 wanglei begin -->
+		<bean id="printBarcodeAction" class="com.pengsheng.eims.storage.action.PrintBarcodeAction" scope="prototype"/>
+	<!-- 条码打印 wanglei end -->
+	
+	<!-- 成本调价管理 wanglei begin -->
+		<bean id="adcostPriceAction" class="com.pengsheng.eims.storage.action.AdcostPriceAction" scope="prototype"/>
+	<!-- 成本调价管理 wanglei end -->
+	
+	<!-- 抽检  sxh begin -->
+		 <bean id="samplingCheckAction" class="com.pengsheng.eims.storage.action.SamplingCheckAction" scope="prototype"/>
+	<!-- 抽检  sxh end -->
+	
+	<!-- 系统上线数据清理 szk begin -->
+		 <bean id="systemClearAction" class="com.pengsheng.eims.storage.action.SystemClearAction" scope="prototype"/>
+	<!-- 系统上线数据清理 szk end -->
+	
+	
+	<!-- 收货检验 sxh begin -->
+		 <bean id="procurementCheckAction" class="com.pengsheng.eims.storage.action.ProcurementCheckAction" scope="prototype"/>
+	<!-- 收货检验 sxh end -->
+	
+	<!-- 批发价格调价管理 liujing begin -->
+		<bean id="wholesalePriceAction" class="com.pengsheng.eims.storage.action.WholesalePriceAction" scope="prototype"/>
+	<!-- 批发价格调价管理 liujing end -->
+	
+	<!-- 加盟店调货管理lvhz  begin-->
+		<bean id="storeGoodsAction" class="com.pengsheng.eims.storage.action.StoreGoodsAction" scope="prototype"/>
+	<!-- 加盟店调货管理lvhz  end-->
+		
+	<!-- 退款 yy  begin-->
+		<bean id="salesReturnAction" class="com.pengsheng.eims.storage.action.SalesReturnAction" scope="prototype"/>
+	<!-- 退款yy  end-->	
+	
+	<!-- 调拨配送  sxh begin -->
+		 <bean id="allocationSendAction" class="com.pengsheng.eims.storage.action.AllocationSendAction" scope="prototype"/>
+	<!-- 调拨配送  sxh end -->
+	
+	<!-- 配镜评级sxh begin -->
+		 <bean id="glassesCheckAction" class="com.pengsheng.eims.storage.action.GlassesCheckAction" scope="prototype"/>
+	<!-- 配镜评级sxh end -->
+	
+	<!-- 委外配送szk begin -->
+		 <bean id="outSourcingDeliveryAction" class="com.pengsheng.eims.storage.action.OutSourcingDeliveryAction" scope="prototype"/>
+	<!-- 委外配送szk end -->
+	
+	<!-- 客户批发收货管理 Add by sxh -->
+	<bean id="storeReceiptAction" class="com.pengsheng.eims.storage.action.StoreReceiptAction" scope="prototype"/>
+	<!-- 客户批发收货管理 End by sxh -->
+	
+</beans>

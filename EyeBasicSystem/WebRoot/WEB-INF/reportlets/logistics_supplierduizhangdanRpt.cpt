@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="supplierID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 ('供应商名称:' + B_SP_ForShort + '    查询日期:' + '${bgnDate}' + ' ～ '+'${endDate}') as queryDate from B_SupplierAgent where B_SP_ID='${supplierID}'
+]]></Query>
+</TableData>
+<TableData name="ds4" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+
+select billdate as billdate,billid as billid,
+       billtype as billtype,billamount as billamount,
+       receiptamount as receiptamount,deliveryID as deliveryID,
+       prePayAmount as prePayAmount,
+       supplierSubAmount as supplierSubAmount,
+       manualAmount as manualAmount
+  from (
+	select convert(varchar(16),L_SC_SA_Date,120) as billdate,L_SC_SA_BillID as billid,
+		   L_SC_SA_BillType as billtype,L_SC_SA_CostPriceAmount as billamount,
+		   L_SC_SA_PayMentAmount as receiptamount,L_SC_SA_DeliveryID as deliveryID,
+		   L_SC_SA_PrePayAmount as prePayAmount,
+		   L_SC_SA_SupplierSubAmount as supplierSubAmount,
+		   L_SC_SA_ManualAmount as manualAmount
+	  from L_SC_SupplierAccount left join B_SupplierAgent on L_SC_SA_SubSupplierID = B_SP_ID
+		   inner join C_ST_Inventory on L_SC_SA_BillID = C_ST_I_BillID
+		   left join B_Warehouse on C_ST_I_InStockId = B_WH_ID 
+		   left join B_Departments on B_WH_deptID = B_DP_DepartmentID 
+	  where L_SC_SA_SubSupplierID='${supplierID}' and ((isnull('${bgnDate}','')<>'' 
+			and  convert(varchar(10),L_SC_SA_Date,120)>='${bgnDate}') or (isnull('${bgnDate}','')=''))
+			and convert(varchar(10),L_SC_SA_Date,120)<='${endDate}'
+			and C_ST_I_BillTypeId in ('1','9')
+			and B_DP_CompanysID = '${logincompanyid}'
+	union all
+	select convert(varchar(16),L_SC_SA_Date,120) as billdate,L_SC_SA_BillID as billid,
+		   L_SC_SA_BillType as billtype,L_SC_SA_CostPriceAmount as billamount,
+		   L_SC_SA_PayMentAmount as receiptamount,L_SC_SA_DeliveryID as deliveryID,
+		   L_SC_SA_PrePayAmount as prePayAmount,
+		   L_SC_SA_SupplierSubAmount as supplierSubAmount,
+		   L_SC_SA_ManualAmount as manualAmount
+	  from L_SC_SupplierAccount left join B_SupplierAgent on L_SC_SA_SubSupplierID = B_SP_ID
+		   inner join C_ST_Inventory on L_SC_SA_BillID = C_ST_I_BillID
+		   left join B_Warehouse on C_ST_I_OutStockId = B_WH_ID 
+		   left join B_Departments on B_WH_deptID = B_DP_DepartmentID 
+	  where L_SC_SA_SubSupplierID='${supplierID}' and ((isnull('${bgnDate}','')<>'' 
+			and  convert(varchar(10),L_SC_SA_Date,120)>='${bgnDate}') or (isnull('${bgnDate}','')=''))
+			and convert(varchar(10),L_SC_SA_Date,120)<='${endDate}'
+			and C_ST_I_BillTypeId = '2'
+			and B_DP_CompanysID = '${logincompanyid}'
+	union all
+	select convert(varchar(16),L_SC_SA_Date,120) as billdate,L_SC_SA_BillID as billid,
+		   L_SC_SA_BillType as billtype,L_SC_SA_CostPriceAmount as billamount,
+		   L_SC_SA_PayMentAmount as receiptamount,L_SC_SA_DeliveryID as deliveryID,
+		   L_SC_SA_PrePayAmount as prePayAmount,
+		   L_SC_SA_SupplierSubAmount as supplierSubAmount,
+		   L_SC_SA_ManualAmount as manualAmount
+	  from L_SC_SupplierAccount left join B_SupplierAgent on L_SC_SA_SubSupplierID = B_SP_ID
+		   inner join L_PB_PB_PaymentBill on L_SC_SA_BillID = L_PB_PB_ID
+		   left join B_Departments on L_PB_PB_DepartmentID = B_DP_DepartmentID 
+	  where L_SC_SA_SubSupplierID='${supplierID}' and ((isnull('${bgnDate}','')<>'' 
+			and  convert(varchar(10),L_SC_SA_Date,120)>='${bgnDate}') or (isnull('${bgnDate}','')=''))
+			and convert(varchar(10),L_SC_SA_Date,120)<='${endDate}'
+			and B_DP_CompanysID = '${logincompanyid}'
+  )m
+  order by billdate]]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 isnull((isnull(m.B_SP_StartPrice,0)+isnull(temp.contactamount,0)),0) as contactamount
+  from B_SupplierAgent 
+    left join (
+		select top 1 L_SC_SA_SubSupplierID as L_SC_SA_SubSupplierID,isnull((isnull(sum(isnull(L_SC_SA_CostPriceAmount,0)+isnull(L_SC_SA_PayMentAmount,0)+isnull(L_SC_SA_PrePayAmount,0)+isnull(L_SC_SA_SupplierSubAmount,0)+isnull(L_SC_SA_ManualAmount,0)),0)),0) as contactamount
+		  from L_SC_SupplierAccount left join B_SupplierAgent on L_SC_SA_SubSupplierID=B_SP_ID
+		  where L_SC_SA_SubSupplierID='${supplierID}' 
+				and convert(varchar(10),L_SC_SA_Date,120)<'${bgnDate}'
+		  group by L_SC_SA_SubSupplierID
+    )temp on B_SP_ID=temp.L_SC_SA_SubSupplierID
+
+    left join (
+        select B_SP_SupplierID,B_SP_StartPrice from B_SupplierOpening 
+          where B_SP_CompanyID = '${logincompanyid}' and B_SP_SupplierID = '${supplierID}'
+    )m  on B_SP_ID=m.B_SP_SupplierID
+
+  where B_SP_ID='${supplierID}']]></Query>
+</TableData>
+</TableDataMap>
+<ReportExportAttr>
+<ExcelExportAttr hideColumn="false" hideRow="false"/>
+<PDFExportAttr/>
+<HTMLExportAttr/>
+</ReportExportAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="3"/>
+<FR F="7" T="7"/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,914400,914400,914400,914400,914400,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,0,4610100,5372100,11734800,2592000,2592000,2592000,2743200,2743200,2743200,4419600,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="2" r="0" cs="10" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="1" cs="10" s="1">
+<O>
+<![CDATA[供应商往来明细]]></O>
+<Expand/>
+</C>
+<C c="2" r="2" cs="10" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="queryDate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="3" s="3">
+<O>
+<![CDATA[单据日期]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="3" r="3" s="3">
+<O>
+<![CDATA[单据编号]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="4" r="3" s="3">
+<O>
+<![CDATA[货单号]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="5" r="3" s="3">
+<O>
+<![CDATA[单据类型]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="6" r="3" s="3">
+<O>
+<![CDATA[单据金额]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="7" r="3" s="3">
+<O>
+<![CDATA[实付金额]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="8" r="3" s="3">
+<O>
+<![CDATA[预付款]]></O>
+<Expand/>
+</C>
+<C c="9" r="3" s="3">
+<O>
+<![CDATA[厂商减账]]></O>
+<Expand/>
+</C>
+<C c="10" r="3" s="3">
+<O>
+<![CDATA[调整]]></O>
+<Expand/>
+</C>
+<C c="11" r="3" s="3">
+<O>
+<![CDATA[应付余额]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand upParentDefault="false"/>
+</C>
+<C c="2" r="4" cs="4" s="4">
+<O>
+<![CDATA[期初金额：]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="6" r="4" cs="5" s="3">
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="11" r="4" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="contactamount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="0"/>
+</C>
+<C c="1" r="5">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="billid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="billdate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="5" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="billid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript1">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="billid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B6]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<Content>
+<![CDATA[parent.billdetail(billid);]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="4" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="deliveryID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="billtype"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="billamount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="receiptamount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="prePayAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="supplierSubAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="manualAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="5" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(&B6 = 1, FuncOne(L5 + G6 + H6 + I6 + J6 + K6), FuncOne(L6[B6:-1]A + G6 + H6 + I6 + J6 + K6))]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="6" cs="4" s="4">
+<O>
+<![CDATA[期末金额：]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="6" r="6" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(G6))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="7" r="6" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(H6))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="8" r="6" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(I6))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="9" r="6" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J6))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="10" r="6" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(K6))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="11" r="6" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(L6[B6:-1]A)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="0"/>
+</C>
+<C c="2" r="7" cs="2" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="打印日期：" + today()]]></Attributes>
+</O>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="4" r="7" s="9">
+<Expand/>
+</C>
+<C c="5" r="7" s="9">
+<Expand/>
+</C>
+<C c="6" r="7" s="9">
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="7" r="7" cs="5" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="页次:第 " + $$page_number + " 页/共 " + $$totalPage_number + " 页"]]></Attributes>
+</O>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="0" bottom="986400" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72" foreground="-16776961" underline="1"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

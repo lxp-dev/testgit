@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="inOrOut"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="brandID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsCategoryID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+declare @bgnDate varchar(10),@endDate varchar(10),@goodsID varchar(50),@goodsName varchar(500),@shopCode varchar(50),@goodsCategoryID varchar(10),@supplierID varchar(10),@brandID varchar(10),@inOrOut varchar(10)
+set @bgnDate = '${bgnDate}'
+set @endDate = '${endDate}'
+set @goodsID = '${goodsID}'
+set @goodsName = '${goodsName}'
+set @shopCode = '${shopCode}'
+set @goodsCategoryID = '${goodsCategoryID}'
+set @supplierID = '${supplierID}'
+set @brandID = '${brandID}'
+set @inOrOut = '${inOrOut}'
+
+if (@shopCode <> 'suoyou')
+begin
+
+select billID as billID,goodsID as goodsID,B_GI_GoodsName as goodsName,
+       (case billTypeID 
+            when '1' then '采购收货单' 
+            when '2' then '采购退货单' 
+            when '3' then '销售出库单' 
+            when '4' then '调拨单' 
+            when '5' then '盘盈单' 
+            when '6' then '盘亏单' 
+            when '7' then '其他入库单' 
+            when '8' then '其他出库单' 
+            when '9' then '委外收货单'
+            else ''           
+        end) as billTypeID,
+       sum(goodsQuantity) as goodsQuantity, 
+       sum(notTaxRateAmount) as notTaxRateAmount
+  from (
+select C_ST_I_BillID as billID,C_ST_I_BillTypeId as billTypeID,
+       C_ST_IE_GoodsId as goodsID,sum(C_ST_IE_GoodsQuantity) as goodsQuantity,
+       sum(C_ST_IE_NotTaxRateAmount) as notTaxRateAmount
+  from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+       inner join B_Warehouse on C_ST_I_InStockId=B_WH_ID
+  where C_ST_I_BillTypeId in ('5') and C_ST_I_AuditState='1'
+        and convert(varchar(10),C_ST_I_AuditDate,120)>=@bgnDate
+        and convert(varchar(10),C_ST_I_AuditDate,120)<=@endDate
+        and B_WH_deptID=@shopcode
+  group by C_ST_I_BillID,C_ST_I_BillTypeId,C_ST_IE_GoodsId
+union all 
+select C_ST_I_BillID as billID,C_ST_I_BillTypeId as billTypeID,
+       C_ST_IE_GoodsId as goodsID,-sum(C_ST_IE_GoodsQuantity) as goodsQuantity,
+       -sum(C_ST_IE_NotTaxRateAmount) as notTaxRateAmount
+  from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+       inner join B_Warehouse on C_ST_I_OutStockId=B_WH_ID
+  where C_ST_I_BillTypeId in ('6') and C_ST_I_AuditState='1'
+        and convert(varchar(10),C_ST_I_AuditDate,120)>=@bgnDate
+        and convert(varchar(10),C_ST_I_AuditDate,120)<=@endDate
+        and B_WH_deptID=@shopcode
+  group by C_ST_I_BillID,C_ST_I_BillTypeId,C_ST_IE_GoodsId
+union all 
+select C_ST_I_BillID as billID,C_ST_I_BillTypeId as billTypeID,
+       C_ST_IE_GoodsId as goodsID,-sum(C_ST_IE_GoodsQuantity) as goodsQuantity,
+       -sum(C_ST_IE_NotTaxRateAmount) as notTaxRateAmount
+  from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+       inner join B_Warehouse on C_ST_I_OutStockId=B_WH_ID
+  where C_ST_I_BillTypeId in ('3') and C_ST_I_AuditState='1' and isnull(C_ST_I_GoodsCategory,'')=''
+        and convert(varchar(10),C_ST_I_AuditDate,120)>=@bgnDate
+        and convert(varchar(10),C_ST_I_AuditDate,120)<=@endDate
+        and B_WH_deptID=@shopcode
+  group by C_ST_I_BillID,C_ST_I_BillTypeId,C_ST_IE_GoodsId
+union all 
+select C_ST_I_BillID as billID,C_ST_I_BillTypeId as billTypeID,
+       C_ST_IE_GoodsId as goodsID,-sum(C_ST_IE_GoodsQuantity) as goodsQuantity,
+       -sum(C_ST_IE_NotTaxRateAmount) as notTaxRateAmount
+  from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+  where C_ST_I_BillTypeId in ('3') and C_ST_I_AuditState='1' and isnull(C_ST_I_GoodsCategory,'')='20'
+        and convert(varchar(10),C_ST_I_AuditDate,120)>=@bgnDate
+        and convert(varchar(10),C_ST_I_AuditDate,120)<=@endDate
+        and C_ST_I_SupplierId=@shopcode
+  group by C_ST_I_BillID,C_ST_I_BillTypeId,C_ST_IE_GoodsId
+)temp inner join B_GoodsInfo on goodsID=B_GI_GoodsID
+  where 1=1 
+        and ((isnull(@goodsID,'')<>'' and goodsID like '%' + @goodsID + '%') or isnull(@goodsID,'')='')
+        and ((isnull(@goodsName,'')<>'' and B_GI_GoodsName like '%' + @goodsName + '%') or isnull(@goodsName,'')='')
+        and ((isnull(@goodsCategoryID,'')<>'' and B_GI_GoodsCategoryID like '%' + @goodsCategoryID + '%') or isnull(@goodsCategoryID,'')='')
+        and ((isnull(@supplierID,'')<>'' and B_GI_SupplierID like '%' + @supplierID + '%') or isnull(@supplierID,'')='')
+        and ((isnull(@brandID,'')<>'' and B_GI_BrandID like '%' + @brandID + '%') or isnull(@brandID,'')='')
+  group by billID,billTypeID,goodsID,B_GI_GoodsName
+
+end
+begin
+
+select billID as billID,goodsID as goodsID,B_GI_GoodsName as goodsName,
+       (case billTypeID 
+            when '1' then '采购收货单' 
+            when '2' then '采购退货单' 
+            when '3' then '销售出库单' 
+            when '4' then '调拨单' 
+            when '5' then '盘盈单' 
+            when '6' then '盘亏单' 
+            when '7' then '其他入库单' 
+            when '8' then '其他出库单' 
+            when '9' then '委外收货单'
+            else ''           
+        end) as billTypeID,
+       sum(goodsQuantity) as goodsQuantity, 
+       sum(notTaxRateAmount) as notTaxRateAmount
+  from (
+select C_ST_I_BillID as billID,C_ST_I_BillTypeId as billTypeID,
+       C_ST_IE_GoodsId as goodsID,sum(C_ST_IE_GoodsQuantity) as goodsQuantity,
+       sum(C_ST_IE_NotTaxRateAmount) as notTaxRateAmount
+  from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+       inner join B_Warehouse on C_ST_I_InStockId=B_WH_ID
+  where C_ST_I_BillTypeId in ('5') and C_ST_I_AuditState='1'
+        and convert(varchar(10),C_ST_I_AuditDate,120)>=@bgnDate
+        and convert(varchar(10),C_ST_I_AuditDate,120)<=@endDate
+  group by C_ST_I_BillID,C_ST_I_BillTypeId,C_ST_IE_GoodsId
+union all 
+select C_ST_I_BillID as billID,C_ST_I_BillTypeId as billTypeID,
+       C_ST_IE_GoodsId as goodsID,-sum(C_ST_IE_GoodsQuantity) as goodsQuantity,
+       -sum(C_ST_IE_NotTaxRateAmount) as notTaxRateAmount
+  from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+       inner join B_Warehouse on C_ST_I_OutStockId=B_WH_ID
+  where C_ST_I_BillTypeId in ('6') and C_ST_I_AuditState='1'
+        and convert(varchar(10),C_ST_I_AuditDate,120)>=@bgnDate
+        and convert(varchar(10),C_ST_I_AuditDate,120)<=@endDate
+  group by C_ST_I_BillID,C_ST_I_BillTypeId,C_ST_IE_GoodsId
+union all 
+select C_ST_I_BillID as billID,C_ST_I_BillTypeId as billTypeID,
+       C_ST_IE_GoodsId as goodsID,-sum(C_ST_IE_GoodsQuantity) as goodsQuantity,
+       -sum(C_ST_IE_NotTaxRateAmount) as notTaxRateAmount
+  from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+  where C_ST_I_BillTypeId in ('3') and C_ST_I_AuditState='1'
+        and convert(varchar(10),C_ST_I_AuditDate,120)>=@bgnDate
+        and convert(varchar(10),C_ST_I_AuditDate,120)<=@endDate
+  group by C_ST_I_BillID,C_ST_I_BillTypeId,C_ST_IE_GoodsId
+)temp inner join B_GoodsInfo on goodsID=B_GI_GoodsID
+  where 1=1 
+        and ((isnull(@goodsID,'')<>'' and goodsID like '%' + @goodsID + '%') or isnull(@goodsID,'')='')
+        and ((isnull(@goodsName,'')<>'' and B_GI_GoodsName like '%' + @goodsName + '%') or isnull(@goodsName,'')='')
+        and ((isnull(@goodsCategoryID,'')<>'' and B_GI_GoodsCategoryID like '%' + @goodsCategoryID + '%') or isnull(@goodsCategoryID,'')='')
+        and ((isnull(@supplierID,'')<>'' and B_GI_SupplierID like '%' + @supplierID + '%') or isnull(@supplierID,'')='')
+        and ((isnull(@brandID,'')<>'' and B_GI_BrandID like '%' + @brandID + '%') or isnull(@brandID,'')='')
+  group by billID,billTypeID,goodsID,B_GI_GoodsName
+
+end]]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.page.First">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-First')}]]></Text>
+<IconName>
+<![CDATA[first]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Previous">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Previous')}]]></Text>
+<IconName>
+<![CDATA[previous]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.PageNavi">
+<WidgetAttr/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Next">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Next')}]]></Text>
+<IconName>
+<![CDATA[next]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Last">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Last')}]]></Text>
+<IconName>
+<![CDATA[last]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.FlashPrint">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Utils-Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.Export">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Export')}]]></Text>
+<IconName>
+<![CDATA[export]]></IconName>
+<Buttons pdf="true" excelP="true" excelO="true" excelS="true" word="true" image="true" html="true"/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.SetPrinterOffset">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('SetPrinterOffset')}]]></Text>
+<IconName>
+<![CDATA[setprinteroffset]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="false" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<ReportExportAttr>
+<ExcelExportAttr hideColumn="false" hideRow="false"/>
+<PDFExportAttr/>
+<HTMLExportAttr/>
+</ReportExportAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="4"/>
+<FR F="7" T="7"/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1143000,1143000,304800,419100,914400,914400,914400,914400,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[7924800,4343400,10858500,12077700,3771900,5181600,3276600,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="6" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" cs="6" s="1">
+<O>
+<![CDATA[商品进销存明细表(发出)]]></O>
+<Expand/>
+</C>
+<C c="0" r="4" s="2">
+<O>
+<![CDATA[单据编号]]></O>
+<Expand/>
+</C>
+<C c="1" r="4" s="2">
+<O>
+<![CDATA[单据类型]]></O>
+<Expand/>
+</C>
+<C c="2" r="4" s="2">
+<O>
+<![CDATA[商品代码]]></O>
+<Expand/>
+</C>
+<C c="3" r="4" s="2">
+<O>
+<![CDATA[商品名称]]></O>
+<Expand/>
+</C>
+<C c="4" r="4" s="2">
+<O>
+<![CDATA[商品数量]]></O>
+<Expand/>
+</C>
+<C c="5" r="4" s="2">
+<O>
+<![CDATA[不含税销售成本]]></O>
+<Expand/>
+</C>
+<C c="0" r="5" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="billID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="5" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="billTypeID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="5" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="goodsID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="5" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="goodsName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="5" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="goodsQuantity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="5" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="notTaxRateAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="6" cs="4" s="4">
+<O>
+<![CDATA[合计：]]></O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="6" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(E6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="6" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F6)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="7" cs="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="打印日期：" + today()]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="7" cs="3" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="页次:第 " + $$page_number + " 页/共 " + $$totalPage_number + " 页"]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<PaperSize width="30240000" height="47520000"/>
+<Margin top="986400" left="1438560" bottom="986400" right="1438560"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="88"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="76" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	
+	<!-- 眼部健康检查 (新)sxh begin-->
+		<bean id="eyesCheckHydsyAction" class="com.pengsheng.eims.hydsycasehistory.action.EyesCheckHydsyAction" scope="prototype"/>
+	<!-- 眼部健康检查 (新)sxh end-->
+	
+	<!-- 双眼视功能检查  (新) sxh  begin -->
+	     <bean id="doubleEyeFunHydsyAction" class="com.pengsheng.eims.hydsycasehistory.action.DoubleEyeFunHydsyAction" scope="prototype"/>
+	<!-- 双眼视功能检查  (新) sxh  end -->
+	
+	<!-- 屈光检查  (新) sxh   begin -->
+	     <bean id="refractiveHydsyAction" class="com.pengsheng.eims.hydsycasehistory.action.RefractiveHydsyAction" scope="prototype"/>
+	<!-- 屈光检查  (新) sxh   end -->
+
+	<!-- 验光基表 (新) sxh begin-->
+		<bean id="optometryBasicHydsyAction" class="com.pengsheng.eims.hydsycasehistory.action.OptometryBasicHydsyAction" scope="prototype"/>
+	<!-- 验光基表 (新) sxh end-->
+	
+	<!-- 特殊功能检查 (新) sxh begin-->
+		<bean id="specialCheckHydsyAction" class="com.pengsheng.eims.hydsycasehistory.action.SpecialCheckHydsyAction" scope="prototype"/>
+	<!-- 特殊功能检查 (新) sxh end-->
+	
+	<!-- 检查结论 (新) sxh begin-->
+		<bean id="inspectionHydsyAction" class="com.pengsheng.eims.hydsycasehistory.action.InspectionHydsyAction" scope="prototype"/>
+	<!-- 检查结论 (新) sxh end-->
+	
+	<!-- 接触镜评估 (新) sxh begin-->
+		<bean id="contactGlassHydsyAction" class="com.pengsheng.eims.hydsycasehistory.action.ContactGlassHydsyAction" scope="prototype"/>
+	<!-- 接触镜评估 (新) sxh end-->
+	
+	<!-- 角膜接触镜检查 (新) sxh begin-->
+		<bean id="cornealContactlLensHydsyAction" class="com.pengsheng.eims.hydsycasehistory.action.CornealContactlLensHydsyAction" scope="prototype"/>
+	<!-- 角膜接触镜检查 (新) sxh end-->
+	
+	<!-- 验光病例查询 (新) sxh  begin -->
+		<bean id="optometryCaseHydsyAction" class="com.pengsheng.eims.hydsycasehistory.action.OptometryCaseHydsyAction" scope="prototype"/>
+	<!-- 验光病例查询 (新) sxh  end -->
+	
+	<!-- 戴镜史 (新) sxh begin-->
+		<bean id="glassesHistoryHydsyAction" class="com.pengsheng.eims.hydsycasehistory.action.GlassesHistoryHydsyAction" scope="prototype"/>
+	<!-- 戴镜史 (新) sxh end-->
+
+	<!-- 顾客验光新2014 哈医大四院 Add by mysflying -->
+	<bean id="customerOptometryHydsyAction" class="com.pengsheng.eims.hydsycasehistory.action.CustomerOptometryHydsyAction" scope="prototype"/>
+	<!-- 顾客验光 Add by mysflying -->
+	
+	<!-- 眼肌 检查begin-->
+		<bean id="yjCheckHydsyAction" class="com.pengsheng.eims.hydsycasehistory.action.YjCheckHydsyAction" scope="prototype"/>
+	<!-- 眼肌 检查begin-->		
+</beans>

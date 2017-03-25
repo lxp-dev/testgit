@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="endtime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begintime"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="department"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select departmentID into #shopCode from sales_createShopCodeTab('${department}')
+
+select 
+printdate,
+S_SE_SB_ShopCode,
+B_DP_DepartmentName,
+B_B_Number,
+B_B_Name,
+yk as yk
+  from (
+
+select 
+'${begintime}' +'--'+ '${endtime}' as printdate,
+S_SE_SB_ShopCode,
+B_DP_DepartmentName,
+B_B_Number,
+B_B_Name,
+sum(cast(isnull(yk.S_SE_SL_Price,0) as float)) as yk
+from S_SE_SalesBasic
+left join S_SE_SalesLog yk on S_SE_SB_SalesID = yk.S_SE_SL_SalesID and yk.S_SE_SL_ConsumptionID = '3'
+inner join B_Departments on B_DP_DepartmentID = S_SE_SB_ShopCode
+inner join B_Bank on S_SE_SL_SourceID=B_B_Number
+where 1=1 
+ and  S_SE_SB_ValueFlag='1' 
+  and convert(varchar(10),S_SE_SB_PosDatetime,23) >= '${begintime}'
+  and convert(varchar(10),S_SE_SB_PosDatetime,23) <= '${endtime}'
+  and ((isnull('${department}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopcode )) or (isnull('${department}','')=''))
+group by S_SE_SB_ShopCode,B_DP_DepartmentName,B_B_Number,B_B_Name
+union all
+select 
+'${begintime}' +'--'+ '${endtime}' as printdate,
+S_SE_SB_ShopCode,
+B_DP_DepartmentName,
+B_B_Number,
+B_B_Name,
+sum(cast(isnull(yk.S_SE_SL_Price,0) as float)) as yk
+from S_SE_SalesBasic_Finished
+left join S_SE_SalesLog yk on S_SE_SB_SalesID = yk.S_SE_SL_SalesID and yk.S_SE_SL_ConsumptionID = '3'
+inner join B_Departments on B_DP_DepartmentID = S_SE_SB_ShopCode
+inner join B_Bank on S_SE_SL_SourceID=B_B_Number
+where 1=1 
+ and  S_SE_SB_ValueFlag='1' 
+  and convert(varchar(10),S_SE_SB_PosDatetime,23) >= '${begintime}'
+  and convert(varchar(10),S_SE_SB_PosDatetime,23) <= '${endtime}'
+  and ((isnull('${department}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopcode )) or (isnull('${department}','')=''))
+group by S_SE_SB_ShopCode,B_DP_DepartmentName,B_B_Number,B_B_Name
+
+)t
+
+order by S_SE_SB_ShopCode
+drop table #shopCode]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters/>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="departmentNames"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[DECLARE @departmentNames VARCHAR(1000)
+SET @departmentNames = '${departmentNames}']]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="4"/>
+<FR/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1219200,1409700,914400,914400,1371600,914400,914400,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[2667000,2057400,4320000,3168000,2743200,2743200,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="13" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" cs="13" s="1">
+<O>
+<![CDATA[结款类型统计表（银行）]]></O>
+<Expand/>
+</C>
+<C c="0" r="2" s="2">
+<O>
+<![CDATA[查询日期：]]></O>
+<Expand/>
+</C>
+<C c="1" r="2" cs="3" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begintime + " 至 " + $endtime]]></Attributes>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="3" s="4">
+<O>
+<![CDATA[销售门店：]]></O>
+<Expand/>
+</C>
+<C c="1" r="3" cs="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_DP_DepartmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand extendable="3"/>
+</C>
+<C c="0" r="4" cs="2" s="5">
+<O>
+<![CDATA[销售门店]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="2" r="4" s="5">
+<O>
+<![CDATA[银行卡小计]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="3" r="4" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_B_Name"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="1"/>
+</C>
+<C c="0" r="5" cs="2" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_DP_DepartmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="5" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(D6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="yk"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="6" cs="2" s="8">
+<O>
+<![CDATA[合计：]]></O>
+<Expand/>
+</C>
+<C c="2" r="6" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(C6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="6" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(D6))]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="88"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

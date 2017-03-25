@@ -1,0 +1,2688 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[2014-08-01]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[2014-08-31]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT departmentID
+INTO   #shopCode
+FROM   Sales_createshopcodetab('${shopCode}')
+
+------------------------------------------------------------------------------------
+IF ( '${bgnDate}' < CONVERT(VARCHAR(10), Getdate(), 120) )
+  BEGIN
+      IF ( '${endDate}' < CONVERT(VARCHAR(10), Getdate(), 120) )
+        BEGIN
+            SELECT ( '${bgnDate}' + ' 至 ' + '${endDate}' ) AS queryDate,
+                   DepartmentId                            AS DepartmentId,
+                   departmentName                          AS departmentName,
+                   workingnum                              AS workingnum,
+                   num                                     AS num,
+                   productsnum                             AS productsnum,
+                   productsprice                           AS productsprice,
+                   ordersnum                               AS ordersnum,
+                   ordersprice                             AS ordersprice,
+                   wholeframe                              AS wholeframe,
+                   openslotting                            AS openslotting,
+                   drillhole                               AS drillhole,
+                   slotandhole                             AS slotandhole,
+                   rubberglass                             AS rubberglass,
+                   hxnonconformingnum                      AS hxnonconformingnum,
+                   nonconformingnum                        AS nonconformingnum,
+                   nonconformingprice                      AS nonconformingprice
+            FROM   (SELECT B_DP_DepartmentID                AS DepartmentID,
+                           B_DP_DepartmentName              AS departmentName,
+                           SUM(R_FWS_OS_workingnum)         AS workingnum,
+                           SUM(R_FWS_OS_collectnum)         AS num,
+                           SUM(R_FWS_OS_productsnum)        AS productsnum,
+                           SUM(R_FWS_OS_productsprice)      AS productsprice,
+                           SUM(R_FWS_OS_ordersnum)          AS ordersnum,
+                           SUM(R_FWS_OS_ordersprice)        AS ordersprice,
+                           SUM(R_FWS_OS_wholeframe)         AS wholeframe,
+                           SUM(R_FWS_OS_openslotting)       AS openslotting,
+                           SUM(R_FWS_OS_drillhole)          AS drillhole,
+                           SUM(R_FWS_OS_slotandhole)        AS slotandhole,
+                           SUM(R_FWS_OS_rubberglass)        AS rubberglass,
+                           SUM(R_FWS_OS_hxnonconformingnum) AS hxnonconformingnum,
+                           SUM(R_FWS_OS_nonconformingnum)   AS nonconformingnum,
+                           SUM(R_FWS_OS_nonconformingprice) AS nonconformingprice
+                    FROM   R_processWorkingStatisticsOnlyStore
+                           INNER JOIN B_Departments
+                             ON R_FWS_OS_DepartmentId = B_DP_DepartmentID
+                    WHERE  ( ( Isnull('${shopCode}', '') <> ''
+                               AND R_FWS_OS_DepartmentId IN (SELECT departmentID
+                                                             FROM   #shopCode) )
+                              OR ( Isnull('${shopCode}', '') = '' ) )
+                           AND R_FWS_OS_Date >= '${bgnDate}'
+                           AND R_FWS_OS_Date <= '${endDate}'
+                    GROUP  BY B_DP_DepartmentID,
+                              B_DP_DepartmentName)TEMP
+            WHERE  workingnum <> 0
+                    OR num <> 0
+                    OR productsnum <> 0
+                    OR productsprice <> 0
+                    OR ordersnum <> 0
+                    OR ordersprice <> 0
+                    OR wholeframe <> 0
+                    OR openslotting <> 0
+                    OR drillhole <> 0
+                    OR slotandhole <> 0
+                    OR rubberglass <> 0
+                    OR hxnonconformingnum <> 0
+                    OR nonconformingnum <> 0
+                    OR nonconformingprice <> 0
+        END
+      ELSE
+        BEGIN
+            SELECT ( '${bgnDate}' + '--' + '${endDate}' ) AS queryDate,
+                   DepartmentID                           AS DepartmentID,
+                   departmentName                         AS departmentName,
+                   workingnum                             AS workingnum,
+                   num                                    AS num,
+                   productsnum                            AS productsnum,
+                   productsprice                          AS productsprice,
+                   ordersnum                              AS ordersnum,
+                   ordersprice                            AS ordersprice,
+                   wholeframe                             AS wholeframe,
+                   openslotting                           AS openslotting,
+                   drillhole                              AS drillhole,
+                   slotandhole                            AS slotandhole,
+                   rubberglass                            AS rubberglass,
+                   hxnonconformingnum                     AS hxnonconformingnum,
+                   nonconformingnum                       AS nonconformingnum,
+                   nonconformingprice                     AS nonconformingprice
+            FROM   (SELECT DepartmentID            AS DepartmentID,
+                           departmentName          AS departmentName,
+                           SUM(workingnum)         AS workingnum,
+                           SUM(num)                AS num,
+                           SUM(productsnum)        AS productsnum,
+                           SUM(productsprice)      AS productsprice,
+                           SUM(ordersnum)          AS ordersnum,
+                           SUM(ordersprice)        AS ordersprice,
+                           SUM(wholeframe)         AS wholeframe,
+                           SUM(openslotting)       AS openslotting,
+                           SUM(drillhole)          AS drillhole,
+                           SUM(slotandhole)        AS slotandhole,
+                           SUM(rubberglass)        AS rubberglass,
+                           SUM(hxnonconformingnum) AS hxnonconformingnum,
+                           SUM(nonconformingnum)   AS nonconformingnum,
+                           SUM(nonconformingprice) AS nonconformingprice
+                    FROM   (SELECT B_DP_DepartmentID                AS DepartmentID,
+                                   B_DP_DepartmentName              AS departmentName,
+                                   SUM(R_FWS_OS_workingnum)         AS workingnum,
+                                   SUM(R_FWS_OS_collectnum)         AS num,
+                                   SUM(R_FWS_OS_productsnum)        AS productsnum,
+                                   SUM(R_FWS_OS_productsprice)      AS productsprice,
+                                   SUM(R_FWS_OS_ordersnum)          AS ordersnum,
+                                   SUM(R_FWS_OS_ordersprice)        AS ordersprice,
+                                   SUM(R_FWS_OS_wholeframe)         AS wholeframe,
+                                   SUM(R_FWS_OS_openslotting)       AS openslotting,
+                                   SUM(R_FWS_OS_drillhole)          AS drillhole,
+                                   SUM(R_FWS_OS_slotandhole)        AS slotandhole,
+                                   SUM(R_FWS_OS_rubberglass)        AS rubberglass,
+                                   SUM(R_FWS_OS_hxnonconformingnum) AS hxnonconformingnum,
+                                   SUM(R_FWS_OS_nonconformingnum)   AS nonconformingnum,
+                                   SUM(R_FWS_OS_nonconformingprice) AS nonconformingprice,
+                                   ''                               AS FormatCurrency
+                            FROM   R_processWorkingStatisticsOnlyStore
+                                   INNER JOIN B_Departments
+                                     ON R_FWS_OS_DepartmentId = B_DP_DepartmentID
+                            WHERE  ( ( Isnull('${shopCode}', '') <> ''
+                                       AND R_FWS_OS_DepartmentId IN (SELECT departmentID
+                                                                     FROM   #shopCode) )
+                                      OR ( Isnull('${shopCode}', '') = '' ) )
+                                   AND R_FWS_OS_Date >= '${bgnDate}'
+                                   AND R_FWS_OS_Date <= CONVERT(CHAR(10), Dateadd(DAY, -1, '${endDate}'), 120)
+                            GROUP  BY B_DP_DepartmentID,
+                                      B_DP_DepartmentName
+                            UNION ALL
+                            SELECT DepartmentID            AS DepartmentID,
+                                   departmentName          AS departmentName,
+                                   SUM(workingnum)         AS workingnum,
+                                   SUM(num)                AS num,
+                                   SUM(productsnum)        AS productsnum,
+                                   SUM(productsprice)      AS productsprice,
+                                   SUM(ordersnum)          AS ordersnum,
+                                   SUM(ordersprice)        AS ordersprice,
+                                   SUM(wholeframe)         AS wholeframe,
+                                   SUM(openslotting)       AS openslotting,
+                                   SUM(drillhole)          AS drillhole,
+                                   SUM(slotandhole)        AS slotandhole,
+                                   SUM(rubberglass)        AS rubberglass,
+                                   SUM(hxnonconformingnum) AS hxnonconformingnum,
+                                   SUM(nonconformingnum)   AS nonconformingnum,
+                                   SUM(nonconformingprice) AS nonconformingprice,
+                                   SUM(FormatCurrency)     AS FormatCurrency
+                            FROM   (SELECT B_DP_DepartmentID                                                         AS DepartmentID,
+                                           B_DP_DepartmentName                                                       AS departmentName,
+                                           Isnull(jgdsb.jgds, 0)                                                     AS workingnum,
+                                           Isnull(zslb.zsl, 0)                                                       AS num,
+                                           Isnull(cpslb.cpsl, 0)                                                     AS productsnum,
+                                           Isnull(cpjeb.cpje, 0)                                                     AS productsprice,
+                                           Isnull(dzslb.dzsl, 0)                                                     AS ordersnum,
+                                           Isnull(dzjeb.dzje, 0)                                                     AS ordersprice,
+                                           Isnull(qkb.qk, 0)                                                         AS wholeframe,
+                                           Isnull(kcb.kc, 0)                                                         AS openslotting,
+                                           Isnull(dkb.dk, 0)                                                         AS drillhole,
+                                           Isnull(dkkcb.dkkc, 0)                                                     AS slotandhole,
+                                           Isnull(jjb.jj, 0)                                                         AS rubberglass,
+                                           Isnull(hxslb.hxsl, 0)                                                     AS hxnonconformingnum,
+                                           Isnull(bfslb.bfsl, 0)                                                     AS nonconformingnum,
+                                           Isnull(bfjeb.bfje, 0)                                                     AS nonconformingprice,
+                                           ( Isnull(cpjeb.cpje, 0) + Isnull(dzjeb.dzje, 0) - Isnull(bfjeb.bfje, 0) ) AS FormatCurrency
+                                    FROM
+                                   --部门
+                                   (SELECT P_CH_CK_ProcessDepartment
+                                    FROM   P_CH_Check
+                                           LEFT JOIN B_Departments
+                                             ON P_CH_CK_ProcessDepartment = B_DP_DepartmentID
+                                    GROUP  BY P_CH_CK_ProcessDepartment) ryb
+                                   --加工单数
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     COUNT(DISTINCT P_CH_CK_SalesId) AS jgds
+                                              FROM   P_CH_Check
+                                              WHERE  CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) jgdsb
+                                     ON jgdsb.P_CH_CK_ProcessDepartment = ryb.P_CH_CK_ProcessDepartment
+                                   --总数量
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     SUM(uview_SalesDetail.S_SE_SD_Number) AS zsl
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesBasic
+                                                       ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                                     INNER JOIN B_GoodsInfo
+                                                       ON S_SE_SD_SalesItemID = B_GI_GoodsID
+                                              WHERE  1 = 1
+                                                     AND B_GI_GoodsCategoryID = '3'
+                                                     AND B_GI_SupplierID <> 'zz'
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) zslb
+                                     ON ryb.P_CH_CK_ProcessDepartment = zslb.P_CH_CK_ProcessDepartment
+                                   --成品数量
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     SUM(uview_SalesDetail.S_SE_SD_Number) AS cpsl
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesBasic
+                                                       ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                                     INNER JOIN B_GoodsInfo
+                                                       ON S_SE_SD_SalesItemID = B_GI_GoodsID
+                                              WHERE  S_SE_SB_OrdersType = '1'
+                                                     AND B_GI_GoodsCategoryID = '3'
+                                                     AND B_GI_SupplierID <> 'zz'
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) cpslb
+                                     ON ryb.P_CH_CK_ProcessDepartment = cpslb.P_CH_CK_ProcessDepartment
+                                   --成品金额
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     SUM(S_SE_SD_SalesValue) AS cpje
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesBasic
+                                                       ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                              WHERE  S_SE_SB_OrdersType = '1'
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) cpjeb
+                                     ON cpjeb.P_CH_CK_ProcessDepartment = ryb.P_CH_CK_ProcessDepartment
+                                   --订做数量
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     SUM(uview_SalesDetail.S_SE_SD_Number) AS dzsl
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesBasic
+                                                       ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                                     INNER JOIN B_GoodsInfo
+                                                       ON S_SE_SD_SalesItemID = B_GI_GoodsID
+                                              WHERE  S_SE_SB_OrdersType = '2'
+                                                     AND B_GI_GoodsCategoryID = '3'
+                                                     AND B_GI_SupplierID <> 'zz'
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) dzslb
+                                     ON ryb.P_CH_CK_ProcessDepartment = dzslb.P_CH_CK_ProcessDepartment
+                                   --订做金额
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     SUM(S_SE_SD_SalesValue) AS dzje
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesBasic
+                                                       ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                              WHERE  S_SE_SB_OrdersType = '2'
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) dzjeb
+                                     ON dzjeb.P_CH_CK_ProcessDepartment = ryb.P_CH_CK_ProcessDepartment
+                                   --全框
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     COUNT(DISTINCT S_SE_SD_SalesID) AS qk
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                                     INNER JOIN B_GoodsInfo
+                                                       ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                              WHERE  B_GI_frameProcessCraftType = '4' --特殊加工编号
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) qkb
+                                     ON ryb.P_CH_CK_ProcessDepartment = qkb.P_CH_CK_ProcessDepartment
+                                   --开槽
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     COUNT(DISTINCT S_SE_SD_SalesID) AS kc
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                                     INNER JOIN B_GoodsInfo
+                                                       ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                              WHERE  B_GI_frameProcessCraftType = '1'--特殊加工编号
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) kcb
+                                     ON ryb.P_CH_CK_ProcessDepartment = kcb.P_CH_CK_ProcessDepartment
+                                   --打孔
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     COUNT(DISTINCT S_SE_SD_SalesID) AS dk
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                                     INNER JOIN B_GoodsInfo
+                                                       ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                              WHERE  B_GI_frameProcessCraftType = '2'--特殊加工编号
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) dkb
+                                     ON ryb.P_CH_CK_ProcessDepartment = dkb.P_CH_CK_ProcessDepartment
+                                   --开槽+打孔
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     COUNT(DISTINCT S_SE_SD_SalesID) AS dkkc
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                                     INNER JOIN B_GoodsInfo
+                                                       ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                              WHERE  B_GI_frameProcessCraftType = '3'--特殊加工编号
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) dkkcb
+                                     ON ryb.P_CH_CK_ProcessDepartment = dkkcb.P_CH_CK_ProcessDepartment
+                                   --胶架
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     COUNT(DISTINCT S_SE_SD_SalesID) AS jj
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                                     INNER JOIN B_GoodsInfo
+                                                       ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                              WHERE  B_GI_frameProcessCraftType = '5' --特殊加工编号
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) jjb
+                                     ON ryb.P_CH_CK_ProcessDepartment = jjb.P_CH_CK_ProcessDepartment
+                                   --报废数量
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     COUNT(C_SHA_NE_goodsID) AS bfsl
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON P_CH_CK_SalesId = S_SE_SD_SalesID
+                                                     INNER JOIN C_SHA_NonconformingEntry
+                                                       ON S_SE_SD_ID = C_SHA_NE_SalesDetailID
+                                                     INNER JOIN C_SHA_Nonconforming
+                                                       ON C_SHA_N_billID = C_SHA_NE_billID
+                                                     INNER JOIN B_GoodsInfo
+                                                       ON B_GI_GoodsID = C_SHA_NE_goodsID
+                                              WHERE  C_SHA_NE_consignMode = '0'
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) bfslb
+                                     ON ryb.P_CH_CK_ProcessDepartment = bfslb.P_CH_CK_ProcessDepartment
+                                   --回修数量
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     COUNT(C_SHA_NE_goodsID) AS hxsl
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON P_CH_CK_SalesId = S_SE_SD_SalesID
+                                                     INNER JOIN C_SHA_NonconformingEntry
+                                                       ON S_SE_SD_ID = C_SHA_NE_SalesDetailID
+                                                     INNER JOIN C_SHA_Nonconforming
+                                                       ON C_SHA_N_billID = C_SHA_NE_billID
+                                                     INNER JOIN B_GoodsInfo
+                                                       ON B_GI_GoodsID = C_SHA_NE_goodsID
+                                              WHERE  C_SHA_NE_consignMode = '1'
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) hxslb
+                                     ON ryb.P_CH_CK_ProcessDepartment = hxslb.P_CH_CK_ProcessDepartment
+                                   --报废金额
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     SUM(S_SE_SD_SalesValue) AS bfje
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON P_CH_CK_SalesId = S_SE_SD_SalesID
+                                                     INNER JOIN C_SHA_NonconformingEntry
+                                                       ON S_SE_SD_ID = C_SHA_NE_SalesDetailID
+                                                     INNER JOIN C_SHA_Nonconforming
+                                                       ON C_SHA_N_billID = C_SHA_NE_billID
+                                                     INNER JOIN B_GoodsInfo
+                                                       ON B_GI_GoodsID = C_SHA_NE_goodsID
+                                              WHERE  CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) bfjeb
+                                     ON ryb.P_CH_CK_ProcessDepartment = bfjeb.P_CH_CK_ProcessDepartment
+                                   --成品单镜片总数
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     SUM(uview_SalesDetail.S_SE_SD_Number) AS cpdjpzs
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                                     INNER JOIN B_GoodsInfo
+                                                       ON S_SE_SD_SalesItemID = B_GI_GoodsID
+                                                     INNER JOIN uview_SalesBasic
+                                                       ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                              WHERE  B_GI_SupplierID = 'zz'
+                                                     AND S_SE_SB_OrdersType = '1'
+                                                     AND B_GI_GoodsCategoryID = '3'
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) cpdjpzsb
+                                     ON ryb.P_CH_CK_ProcessDepartment = cpdjpzsb.P_CH_CK_ProcessDepartment
+                                   --订做单镜片总数
+                                   LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                                     SUM(uview_SalesDetail.S_SE_SD_Number) AS dzdjpzs
+                                              FROM   P_CH_Check
+                                                     INNER JOIN uview_SalesDetail
+                                                       ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                                     INNER JOIN B_GoodsInfo
+                                                       ON S_SE_SD_SalesItemID = B_GI_GoodsID
+                                                     INNER JOIN uview_SalesBasic
+                                                       ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                              WHERE  B_GI_SupplierID = 'zz'
+                                                     AND S_SE_SB_OrdersType = '2'
+                                                     AND B_GI_GoodsCategoryID = '3'
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                                     AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                                     AND ( ( Isnull('${shopCode}', '') <> ''
+                                                             AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                               FROM   #shopCode) )
+                                                            OR ( Isnull('${shopCode}', '') = '' ) )
+                                              GROUP  BY P_CH_CK_ProcessDepartment) dzdjpzsb
+                                     ON ryb.P_CH_CK_ProcessDepartment = dzdjpzsb.P_CH_CK_ProcessDepartment
+                                   LEFT JOIN P_CH_Check
+                                     ON ryb.P_CH_CK_ProcessDepartment = P_CH_Check.P_CH_CK_ProcessDepartment
+                                   INNER JOIN B_Departments
+                                     ON ryb.P_CH_CK_ProcessDepartment = B_DP_DepartmentID
+                                    --日期判断
+                                    WHERE  CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 23)
+                                           AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                    GROUP  BY B_DP_DepartmentID,
+                                              B_DP_DepartmentName,
+                                              jgdsb.jgds,
+                                              zslb.zsl,
+                                              cpslb.cpsl,
+                                              cpjeb.cpje,
+                                              dzslb.dzsl,
+                                              dzjeb.dzje,
+                                              qkb.qk,
+                                              kcb.kc,
+                                              dkb.dk,
+                                              dkkcb.dkkc,
+                                              jjb.jj,
+                                              hxslb.hxsl,
+                                              bfslb.bfsl,
+                                              bfjeb.bfje,
+                                              cpdjpzsb.cpdjpzs,
+                                              dzdjpzsb.dzdjpzs)TEMP
+                            GROUP  BY DepartmentID,
+                                      departmentName)temp4
+                    GROUP  BY DepartmentID,
+                              departmentName)TEMP
+            WHERE  workingnum <> 0
+                    OR num <> 0
+                    OR productsnum <> 0
+                    OR productsprice <> 0
+                    OR ordersnum <> 0
+                    OR ordersprice <> 0
+                    OR wholeframe <> 0
+                    OR openslotting <> 0
+                    OR drillhole <> 0
+                    OR slotandhole <> 0
+                    OR rubberglass <> 0
+                    OR hxnonconformingnum <> 0
+                    OR nonconformingnum <> 0
+                    OR nonconformingprice <> 0
+        END
+  END
+ELSE
+  BEGIN
+      --------------------------*********************************----------------------------------------------------------
+      SELECT ( '${bgnDate}' + '--' + '${endDate}' ) AS queryDate,
+             DepartmentID                           AS DepartmentID,
+             departmentName                         AS departmentName,
+             workingnum                             AS workingnum,
+             num                                    AS num,
+             productsnum                            AS productsnum,
+             productsprice                          AS productsprice,
+             ordersnum                              AS ordersnum,
+             ordersprice                            AS ordersprice,
+             wholeframe                             AS wholeframe,
+             openslotting                           AS openslotting,
+             drillhole                              AS drillhole,
+             slotandhole                            AS slotandhole,
+             rubberglass                            AS rubberglass,
+             hxnonconformingnum                     AS hxnonconformingnum,
+             nonconformingnum                       AS nonconformingnum,
+             nonconformingprice                     AS nonconformingprice
+      FROM   (SELECT DepartmentID            AS DepartmentID,
+                     departmentName          AS departmentName,
+                     SUM(workingnum)         AS workingnum,
+                     SUM(num)                AS num,
+                     SUM(productsnum)        AS productsnum,
+                     SUM(productsprice)      AS productsprice,
+                     SUM(ordersnum)          AS ordersnum,
+                     SUM(ordersprice)        AS ordersprice,
+                     SUM(wholeframe)         AS wholeframe,
+                     SUM(openslotting)       AS openslotting,
+                     SUM(drillhole)          AS drillhole,
+                     SUM(slotandhole)        AS slotandhole,
+                     SUM(rubberglass)        AS rubberglass,
+                     SUM(hxnonconformingnum) AS hxnonconformingnum,
+                     SUM(nonconformingnum)   AS nonconformingnum,
+                     SUM(nonconformingprice) AS nonconformingprice,
+                     SUM(FormatCurrency)     AS FormatCurrency
+              FROM   (SELECT B_DP_DepartmentID                                                         AS DepartmentID,
+                             B_DP_DepartmentName                                                       AS departmentName,
+                             Isnull(jgdsb.jgds, 0)                                                     AS workingnum,
+                             Isnull(zslb.zsl, 0)                                                       AS num,
+                             Isnull(cpslb.cpsl, 0)                                                     AS productsnum,
+                             Isnull(cpjeb.cpje, 0)                                                     AS productsprice,
+                             Isnull(dzslb.dzsl, 0)                                                     AS ordersnum,
+                             Isnull(dzjeb.dzje, 0)                                                     AS ordersprice,
+                             Isnull(qkb.qk, 0)                                                         AS wholeframe,
+                             Isnull(kcb.kc, 0)                                                         AS openslotting,
+                             Isnull(dkb.dk, 0)                                                         AS drillhole,
+                             Isnull(dkkcb.dkkc, 0)                                                     AS slotandhole,
+                             Isnull(jjb.jj, 0)                                                         AS rubberglass,
+                             Isnull(hxslb.hxsl, 0)                                                     AS hxnonconformingnum,
+                             Isnull(bfslb.bfsl, 0)                                                     AS nonconformingnum,
+                             Isnull(bfjeb.bfje, 0)                                                     AS nonconformingprice,
+                             ( Isnull(cpjeb.cpje, 0) + Isnull(dzjeb.dzje, 0) - Isnull(bfjeb.bfje, 0) ) AS FormatCurrency
+                      FROM
+                     --部门
+                     (SELECT P_CH_CK_ProcessDepartment
+                      FROM   P_CH_Check
+                             LEFT JOIN B_Departments
+                               ON P_CH_CK_ProcessDepartment = B_DP_DepartmentID
+                      GROUP  BY P_CH_CK_ProcessDepartment) ryb
+                     --加工单数
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       COUNT(DISTINCT P_CH_CK_SalesId) AS jgds
+                                FROM   P_CH_Check
+                                WHERE  CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) jgdsb
+                       ON jgdsb.P_CH_CK_ProcessDepartment = ryb.P_CH_CK_ProcessDepartment
+                     --总数量
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       SUM(uview_SalesDetail.S_SE_SD_Number) AS zsl
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesBasic
+                                         ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                       INNER JOIN uview_SalesDetail
+                                         ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                       INNER JOIN B_GoodsInfo
+                                         ON S_SE_SD_SalesItemID = B_GI_GoodsID
+                                WHERE  1 = 1
+                                       AND B_GI_GoodsCategoryID = '3'
+                                       AND B_GI_SupplierID <> 'zz'
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) zslb
+                       ON ryb.P_CH_CK_ProcessDepartment = zslb.P_CH_CK_ProcessDepartment
+                     --成品数量
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       SUM(uview_SalesDetail.S_SE_SD_Number) AS cpsl
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesBasic
+                                         ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                       INNER JOIN uview_SalesDetail
+                                         ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                       INNER JOIN B_GoodsInfo
+                                         ON S_SE_SD_SalesItemID = B_GI_GoodsID
+                                WHERE  S_SE_SB_OrdersType = '1'
+                                       AND B_GI_GoodsCategoryID = '3'
+                                       AND B_GI_SupplierID <> 'zz'
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) cpslb
+                       ON ryb.P_CH_CK_ProcessDepartment = cpslb.P_CH_CK_ProcessDepartment
+                     --成品金额
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       SUM(S_SE_SD_SalesValue) AS cpje
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesBasic
+                                         ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                       INNER JOIN uview_SalesDetail
+                                         ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                WHERE  S_SE_SB_OrdersType = '1'
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) cpjeb
+                       ON cpjeb.P_CH_CK_ProcessDepartment = ryb.P_CH_CK_ProcessDepartment
+                     --订做数量
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       SUM(uview_SalesDetail.S_SE_SD_Number) AS dzsl
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesBasic
+                                         ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                       INNER JOIN uview_SalesDetail
+                                         ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                       INNER JOIN B_GoodsInfo
+                                         ON S_SE_SD_SalesItemID = B_GI_GoodsID
+                                WHERE  S_SE_SB_OrdersType = '2'
+                                       AND B_GI_GoodsCategoryID = '3'
+                                       AND B_GI_SupplierID <> 'zz'
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) dzslb
+                       ON ryb.P_CH_CK_ProcessDepartment = dzslb.P_CH_CK_ProcessDepartment
+                     --订做金额
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       SUM(S_SE_SD_SalesValue) AS dzje
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesBasic
+                                         ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                       INNER JOIN uview_SalesDetail
+                                         ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                WHERE  S_SE_SB_OrdersType = '2'
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) dzjeb
+                       ON dzjeb.P_CH_CK_ProcessDepartment = ryb.P_CH_CK_ProcessDepartment
+                     --全框
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       COUNT(DISTINCT S_SE_SD_SalesID) AS qk
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesDetail
+                                         ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                       INNER JOIN B_GoodsInfo
+                                         ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                WHERE  B_GI_frameProcessCraftType = '4' --特殊加工编号
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) qkb
+                       ON ryb.P_CH_CK_ProcessDepartment = qkb.P_CH_CK_ProcessDepartment
+                     --开槽
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       COUNT(DISTINCT S_SE_SD_SalesID) AS kc
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesDetail
+                                         ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                       INNER JOIN B_GoodsInfo
+                                         ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                WHERE  B_GI_frameProcessCraftType = '1'--特殊加工编号
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) kcb
+                       ON ryb.P_CH_CK_ProcessDepartment = kcb.P_CH_CK_ProcessDepartment
+                     --打孔
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       COUNT(DISTINCT S_SE_SD_SalesID) AS dk
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesDetail
+                                         ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                       INNER JOIN B_GoodsInfo
+                                         ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                WHERE  B_GI_frameProcessCraftType = '2'--特殊加工编号
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) dkb
+                       ON ryb.P_CH_CK_ProcessDepartment = dkb.P_CH_CK_ProcessDepartment
+                     --开槽+打孔
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       COUNT(DISTINCT S_SE_SD_SalesID) AS dkkc
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesDetail
+                                         ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                       INNER JOIN B_GoodsInfo
+                                         ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                WHERE  B_GI_frameProcessCraftType = '3'--特殊加工编号
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) dkkcb
+                       ON ryb.P_CH_CK_ProcessDepartment = dkkcb.P_CH_CK_ProcessDepartment
+                     --胶架
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       COUNT(DISTINCT S_SE_SD_SalesID) AS jj
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesDetail
+                                         ON S_SE_SD_SalesID = P_CH_CK_SalesId
+                                       INNER JOIN B_GoodsInfo
+                                         ON B_GI_GoodsID = S_SE_SD_SalesItemID
+                                WHERE  B_GI_frameProcessCraftType = '5' --特殊加工编号
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) jjb
+                       ON ryb.P_CH_CK_ProcessDepartment = jjb.P_CH_CK_ProcessDepartment
+                     --报废数量
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       COUNT(C_SHA_NE_goodsID) AS bfsl
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesDetail
+                                         ON P_CH_CK_SalesId = S_SE_SD_SalesID
+                                       INNER JOIN C_SHA_NonconformingEntry
+                                         ON S_SE_SD_ID = C_SHA_NE_SalesDetailID
+                                       INNER JOIN C_SHA_Nonconforming
+                                         ON C_SHA_N_billID = C_SHA_NE_billID
+                                       INNER JOIN B_GoodsInfo
+                                         ON B_GI_GoodsID = C_SHA_NE_goodsID
+                                WHERE  C_SHA_NE_consignMode = '0'
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) bfslb
+                       ON ryb.P_CH_CK_ProcessDepartment = bfslb.P_CH_CK_ProcessDepartment
+                     --回修数量
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       COUNT(C_SHA_NE_goodsID) AS hxsl
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesDetail
+                                         ON P_CH_CK_SalesId = S_SE_SD_SalesID
+                                       INNER JOIN C_SHA_NonconformingEntry
+                                         ON S_SE_SD_ID = C_SHA_NE_SalesDetailID
+                                       INNER JOIN C_SHA_Nonconforming
+                                         ON C_SHA_N_billID = C_SHA_NE_billID
+                                       INNER JOIN B_GoodsInfo
+                                         ON B_GI_GoodsID = C_SHA_NE_goodsID
+                                WHERE  C_SHA_NE_consignMode = '1'
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) hxslb
+                       ON ryb.P_CH_CK_ProcessDepartment = hxslb.P_CH_CK_ProcessDepartment
+                     --报废金额
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       SUM(S_SE_SD_SalesValue) AS bfje
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesDetail
+                                         ON P_CH_CK_SalesId = S_SE_SD_SalesID
+                                       INNER JOIN C_SHA_NonconformingEntry
+                                         ON S_SE_SD_ID = C_SHA_NE_SalesDetailID
+                                       INNER JOIN C_SHA_Nonconforming
+                                         ON C_SHA_N_billID = C_SHA_NE_billID
+                                       INNER JOIN B_GoodsInfo
+                                         ON B_GI_GoodsID = C_SHA_NE_goodsID
+                                WHERE  CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) bfjeb
+                       ON ryb.P_CH_CK_ProcessDepartment = bfjeb.P_CH_CK_ProcessDepartment
+                     --成品单镜片总数
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       SUM(uview_SalesDetail.S_SE_SD_Number) AS cpdjpzs
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesBasic
+                                         ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                       INNER JOIN uview_SalesDetail
+                                         ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                       INNER JOIN B_GoodsInfo
+                                         ON S_SE_SD_SalesItemID = B_GI_GoodsID
+                                WHERE  S_SE_SB_OrdersType = '1'
+                                       AND B_GI_GoodsCategoryID = '3'
+                                       AND B_GI_SupplierID = 'zz'
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) cpdjpzsb
+                       ON ryb.P_CH_CK_ProcessDepartment = cpdjpzsb.P_CH_CK_ProcessDepartment
+                     --订做单镜片总数
+                     LEFT JOIN (SELECT P_CH_CK_ProcessDepartment,
+                                       SUM(uview_SalesDetail.S_SE_SD_Number) AS dzdjpzs
+                                FROM   P_CH_Check
+                                       INNER JOIN uview_SalesBasic
+                                         ON S_SE_SB_SalesID = P_CH_CK_SalesId
+                                       INNER JOIN uview_SalesDetail
+                                         ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                                       INNER JOIN B_GoodsInfo
+                                         ON S_SE_SD_SalesItemID = B_GI_GoodsID
+                                WHERE  S_SE_SB_OrdersType = '2'
+                                       AND B_GI_GoodsCategoryID = '3'
+                                       AND B_GI_SupplierID <> 'zz'
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 120)
+                                       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                                       AND ( ( Isnull('${shopCode}', '') <> ''
+                                               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                                                 FROM   #shopCode) )
+                                              OR ( Isnull('${shopCode}', '') = '' ) )
+                                GROUP  BY P_CH_CK_ProcessDepartment) dzdjpzsb
+                       ON ryb.P_CH_CK_ProcessDepartment = dzdjpzsb.P_CH_CK_ProcessDepartment
+                     LEFT JOIN P_CH_Check
+                       ON ryb.P_CH_CK_ProcessDepartment = P_CH_Check.P_CH_CK_ProcessDepartment
+                     INNER JOIN B_Departments
+                       ON ryb.P_CH_CK_ProcessDepartment = B_DP_DepartmentID
+                      --日期判断
+                      WHERE  CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 23)
+                             AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23)
+                      GROUP  BY B_DP_DepartmentID,
+                                B_DP_DepartmentName,
+                                jgdsb.jgds,
+                                zslb.zsl,
+                                cpslb.cpsl,
+                                cpjeb.cpje,
+                                dzslb.dzsl,
+                                dzjeb.dzje,
+                                qkb.qk,
+                                kcb.kc,
+                                dkb.dk,
+                                dkkcb.dkkc,
+                                jjb.jj,
+                                hxslb.hxsl,
+                                bfslb.bfsl,
+                                bfjeb.bfje,
+                                cpdjpzsb.cpdjpzs,
+                                dzdjpzsb.dzdjpzs)TEMP
+              GROUP  BY DepartmentID,
+                        departmentName)temp4
+      WHERE  workingnum <> 0
+              OR num <> 0
+              OR productsnum <> 0
+              OR productsprice <> 0
+              OR ordersnum <> 0
+              OR ordersprice <> 0
+              OR wholeframe <> 0
+              OR openslotting <> 0
+              OR drillhole <> 0
+              OR slotandhole <> 0
+              OR rubberglass <> 0
+              OR hxnonconformingnum <> 0
+              OR nonconformingnum <> 0
+              OR nonconformingprice <> 0
+  END
+
+DROP TABLE #shopCode]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 '${customAmountName}' as customAmountName,'${ShopCodeName}' as ShopCodeName,'${queryWay}'  as queryWay,'${lookWay}' as lookWay
+]]></Query>
+</TableData>
+<TableData name="ds5" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[2014-01-01]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[2014-01-01]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT departmentID
+INTO   #shopCode
+FROM   Sales_createshopcodetab('${shopCode}')
+
+SELECT t.P_CH_CK_ProcessDepartment AS ProcessDepartment,
+       t.isMutiLuminosity          AS isMutiLuminosity,
+       CASE t.isMutiLuminosity
+         WHEN 'O' THEN '单光'
+         WHEN 'M' THEN '多光'
+         WHEN 'J' THEN '渐进'
+         WHEN 'K' THEN '抗疲劳'
+         WHEN 'Q' THEN '其它'
+         ELSE '无光度分类'
+       END                         isMutiLuminosityName,
+       t.xsNum                     AS xsNum
+FROM  (SELECT P_CH_CK_ProcessDepartment,
+              Isnull(B_GI_isMutiLuminosity, '')         AS isMutiLuminosity,
+              Isnull(SUM(Isnull(S_SE_SD_Number, 0)), 0) AS xsNum
+       FROM   P_CH_Check
+              INNER JOIN uview_SalesDetail
+                ON S_SE_SD_SalesID = P_CH_CK_SalesId
+              INNER JOIN B_GoodsInfo
+                ON B_GI_GoodsID = S_SE_SD_SalesItemID
+       WHERE  1 = 1
+              AND B_GI_GoodsCategoryID = '3'
+              AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), '${bgnDate}', 120)
+              AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), '${endDate}', 120)
+              AND ( ( Isnull('${shopCode}', '') <> ''
+                      AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                        FROM   #shopCode) )
+                     OR Isnull('${shopCode}', '') = '' )
+       GROUP  BY P_CH_CK_ProcessDepartment,
+                 B_GI_isMutiLuminosity)t
+
+DROP TABLE #shopCode ]]></Query>
+</TableData>
+<TableData name="ds4" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[2014-01-01]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[2014-01-01]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT departmentID
+INTO   #shopCode
+FROM   Sales_createshopcodetab('${shopCode}')
+
+SELECT P_CH_CK_ProcessDepartment                 AS ProcessDepartment,
+       Isnull(B_GI_Refractive, '无折射率')           AS Refractive,
+       Isnull(SUM(Isnull(S_SE_SD_Number, 0)), 0) AS xsNum
+FROM   P_CH_Check
+       INNER JOIN uview_SalesDetail
+         ON S_SE_SD_SalesID = P_CH_CK_SalesId
+       INNER JOIN B_GoodsInfo
+         ON B_GI_GoodsID = S_SE_SD_SalesItemID
+WHERE  1 = 1
+       AND B_GI_GoodsCategoryID = '3'
+       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), '${bgnDate}', 120)
+       AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), '${endDate}', 120)
+       AND ( ( Isnull('${shopCode}', '') <> ''
+               AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                 FROM   #shopCode) )
+              OR Isnull('${shopCode}', '') = '' )
+GROUP  BY P_CH_CK_ProcessDepartment,
+          B_GI_Refractive
+ORDER  BY B_GI_Refractive
+
+DROP TABLE #shopCode ]]></Query>
+</TableData>
+<TableData name="ds6" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[2014-01-01]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[2014-01-01]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT departmentID
+INTO   #shopCode
+FROM   Sales_createshopcodetab('${shopCode}')
+
+SELECT t.P_CH_CK_ProcessDepartment AS ProcessDepartment,
+       t.GradualClass              AS GradualClass,
+       CASE t.GradualClass
+         WHEN '1' THEN '青少年渐进'
+         WHEN '2' THEN '老年渐进'
+         ELSE '无渐进片分类'
+       END                         GradualClassName,
+       t.xsNum                     AS xsNum
+FROM  (SELECT P_CH_CK_ProcessDepartment,
+              Isnull(B_GI_GradualClass, '')             AS GradualClass,
+              Isnull(SUM(Isnull(S_SE_SD_Number, 0)), 0) AS xsNum
+       FROM   P_CH_Check
+              INNER JOIN uview_SalesDetail
+                ON S_SE_SD_SalesID = P_CH_CK_SalesId
+              INNER JOIN B_GoodsInfo
+                ON B_GI_GoodsID = S_SE_SD_SalesItemID
+       WHERE  1 = 1
+              AND B_GI_GoodsCategoryID = '3'
+              AND B_GI_isMutiLuminosity = 'J'
+              AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) >= CONVERT(VARCHAR(10), '${bgnDate}', 120)
+              AND CONVERT(VARCHAR(10), P_CH_CK_CheckDate, 120) <= CONVERT(VARCHAR(10), '${endDate}', 120)
+              AND ( ( Isnull('${shopCode}', '') <> ''
+                      AND P_CH_CK_ProcessDepartment IN (SELECT departmentID
+                                                        FROM   #shopCode) )
+                     OR Isnull('${shopCode}', '') = '' )
+       GROUP  BY P_CH_CK_ProcessDepartment,
+                 B_GI_GradualClass)t
+
+DROP TABLE #shopCode ]]></Query>
+</TableData>
+<TableData name="ds7" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select departmentID into #shopCode from sales_createShopCodeTab('${shopCode}')
+
+if ('${bgnDate}'<convert(varchar(10),getdate(),120))
+begin
+
+if ('${endDate}'<convert(varchar(10),getdate(),120))
+begin
+
+	select
+		R_FWS_OST_ShopCode			as pid,
+		F_TT_Name					as tname,
+		sum(cast(R_FWS_OST_WorkCount as int))	as tcount	
+	from R_processWorkingStatisticsForType
+	inner join F_TechnologyType on R_FWS_OST_WorkType = F_TT_ID
+	where convert(varchar(10),R_FWS_OST_Date,120) >= CONVERT(VARCHAR(10), '${bgnDate}', 120) 
+	  and convert(varchar(10),R_FWS_OST_Date,120) <= CONVERT(VARCHAR(10), '${endDate}', 120)
+	  and ((ISNULL('${shopCode}', '') <> '' AND R_FWS_OST_ShopCode in (select departmentID from #shopCode)) OR ISNULL('${shopCode}', '') = '') 
+	group by 
+		R_FWS_OST_ShopCode,
+		F_TT_Name,
+		F_TT_ID
+	order by F_TT_Name
+
+end
+else
+begin
+
+select
+	pid,
+	tname,
+	sum(tcount) as tcount
+from (
+	select	
+		P_CH_CK_ProcessDepartment		as pid,
+		F_TT_Name						as tname,
+		count(F_TT_ID)					as tcount 
+	from P_CH_Check
+	inner join S_SE_SalesDetail on S_SE_SD_SalesID = P_CH_CK_SalesId
+	inner join B_GoodsInfo on B_GI_GoodsID = S_SE_SD_SalesItemID
+	inner join F_TechnologyType on B_GI_frameProcessCraftType = F_TT_ID
+	where convert(varchar(10),P_CH_CK_CheckDate,120) >= CONVERT(VARCHAR(10), getdate(), 120) 
+	  and convert(varchar(10),P_CH_CK_CheckDate,120) <= CONVERT(VARCHAR(10), getdate(), 120)
+	  and isnull(B_GI_frameProcessCraftType,'') <> ''
+	  and ((ISNULL('${shopCode}', '') <> '' AND P_CH_CK_ProcessDepartment in (select departmentID from #shopCode)) OR ISNULL('${shopCode}', '') = '') 
+	group by 
+		P_CH_CK_ProcessDepartment,
+		F_TT_Name,
+		F_TT_ID
+
+	union all
+
+	select
+		R_FWS_OST_ShopCode			as pid,
+		F_TT_Name					as tname,
+		sum(cast(R_FWS_OST_WorkCount as int))	as tcount	
+	from R_processWorkingStatisticsForType
+	inner join F_TechnologyType on R_FWS_OST_WorkType = F_TT_ID
+	where convert(varchar(10),R_FWS_OST_Date,120) >= CONVERT(VARCHAR(10), '${bgnDate}', 120) 
+	  and convert(varchar(10),R_FWS_OST_Date,120) <= CONVERT(VARCHAR(10), '${endDate}', 120)
+	  and ((ISNULL('${shopCode}', '') <> '' AND R_FWS_OST_ShopCode in (select departmentID from #shopCode)) OR ISNULL('${shopCode}', '') = '') 
+	group by 
+		R_FWS_OST_ShopCode,
+		F_TT_Name,
+		F_TT_ID
+) temp
+group by 
+	pid,
+	tname
+order by tname
+        END
+  END
+ELSE
+  BEGIN
+	select	
+		P_CH_CK_ProcessDepartment			as pid,
+		F_TT_Name						as tname,
+		count(F_TT_ID)					as tcount 
+	from P_CH_Check
+	inner join S_SE_SalesDetail on S_SE_SD_SalesID = P_CH_CK_SalesId
+	inner join B_GoodsInfo on B_GI_GoodsID = S_SE_SD_SalesItemID
+	inner join F_TechnologyType on B_GI_frameProcessCraftType = F_TT_ID
+	where convert(varchar(10),P_CH_CK_CheckDate,120) >= CONVERT(VARCHAR(10), getdate(), 120) 
+	  and convert(varchar(10),P_CH_CK_CheckDate,120) <= CONVERT(VARCHAR(10), getdate(), 120)
+	  and isnull(B_GI_frameProcessCraftType,'') <> ''
+	  and ((ISNULL('${shopCode}', '') <> '' AND P_CH_CK_ProcessDepartment in (select departmentID from #shopCode)) OR ISNULL('${shopCode}', '') = '') 
+	group by 
+		P_CH_CK_ProcessDepartment,
+		F_TT_Name,
+		F_TT_ID
+	order by F_TT_Name
+END
+
+
+drop table #shopCode
+]]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<WebPageContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.ui.impl.page.First">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-First')}]]></Text>
+<IconName>
+<![CDATA[first]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Previous">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Previous')}]]></Text>
+<IconName>
+<![CDATA[previous]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.PageNavi">
+<WidgetAttr/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Next">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Next')}]]></Text>
+<IconName>
+<![CDATA[next]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.Last">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('ReportServerP-Last')}]]></Text>
+<IconName>
+<![CDATA[last]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.FlashPrint">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Utils-Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.Export">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('Export')}]]></Text>
+<IconName>
+<![CDATA[export]]></IconName>
+<Buttons pdf="true" excelP="true" excelO="true" excelS="true" word="true" image="true" html="true"/>
+</Widget>
+<Widget class="com.fr.report.web.ui.impl.page.SetPrinterOffset">
+<WidgetAttr/>
+<Text>
+<![CDATA[${i18n('SetPrinterOffset')}]]></Text>
+<IconName>
+<![CDATA[setprinteroffset]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<WebPage isPage="false" isShowAsImage="false" isAutoScale="false" isTDHeavy="false"/>
+</WebPageContent>
+</ReportWebAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="8"/>
+<FR F="11" T="11"/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,914400,914400,914400,0,914400,914400,914400,914400,914400,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,0,2628900,1409700,2438400,2095500,2438400,2438400,2362200,2514600,1728000,2160000,2743200,2171700,2438400,1752600,2400300,2476500,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="2" r="0" cs="16" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="1" cs="16" s="1">
+<O>
+<![CDATA[加工人员工作量统计]]></O>
+<Expand/>
+</C>
+<C c="2" r="2" cs="16">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="3" s="2">
+<O>
+<![CDATA[部门名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="3" cs="11" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="ShopCodeName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="14" r="3" cs="4" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="查询日期：" + $bgnDate + " 至 " + $endDate]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="4">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="4" s="2">
+<O>
+<![CDATA[查询方式：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="4" cs="11" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="queryWay"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="14" r="4">
+<Expand/>
+</C>
+<C c="15" r="4">
+<Expand/>
+</C>
+<C c="16" r="4" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="17" r="4" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="5">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="5" s="2">
+<O>
+<![CDATA[查看分类：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="5" cs="11" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds3" columnName="lookWay"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="14" r="5">
+<Expand/>
+</C>
+<C c="15" r="5">
+<Expand/>
+</C>
+<C c="16" r="5" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="17" r="5" s="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="7" cs="2" rs="2" s="5">
+<O>
+<![CDATA[ 加工区域]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="4" r="7" rs="2" s="6">
+<O>
+<![CDATA[加工单数]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[1]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[2]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="5" r="7" rs="2" s="6">
+<O>
+<![CDATA[总数量]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[3]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[4]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="6" r="7" rs="2" s="6">
+<O>
+<![CDATA[成品数量]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[5]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[6]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="7" r="7" rs="2" s="6">
+<O>
+<![CDATA[成品金额]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[7]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[8]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="8" r="7" rs="2" s="6">
+<O>
+<![CDATA[订做数量]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[9]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[10]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="9" r="7" rs="2" s="6">
+<O>
+<![CDATA[订做金额]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[11]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[12]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="10" r="7" s="7">
+<O>
+<![CDATA[折射率]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="11" r="7" s="7">
+<O>
+<![CDATA[光度分类]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="12" r="7" s="7">
+<O>
+<![CDATA[渐进片]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="13" r="7" s="8">
+<O>
+<![CDATA[工艺类型]]></O>
+<Expand/>
+</C>
+<C c="14" r="7" rs="2" s="6">
+<O>
+<![CDATA[回修次数]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[23]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[24]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="15" r="7" rs="2" s="6">
+<O>
+<![CDATA[报残数]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[25]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[26]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="16" r="7" rs="2" s="6">
+<O>
+<![CDATA[报残金额]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[27]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[28]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="17" r="7" rs="2" s="6">
+<O>
+<![CDATA[总金额]]></O>
+<NameJavaScriptGroup>
+<NameJavaScript name="从小到大">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[29]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+<NameJavaScript name="从大到小">
+<JavaScript class="com.fr.base.js.ParameterJavaScript">
+<Parameters>
+<Parameter>
+<Attributes name="order"/>
+<O>
+<![CDATA[30]]></O>
+</Parameter>
+</Parameters>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="10" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="Refractive"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="1"/>
+</C>
+<C c="11" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="isMutiLuminosityName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="1"/>
+</C>
+<C c="12" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds6" columnName="GradualClassName"/>
+<Condition class="com.fr.data.condition.CommonCondition">
+<CNUMBER>
+<![CDATA[1]]></CNUMBER>
+<CNAME>
+<![CDATA[ProcessDepartment]]></CNAME>
+<Compare op="0">
+<ColumnRow column="1" row="9"/>
+</Compare>
+</Condition>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="1"/>
+</C>
+<C c="13" r="8" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds7" columnName="tname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="1"/>
+</C>
+<C c="1" r="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="DepartmentId"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="9" cs="2" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="departmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$categoryid]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$bgnDate]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$endDate]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="shopCode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B10]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="customAmountName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=E5]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=E4]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="queryWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=D5]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="lookWay"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=D6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="showCompanyName"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$showCompanyName]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="iscustomize"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$iscustomize]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="brandbarcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=D10]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="sprice"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=G10]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="salerid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$salerid]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="posid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$posid]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="viewname"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$viewname]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[var DataURL = "report.action?reportlet=process_processWorkingOnlyStoreRpt.cpt&__bypagesize__=false&categoryid="+categoryid+"&bgnDate="+bgnDate+"&endDate="+endDate+"&shopCode="+shopCode+"&customAmountName="+EncodeUtf8(customAmountName)+"&ShopCodeName="+EncodeUtf8(ShopCodeName)+"&queryWay="+EncodeUtf8(queryWay)+"&lookWay="+EncodeUtf8(lookWay)+"&showCompanyName="+EncodeUtf8(showCompanyName)+"&isShow="+isShow+"&iscustomize="+iscustomize+"&brandbarcode="+brandbarcode+"&sprice="+sprice+"&salerid="+salerid+"&posid="+posid+"&viewname="+EncodeUtf8(viewname)+"&logincompanyid="+logincompanyid;
+
+openWindowForReport(DataURL);
+
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0" order="2">
+<SortFormula>
+<![CDATA[SWITCH($order, "1", -G10, "2", G10, "3", -H10, "4", H10, "5", -I10, "6", I10, "7", -N10, "8", N10, "9", -N10, "10", N10)]]></SortFormula>
+</Expand>
+</C>
+<C c="4" r="9" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="workingnum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="9" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="num"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="9" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="productsnum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="9" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="productsprice"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="9" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="ordersnum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="9" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="ordersprice"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="9" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="xsNum"/>
+<Condition class="com.fr.data.condition.ListCondition">
+<JoinCondition join="0">
+<Condition class="com.fr.data.condition.CommonCondition">
+<CNUMBER>
+<![CDATA[1]]></CNUMBER>
+<CNAME>
+<![CDATA[P_CH_CK_ProcessPersonID]]></CNAME>
+<Compare op="0">
+<ColumnRow column="1" row="9"/>
+</Compare>
+</Condition>
+</JoinCondition>
+</Condition>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand leftParentDefault="false" left="B10"/>
+</C>
+<C c="11" r="9" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds5" columnName="xsNum"/>
+<Condition class="com.fr.data.condition.CommonCondition">
+<CNUMBER>
+<![CDATA[1]]></CNUMBER>
+<CNAME>
+<![CDATA[ProcessDepartment]]></CNAME>
+<Compare op="0">
+<ColumnRow column="1" row="9"/>
+</Compare>
+</Condition>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand leftParentDefault="false" left="B10"/>
+</C>
+<C c="12" r="9" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds6" columnName="xsNum"/>
+<Condition class="com.fr.data.condition.CommonCondition">
+<CNUMBER>
+<![CDATA[1]]></CNUMBER>
+<CNAME>
+<![CDATA[ProcessDepartment]]></CNAME>
+<Compare op="0">
+<ColumnRow column="1" row="9"/>
+</Compare>
+</Condition>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand leftParentDefault="false" left="B10"/>
+</C>
+<C c="13" r="9" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds7" columnName="tcount"/>
+<Condition class="com.fr.data.condition.CommonCondition">
+<CNUMBER>
+<![CDATA[1]]></CNUMBER>
+<CNAME>
+<![CDATA[pid]]></CNAME>
+<Compare op="0">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B10]]></Attributes>
+</O>
+</Compare>
+</Condition>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand leftParentDefault="false" left="B10"/>
+</C>
+<C c="14" r="9" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="hxnonconformingnum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="15" r="9" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nonconformingnum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="16" r="9" s="10">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="nonconformingprice"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="17" r="9" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(H10, J10, Q10))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="10" cs="2" s="12">
+<O>
+<![CDATA[合计：]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="4" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(E10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="5" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(F10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="6" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(G10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="7" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(H10))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="8" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(I10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="9" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(J10))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="10" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(K10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="11" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(L10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="12" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(M10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="13" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(N10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="14" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(O10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="15" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(P10)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="16" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(Q10))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="17" r="10" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(SUM(R10))]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="2" r="11" s="3">
+<O>
+<![CDATA[打印日期:]]></O>
+<CellPageAttr pageAfterRow="true"/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="3" r="11" cs="4" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=today()]]></Attributes>
+</O>
+<CellPageAttr pageAfterRow="true"/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="8" r="11" s="2">
+<CellPageAttr pageAfterRow="true"/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="9" r="11" s="2">
+<CellPageAttr pageAfterRow="true"/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="13" r="11" s="2">
+<CellPageAttr pageAfterRow="true"/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="14" r="11" cs="4" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="页次:第 " + $$page_number + " 页/共 " + $$totalPage_number + " 页"]]></Attributes>
+</O>
+<CellPageAttr pageAfterRow="true"/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="0" bottom="986400" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72" foreground="-16776961" underline="1"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72" foreground="-16776961" underline="1"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

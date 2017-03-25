@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="queryDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+select C_ST_I_BillID,C_ST_I_billDate as C_ST_I_billDate,C_ST_I_AuditDate as C_ST_I_AuditDate,
+       C_ST_I_FinanceAuditDate as C_ST_I_FinanceAuditDate,B_GC_GoodsCategoryName as B_GC_GoodsCategoryName,
+       C_ST_I_SupplierId as C_ST_I_SupplierId,B_SP_SupplierName as B_SP_SupplierName,
+       C_ST_IE_GoodsQuantity as C_ST_IE_GoodsQuantity,
+       C_ST_IE_NotTaxRateAmount as C_ST_IE_NotTaxRateAmount,
+       C_ST_IE_TaxAmount as C_ST_IE_TaxAmount,
+       C_ST_IE_CostPriceAmount as C_ST_IE_CostPriceAmount,
+       C_ST_IE_TaxRate as C_ST_IE_TaxRate,
+       createperson as createperson,
+       auditperson as auditperson
+  from (
+select C_ST_I_BillID,convert(varchar(10),C_ST_I_billDate,120) as C_ST_I_billDate,
+	   convert(varchar(10),C_ST_I_AuditDate,120) as C_ST_I_AuditDate,convert(varchar(10),C_ST_I_FinanceAuditDate,120) as C_ST_I_FinanceAuditDate,      
+	   B_GC_GoodsCategoryName as B_GC_GoodsCategoryName,C_ST_I_SupplierId as C_ST_I_SupplierId,B_SP_SupplierName as B_SP_SupplierName,
+       sum(C_ST_IE_GoodsQuantity) as C_ST_IE_GoodsQuantity,
+       sum(C_ST_IE_NotTaxRateAmount) as C_ST_IE_NotTaxRateAmount,
+       sum(C_ST_IE_TaxAmount) as C_ST_IE_TaxAmount,
+       sum(C_ST_IE_CostPriceAmount) as C_ST_IE_CostPriceAmount,C_ST_IE_TaxRate as C_ST_IE_TaxRate,
+       a.personname as createperson,b.personname as auditperson
+  from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+    left join B_Supplier on C_ST_I_SupplierId=B_SP_ID
+    left join SYS_PersonInfo a on a.id=C_ST_I_createPerson
+    left join SYS_PersonInfo b on b.id=C_ST_I_AuditPerson
+    left join SYS_PersonInfo c on c.id=C_ST_I_FinanceAuditPerson
+    left join B_GoodsInfo on C_ST_IE_GoodsId=B_GI_GoodsID
+    left join B_GoodsCategory on B_GC_ID=B_GI_GoodsCategoryID
+  where C_ST_I_BillTypeId in ('1','9') and C_ST_I_AuditState='1' and C_ST_I_FinanceAuditState='1'
+        and convert(varchar(7),C_ST_I_FinanceAuditDate,120)='${queryDate}'
+  group by C_ST_I_BillID,C_ST_I_billDate,C_ST_I_AuditDate,
+           C_ST_I_FinanceAuditDate, B_GC_GoodsCategoryName,C_ST_I_SupplierId,
+           B_SP_SupplierName,C_ST_IE_TaxRate,a.personname,b.personname
+union all
+select C_ST_I_BillID,convert(varchar(10),C_ST_I_billDate,120) as C_ST_I_billDate,
+	   convert(varchar(10),C_ST_I_AuditDate,120) as C_ST_I_AuditDate,convert(varchar(10),C_ST_I_FinanceAuditDate,120) as C_ST_I_FinanceAuditDate,      
+	   B_GC_GoodsCategoryName as B_GC_GoodsCategoryName,C_ST_I_SupplierId as C_ST_I_SupplierId,B_SP_SupplierName as B_SP_SupplierName,
+       -sum(C_ST_IE_GoodsQuantity) as C_ST_IE_GoodsQuantity,
+       -sum(C_ST_IE_NotTaxRateAmount) as C_ST_IE_NotTaxRateAmount,
+       -sum(C_ST_IE_TaxAmount) as C_ST_IE_TaxAmount,
+       -sum(C_ST_IE_CostPriceAmount) as C_ST_IE_CostPriceAmount,C_ST_IE_TaxRate as C_ST_IE_TaxRate,
+       a.personname as createperson,b.personname as auditperson
+  from C_ST_Inventory inner join C_ST_InventoryEntry on C_ST_I_BillID=C_ST_IE_BillID
+    left join B_Supplier on C_ST_I_SupplierId=B_SP_ID
+    left join SYS_PersonInfo a on a.id=C_ST_I_createPerson
+    left join SYS_PersonInfo b on b.id=C_ST_I_AuditPerson
+    left join SYS_PersonInfo c on c.id=C_ST_I_FinanceAuditPerson
+    left join B_GoodsInfo on C_ST_IE_GoodsId=B_GI_GoodsID
+    left join B_GoodsCategory on B_GC_ID=B_GI_GoodsCategoryID
+  where C_ST_I_BillTypeId in ('2') and C_ST_I_AuditState='1' and C_ST_I_FinanceAuditState='1'
+        and convert(varchar(7),C_ST_I_FinanceAuditDate,120)='${queryDate}'
+  group by C_ST_I_BillID,C_ST_I_billDate,C_ST_I_AuditDate,
+           C_ST_I_FinanceAuditDate, B_GC_GoodsCategoryName,C_ST_I_SupplierId,
+           B_SP_SupplierName,C_ST_IE_TaxRate,a.personname,b.personname
+
+)temp
+  order by C_ST_I_FinanceAuditDate
+
+
+
+
+
+]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="queryDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select top 1 ('查看年月：' + '${queryDate}') as queryDate]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="2"/>
+<FR/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,914400,914400,914400,914400,914400,723900,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,6705600,2933700,2857500,2933700,3200400,3009900,8724900,2019300,2590800,2628900,2438400,1714500,2552700,2590800,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="1" r="0" cs="14" s="0">
+<O>
+<![CDATA[制造商明细表]]></O>
+<Expand/>
+</C>
+<C c="1" r="1" cs="2" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="queryDate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="1">
+<Expand/>
+</C>
+<C c="4" r="1">
+<Expand/>
+</C>
+<C c="5" r="1">
+<Expand/>
+</C>
+<C c="1" r="2" s="2">
+<O>
+<![CDATA[单据编号]]></O>
+<Expand/>
+</C>
+<C c="2" r="2" s="2">
+<O>
+<![CDATA[制单日期]]></O>
+<Expand/>
+</C>
+<C c="3" r="2" s="2">
+<O>
+<![CDATA[审核日期]]></O>
+<Expand/>
+</C>
+<C c="4" r="2" s="2">
+<O>
+<![CDATA[结算日期]]></O>
+<Expand/>
+</C>
+<C c="5" r="2" s="2">
+<O>
+<![CDATA[商品类型]]></O>
+<Expand/>
+</C>
+<C c="6" r="2" s="2">
+<O>
+<![CDATA[制造商编号]]></O>
+<Expand/>
+</C>
+<C c="7" r="2" s="2">
+<O>
+<![CDATA[制造商名称]]></O>
+<Expand/>
+</C>
+<C c="8" r="2" s="2">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="9" r="2" s="2">
+<O>
+<![CDATA[成本合计]]></O>
+<Expand/>
+</C>
+<C c="10" r="2" s="2">
+<O>
+<![CDATA[税额合计]]></O>
+<Expand/>
+</C>
+<C c="11" r="2" s="2">
+<O>
+<![CDATA[价税合计]]></O>
+<Expand/>
+</C>
+<C c="12" r="2" s="2">
+<O>
+<![CDATA[税率]]></O>
+<Expand/>
+</C>
+<C c="13" r="2" s="2">
+<O>
+<![CDATA[制单人]]></O>
+<Expand/>
+</C>
+<C c="14" r="2" s="2">
+<O>
+<![CDATA[审核人]]></O>
+<Expand/>
+</C>
+<C c="1" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_I_BillID"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_I_billDate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_I_AuditDate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_I_FinanceAuditDate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_GC_GoodsCategoryName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_I_SupplierId"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_SP_SupplierName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_IE_GoodsQuantity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_IE_NotTaxRateAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_IE_TaxAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_IE_CostPriceAmount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="C_ST_IE_TaxRate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="createperson"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="3" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="auditperson"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="4" cs="7" s="4">
+<O>
+<![CDATA[合计]]></O>
+<Expand/>
+</C>
+<C c="8" r="4" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(I4)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="4" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J4))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="4" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(K4))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="4" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(L4))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="4" cs="3" s="4">
+<Expand/>
+</C>
+<C c="1" r="5" cs="3" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="打印日期:" + today()]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="5" cs="3" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="页次:第 " + $$page_number + " 页/共 " + $$totalPage_number + " 页"]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<PaperSize width="30240000" height="47520000"/>
+<Margin top="969120" left="0" bottom="969120" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="120"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

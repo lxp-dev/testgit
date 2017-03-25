@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false" default-dependency-check="none">
+	
+	<!-- 散瞳检查 du begin-->
+		<bean id="mydriasisAction" class="com.pengsheng.eims.sales.action.MydriasisAction" scope="prototype"/>
+	<!-- 散瞳检查 du end-->
+	<!-- 眼部健康检查 du begin-->
+		<bean id="eyesCheckAction" class="com.pengsheng.eims.sales.action.EyesCheckAction" scope="prototype"/>
+	<!-- 眼部健康检查 du end-->
+	
+	<!-- 双眼视功能检查 qiyue  begin -->
+	     <bean id="doubleEyeFunAction" class="com.pengsheng.eims.sales.action.DoubleEyeFunAction" scope="prototype"/>
+	<!-- 双眼视功能检查   end  -->
+	
+	<!-- 屈光检查  begin -->
+	     <bean id="refractiveAction" class="com.pengsheng.eims.sales.action.RefractiveAction" scope="prototype"/>
+	<!-- 屈光检查   end  -->
+	
+	<!-- 验光基表 Liuqian begin-->
+		<bean id="optometryBasicAction" class="com.pengsheng.eims.sales.action.OptometryBasicAction" scope="prototype"/>
+	<!-- 验光基表 Liuqian end-->
+
+	
+	<!-- 特殊功能检查 wanglei begin-->
+		<bean id="specialCheckAction" class="com.pengsheng.eims.sales.action.SpecialCheckAction" scope="prototype"/>
+	<!-- 特殊功能检查 wanglei end-->
+
+	<!-- 检查结论 sb begin-->
+		<bean id="inspectionAction" class="com.pengsheng.eims.sales.action.InspectionAction" scope="prototype"/>
+	<!-- 检查结论 sb end-->
+	
+	<!-- 戴镜史 wanglei begin-->
+		<bean id="glassesHistoryAction" class="com.pengsheng.eims.sales.action.GlassesHistoryAction" scope="prototype"/>
+	<!-- 戴镜史 wanglei end-->
+
+	<!-- 打印处方 qiyue begin -->
+		 <bean id="printPrescriptionAction" class="com.pengsheng.eims.sales.action.PrintPrescriptionAction" scope="prototype"/>
+	<!-- 打印处方 qiyue end -->
+	
+	<!-- 框镜销售 Liuqian begin-->
+	     <bean id="frameSalesAction" class="com.pengsheng.eims.sales.action.FrameSalesAction" scope="prototype"/>
+	<!-- 框镜销售 Liuqian end-->
+	
+	<!-- 打印挂号单 qiyue begin -->
+		 <bean id="printRegistrationAction" class="com.pengsheng.eims.sales.action.PrintRegistrationAction" scope="prototype"/>
+	<!-- 打印挂号单 qiyue end -->
+	
+	<!-- 打印配镜单 wanglei begin -->
+		 <bean id="putOptometryOrderAction" class="com.pengsheng.eims.sales.action.PutOptometryOrderAction" scope="prototype"/>
+	<!-- 打印配镜单 wanglei end -->
+	
+	<!-- 门店取镜 wanglei begin -->
+		 <bean id="shopCodeTakeAction" class="com.pengsheng.eims.sales.action.ShopCodeTakeAction" scope="prototype"/>
+	<!-- 门店取镜 wanglei end -->
+	
+	<!-- 顾客取镜 wanglei begin -->
+		 <bean id="customerTakeAction" class="com.pengsheng.eims.sales.action.CustomerTakeAction" scope="prototype"/>
+	<!-- 顾客取镜 wanglei end -->
+	
+	<!-- 门店配送 qiyue begin -->
+		 <bean id="doorStoreDeliveryAction" class="com.pengsheng.eims.sales.action.DoorStoreDeliveryAction" scope="prototype"/>
+	<!-- 门店配送  qiyue end -->
+	
+	<!-- 隐形订做片配送 qiyue begin -->
+		 <bean id="invisibleDistributionAction" class="com.pengsheng.eims.sales.action.InvisibleDistributionAction" scope="prototype"/>
+	<!-- 隐形订做片配送  qiyue end -->
+	
+	<!-- 加工配送 qiyue begin -->
+		 <bean id="processDistributionAction" class="com.pengsheng.eims.sales.action.ProcessDistributionAction" scope="prototype"/>
+	<!-- 加工配送  qiyue end -->
+	
+	<!-- 挂号 Liuqian begin -->
+		 <bean id="registeredAction" class="com.pengsheng.eims.sales.action.RegisteredAction" scope="prototype"/>
+	<!-- 挂号 Liuqian end -->
+	
+	<!-- 病历信息 qiyue begin -->
+		<bean id="optometryInformationAction" class="com.pengsheng.eims.sales.action.OptometryInformationAction" scope="prototype"/>
+	<!-- 病历信息 qiyue end -->
+
+	<!-- 销售信息 qiyue begin -->
+		<bean id="venditionInformationAction" class="com.pengsheng.eims.sales.action.VenditionInformationAction" scope="prototype"/>
+	<!-- 销售信息 qiyue end -->
+	
+	<!-- 刷卡记录 qiyue begin -->
+		<bean id="registerCardAction" class="com.pengsheng.eims.sales.action.RegisterCardAction" scope="prototype"/>
+	<!-- 刷卡记录 qiyue end -->
+	
+	<!-- 结款管理 Liuqian begin -->
+		<bean id="guitarManagementAction" class="com.pengsheng.eims.sales.action.GuitarManagementAction" scope="prototype"/>
+	<!-- 结款管理 Liuqian end -->
+	
+	<!-- 误期管理 qiyue begin -->
+		<bean id="delaysReminderAction" class="com.pengsheng.eims.sales.action.DelaysReminderAction" scope="prototype"/>
+	<!-- 误期管理 qiyue end -->
+	
+	<!-- 隐形销售 Liuqian begin-->
+	     <bean id="conSalesAction" class="com.pengsheng.eims.sales.action.ConSalesAction" scope="prototype"/>
+	<!-- 隐形销售 Liuqian end-->
+	
+	<!-- 辅料销售 Liuqian begin-->
+	     <bean id="accSalesAction" class="com.pengsheng.eims.sales.action.AccSalesAction" scope="prototype"/>
+	<!-- 辅料销售 Liuqian end-->
+	
+	<!-- 欠费  Liuqian begin-->
+	     <bean id="arrearsAction" class="com.pengsheng.eims.sales.action.ArrearsAction" scope="prototype"/>
+	<!-- 欠费 Liuqian end-->
+	
+	<!--退差价 Liuqian begin-->
+	     <bean id="diffPriceAction" class="com.pengsheng.eims.sales.action.DiffPriceAction" scope="prototype"/>
+	<!-- 退差价 Liuqian end-->
+	
+	<!-- 退款管理  Liuqian begin-->
+	     <bean id="refundAction" class="com.pengsheng.eims.sales.action.RefundAction" scope="prototype"/>
+	<!-- 退款管理  Liuqian end-->
+	
+	<!-- 退款管理  Liuqian begin-->
+	     <bean id="cardBillingAction" class="com.pengsheng.eims.sales.action.CardBillingAction" scope="prototype"/>
+	<!-- 退款管理  Liuqian end-->
+
+	<!-- 客户刷卡计费功能 qiyue begin -->
+		<bean id="creditCardAccountFeesAction" class="com.pengsheng.eims.sales.action.CreditCardAccountFeesAction" scope="prototype"/>
+	<!-- 客户刷卡计费功能  qiyue end -->
+
+	<!-- 旧镜检查sxh begin -->
+		<bean id="oldGlassCheckAction" class="com.pengsheng.eims.sales.action.OldGlassCheckAction" scope="prototype"/>
+	<!-- 旧镜检查sxh end -->
+	
+	<!-- 验光病例查询sxh begin -->
+		<bean id="optometryCaseAction" class="com.pengsheng.eims.sales.action.OptometryCaseAction" scope="prototype"/>
+	<!-- 验光病例查询sxh end -->
+	
+	<!-- 邮寄sxh begin -->
+		<bean id="toMailAction" class="com.pengsheng.eims.sales.action.ToMailAction" scope="prototype"/>
+	<!-- 邮寄sxh end -->
+	
+	<!-- 顾客投诉 sxh begin -->
+		<bean id="customerComplainAction" class="com.pengsheng.eims.sales.action.CustomerComplainAction" scope="prototype"/>
+	<!-- 顾客投诉 sxh end -->
+	
+    <!-- 套餐维护  szk begin -->
+		<bean id="setMealAction" class="com.pengsheng.eims.sales.action.SetMealAction" scope="prototype"/>
+	<!-- 套餐维护  szk end -->
+	
+	<!-- 商品成本折扣维护  szk begin -->
+		<bean id="goodsCostDiscountAction" class="com.pengsheng.eims.sales.action.GoodsCostDiscountAction" scope="prototype"/>
+	<!-- 商品成本折扣维护  szk end -->
+	
+	<!-- 积分增减  sxh begin -->
+		<bean id="integralAddandSubAction" class="com.pengsheng.eims.sales.action.IntegralAddandSubAction" scope="prototype"/>
+	<!-- 积分增减  sxh end -->
+	
+	<!-- 积分兑换管理 liujing begin -->
+		<bean id="integralExchangeManagementAction" class="com.pengsheng.eims.sales.action.IntegralExchangeManagementAction" scope="prototype"/>
+	<!-- 积分兑换管理  liujing end -->
+		
+	<!-- 门店预销售设置         ZK begin-->
+	<bean id="preSalesAction" class="com.pengsheng.eims.sales.action.PreSalesAction" scope="prototype"/>
+	<!-- 门店预销售设置         ZK end-->
+	
+	<!-- 代金券  begin -->
+	<bean id="cashCouponAction" class="com.pengsheng.eims.sales.action.CashCouponAction" scope="prototype"/>
+	<!-- 代金券 end -->
+	<!-- 打印配镜单  begin -->
+		 <bean id="packingListAction" class="com.pengsheng.eims.sales.action.PackingListAction" scope="prototype"/>
+	<!-- 打印配镜单  end -->
+	
+</beans>

@@ -1,0 +1,924 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+    
+<struts>
+	<package name="components" namespace="/" extends="struts-default">
+	<!-- 
+		<global-results>	        
+		   <result name="error">/error.jsp</result>
+		</global-results>	
+	    <global-exception-mappings>   
+	       <exception-mapping exception="java.lang.Exception" result="error"></exception-mapping>   
+	    </global-exception-mappings>
+	 -->    
+		<!-- Action Start -->
+
+		<!--连接HIS会员开窗 -->
+		<action name="initSCIHISdukaWin" class="windowCustomerInfoAction" method="initSCIHISdukaWin">
+			<result name="success">/readcard/changcheng/readChangCheng.jsp</result>
+		</action>
+		<action name="SCIHISdukaWin" class="windowCustomerInfoAction" method="SCIHISdukaWin">
+			<result name="success">/WEB-INF/pages/sales/frameSales/shopsales_main.jsp</result>
+	        <result name="error">/WEB-INF/pages/sales/frameSales/shopsales_title.jsp</result>
+		</action>
+		<action name="initSCIHISsaomaWin" class="windowCustomerInfoAction" method="initSCIHISsaomaWin">
+			<result name="success">/WEB-INF/pages/aierhis/cusOpenWin/hisCusWin.jsp</result>
+		</action>
+		<!--连接HIS会员开窗 -->
+		
+		
+		<!-- 制造商开窗 add by Liuqian -->
+		<action name="selSupplierOpen" class="windowsAction" method="selSupplierOpen">
+			<result name="success">/WEB-INF/pages/components/supplier/supplier_open.jsp</result>
+		</action>
+		<!-- 制造商开窗 add by Liuqian -->
+		<!-- 商品成本、零售价、批发开窗 add by Liuqian -->
+		<action name="selgalessDWOpen" class="windowsAction" method="selgalessDWOpen">
+			<result name="success">/WEB-INF/pages/components/glassesTwoDimension/glassesTwoDimensionCB_select.jsp</result>
+			<result name="Retail">/WEB-INF/pages/components/glassesTwoDimension/glassesTwoDimensionLS_select.jsp</result>
+			<result name="Wholesale">/WEB-INF/pages/components/glassesTwoDimension/glassesTwoDimension_select.jsp</result>
+			<result name="Cost">/WEB-INF/pages/components/glassesTwoDimension/glassesTwoDimensionCB_select.jsp</result>
+		</action>
+		<!-- 成本、零售价、批发开窗 add by Liuqian -->
+		<!--  品种开窗add by Liuqian -->
+		
+		<action name="initSelPrintBrandOpen" class="windowsAction" method="initSelPrintBrandOpen">
+			<result name="success">/WEB-INF/pages/components/brand/brandprint_open.jsp</result>
+		</action>
+		
+		<action name="selPrintBrandOpen" class="windowsAction" method="selPrintBrandOpen">
+			<result name="success">/WEB-INF/pages/components/brand/brandprint_open.jsp</result>
+		</action>
+		
+		<action name="selBrandOpen" class="windowsAction" method="selBrandOpen">
+			<result name="success">/WEB-INF/pages/components/brand/brand_open.jsp</result>
+		</action>
+		<action name="initSelBrandOpenWithoutSupplier" class="windowsAction" method="initSelBrandOpenWithoutSupplier">
+	      	<result name="success">/WEB-INF/pages/components/brand/brandwithoutsupplier_open.jsp</result>
+	    </action>
+		<action name="selBrandOpenWithoutSupplier" class="windowsAction" method="selBrandOpenWithoutSupplier">
+			<result name="success">/WEB-INF/pages/components/brand/brandwithoutsupplier_open.jsp</result>
+		</action>
+		<!-- 品种开窗 add by Liuqian -->
+		
+		<!-- 品种开窗 add by Liuqian -->
+		<action name="selVarietyOpen" class="windowsAction" method="selVarietyOpen">
+			<result name="success">/WEB-INF/pages/components/brand/variety_open.jsp</result>
+		</action>
+		<!-- 品种开窗 add by Liuqian -->
+		
+		<!-- 品种开窗 add by Liuqian -->
+		<action name="selVarietyOpen" class="windowsAction" method="selVarietyOpen">
+			<result name="success">/WEB-INF/pages/components/variety/variety_open.jsp</result>
+		</action>
+		<!-- 品种开窗 add by Liuqian -->
+		
+        <!-- 商品开窗 Add by du -->
+	    <action name="initGoodsSingleSel" class="windowGoodsAction" method="initGoodsSingleSel">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingle_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingle" class="windowGoodsAction" method="selGoodsSingle">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingle_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingleForPremiums" class="windowGoodsAction" method="selGoodsSingleForPremiums">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleForPremiums_select.jsp</result>
+	    </action>
+	    
+	    <action name="initGoodsSingleSelWP" class="windowGoodsAction" method="initGoodsSingleSelWP">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingle3_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingleWP" class="windowGoodsAction" method="selGoodsSingleWP">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingle3_select.jsp</result>
+	    </action>
+	    
+	    <action name="initGoodsSingleSelBP" class="windowGoodsAction" method="initGoodsSingleSelBP">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleBP_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingleBP" class="windowGoodsAction" method="selGoodsSingleBP">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleBP_select.jsp</result>
+	    </action>
+	    <action name="initGoodsSingleSelZT" class="windowGoodsAction" method="initGoodsSingleSelZT">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleZT_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingleZT" class="windowGoodsAction" method="selGoodsSingleZT">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleZT_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingleZTOpen" class="windowGoodsAction" method="selGoodsSingleZT">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleZT_open.jsp</result>
+	    </action>
+	    <action name="initSelGoodsInfoForSOUT" class="windowGoodsAction" method="initSelGoodsInfoForSOUT">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleForSOUT_select.jsp</result>
+	    </action>
+	    <action name="selGoodsInfoForSOUT" class="windowGoodsAction" method="selGoodsInfoForSOUT">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleForSOUT_select.jsp</result>
+	    </action>
+	    <action name="initGoodsSingleForSOUTCategory" class="windowGoodsAction" method="initGoodsSingleForSOUTCategory">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleForSOUT_select.jsp</result>
+	    </action>
+	    <action name="initGoodsSingleForSOUTSupplier" class="windowGoodsAction" method="initGoodsSingleForSOUTSupplier">
+	    </action>
+	    <action name="initGoodsSingleForSOUTBrand" class="windowGoodsAction" method="initGoodsSingleForSOUTBrand">
+	    </action>
+	    <action name="initSelBrandForReturn" class="windowGoodsAction" method="initSelBrandForReturn">
+	      <result name="success">/WEB-INF/pages/components/brand/brandReturn_select.jsp</result>
+	    </action>
+	    <action name="selBrandForReturn" class="windowGoodsAction" method="selBrandForReturn">
+	      <result name="success">/WEB-INF/pages/components/brand/brandReturn_select.jsp</result>
+	    </action>
+	    <action name="downloadGoodsSingleSel" class="windowGoodsAction" method="downloadGoodsSingleSel">
+	      <result name="success">/WEB-INF/pages/components/goods/download_goodsSingle_select.jsp</result>
+	    </action>	    	    
+	    <action name="initGoodsSingleSelUpdateAttribute" class="windowGoodsAction" method="initGoodsSingleSelUpdateAttribute">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleUpdateAttribute_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingleUpdateAttribute" class="windowGoodsAction" method="selGoodsSingleUpdateAttribute">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleUpdateAttribute_select.jsp</result>
+	    </action>
+	    <!-- 商品开窗 End by du -->
+	    
+	    <!-- 兑换商品开窗 Add by liujing -->
+	    <action name="initGoodsSingleExchangeSel" class="windowGoodsAction" method="initGoodsSingleExchangeSel">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleExchange_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingleExchange" class="windowGoodsAction" method="selGoodsSingleExchange">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleExchange_select.jsp</result>
+	    </action>
+	    <!-- 兑换商品开窗  End by liujing -->
+	    
+	    
+	      <!-- 赠品开窗选择 Add by liujing -->
+	    <action name="initGoodsSingleGiftsSel" class="windowGoodsAction" method="initGoodsSingleGiftsSel">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleGifts_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingleGifts" class="windowGoodsAction" method="selGoodsSingleGifts">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleGifts_select.jsp</result>
+	    </action>
+	    
+	    <action name="initGoodsSingleGiftsBatchSel" class="windowGoodsAction" method="initGoodsSingleGiftsBatchSel">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleGiftsBatch_select.jsp</result>
+	    </action>
+	    
+	    <action name="selGoodsSingleGiftsBatch" class="windowGoodsAction" method="selGoodsSingleGiftsBatch">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleGiftsBatch_select.jsp</result>
+	    </action>
+	    <!-- 赠品开窗选择 End by liujing -->
+	    
+	     <!-- 批发商品开窗 Add by liujing -->
+	    <action name="initGoodsSingleWSel" class="windowGoodsAction" method="initGoodsSingleWSel">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleW_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingleW" class="windowGoodsAction" method="selGoodsSingleW">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleW_select.jsp</result>
+	    </action>
+	    <!-- 批发商品开窗 End by liujing -->
+	    
+	      <!-- 商品单品开窗选择 Add by du -->
+	    <action name="initGoodsSinglesSel" class="windowGoodsAction" method="initGoodsSinglesSel">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingles_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingles" class="windowGoodsAction" method="selGoodsSingles">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingles_select.jsp</result>
+	    </action>
+	    <!-- 商品单品开窗选择 End by du -->
+	    
+	    
+	    
+	    <!-- 商品调价开窗 Add sxh -->
+	    <action name="initGoodsModifyPriceSel" class="windowGoodsAction" method="initGoodsModifyPriceSel">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsModifyPrice_select.jsp</result>
+	    </action>
+	    <action name="selGoodsModifyPrice" class="windowGoodsAction" method="selGoodsModifyPrice">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsModifyPrice_select.jsp</result>
+	    </action>
+	    <!-- 商品调价开窗 End sxh -->
+	    
+	     <!-- 商品报表开窗 Add yy -->
+	    <action name="initGoodsReportSel" class="windowGoodsAction" method="initGoodsReportSel">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsRrport_select.jsp</result>
+	    </action>
+	    <action name="selGoodsReport" class="windowGoodsAction" method="selGoodsReport">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsRrport_select.jsp</result>
+	    </action>
+	    <!-- 商品报表开窗 End yy -->
+	    
+	    
+	    
+	    <!-- 商品调拨开窗 订单Add by liujing -->
+	    <action name="initGoodsSingleSelAll" class="windowGoodsAction" method="initGoodsSingleSelAll">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleAll_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingleAll" class="windowGoodsAction" method="selGoodsSingleAll">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleAll_select.jsp</result>
+	    </action>
+	    <!-- 商品调拨开窗订单 End by liujing -->
+	    
+	    <!-- 调拨申请开窗 订单Add by liujing -->
+	    <action name="initGoodsSingleSelAllForApp" class="windowGoodsAction" method="initGoodsSingleSelAllForApp">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleAllForApp_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingleAllForApp" class="windowGoodsAction" method="selGoodsSingleAllForApp">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleAllForApp_select.jsp</result>
+	    </action>
+	    <!-- 调拨申请开窗订单 End by liujing -->
+	    
+	     <!-- 商品调拨开窗调拨Add by liujing -->
+	    <action name="initGoodsSingleSelAlls" class="windowGoodsAction" method="initGoodsSingleSelAlls">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleAll1_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingleAlls" class="windowGoodsAction" method="selGoodsSingleAlls">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingleAll1_select.jsp</result>
+	    </action>
+	    <!-- 商品调拨开窗调拨 End by liujing -->
+	    
+	      <!-- 商品负调拨开窗调拨Add by liujing -->
+	    <action name="initGoodsAllocation" class="windowGoodsAction" method="initGoodsAllocation">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsAllocation_select.jsp</result>
+	    </action>
+	    <action name="selGoodsAllocation" class="windowGoodsAction" method="selGoodsAllocation">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsAllocation_select.jsp</result>
+	    </action>
+	    <!-- 商品负调拨开窗调拨 End by liujing -->
+	    
+	    
+	     <!-- 调拨开窗Add by liujing -->
+	    <action name="initAllocationGoods" class="windowGoodsAction" method="initAllocationGoods">
+	      <result name="success">/WEB-INF/pages/components/goods/Allocation_select.jsp</result>
+	    </action>
+	    <action name="selAllocationGoods" class="windowGoodsAction" method="selAllocationGoods">
+	      <result name="success">/WEB-INF/pages/components/goods/Allocation_select.jsp</result>
+	    </action>
+	    <!-- 调拨开窗 End by liujing -->
+	    
+	      <!-- 商品负调拨开窗退货Add by liujing -->
+	    <action name="initGoodsAllocationTui" class="windowGoodsAction" method="initGoodsAllocationTui">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsAllocationTui_select.jsp</result>
+	    </action>
+	    <action name="selGoodsAllocationTui" class="windowGoodsAction" method="selGoodsAllocationTui">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsAllocationTui_select.jsp</result>
+	    </action>
+	    <!-- 商品负调拨开窗调拨 End by liujing -->
+	    
+	      <!-- 商品负调拨开窗销售出库Add by liujing -->
+	    <action name="initGoodsAllocationOut" class="windowGoodsAction" method="initGoodsAllocationOut">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsAllocationOut_select.jsp</result>
+	    </action>
+	    <action name="selGoodsAllocationOut" class="windowGoodsAction" method="selGoodsAllocationOut">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsAllocationOut_select.jsp</result>
+	    </action>
+	    <action name="initOpenInvisible" class="windowGoodsAction" method="initOpenInvisible">
+	      <result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchInvisibleOpen_select.jsp</result>
+	    </action>
+	    <action name="selOpenInvisible" class="windowGoodsAction" method="selOpenInvisible">
+	      <result name="success">/WEB-INF/pages/storage/stockSearch/stockSearchInvisibleOpen_select.jsp</result>
+	    </action>
+	    
+	     <!-- 商品负调拨开窗销售出库Add by liujing -->
+	    
+	      <!-- 商品调拨开窗收货Add by liujing -->
+	    <action name="initGoodsReceipt" class="windowGoodsAction" method="initGoodsReceipt">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsReceipt_select.jsp</result>
+	    </action>
+	    <action name="selGoodsReceipt" class="windowGoodsAction" method="selGoodsReceipt">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsReceipt_select.jsp</result>
+	    </action>
+	    <!-- 商品调拨开窗调拨 End by liujing -->
+
+        <!-- 商品开窗 Add by du -->
+	    <action name="initGoodsAlertSel" class="windowGoodsAction" method="initGoodsAlertSel">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsAlert_select.jsp</result>
+	    </action>
+	    <action name="selGoodsAlert" class="windowGoodsAction" method="selGoodsAlert">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsAlert_select.jsp</result>
+	    </action>
+	    <!-- 商品开窗 End by du -->
+	    
+        <!-- 单据开窗 Add by du -->
+	    <action name="initProcurementOrdersOpen" class="windowOrderAction" method="initProcurementOrdersOpen">
+	      <result name="success">/WEB-INF/pages/components/orders/procurementOrders_select.jsp</result>
+	    </action>
+	    <action name="initProcurementOrdersForOpen" class="windowOrderAction" method="initProcurementOrdersForOpen">
+	      <result name="success">/WEB-INF/pages/components/orders/procurementOrders_open.jsp</result>
+	    </action>
+	    <action name="selProcurementOrdersForOpen" class="windowOrderAction" method="selProcurementOrdersForOpen">
+	      <result name="success">/WEB-INF/pages/components/orders/procurementOrders_open.jsp</result>
+	    </action>
+	    <action name="openProcurementOrders" class="windowOrderAction" method="openProcurementOrders">
+	      <result name="success">/WEB-INF/pages/components/orders/procurementOrders_select.jsp</result>
+	    </action>
+	     <action name="initProcurementOrdersForOpenyx" class="windowOrderAction" method="initProcurementOrdersForOpenyx">
+	      <result name="success">/WEB-INF/pages/components/orders/procurementOrdersyx_open.jsp</result>
+	    </action>
+	    <action name="selProcurementOrdersForOpenyx" class="windowOrderAction" method="selProcurementOrdersForOpenyx">
+	      <result name="success">/WEB-INF/pages/components/orders/procurementOrdersyx_open.jsp</result>
+	    </action>
+	    <!-- 核销单据开窗-->
+	     <action name="initProcurementOrdersForOpens" class="windowOrderAction" method="initProcurementOrdersForOpens">
+	      <result name="success">/WEB-INF/pages/components/orders/procurementOrders_opens.jsp</result>
+	    </action>
+	    <action name="selProcurementOrdersForOpens" class="windowOrderAction" method="selProcurementOrdersForOpens">
+	      <result name="success">/WEB-INF/pages/components/orders/procurementOrders_opens.jsp</result>
+	    </action>
+	     <!-- 核销单据开窗-->
+	    <!-- 隐形核销单据开窗-->
+	     <action name="initProcurementOrdersForOpensyx" class="windowOrderAction" method="initProcurementOrdersForOpensyx">
+	      <result name="success">/WEB-INF/pages/components/orders/procurementOrdersyx_opens.jsp</result>
+	    </action>
+	    <action name="selProcurementOrdersForOpensyx" class="windowOrderAction" method="selProcurementOrdersForOpensyx">
+	      <result name="success">/WEB-INF/pages/components/orders/procurementOrdersyx_opens.jsp</result>
+	    </action>
+	    <!-- 隐形核销单据开窗-->
+	    <!-- 委外订单开窗 End by du -->	
+	    <action name="initSalesBasicForConsignProcessOpen" class="windowConsignProcessOrderAction" method="initSalesBasicForConsignProcessOpen">
+	      <result name="success">/WEB-INF/pages/components/windowConsignProcessOrder/salesBasicForConsignProcess_open.jsp</result>
+	    </action>
+	    <action name="openSalesBasicForConsignProcess" class="windowConsignProcessOrderAction" method="openSalesBasicForConsignProcess">
+	      <result name="success">/WEB-INF/pages/components/windowConsignProcessOrder/salesBasicForConsignProcess_open.jsp</result>
+	    </action>
+	    <action name="initGlassForConsignProcessOpen" class="windowConsignProcessOrderAction" method="initGlassForConsignProcessOpen">
+	      <result name="success">/WEB-INF/pages/components/windowConsignProcessOrder/glassForConsignProcess_open.jsp</result>
+	    </action>
+	    <action name="initStealthForConsignProcessOpen" class="windowConsignProcessOrderAction" method="initStealthForConsignProcessOpen">
+	      <result name="success">/WEB-INF/pages/components/windowConsignProcessOrder/stealthForConsignProcess_open.jsp</result>
+	    </action>
+	    <action name="initGoodsForConsignProcessOpen" class="windowConsignProcessOrderAction" method="initGoodsForConsignProcessOpen">
+	      <result name="success">/WEB-INF/pages/components/windowConsignProcessOrder/goodsForConsignProcess_open.jsp</result>
+	    </action>
+	    <action name="selGoodsForConsignProcessOpen" class="windowConsignProcessOrderAction" method="selGoodsForConsignProcessOpen">
+	      <result name="success">/WEB-INF/pages/components/windowConsignProcessOrder/goodsForConsignProcess_open.jsp</result>
+	    </action>
+	    <action name="initGoodsForConsignProcessReceiptOpen" class="windowConsignProcessOrderAction" method="initGoodsForConsignProcessReceiptOpen">
+	      <result name="success">/WEB-INF/pages/components/consignProcessReceipt/consignProcessReceiptw_select.jsp</result>
+	    </action>
+	    <action name="selGoodsForConsignProcessReceiptOpen" class="windowConsignProcessOrderAction" method="selGoodsForConsignProcessReceiptOpen">
+	      <result name="success">/WEB-INF/pages/components/consignProcessReceipt/consignProcessReceiptw_select.jsp</result>
+	    </action>
+	    <action name="initConsignProcessReceiptwOpen" class="windowConsignProcessOrderAction" method="initConsignProcessReceiptwOpen">
+	      <result name="success">/WEB-INF/pages/components/consignProcessReceipt/consignProcessReceiptw_open.jsp</result>
+	    </action>
+	    <action name="selConsignProcessReceiptwOpen" class="windowConsignProcessOrderAction" method="selConsignProcessReceiptwOpen">
+	      <result name="success">/WEB-INF/pages/components/consignProcessReceipt/consignProcessReceiptw_open.jsp</result>
+	    </action>
+	    <action name="initSelSalesConsignProcessReceiptOpen" class="windowConsignProcessOrderAction" method="initSelSalesConsignProcessReceiptOpen">
+	      <result name="success">/WEB-INF/pages/components/windowConsignProcessOrder/salesConsignProcessReceipt_open.jsp</result>
+	    </action>
+	    <action name="selSalesConsignProcessReceiptOpen" class="windowConsignProcessOrderAction" method="selSalesConsignProcessReceiptOpen">
+	      <result name="success">/WEB-INF/pages/components/windowConsignProcessOrder/salesConsignProcessReceipt_open.jsp</result>
+	    </action>
+	    <!-- 委外订单开窗 End by du -->	
+	    
+	    <!-- 客户开窗 Add by du -->
+	    <action name="initCustomerOpen" class="windowsAction" method="initCustomerOpen">
+	      <result name="success">/WEB-INF/pages/components/customer/customer_open.jsp</result>
+	    </action>
+	    <action name="selCustomerOpen" class="windowsAction" method="selCustomerOpen">
+	      <result name="success">/WEB-INF/pages/components/customer/customer_open.jsp</result>
+	    </action>
+	    <!-- 客户开窗 End by du -->	
+	    
+	    <!-- 单据开窗 Add by Liuqian -->
+	    <action name="initConsignProcessReceiptOpen" class="windowOrderAction" method="initConsignProcessReceiptOpen">
+	      <result name="success">/WEB-INF/pages/components/consignProcessOrder/consignProcessOrder_select.jsp</result>
+	    </action>
+	    <action name="initConsignProcessReceiptForOpen" class="windowOrderAction" method="initConsignProcessReceiptForOpen">
+	      <result name="success">/WEB-INF/pages/components/consignProcessOrder/consignProcessOrder_open.jsp</result>
+	    </action>
+	    <action name="selConsignProcessReceiptForOpen" class="windowOrderAction" method="selConsignProcessReceiptForOpen">
+	      <result name="success">/WEB-INF/pages/components/consignProcessOrder/consignProcessOrder_open.jsp</result>
+	    </action>
+	    <action name="openConsignProcessReceipt" class="windowOrderAction" method="openConsignProcessReceipt">
+	      <result name="success">/WEB-INF/pages/components/consignProcessOrder/consignProcessOrder_select.jsp</result>
+	    </action>
+	    <!-- 单据开窗 End by Liuqian -->
+	    
+	    <!-- 调价管理 批量选择商品开窗 Add by SB -->
+	    <action name="initMoreAdjustmentPriceOpen" class="windowGoodsAction" method="initMoreAdjustmentPriceOpen">
+	      <result name="success">/WEB-INF/pages/components/adjustmentPrice/adjustmentPrice_open.jsp</result>
+	    </action>
+	    <action name="moreAdjustmentPriceSel" class="windowGoodsAction" method="moreAdjustmentPriceSel">
+	      <result name="success">/WEB-INF/pages/components/adjustmentPrice/adjustmentPrice_open.jsp</result>
+	    </action>
+	    <!--调价管理 批量选择商品开窗 Add by SB -->	
+	    <!-- 单据开窗 End by Liuqian -->
+	    
+	    <!-- 顾客验光 Add by Liuqian -->
+	    <action name="initCustomerOptometryTitle" class="customerOptometryAction" method="initCustomerOptometryTitle">
+	      <result name="success">/WEB-INF/pages/components/optometryBasic/optometryBasic_title.jsp</result>
+	    </action>
+	    <!-- 顾客验光 Add by Liuqian -->
+
+	    <!-- 顾客验光新2014 Add by mysflying -->
+	    <action name="initCustomerOptometryTitleN" class="customerOptometryNAction" method="initCustomerOptometryTitleN">
+	      <result name="success">/WEB-INF/pages/components/optometryBasic/optometryBasic_titleN.jsp</result>
+	    </action>
+	    <!-- 顾客验光 Add by mysflying -->	    
+		<!-- Action End -->
+		
+		<!-- 特殊加工要求 开窗qiyue begin -->
+			<action name="initSpecialRequirementsInsertOpen" class="specialRequirementsOpenAction" method="initSpecialRequirementsInsertOpen">
+	      		<result name="success">/WEB-INF/pages/components/specialRequirements/specialRequirements_select.jsp</result>
+	   	    </action>
+	   	    
+			<action name="selSpecialRequirementsOpen" class="specialRequirementsOpenAction" method="selSpecialRequirementsOpen">
+	      		<result name="success">/WEB-INF/pages/components/specialRequirements/specialRequirements_select.jsp</result>
+	   	    </action>
+		<!-- 特殊加工要求开窗 end -->
+		
+		<!-- 销售镜架开窗 qiyue begin -->
+			<action name="initSellMirrorFrameSel" class="sellMirrorFrameAction" method="initSellMirrorFrameSel">
+	      		<result name="success">/WEB-INF/pages/components/sellMirrorFrame/sellMirrorFrame_select.jsp</result>
+	   	    </action>
+			<action name="selectSellMirrorFrame" class="sellMirrorFrameAction" method="selectSellMirrorFrame">
+	      		<result name="success">/WEB-INF/pages/components/sellMirrorFrame/sellMirrorFrame_select.jsp</result>
+	   	    </action>	   	    
+	   	    <action name="initSellMirrorFrameSelAll" class="sellMirrorFrameAction" method="initSellMirrorFrameSelAll">
+	      		<result name="success">/WEB-INF/pages/components/sellMirrorFrame/sellMirrorFrameAll_select.jsp</result>
+	   	    </action>
+	   	    <action name="selectSellMirrorFrameAll" class="sellMirrorFrameAction" method="selectSellMirrorFrameAll">
+	      		<result name="success">/WEB-INF/pages/components/sellMirrorFrame/sellMirrorFrameAll_select.jsp</result>
+	   	    </action>
+	   	    <action name="selectSellMirrorFrameBatch" class="sellMirrorFrameAction" method="selectSellMirrorFrameBatch">
+	      		<result name="success">/WEB-INF/pages/components/sellMirrorFrame/sellMirrorFrameBatch_select.jsp</result>
+	   	    </action>
+	   	    <action name="scanGoodsSelAll" class="sellMirrorFrameAction" method="scanGoodsSelAll">
+	      		<result name="success">/WEB-INF/pages/components/sellMirrorFrame/scanGoods_select.jsp</result>
+	   	    </action>
+	   	    <action name="scanGoodsSelAllBatch" class="sellMirrorFrameAction" method="scanGoodsSelAllBatch">
+	      		<result name="success">/WEB-INF/pages/components/sellMirrorFrame/scanGoodsBatch_select.jsp</result>
+	   	    </action>
+		<!-- 销售镜架开窗 end --> 
+		
+		<!-- 扫条码获取商品开窗 -->	
+		<action name="initSellMirrorGoodsSel" class="sellMirrorFrameAction" method="initSellMirrorGoodsSel">
+	     		<result name="success">/WEB-INF/pages/components/sellMirrorFrame/sellMirrorGoods_select.jsp</result>
+	  	    </action>
+		<action name="selectSellMirrorGoods" class="sellMirrorFrameAction" method="selectSellMirrorGoods">
+     		<result name="success">/WEB-INF/pages/components/sellMirrorFrame/sellMirrorGoods_select.jsp</result>
+  	    </action>
+		<!-- 扫条码获取商品开窗 -->	
+		<!-- 不合格品按销售单查询开窗 wanglei -->
+		<action name="initWindowNonformingOrderSel" class="windowNonconformingSaleOrderAction" method="initWindowNonformingOrderSel">
+	      <result name="success">/WEB-INF/pages/components/nonconformingSaleOrder/nonconformingOrder_select.jsp</result>
+	    </action>
+	    
+	    <action name="selectWindowNonformingOrder" class="windowNonconformingSaleOrderAction" method="selectWindowNonformingOrder">
+	      <result name="success">/WEB-INF/pages/components/nonconformingSaleOrder/nonconformingOrder_select.jsp</result>
+	    </action>
+	    
+	    <action name="initWindowNonformingSaleOrderSel" class="windowNonconformingSaleOrderAction" method="initWindowNonformingSaleOrderSel">
+	      <result name="success">/WEB-INF/pages/components/nonconformingSaleOrder/nonconformingSaleOrder_select.jsp</result>
+	    </action>
+	    
+	    <action name="selectWindowNonformingSaleOrder" class="windowNonconformingSaleOrderAction" method="selectWindowNonformingSaleOrder">
+	      <result name="success">/WEB-INF/pages/components/nonconformingSaleOrder/nonconformingSaleOrder_select.jsp</result>
+	    </action>
+		<!-- 不合格品按销售单查询开窗 wanglei -->
+		
+		<!-- 顾客资料开窗 Liuqian begin-->
+		<action name="initSelCustomerInfoWin" class="windowCustomerInfoAction" method="initSelCustomerInfoWin">
+		  <result name="success">/WEB-INF/pages/components/customerInfo/customerInfo_select.jsp</result>
+		</action>
+		
+		<action name="selCustomerInfoWin" class="windowCustomerInfoAction" method="selCustomerInfoWin">
+		  <result name="success">/WEB-INF/pages/components/customerInfo/customerInfo_select.jsp</result>
+		</action>
+		<!-- 顾客资料开窗 Liuqian end -->
+		
+		<!-- inspection canying123 begin-->
+		<action name="initWindowInspectionNormalOpen" class="windowInspectionAction" method="initWindowInspectionNormalOpen">
+		  <result name="success">/WEB-INF/pages/components/inspection/WindowInspectionNormalOpen.jsp</result>
+		</action>
+		
+		<action name="selWindowInspectionNormalOpen" class="windowInspectionAction" method="selWindowInspectionNormalOpen">
+		  <result name="success">/WEB-INF/pages/components/inspection/WindowInspectionNormalOpen.jsp</result>
+		</action>
+		
+		
+		<action name="initWindowInspectionStealOpen" class="windowInspectionAction" method="initWindowInspectionStealOpen">
+		  <result name="success">/WEB-INF/pages/components/inspection/WindowInspectionNormalOpen.jsp</result>
+		</action>
+		
+		<action name="selWindowInspectionStealOpen" class="windowInspectionAction" method="selWindowInspectionStealOpen">
+		  <result name="success">/WEB-INF/pages/components/inspection/WindowInspectionNormalOpen.jsp</result>
+		</action>
+		<!-- inspection canying123 end -->
+		
+		<!-- 销售镜片开窗 canying123 begin -->
+		<action name="initSellLensSel" class="sellLensAction" method="initSellLensSel">
+      		<result name="success">/WEB-INF/pages/components/sellLens/sellLens_select.jsp</result>
+   	    </action>
+		<action name="sellLensSel" class="sellLensAction" method="sellLensSel">
+      		<result name="success">/WEB-INF/pages/components/sellLens/sellLens_select.jsp</result>
+   	    </action>
+		<!-- 销售镜片开窗 canying123 end --> 
+		
+		
+		<!-- 辅料中隐形辅料开窗 wanglei begin-->
+		<action name="initContactAccessoriesSel" class="contactAccessoriesAction" method="initContactAccessoriesSel">
+		  <result name="success">/WEB-INF/pages/components/contactAccessories/contactAccessories_select.jsp</result>
+		</action>
+		
+		<action name="selectContactAccessories" class="contactAccessoriesAction" method="selectContactAccessories">
+		  <result name="success">/WEB-INF/pages/components/contactAccessories/contactAccessories_select.jsp</result>
+		</action>
+		
+		<action name="selectContactByGoodsbarcode" class="contactAccessoriesAction" method="selectContactByGoodsbarcode">
+		  <result name="success">/WEB-INF/pages/components/contactAccessories/contactAccessories_select.jsp</result>
+		</action>
+		<!-- 辅料中隐形辅料开窗 wanglei end-->
+		
+		<!-- 辅料中成品镜(太阳镜、老花镜)开窗 wanglei begin-->
+		<action name="initFinishedGlassesSel" class="windowFinishedGlassesAction" method="initFinishedGlassesSel">
+		  <result name="success">/WEB-INF/pages/components/finishedGlasses/windowFinishedGlasses_select.jsp</result>
+		</action>
+		
+		<action name="selectFinishedGlasses" class="windowFinishedGlassesAction" method="selectFinishedGlasses">
+		  <result name="success">/WEB-INF/pages/components/finishedGlasses/windowFinishedGlasses_select.jsp</result>
+		</action>
+		
+		<action name="selecFinishedtByGoodsbarcode" class="windowFinishedGlassesAction" method="selecFinishedtByGoodsbarcode">
+		  <result name="success">/WEB-INF/pages/components/finishedGlasses/windowFinishedGlasses_select.jsp</result>
+		</action>
+		<!-- 辅料中成品镜(太阳镜、老花镜)开窗 wanglei end-->
+		
+		<!-- 辅料中镜架辅料开窗 wanglei begin-->
+		<action name="initFramesAccessoriesSel" class="windowFramesAccessoriesAction" method="initFramesAccessoriesSel">
+		  <result name="success">/WEB-INF/pages/components/framesAccessories/windowFramesAccessories_select.jsp</result>
+		</action>
+		
+		<action name="selectFramesAccessories" class="windowFramesAccessoriesAction" method="selectFramesAccessories">
+		  <result name="success">/WEB-INF/pages/components/framesAccessories/windowFramesAccessories_select.jsp</result>
+		</action>
+		
+		<action name="selectFramesByGoodsbarcode" class="windowFramesAccessoriesAction" method="selectFramesByGoodsbarcode">
+		  <result name="success">/WEB-INF/pages/components/framesAccessories/windowFramesAccessories_select.jsp</result>
+		</action>
+		<!-- 辅料中镜架辅料开窗 wanglei end-->
+		
+		<!-- 辅料中其他商品开窗 wanglei begin-->
+		<action name="initWindowOtherGoodsSel" class="windowOtherGoodsAction" method="initWindowOtherGoodsSel">
+		  <result name="success">/WEB-INF/pages/components/otherGoods/windowOtherGoods_select.jsp</result>
+		</action>
+		
+		<action name="selectWindowOtherGoods" class="windowOtherGoodsAction" method="selectWindowOtherGoods">
+		  <result name="success">/WEB-INF/pages/components/otherGoods/windowOtherGoods_select.jsp</result>
+		</action>
+		
+		<action name="selectOthersByGoodsbarcode" class="windowOtherGoodsAction" method="selectOthersByGoodsbarcode">
+		  <result name="success">/WEB-INF/pages/components/otherGoods/windowOtherGoods_select.jsp</result>
+		</action>
+		<!-- 辅料中其它商品开窗 wanglei end-->
+		
+		<!-- 扫商品条码开窗 wanglei begin-->
+		<action name="initGoodsByGoodsbarcodeSel" class="selectGoodsByGoodsbarcodeAction" method="initGoodsByGoodsbarcodeSel">
+		  <result name="success">/WEB-INF/pages/components/goodsByGoodsbarcode/selectGoodsByBarcode_select.jsp</result>
+		</action>
+		
+		<action name="selectGoodsByGoodsbarcode" class="selectGoodsByGoodsbarcodeAction" method="selectGoodsByGoodsbarcode">
+		  <result name="success">/WEB-INF/pages/components/goodsByGoodsbarcode/selectGoodsByBarcode_select.jsp</result>
+		</action>
+		<!-- 扫商品条码开窗 wanglei end-->
+		
+		<!-- 员工打折开窗 wanglei start -->
+		<action name="initPersonDiscountSelect" class="windowPersonDiscountAction" method="initPersonDiscountSelect">
+		  <result name="success">/WEB-INF/pages/components/personDiscount/windowPersonDiscount_select.jsp</result>
+		</action>
+		
+		<action name="selectPersonDiscount" class="windowPersonDiscountAction" method="selectPersonDiscount">
+		  <result name="success">/WEB-INF/pages/components/personDiscount/windowPersonDiscount_select.jsp</result>
+		  <result name="error" type="chain">initPersonDiscountSelect</result>
+		</action>
+		<action name="initPersonDiscountCardSelect" class="windowPersonDiscountAction" method="initPersonDiscountCardSelect">
+		  <result name="success">/WEB-INF/pages/components/personDiscount/windowPersonDiscountCard_select.jsp</result>
+		</action>
+		
+		<action name="selectPersonDiscountCard" class="windowPersonDiscountAction" method="selectPersonDiscountCard">
+		  <result name="success">/WEB-INF/pages/components/personDiscount/windowPersonDiscountCard_select.jsp</result>
+		  <result name="error" type="chain">initPersonDiscountCardSelect</result>
+		</action>
+		<action name="initSelectDiscountCard" class="windowPersonDiscountAction" method="initSelectDiscountCard">
+		  <result name="success">/WEB-INF/pages/components/personDiscount/windowDiscountCard_select.jsp</result>
+		</action>
+		
+		<action name="selectDiscountCard" class="windowPersonDiscountAction" method="selectDiscountCard">
+		  <result name="success">/WEB-INF/pages/components/personDiscount/windowDiscountCard_select.jsp</result>
+		  <result name="error" type="chain">initSelectDiscountCard</result>
+		</action>
+		
+		<action name="initSelectQOnePrice" class="windowPersonDiscountAction" method="initSelectQOnePrice">
+		  <result name="success">/WEB-INF/pages/components/personDiscount/windowQOnePrice_select.jsp</result>
+		</action>
+		
+		<action name="selectQOnePrice" class="windowPersonDiscountAction" method="selectQOnePrice">
+		  <result name="success">/WEB-INF/pages/components/personDiscount/windowQOnePrice_select.jsp</result>
+		  <result name="error" type="chain">initSelectQOnePrice</result>
+		</action>
+		<!-- 员工打折开窗 wanglei end  -->
+		
+		
+		<!-- 隐形镜片开窗 canying123 begin -->
+			<action name="initSellStealthLensSel" class="sellSteathlLensAction" method="initSellStealthLensSel">
+	      		<result name="success">/WEB-INF/pages/components/sellStealthLens/sellStealthLens_select.jsp</result>
+	   	    </action>
+			<action name="sellStealthLensSel" class="sellLensAction" method="sellStealthLensSel">
+	      		<result name="success">/WEB-INF/pages/components/sellStealthLens/sellStealthLens_select.jsp</result>
+	   	    </action>
+		<!-- 隐形镜片开窗 canying123 end --> 
+		
+		<!-- 隐形商品开窗 Liuqian begin-->
+		<action name="initConLensSel" class="conLensAction" method="initConLensSel">
+	    	<result name="success">/WEB-INF/pages/components/conLensGoods/conLensGoods_select.jsp</result>
+	   	</action>
+	   	<action name="conLensSel" class="conLensAction" method="conLensSel">
+	    	<result name="success">/WEB-INF/pages/components/conLensGoods/conLensGoods_select.jsp</result>
+	   	</action>
+		<!-- 隐形商品开窗 Liuqian end-->
+		
+		<!-- 配镜单开窗 qiyue begin-->
+		<action name="initSalesBasicSel" class="salesBasicAction" method="initSalesBasicSel">
+	    	<result name="success">/WEB-INF/pages/components/salesBasic/salesBasic_open.jsp</result>
+	   	</action>
+		<action name="selectSalesBasic" class="salesBasicAction" method="selectSalesBasic">
+	    	<result name="success">/WEB-INF/pages/components/salesBasic/salesBasic_open.jsp</result>
+	   	</action>
+	   	
+		<!-- 配镜单开窗 qiyue end-->
+		
+		
+		<!-- 在途查询开窗 qiyue begin-->
+		<action name="initInTransitDetailsSel" class="inTransitDetailsAction" method="initInTransitDetailsSel">
+	    	<result name="success">/WEB-INF/pages/components/inTransit/inTransit_details.jsp</result>
+	   	</action>
+		<action name="selectInTransitDetails" class="inTransitDetailsAction" method="selectInTransitDetails">
+	    	<result name="success">/WEB-INF/pages/components/inTransit/inTransitCustomer_select.jsp</result>
+	   	</action>
+		<action name="selectGoodsOut" class="inTransitDetailsAction" method="selectGoodsOut">
+	    	<result name="success">/WEB-INF/pages/components/inTransit/selectGoodsOut.jsp</result>
+	   	</action>
+		<action name="selectSalesLog" class="inTransitDetailsAction" method="selectSalesLog">
+	    	<result name="success">/WEB-INF/pages/components/inTransit/selectSalesLog.jsp</result>
+	   	</action>	   	
+	   	<action name="selectInTransitDetails2" class="inTransitDetailsAction" method="selectInTransitDetails2">
+	    	<result name="success">/WEB-INF/pages/components/inTransit/inTransitCustomer_select2.jsp</result>
+	   	</action>
+	   	<action name="selectInTransitDetails3" class="inTransitDetailsAction" method="selectInTransitDetails3">
+	    	<result name="success">/WEB-INF/pages/components/inTransit/inTransitCustomer_select3.jsp</result>
+	   	</action>
+		<!-- 在途查询开窗 qiyue end-->
+		
+		<!-- 订单系统取发货单开窗  liuqian begin-->
+		<action name="initInvoiceForOpen" class="windowOrderAction" method="initInvoiceForOpen">
+	      <result name="success">/WEB-INF/pages/components/invoice/invoice_open.jsp</result>
+	    </action>
+	    <action name="selInvoiceForOpen" class="windowOrderAction" method="selInvoiceForOpen">
+	      <result name="success">/WEB-INF/pages/components/invoice/invoice_open.jsp</result>
+	    </action>
+		<!-- 订单系统取发货单开窗 liuqian end-->
+		<action name="initChangeSaleser" class="frameSalesAction" method="initChangeSaleser">
+		  <result name="success">/WEB-INF/pages/components/changeSaleser/changeSaleser_select.jsp</result>
+		</action>
+		<action name="changeSaleser" class="frameSalesAction" method="changeSaleser">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  <result name="error">/WEB-INF/pages/components/changeSaleser/changeSaleser_select.jsp</result>
+		</action>
+	<action name="initChangeSaleserCard" class="frameSalesAction" method="initChangeSaleserCard">
+	  <result name="success">/WEB-INF/pages/components/changeSaleser/changeSaleserCard_select.jsp</result>
+	  
+	</action>
+	<action name="changeSaleserCard" class="frameSalesAction" method="changeSaleserCard">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  <result name="error">/WEB-INF/pages/components/changeSaleser/changeSaleser_select.jsp</result>
+	</action>
+		<!-- 处方类型为隐性时开窗  SZK begin-->
+		<action name="initWindowInspectionOtherOpen" class="windowInspectionAction" method="initWindowInspectionOtherOpen">
+		  <result name="success">/WEB-INF/pages/components/inspection/WindowInspectionOtherOpen.jsp</result>
+		</action>
+		<action name="selWindowInspectionOtherOpen" class="windowInspectionAction" method="selWindowInspectionOtherOpen">
+		  <result name="success">/WEB-INF/pages/components/inspection/WindowInspectionOtherOpen.jsp</result>
+		</action>
+		<!-- 处方类型为隐性时开窗  SZK end-->
+		
+		<!-- 二维表开窗 Add by shen -->
+	    <action name="init2DSel" class="windowGoodsAction" method="init2DSel">
+	      <result name="success">/WEB-INF/pages/report/2D/2D_report.jsp</result>
+	    </action>
+
+		<!-- 人员开窗 -->
+		<action name="selPersonOpen" class="windowsAction" method="selPersonOpen">
+			<result name="success">/WEB-INF/pages/components/personInfo/personInfo_open.jsp</result>
+		</action>
+		<!-- 人员开窗 -->
+		
+		
+	    <!-- 部门开窗 Add by zjy -->
+	    <action name="initDepartmentOpen" class="windowsAction" method="initDepartmentOpen">
+	      <result name="success">/WEB-INF/pages/components/department/department_open.jsp</result>
+	      <result name="onlydept">/WEB-INF/pages/components/department/onlydepartment_open.jsp</result>
+	    </action>
+	    <action name="selDepartmentOpen" class="windowsAction" method="selDepartmentOpen">
+	      <result name="success">/WEB-INF/pages/components/department/department_open.jsp</result>
+	      <result name="onlydept">/WEB-INF/pages/components/department/onlydepartment_open.jsp</result>
+	    </action>
+	    <action name="selDepartmentInOrOutStorageOpen" class="windowsAction" method="selDepartmentInOrOutStorageOpen">
+	      <result name="success">/WEB-INF/pages/components/department/departmentInOrOutStorage_open.jsp</result>
+	    </action>
+	    <action name="initDepartmentOpen2" class="windowsAction" method="initDepartmentOpen2">
+	      <result name="success">/WEB-INF/pages/components/department/department_open2.jsp</result>
+	    </action>
+	    <action name="selDepartmentOpen2" class="windowsAction" method="selDepartmentOpen2">
+	      <result name="success">/WEB-INF/pages/components/department/department_open2.jsp</result>
+	    </action>
+	    <!-- 部门开窗 End by zjy -->	
+	   
+	   	<!-- 初始化二维表开窗 Add by szk -->
+	    <action name="initGoodsOpen_dimensional" class="windowGoodsAction" method="initGoodsOpen_dimensional">
+	      <result name="success">/WEB-INF/pages/report/2D/2D_report.jsp</result>
+	    </action>
+	    
+	    <!-- 二维表开窗 Add by szk -->
+	    <action name="goodsOpen_dimensional" class="windowGoodsAction" method="goodsOpen_dimensional">
+	      <result name="success">/WEB-INF/pages/report/2D/2D_report.jsp</result>
+	    </action>	     
+	     	    
+	    <!-- 初始化调价二维表开窗 Add by szk -->
+	    <action name="initAdjustPriceGoodsOpen_dimensional" class="windowGoodsAction" method="initGoodsOpen_dimensional">
+	      <result name="success">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_2D.jsp</result>
+	    </action>	    
+	    	    
+	    <!-- 调价二维表开窗 Add by szk -->
+	    <action name="adjustPriceGoodsOpen_dimensional" class="windowGoodsAction" method="goodsOpen_dimensional">
+	      <result name="success">/WEB-INF/pages/storage/adjustmentPrice/adjustmentprice_2D.jsp</result>
+	    </action>
+	    
+	    <!-- 在途点维护查询 Add by szk -->
+	    <action name="initInTransitQuery" class="windowsAction" method="initInTransitQuery">
+	      <result name="success">/WEB-INF/pages/components/inTransit/inTransit_select.jsp</result>
+	    </action>	     
+	     	    
+	    <!-- 初始化在途点维护  Add by szk -->
+	    <action name="initEnabledInTransit" class="windowsAction" method="initEnabledInTransit">
+	      <result name="success">/WEB-INF/pages/components/inTransit/inTransit_abled.jsp</result>
+	    </action>	    
+	    	    
+	    <!-- 在途点停用启用 Add by szk -->
+	    <action name="enabledInTransit" class="windowsAction" method="enabledInTransit">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initScanBarcode" class="windowsAction" method="initScanBarcode">
+			<result name="success">/WEB-INF/pages/components/barcode/barcode_scan.jsp</result>
+	    </action>
+    
+	    <action name="scanBarcode" class="windowsAction" method="scanBarcode">
+			<result name="success">/WEB-INF/pages/components/barcode/barcode_scan.jsp</result>
+	    </action>
+	    
+	    	    
+	    <action name="initScanGoodsID" class="windowsAction" method="initScanGoodsID">
+			<result name="success">/WEB-INF/pages/components/barcode/goodsid_scan.jsp</result>
+	    </action>
+	    
+	    <action name="scanGoodsID" class="windowsAction" method="scanGoodsID">
+			<result name="success">/WEB-INF/pages/components/barcode/goodsid_scan.jsp</result>
+	    </action>	
+	    
+	    <!-- 报表中价格区间开窗  add by szk -->
+		<action name="initSalesAreaOpen" class="windowsAction" method="initSalesAreaOpen">
+			<result name="success">/WEB-INF/pages/components/report/salesArea_open.jsp</result>
+		</action>
+		<action name="salesAreaOpen" class="windowsAction" method="salesAreaOpen">
+			<result name="success">/WEB-INF/pages/components/report/salesArea_open.jsp</result>
+		</action>
+		<!-- 报表中价格区间开窗  add by szk  -->
+		
+		<!-- 仓位开窗  -->
+	    <action name="initWarehouseOpen" class="windowsAction" method="initWarehouseOpen">
+	      <result name="success">/WEB-INF/pages/components/warehouse/warehouse_open.jsp</result>
+	      <result name="wd1">/WEB-INF/pages/components/warehouse/warehouse_open1.jsp</result>
+	    </action>
+	    <action name="selWarehouseOpen" class="windowsAction" method="selWarehouseOpen">
+	      <result name="success">/WEB-INF/pages/components/warehouse/warehouse_open.jsp</result>
+	      <result name="Warehouse1">/WEB-INF/pages/components/warehouse/warehouse_open1.jsp</result>
+	    </action>
+	    <!-- 仓位开窗  -->
+	    
+	<!-- 商品开窗 Add by du -->
+	    <action name="initGoodsSingleSel2" class="windowGoodsAction" method="initGoodsSingleSel">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingle2_select.jsp</result>
+	    </action>
+	    <action name="selGoodsSingle2" class="windowGoodsAction" method="selGoodsSingle">
+	      <result name="success">/WEB-INF/pages/components/goods/goodsSingle2_select.jsp</result>
+	    </action>
+	<!-- 商品开窗 End by du -->
+	
+	     	
+	<!--报表时英维护 szk begin-->
+		<action name="selectReportQuartzInfo" class="reportQuartzAction" method="selectReportQuartzInfo">
+			<result name="success">/WEB-INF/pages/components/reportquartz/reportQuartz_select.jsp</result>
+	    </action>
+	    <action name="initReportQuartzDataUpdate" class="reportQuartzAction" method="initReportQuartzDataUpdate">
+			<result name="success">/WEB-INF/pages/components/reportquartz/reportQuartz_update.jsp</result>
+	    </action>
+	    <action name="updateReportQuartzData" class="reportQuartzAction" method="updateReportQuartzData">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initReportQuartzDataDetail" class="reportQuartzAction" method="initReportQuartzDataDetail">
+			<result name="success">/WEB-INF/pages/components/reportquartz/reportQuartz_detail.jsp</result>
+	    </action>
+	    <action name="initReportQuartzDataInsert" class="reportQuartzAction" method="initReportQuartzDataInsert">
+			<result name="success">/WEB-INF/pages/components/reportquartz/reportQuartz_insert.jsp</result>
+	    </action>
+	    <action name="insertReportQuartzData" class="reportQuartzAction" method="insertReportQuartzData">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!--报表时英维护 szk end-->	
+	
+	<!-- 按品种调价开窗（零售价） Add by du -->
+	    <action name="initBrandPriceSel" class="windowGoodsAction" method="initBrandPriceSel">
+	      <result name="success">/WEB-INF/pages/components/brandPrice/brandPrice_select.jsp</result>
+	    </action>
+	    <action name="selBrandPrice" class="windowGoodsAction" method="selBrandPrice">
+	      <result name="success">/WEB-INF/pages/components/brandPrice/brandPrice_select.jsp</result>
+	    </action>
+	<!-- 按品种调价开窗（零售价） End by du -->
+	
+	<!-- 按品种调价开窗（成本） Add by du -->
+	    <action name="initBrandPriceSel2" class="windowGoodsAction" method="initBrandPriceSel2">
+	      <result name="success">/WEB-INF/pages/components/brandPrice/brandPrice_select2.jsp</result>
+	    </action>
+	    <action name="selBrandPrice2" class="windowGoodsAction" method="selBrandPrice2">
+	      <result name="success">/WEB-INF/pages/components/brandPrice/brandPrice_select2.jsp</result>
+	    </action>
+	<!-- 按品种调价开窗（成本） End by du -->
+	
+	<!-- 按品种调价开窗（批发价） Add by du -->
+	    <action name="initBrandPriceSel3" class="windowGoodsAction" method="initBrandPriceSel3">
+	      <result name="success">/WEB-INF/pages/components/brandPrice/brandPrice_select3.jsp</result>
+	    </action>
+	    <action name="selBrandPrice3" class="windowGoodsAction" method="selBrandPrice3">
+	      <result name="success">/WEB-INF/pages/components/brandPrice/brandPrice_select3.jsp</result>
+	    </action>
+	<!-- 按品种调价开窗（批发价） End by du -->
+	
+	<!-- 门店预销售品种开窗 Add by du -->
+	    <action name="initBrandPriceSel4" class="windowGoodsAction" method="initBrandPriceSel4">
+	      <result name="success">/WEB-INF/pages/components/brandPrice/brandPrice_select4.jsp</result>
+	    </action>
+	    <action name="selBrandPrice4" class="windowGoodsAction" method="selBrandPrice4">
+	      <result name="success">/WEB-INF/pages/components/brandPrice/brandPrice_select4.jsp</result>
+	    </action>
+	<!-- 门店预销售品种开窗 End by du -->
+	
+	<!-- 制造商开窗(多选) -->
+		<action name="selManySupplierOpen" class="windowsAction" method="selSupplierOpen">
+			<result name="success">/WEB-INF/pages/components/supplier/manysupplier_open.jsp</result>
+		</action>
+	<!-- 制造商开窗 (多选)  -->
+	
+	<!-- 加盟店选择 (多选)  -->
+		<action name="selManyFranchiseeOpen" class="departmentsAction" method="franchiseeSel">
+			<result name="success">/WEB-INF/pages/components/department/manyfranchisee_open.jsp</result>
+		</action>
+	<!-- 加盟店选择 (多选) -->
+	
+	<!-- 商品价格走势 add by sxh -->
+		<action name="selectGoodsPriceChange" class="windowsAction" method="selectGoodsPriceChange">
+			<result name="success">/WEB-INF/pages/components/glassesTwoDimension/goodsCostChange_select.jsp</result>
+			<result name="retail">/WEB-INF/pages/components/glassesTwoDimension/goodsRetailChange_select.jsp</result>
+			<result name="whole">/WEB-INF/pages/components/glassesTwoDimension/goodsWholeChange_select.jsp</result>
+			<result name="cost">/WEB-INF/pages/components/glassesTwoDimension/goodsCostChange_select.jsp</result>
+		</action>
+	<!-- 商品价格走势 add by sxh -->
+	
+	<!-- 加盟店选择 (单选)  -->
+		<action name="selOnlyFranchiseeOpen" class="departmentsAction" method="franchiseeSel">
+			<result name="success">/WEB-INF/pages/components/department/onlyfranchisee_open.jsp</result>
+		</action>
+	<!-- 加盟店选择 (单选) -->
+	
+	<!-- 会员卡类别开窗(多选) -->
+		<action name="selMemberTypeOpen" class="windowsAction" method="selMemberTypeOpen">
+			<result name="success">/WEB-INF/pages/components/memberType/memberType_open.jsp</result>
+		</action>
+	<!-- 会员卡类别开窗 (多选)  -->
+	
+		<!-- 多选制造商开窗 add by szk -->
+		<action name="selManySupplierOpen" class="windowsAction" method="selSupplierOpen">
+			<result name="success">/WEB-INF/pages/report/sskchz/manysupplier_select.jsp</result>
+		</action>
+		<!-- 多选制造商开窗 add by szk -->
+		
+		<!-- 多选按品种开窗 Add by szk -->
+	    <action name="selManyBrandOpen" class="windowGoodsAction" method="selManyBrandOpen">
+	      <result name="success">/WEB-INF/pages/report/sskchz/manybrand_select.jsp</result>
+	    </action>
+	    <!-- 多选按品种开窗 Add by szk -->
+	    
+	    <!-- 多选仓位开窗  -->
+	    <action name="selManyWarehouseOpen" class="windowsAction" method="selWarehouseOpen">
+	      <result name="success">/WEB-INF/pages/report/sskchz/manystock_select.jsp</result>
+	    </action>
+	    <!-- 多选仓位开窗  -->
+		
+	</package>
+</struts>

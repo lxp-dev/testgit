@@ -1,0 +1,6 @@
+#Created by JInto - www.guh-software.de
+#Wed Aug 06 16:04:20 CST 2008
+jdbc.driverClassName=com.mysql.jdbc.Driver
+jdbc.url=jdbc\:mysql\://192.168.1.28\:3306/pengsheng_sms?useUnicode\=true&characterEncoding\=UTF-8
+jdbc.username=root
+jdbc.password=tjeh

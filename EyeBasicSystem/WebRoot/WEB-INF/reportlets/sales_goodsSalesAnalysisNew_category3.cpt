@@ -1,0 +1,1918 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="salesCost"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="maxSphyj"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="minSphjp"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="maxCyljp"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endretailamount"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgistealthclassyj"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgiothergoodsbigclass"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="minCylyj"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgiothergoodssmallclass"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgispecjj"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnretailamount"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="maxCylyj"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="minSphlh"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgiismutiluminosityjp"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="minSphyj"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgiusetypeyj"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bandID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgieyeglassmaterialtypejp"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgiframesizejj"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="maxSphjp"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="isCustomize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="maxSphlh"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsCategoryID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="minCyljp"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgirefractivejp"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsID"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgicolorjj"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+select departmentID into #salesDepartments from sales_createShopCodeTab('${shopCode}')
+
+----------------*********************************************------------------------------------
+
+if ('${bgnDate}'<convert(varchar(10),getdate(),120))
+begin
+
+if ('${endDate}'<convert(varchar(10),getdate(),120))
+begin
+	select CategoryID as goodsid,
+		   B_GC_GoodsCategoryName as goodsname,
+		   ShopCode,
+		   B_DP_DepartmentName as ShopCodeName,
+	       sum(xsNum) as xsNum,
+		   sum(thNum) as thNum,
+		   sum(thje) as thje,
+		   sum(xsje) as xsje,
+		   sum(bhsje) as bhsje 
+	 from (
+
+		select 	R_SD_DSE_ShopCode as ShopCode,
+			R_RC_DSE_SupplierID as SupplierID,
+			R_RC_DSE_SupplierName as SupplierName,
+            isnull(R_SD_DSE_GoodsNum,0) as xsNum,
+			0 as thNum,
+			0 as thje,
+			isnull(R_SD_DSE_GoodsAmount,0) as xsje,
+                                     (CASE 
+                                        WHEN ISNULL('${salesCost}', '') = '1' THEN Isnull(R_SD_DSE_GoodsRateAmount, 0)
+                                        WHEN ISNULL('${salesCost}', '') = '2' THEN Isnull(R_SD_DSE_GoodsNotRateAmount, 0)
+                                        WHEN ISNULL('${salesCost}', '') = '3' THEN Isnull(R_SD_DSE_GoodsAvgAmount, 0)
+                                      ELSE Isnull(R_SD_DSE_GoodsRateAmount, 0)  END )AS bhsje,
+			B_GI_ViewGoodsName as goodsname,
+			R_RC_DSE_GoodsID as GoodsID,
+			R_RC_DSE_BandID as brandid,
+			R_RC_DSE_BandName as BrandName,
+			R_RC_DSE_GoodsCategoryID as CategoryID
+		  from R_RC_DaySalesEntry
+		  left join B_GoodsInfo on B_GI_GoodsID = R_RC_DSE_GoodsID
+		  where R_SD_DSE_SalesType='1'
+			   and ((isnull('${shopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #salesDepartments)) or isnull('${shopCode}','')='')
+			   and ((isnull('${bgnDate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)>='${bgnDate}') or isnull('${bgnDate}','')='')
+			   and ((isnull('${endDate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)<='${endDate}') or isnull('${endDate}','')='')
+			   and ((isnull('${goodsCategoryID}','')<>'' and R_RC_DSE_GoodsCategoryID=isnull('${goodsCategoryID}','')) or isnull('${goodsCategoryID}','')='')
+			   and ((isnull('${supplierID}','')<>'' and R_RC_DSE_SupplierID=isnull('${supplierID}','')) or isnull('${supplierID}','')='')
+			   and ((isnull('${bandID}','')<>'' and R_RC_DSE_BandID=isnull('${bandID}','')) or isnull('${bandID}','')='')
+			   and ((isnull('${goodsID}','')<>'' and R_RC_DSE_GoodsID like '%' + isnull('${goodsID}','') + '%') or isnull('${goodsID}','')='')
+			   and ((isnull('${goodsName}','')<>'' and B_GI_ViewGoodsName like '%' + isnull('${goodsName}','') + '%') or isnull('${goodsName}','')='')
+		   and (('${bgispecjj}' <> '' and B_GoodsInfo.B_GI_Spec='${bgispecjj}') or ('${bgispecjj}' = ''))  --型号
+	and (('${bgicolorjj}' <> '' and B_GoodsInfo.B_GI_Color='${bgicolorjj}') or ('${bgicolorjj}' = ''))  --色号
+	and (('${bgiframesizejj}' <> '' and B_GoodsInfo.B_GI_FrameSize='${bgiframesizejj}') or ('${bgiframesizejj}' = ''))  --尺寸 
+	and (('${bgieyeglassmaterialtypejp}' <> '' and B_GoodsInfo.B_GI_EyeGlassMaterialType='${bgieyeglassmaterialtypejp}') or ('${bgieyeglassmaterialtypejp}' = '')) --镜片材料分类
+	and (('${bgirefractivejp}' <> '' and B_GoodsInfo.B_GI_Refractive='${bgirefractivejp}') or ('${bgirefractivejp}' = ''))  --镜片折射率
+	and (('${bgiismutiluminosityjp}' <> '' and B_GoodsInfo.B_GI_isMutiLuminosity='${bgiismutiluminosityjp}') or ('${bgiismutiluminosityjp}' = ''))   --镜片光度分类
+	and (('${minSphjp}' <> '' and B_GoodsInfo.B_GI_Sph >= cast( '${minSphjp}' as float)) or ('${minSphjp}' = ''))   --镜片球镜范围
+	and (('${maxSphjp}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphjp}' = ''))   --镜片球镜范围
+	and (('${minCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCyljp}' = ''))   --镜片柱镜范围
+	and (('${maxCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl <= cast( '${maxCyljp}' as float)) or ('${maxCyljp}' = ''))   --镜片柱镜范围
+	and (('${bgiusetypeyj}' <> '' and B_GoodsInfo.B_GI_UseType='${bgiusetypeyj}') or ('${bgiusetypeyj}' = ''))   --隐形使用类型
+	and (('${bgistealthclassyj}' <> '' and B_GoodsInfo.B_GI_StealthClass='${bgistealthclassyj}') or ('${bgistealthclassyj}' = ''))   --抛弃型分类
+	and (('${minSphyj}' <> '' and B_GoodsInfo.B_GI_Sph >= cast('${minSphjp}' as float)) or ('${minSphyj}' = ''))   --隐形球镜范围
+	and (('${maxSphyj}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphyj}' = ''))   --隐形球镜范围
+	and (('${minCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCylyj}' = ''))   --隐形柱镜范围
+	and (('${maxCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl  <= cast( '${maxCyljp}' as float)) or ('${maxCylyj}' = ''))   --隐形柱镜范围
+    AND ( ( '${minSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph >= CAST('${minSphlh}' AS FLOAT) ) OR ( '${minSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${maxSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph <= CAST('${maxSphlh}' AS FLOAT) ) OR ( '${maxSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${bgiothergoodsbigclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsBigClass = '${bgiothergoodsbigclass}' )  OR ( '${bgiothergoodsbigclass}' = '' ) ) --其他大类
+    AND ( ( '${bgiothergoodssmallclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsSmallClass = '${bgiothergoodssmallclass}' ) OR ( '${bgiothergoodssmallclass}' = '' ) ) --其他小类
+	AND ( ( '${bgnretailamount}' <> '' AND R_RC_DSE_RetailPrice >= CAST('${bgnretailamount}' AS FLOAT) ) OR ( '${bgnretailamount}' = '' ) )
+    AND ( ( '${endretailamount}' <> '' AND R_RC_DSE_RetailPrice <= CAST('${endretailamount}' AS FLOAT) ) OR ( '${endretailamount}' = '' ) )
+AND ( ( '${isCustomize}' <> '' AND B_GoodsInfo.B_GI_isCustomize = '${isCustomize}' ) OR ( '${isCustomize}' = '' ) ) --定做标识
+
+		union all
+		select  R_SD_DSE_ShopCode as ShopCode,
+			R_RC_DSE_SupplierID as SupplierID,
+			R_RC_DSE_SupplierName as SupplierName,
+            0 as xsNum,
+			isnull(R_SD_DSE_GoodsNum,0) as thNum,
+			isnull(R_SD_DSE_GoodsAmount,0) as thje,
+			0 as xsje,
+                                     (CASE 
+                                        WHEN ISNULL('${salesCost}', '') = '1' THEN Isnull(R_SD_DSE_GoodsRateAmount, 0)
+                                        WHEN ISNULL('${salesCost}', '') = '2' THEN Isnull(R_SD_DSE_GoodsNotRateAmount, 0)
+                                        WHEN ISNULL('${salesCost}', '') = '3' THEN Isnull(R_SD_DSE_GoodsAvgAmount, 0)
+                                      ELSE Isnull(R_SD_DSE_GoodsRateAmount, 0)  END )AS bhsje,
+			B_GI_ViewGoodsName as goodsname,
+			R_RC_DSE_GoodsID as GoodsID,
+			R_RC_DSE_BandID as brandid,
+			R_RC_DSE_BandName as BrandName,
+			R_RC_DSE_GoodsCategoryID as CategoryID
+		  from R_RC_DaySalesEntry
+		  left join B_GoodsInfo on B_GI_GoodsID = R_RC_DSE_GoodsID
+		  where R_SD_DSE_SalesType='2'
+			   and ((isnull('${shopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #salesDepartments)) or isnull('${shopCode}','')='')
+			   and ((isnull('${bgnDate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)>='${bgnDate}') or isnull('${bgnDate}','')='')
+			   and ((isnull('${endDate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)<='${endDate}') or isnull('${endDate}','')='')
+			   and ((isnull('${goodsCategoryID}','')<>'' and R_RC_DSE_GoodsCategoryID=isnull('${goodsCategoryID}','')) or isnull('${goodsCategoryID}','')='')
+			   and ((isnull('${supplierID}','')<>'' and R_RC_DSE_SupplierID=isnull('${supplierID}','')) or isnull('${supplierID}','')='')
+			   and ((isnull('${bandID}','')<>'' and R_RC_DSE_BandID=isnull('${bandID}','')) or isnull('${bandID}','')='')
+			   and ((isnull('${goodsID}','')<>'' and R_RC_DSE_GoodsID like '%' + isnull('${goodsID}','') + '%') or isnull('${goodsID}','')='')
+			   and ((isnull('${goodsName}','')<>'' and B_GI_ViewGoodsName like '%' + isnull('${goodsName}','') + '%') or isnull('${goodsName}','')='')
+		   and (('${bgispecjj}' <> '' and B_GoodsInfo.B_GI_Spec='${bgispecjj}') or ('${bgispecjj}' = ''))  --型号
+	and (('${bgicolorjj}' <> '' and B_GoodsInfo.B_GI_Color='${bgicolorjj}') or ('${bgicolorjj}' = ''))  --色号
+	and (('${bgiframesizejj}' <> '' and B_GoodsInfo.B_GI_FrameSize='${bgiframesizejj}') or ('${bgiframesizejj}' = ''))  --尺寸 
+	and (('${bgieyeglassmaterialtypejp}' <> '' and B_GoodsInfo.B_GI_EyeGlassMaterialType='${bgieyeglassmaterialtypejp}') or ('${bgieyeglassmaterialtypejp}' = '')) --镜片材料分类
+	and (('${bgirefractivejp}' <> '' and B_GoodsInfo.B_GI_Refractive='${bgirefractivejp}') or ('${bgirefractivejp}' = ''))  --镜片折射率
+	and (('${bgiismutiluminosityjp}' <> '' and B_GoodsInfo.B_GI_isMutiLuminosity='${bgiismutiluminosityjp}') or ('${bgiismutiluminosityjp}' = ''))   --镜片光度分类
+	and (('${minSphjp}' <> '' and B_GoodsInfo.B_GI_Sph >= cast( '${minSphjp}' as float)) or ('${minSphjp}' = ''))   --镜片球镜范围
+	and (('${maxSphjp}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphjp}' = ''))   --镜片球镜范围
+	and (('${minCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCyljp}' = ''))   --镜片柱镜范围
+	and (('${maxCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl <= cast( '${maxCyljp}' as float)) or ('${maxCyljp}' = ''))   --镜片柱镜范围
+	and (('${bgiusetypeyj}' <> '' and B_GoodsInfo.B_GI_UseType='${bgiusetypeyj}') or ('${bgiusetypeyj}' = ''))   --隐形使用类型
+	and (('${bgistealthclassyj}' <> '' and B_GoodsInfo.B_GI_StealthClass='${bgistealthclassyj}') or ('${bgistealthclassyj}' = ''))   --抛弃型分类
+	and (('${minSphyj}' <> '' and B_GoodsInfo.B_GI_Sph >= cast('${minSphjp}' as float)) or ('${minSphyj}' = ''))   --隐形球镜范围
+	and (('${maxSphyj}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphyj}' = ''))   --隐形球镜范围
+	and (('${minCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCylyj}' = ''))   --隐形柱镜范围
+	and (('${maxCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl  <= cast( '${maxCyljp}' as float)) or ('${maxCylyj}' = ''))   --隐形柱镜范围
+    AND ( ( '${minSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph >= CAST('${minSphlh}' AS FLOAT) ) OR ( '${minSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${maxSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph <= CAST('${maxSphlh}' AS FLOAT) ) OR ( '${maxSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${bgiothergoodsbigclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsBigClass = '${bgiothergoodsbigclass}' )  OR ( '${bgiothergoodsbigclass}' = '' ) ) --其他大类
+    AND ( ( '${bgiothergoodssmallclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsSmallClass = '${bgiothergoodssmallclass}' ) OR ( '${bgiothergoodssmallclass}' = '' ) ) --其他小类
+	AND ( ( '${bgnretailamount}' <> '' AND R_RC_DSE_RetailPrice >= CAST('${bgnretailamount}' AS FLOAT) ) OR ( '${bgnretailamount}' = '' ) )
+    AND ( ( '${endretailamount}' <> '' AND R_RC_DSE_RetailPrice <= CAST('${endretailamount}' AS FLOAT) ) OR ( '${endretailamount}' = '' ) )
+AND ( ( '${isCustomize}' <> '' AND B_GoodsInfo.B_GI_isCustomize = '${isCustomize}' ) OR ( '${isCustomize}' = '' ) ) --定做标识
+
+	)temp
+	left join B_Departments on B_DP_DepartmentID = ShopCode
+	left join B_GoodsCategory on CategoryID = B_GC_ID
+	  group by CategoryID,B_GC_GoodsCategoryName,ShopCode,B_DP_DepartmentName
+end
+else
+begin
+
+	select  CategoryID as goodsid,
+			B_GC_GoodsCategoryName as goodsname,
+			ShopCode,
+			B_DP_DepartmentName as ShopCodeName,
+			sum(xsNum) as xsNum,
+			sum(thNum) as thNum,
+		    sum(thje) as thje,
+			sum(xsje) as xsje,
+			sum(bhsje) as bhsje 
+	from (
+	select  CategoryID,
+			ShopCode,
+			SupplierID as SupplierID,
+			SupplierName as SupplierName,
+			brandid as BrandID,
+			BrandName as BrandName,
+			GoodsID as goodsid,
+			goodsname as goodsname,
+			sum(xsNum) as xsNum,
+			sum(thNum) as thNum,
+		    sum(thje) as thje,
+			sum(xsje) as xsje,
+			sum(bhsje) as bhsje 
+	from (
+
+		select R_SD_DSE_ShopCode as ShopCode,
+			   R_RC_DSE_GoodsCategoryID as CategoryID,
+			   R_RC_DSE_SupplierID as SupplierID,
+			   R_RC_DSE_SupplierName as SupplierName,
+			   R_RC_DSE_BandID as brandid,
+			   R_RC_DSE_BandName as BrandName,
+               isnull(R_SD_DSE_GoodsNum,0) as xsNum,
+			   R_RC_DSE_GoodsID as GoodsID,
+			   B_GI_ViewGoodsName as goodsname,
+			   0 as thNum,
+			   0 as thje,
+			   isnull(R_SD_DSE_GoodsAmount,0) as xsje,
+                                     (CASE 
+                                        WHEN ISNULL('${salesCost}', '') = '1' THEN Isnull(R_SD_DSE_GoodsRateAmount, 0)
+                                        WHEN ISNULL('${salesCost}', '') = '2' THEN Isnull(R_SD_DSE_GoodsNotRateAmount, 0)
+                                        WHEN ISNULL('${salesCost}', '') = '3' THEN Isnull(R_SD_DSE_GoodsAvgAmount, 0)
+                                      ELSE Isnull(R_SD_DSE_GoodsRateAmount, 0)  END )AS bhsje
+		  from R_RC_DaySalesEntry
+		  left join B_GoodsInfo on B_GI_GoodsID = R_RC_DSE_GoodsID
+		  where R_SD_DSE_SalesType='1'
+			   and ((isnull('${shopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #salesDepartments)) or isnull('${shopCode}','')='')
+			   and ((isnull('${bgnDate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)>='${bgnDate}') or isnull('${bgnDate}','')='')
+			   and ((isnull('${endDate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)<=convert(char(10), dateadd(day,-1, '${endDate}'),120)) or isnull('${endDate}','')='')
+			   and ((isnull('${goodsCategoryID}','')<>'' and R_RC_DSE_GoodsCategoryID=isnull('${goodsCategoryID}','')) or isnull('${goodsCategoryID}','')='')
+			   and ((isnull('${supplierID}','')<>'' and R_RC_DSE_SupplierID=isnull('${supplierID}','')) or isnull('${supplierID}','')='')
+			   and ((isnull('${bandID}','')<>'' and R_RC_DSE_BandID=isnull('${bandID}','')) or isnull('${bandID}','')='')
+			   and ((isnull('${goodsID}','')<>'' and R_RC_DSE_GoodsID like '%' + isnull('${goodsID}','') + '%') or isnull('${goodsID}','')='')
+			   and ((isnull('${goodsName}','')<>'' and B_GI_ViewGoodsName like '%' + isnull('${goodsName}','') + '%') or isnull('${goodsName}','')='')
+		   and (('${bgispecjj}' <> '' and B_GoodsInfo.B_GI_Spec='${bgispecjj}') or ('${bgispecjj}' = ''))  --型号
+	and (('${bgicolorjj}' <> '' and B_GoodsInfo.B_GI_Color='${bgicolorjj}') or ('${bgicolorjj}' = ''))  --色号
+	and (('${bgiframesizejj}' <> '' and B_GoodsInfo.B_GI_FrameSize='${bgiframesizejj}') or ('${bgiframesizejj}' = ''))  --尺寸 
+	and (('${bgieyeglassmaterialtypejp}' <> '' and B_GoodsInfo.B_GI_EyeGlassMaterialType='${bgieyeglassmaterialtypejp}') or ('${bgieyeglassmaterialtypejp}' = '')) --镜片材料分类
+	and (('${bgirefractivejp}' <> '' and B_GoodsInfo.B_GI_Refractive='${bgirefractivejp}') or ('${bgirefractivejp}' = ''))  --镜片折射率
+	and (('${bgiismutiluminosityjp}' <> '' and B_GoodsInfo.B_GI_isMutiLuminosity='${bgiismutiluminosityjp}') or ('${bgiismutiluminosityjp}' = ''))   --镜片光度分类
+	and (('${minSphjp}' <> '' and B_GoodsInfo.B_GI_Sph >= cast( '${minSphjp}' as float)) or ('${minSphjp}' = ''))   --镜片球镜范围
+	and (('${maxSphjp}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphjp}' = ''))   --镜片球镜范围
+	and (('${minCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCyljp}' = ''))   --镜片柱镜范围
+	and (('${maxCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl <= cast( '${maxCyljp}' as float)) or ('${maxCyljp}' = ''))   --镜片柱镜范围
+	and (('${bgiusetypeyj}' <> '' and B_GoodsInfo.B_GI_UseType='${bgiusetypeyj}') or ('${bgiusetypeyj}' = ''))   --隐形使用类型
+	and (('${bgistealthclassyj}' <> '' and B_GoodsInfo.B_GI_StealthClass='${bgistealthclassyj}') or ('${bgistealthclassyj}' = ''))   --抛弃型分类
+	and (('${minSphyj}' <> '' and B_GoodsInfo.B_GI_Sph >= cast('${minSphjp}' as float)) or ('${minSphyj}' = ''))   --隐形球镜范围
+	and (('${maxSphyj}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphyj}' = ''))   --隐形球镜范围
+	and (('${minCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCylyj}' = ''))   --隐形柱镜范围
+	and (('${maxCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl  <= cast( '${maxCyljp}' as float)) or ('${maxCylyj}' = ''))   --隐形柱镜范围
+    AND ( ( '${minSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph >= CAST('${minSphlh}' AS FLOAT) ) OR ( '${minSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${maxSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph <= CAST('${maxSphlh}' AS FLOAT) ) OR ( '${maxSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${bgiothergoodsbigclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsBigClass = '${bgiothergoodsbigclass}' )  OR ( '${bgiothergoodsbigclass}' = '' ) ) --其他大类
+    AND ( ( '${bgiothergoodssmallclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsSmallClass = '${bgiothergoodssmallclass}' ) OR ( '${bgiothergoodssmallclass}' = '' ) ) --其他小类
+	AND ( ( '${bgnretailamount}' <> '' AND R_RC_DSE_RetailPrice >= CAST('${bgnretailamount}' AS FLOAT) ) OR ( '${bgnretailamount}' = '' ) )
+    AND ( ( '${endretailamount}' <> '' AND R_RC_DSE_RetailPrice <= CAST('${endretailamount}' AS FLOAT) ) OR ( '${endretailamount}' = '' ) )
+AND ( ( '${isCustomize}' <> '' AND B_GoodsInfo.B_GI_isCustomize = '${isCustomize}' ) OR ( '${isCustomize}' = '' ) ) --定做标识
+
+		union all
+		select	R_SD_DSE_ShopCode as ShopCode,
+			    R_RC_DSE_GoodsCategoryID as CategoryID,
+			    R_RC_DSE_SupplierID as SupplierID,
+			    R_RC_DSE_SupplierName as SupplierName,
+			    R_RC_DSE_BandID as brandid,
+			    R_RC_DSE_BandName as BrandName,
+                0 as xsNum,
+			    R_RC_DSE_GoodsID as GoodsID,
+			    B_GI_ViewGoodsName as goodsname,
+			    isnull(R_SD_DSE_GoodsNum,0) as thNum,
+			    isnull(R_SD_DSE_GoodsAmount,0) as thje,
+			    0 as xsje,
+                                     (CASE 
+                                        WHEN ISNULL('${salesCost}', '') = '1' THEN Isnull(R_SD_DSE_GoodsRateAmount, 0)
+                                        WHEN ISNULL('${salesCost}', '') = '2' THEN Isnull(R_SD_DSE_GoodsNotRateAmount, 0)
+                                        WHEN ISNULL('${salesCost}', '') = '3' THEN Isnull(R_SD_DSE_GoodsAvgAmount, 0)
+                                      ELSE Isnull(R_SD_DSE_GoodsRateAmount, 0)  END )AS bhsje
+		  from R_RC_DaySalesEntry
+		  left join B_GoodsInfo on B_GI_GoodsID = R_RC_DSE_GoodsID
+		  where R_SD_DSE_SalesType='2'
+			   and ((isnull('${shopCode}','')<>'' and R_SD_DSE_ShopCode in (select departmentID from #salesDepartments)) or isnull('${shopCode}','')='')
+			   and ((isnull('${bgnDate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)>='${bgnDate}') or isnull('${bgnDate}','')='')
+			   and ((isnull('${endDate}','')<>'' and convert(varchar(10),R_SD_DSE_Date,120)<=convert(char(10), dateadd(day,-1, '${endDate}'),120)) or isnull('${endDate}','')='')
+			   and ((isnull('${goodsCategoryID}','')<>'' and R_RC_DSE_GoodsCategoryID=isnull('${goodsCategoryID}','')) or isnull('${goodsCategoryID}','')='')
+			   and ((isnull('${supplierID}','')<>'' and R_RC_DSE_SupplierID=isnull('${supplierID}','')) or isnull('${supplierID}','')='')
+			   and ((isnull('${bandID}','')<>'' and R_RC_DSE_BandID=isnull('${bandID}','')) or isnull('${bandID}','')='')
+			   and ((isnull('${goodsID}','')<>'' and R_RC_DSE_GoodsID like '%' + isnull('${goodsID}','') + '%') or isnull('${goodsID}','')='')
+			   and ((isnull('${goodsName}','')<>'' and B_GI_ViewGoodsName like '%' + isnull('${goodsName}','') + '%') or isnull('${goodsName}','')='')
+		   and (('${bgispecjj}' <> '' and B_GoodsInfo.B_GI_Spec='${bgispecjj}') or ('${bgispecjj}' = ''))  --型号
+	and (('${bgicolorjj}' <> '' and B_GoodsInfo.B_GI_Color='${bgicolorjj}') or ('${bgicolorjj}' = ''))  --色号
+	and (('${bgiframesizejj}' <> '' and B_GoodsInfo.B_GI_FrameSize='${bgiframesizejj}') or ('${bgiframesizejj}' = ''))  --尺寸 
+	and (('${bgieyeglassmaterialtypejp}' <> '' and B_GoodsInfo.B_GI_EyeGlassMaterialType='${bgieyeglassmaterialtypejp}') or ('${bgieyeglassmaterialtypejp}' = '')) --镜片材料分类
+	and (('${bgirefractivejp}' <> '' and B_GoodsInfo.B_GI_Refractive='${bgirefractivejp}') or ('${bgirefractivejp}' = ''))  --镜片折射率
+	and (('${bgiismutiluminosityjp}' <> '' and B_GoodsInfo.B_GI_isMutiLuminosity='${bgiismutiluminosityjp}') or ('${bgiismutiluminosityjp}' = ''))   --镜片光度分类
+	and (('${minSphjp}' <> '' and B_GoodsInfo.B_GI_Sph >= cast( '${minSphjp}' as float)) or ('${minSphjp}' = ''))   --镜片球镜范围
+	and (('${maxSphjp}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphjp}' = ''))   --镜片球镜范围
+	and (('${minCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCyljp}' = ''))   --镜片柱镜范围
+	and (('${maxCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl <= cast( '${maxCyljp}' as float)) or ('${maxCyljp}' = ''))   --镜片柱镜范围
+	and (('${bgiusetypeyj}' <> '' and B_GoodsInfo.B_GI_UseType='${bgiusetypeyj}') or ('${bgiusetypeyj}' = ''))   --隐形使用类型
+	and (('${bgistealthclassyj}' <> '' and B_GoodsInfo.B_GI_StealthClass='${bgistealthclassyj}') or ('${bgistealthclassyj}' = ''))   --抛弃型分类
+	and (('${minSphyj}' <> '' and B_GoodsInfo.B_GI_Sph >= cast('${minSphjp}' as float)) or ('${minSphyj}' = ''))   --隐形球镜范围
+	and (('${maxSphyj}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphyj}' = ''))   --隐形球镜范围
+	and (('${minCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCylyj}' = ''))   --隐形柱镜范围
+	and (('${maxCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl  <= cast( '${maxCyljp}' as float)) or ('${maxCylyj}' = ''))   --隐形柱镜范围
+    AND ( ( '${minSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph >= CAST('${minSphlh}' AS FLOAT) ) OR ( '${minSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${maxSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph <= CAST('${maxSphlh}' AS FLOAT) ) OR ( '${maxSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${bgiothergoodsbigclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsBigClass = '${bgiothergoodsbigclass}' )  OR ( '${bgiothergoodsbigclass}' = '' ) ) --其他大类
+    AND ( ( '${bgiothergoodssmallclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsSmallClass = '${bgiothergoodssmallclass}' ) OR ( '${bgiothergoodssmallclass}' = '' ) ) --其他小类
+	AND ( ( '${bgnretailamount}' <> '' AND R_RC_DSE_RetailPrice >= CAST('${bgnretailamount}' AS FLOAT) ) OR ( '${bgnretailamount}' = '' ) )
+    AND ( ( '${endretailamount}' <> '' AND R_RC_DSE_RetailPrice <= CAST('${endretailamount}' AS FLOAT) ) OR ( '${endretailamount}' = '' ) )
+AND ( ( '${isCustomize}' <> '' AND B_GoodsInfo.B_GI_isCustomize = '${isCustomize}' ) OR ( '${isCustomize}' = '' ) ) --定做标识
+
+	)temp
+	  group by CategoryID,ShopCode,SupplierID,SupplierName,brandid,BrandName,GoodsID,goodsname
+    union all
+	select  CategoryID,
+			ShopCode,
+			SupplierID as SupplierID,
+			SupplierName as SupplierName,
+			brandid as brandid,
+			brandName as brandName,
+			GoodsID as goodsid,
+			goodsname as goodsname,
+			sum(xsNum) as xsNum,
+			sum(thNum) as thNum,
+		    sum(thje) as thje,
+			sum(xsje) as xsje,
+			sum(bhsje) as bhsje 
+	from (
+	select  S_SE_SB_ShopCode as ShopCode,
+			S_SE_SD_CommoditiesFlag as CategoryID,
+			B_SP_ID as SupplierID,
+			B_SP_SupplierName as SupplierName,
+			B_BD_ID as brandid,
+		    B_BD_brandName as brandName,
+			S_SE_SD_SalesItemID as GoodsID,
+			B_GI_ViewGoodsName as goodsname,
+		    isnull(sum(isnull(S_SE_SD_Number,0)),0) as xsNum,
+			0 as thNum,
+			0 as thje,
+		    isnull(sum(isnull(S_SE_SD_SalesValue,0)),0) as xsje,(CASE 
+                                        WHEN ISNULL('${salesCost}', '') = '1' THEN Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0) 
+                                        WHEN ISNULL('${salesCost}', '') = '2' THEN Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0) 
+                                        WHEN ISNULL('${salesCost}', '') = '3' THEN Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                      ELSE Isnull(SUM(Isnull(S_SE_SD_SalesValue, 0)), 0)  END )AS bhsje
+
+	  from S_SE_SalesBasic_Today inner join S_SE_SalesDetail_Today on S_SE_SB_SalesID=S_SE_SD_SalesID
+		   left join B_GoodsInfo on S_SE_SD_SalesItemID=B_GI_GoodsID
+		   left join B_Brand on B_BD_ID=B_GI_BrandID and B_GI_SupplierID=B_BD_SupplierID
+		   left join B_Supplier on B_GI_SupplierID=B_SP_ID
+	  where S_SE_SB_ValueFlag='1' 
+		   and ((isnull('${shopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #salesDepartments)) or isnull('${shopCode}','')='')
+		   and ((isnull('${bgnDate}','')<>'' and convert(varchar(10),S_SE_SB_PosDatetime,120)>=convert(varchar(10), getdate(), 23)) or isnull('${bgnDate}','')='')
+		   and ((isnull('${endDate}','')<>'' and convert(varchar(10),S_SE_SB_PosDatetime,120)<='${endDate}') or isnull('${endDate}','')='')
+		   and ((isnull('${goodsCategoryID}','')<>'' and B_GI_GoodsCategoryID=isnull('${goodsCategoryID}','')) or isnull('${goodsCategoryID}','')='')
+		   and ((isnull('${supplierID}','')<>'' and B_GI_SupplierID=isnull('${supplierID}','')) or isnull('${supplierID}','')='')
+		   and ((isnull('${bandID}','')<>'' and B_GI_BrandID=isnull('${bandID}','')) or isnull('${bandID}','')='')
+		   and ((isnull('${goodsID}','')<>'' and S_SE_SD_SalesItemID like '%' + isnull('${goodsID}','') + '%') or isnull('${goodsID}','')='')
+		   and ((isnull('${goodsName}','')<>'' and B_GI_ViewGoodsName like '%' + isnull('${goodsName}','') + '%') or isnull('${goodsName}','')='')
+		   and (('${bgispecjj}' <> '' and B_GoodsInfo.B_GI_Spec='${bgispecjj}') or ('${bgispecjj}' = ''))  --型号
+	and (('${bgicolorjj}' <> '' and B_GoodsInfo.B_GI_Color='${bgicolorjj}') or ('${bgicolorjj}' = ''))  --色号
+	and (('${bgiframesizejj}' <> '' and B_GoodsInfo.B_GI_FrameSize='${bgiframesizejj}') or ('${bgiframesizejj}' = ''))  --尺寸 
+	and (('${bgieyeglassmaterialtypejp}' <> '' and B_GoodsInfo.B_GI_EyeGlassMaterialType='${bgieyeglassmaterialtypejp}') or ('${bgieyeglassmaterialtypejp}' = '')) --镜片材料分类
+	and (('${bgirefractivejp}' <> '' and B_GoodsInfo.B_GI_Refractive='${bgirefractivejp}') or ('${bgirefractivejp}' = ''))  --镜片折射率
+	and (('${bgiismutiluminosityjp}' <> '' and B_GoodsInfo.B_GI_isMutiLuminosity='${bgiismutiluminosityjp}') or ('${bgiismutiluminosityjp}' = ''))   --镜片光度分类
+	and (('${minSphjp}' <> '' and B_GoodsInfo.B_GI_Sph >= cast( '${minSphjp}' as float)) or ('${minSphjp}' = ''))   --镜片球镜范围
+	and (('${maxSphjp}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphjp}' = ''))   --镜片球镜范围
+	and (('${minCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCyljp}' = ''))   --镜片柱镜范围
+	and (('${maxCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl <= cast( '${maxCyljp}' as float)) or ('${maxCyljp}' = ''))   --镜片柱镜范围
+	and (('${bgiusetypeyj}' <> '' and B_GoodsInfo.B_GI_UseType='${bgiusetypeyj}') or ('${bgiusetypeyj}' = ''))   --隐形使用类型
+	and (('${bgistealthclassyj}' <> '' and B_GoodsInfo.B_GI_StealthClass='${bgistealthclassyj}') or ('${bgistealthclassyj}' = ''))   --抛弃型分类
+	and (('${minSphyj}' <> '' and B_GoodsInfo.B_GI_Sph >= cast('${minSphjp}' as float)) or ('${minSphyj}' = ''))   --隐形球镜范围
+	and (('${maxSphyj}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphyj}' = ''))   --隐形球镜范围
+	and (('${minCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCylyj}' = ''))   --隐形柱镜范围
+	and (('${maxCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl  <= cast( '${maxCyljp}' as float)) or ('${maxCylyj}' = ''))   --隐形柱镜范围
+    AND ( ( '${minSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph >= CAST('${minSphlh}' AS FLOAT) ) OR ( '${minSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${maxSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph <= CAST('${maxSphlh}' AS FLOAT) ) OR ( '${maxSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${bgiothergoodsbigclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsBigClass = '${bgiothergoodsbigclass}' )  OR ( '${bgiothergoodsbigclass}' = '' ) ) --其他大类
+    AND ( ( '${bgiothergoodssmallclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsSmallClass = '${bgiothergoodssmallclass}' ) OR ( '${bgiothergoodssmallclass}' = '' ) ) --其他小类
+	AND ( ( '${bgnretailamount}' <> '' AND S_SE_SD_Sprice >= CAST('${bgnretailamount}' AS FLOAT) ) OR ( '${bgnretailamount}' = '' ) )
+    AND ( ( '${endretailamount}' <> '' AND S_SE_SD_Sprice <= CAST('${endretailamount}' AS FLOAT) ) OR ( '${endretailamount}' = '' ) )
+AND ( ( '${isCustomize}' <> '' AND B_GoodsInfo.B_GI_isCustomize = '${isCustomize}' ) OR ( '${isCustomize}' = '' ) ) --定做标识
+
+	  group by  S_SE_SD_SalesItemID,
+				B_GI_ViewGoodsName,
+				B_BD_ID,
+				S_SE_SD_CommoditiesFlag,
+				S_SE_SB_ShopCode,
+				B_SP_ID,
+				B_SP_SupplierName,
+				B_BD_brandName
+	union all
+	select S_SE_SB_ShopCode as ShopCode,
+			S_SE_SD_CommoditiesFlag as CategoryID,
+			B_SP_ID as SupplierID,
+			B_SP_SupplierName as SupplierName,
+			B_BD_ID as brandid,
+		    B_BD_brandName as brandName,
+			S_SE_SD_SalesItemID as GoodsID,
+			B_GI_ViewGoodsName as goodsname,
+		    0 as xsNum,
+			-isnull(sum(isnull(S_SE_SD_Number,0)),0) as thNum,
+			-isnull(sum(isnull(S_SE_SD_SalesValue,0)),0) as thje,
+		    0 as xsje,(CASE 
+                                        WHEN ISNULL('${salesCost}', '') = '1' THEN -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0) 
+                                        WHEN ISNULL('${salesCost}', '') = '2' THEN -Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0) 
+                                        WHEN ISNULL('${salesCost}', '') = '3' THEN -Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                      ELSE -Isnull(SUM(Isnull(S_SE_SD_SalesValue, 0)), 0)  END )AS bhsje
+
+	  from S_SE_SalesBasic_Today inner join S_SE_SalesDetail_Today on S_SE_SB_SalesID=S_SE_SD_SalesID
+		   left join B_GoodsInfo on S_SE_SD_SalesItemID=B_GI_GoodsID
+		   left join B_Brand on B_BD_ID=B_GI_BrandID and B_GI_SupplierID=B_BD_SupplierID
+		   left join B_Supplier on B_GI_SupplierID=B_SP_ID
+	  where S_SE_SB_ValueFlag='1' and S_SE_SB_WithdrawFlag='1'
+		   and ((isnull('${shopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #salesDepartments)) or isnull('${shopCode}','')='')
+		   and ((isnull('${bgnDate}','')<>'' and convert(varchar(10),S_SE_SB_WithdrawDate,120)>=convert(varchar(10), getdate(), 23)) or isnull('${bgnDate}','')='')
+		   and ((isnull('${endDate}','')<>'' and convert(varchar(10),S_SE_SB_WithdrawDate,120)<='${endDate}') or isnull('${endDate}','')='')
+		   and ((isnull('${goodsCategoryID}','')<>'' and B_GI_GoodsCategoryID=isnull('${goodsCategoryID}','')) or isnull('${goodsCategoryID}','')='')
+		   and ((isnull('${supplierID}','')<>'' and B_GI_SupplierID=isnull('${supplierID}','')) or isnull('${supplierID}','')='')
+		   and ((isnull('${bandID}','')<>'' and B_GI_BrandID=isnull('${bandID}','')) or isnull('${bandID}','')='')
+		   and ((isnull('${goodsID}','')<>'' and S_SE_SD_SalesItemID like '%' + isnull('${goodsID}','') + '%') or isnull('${goodsID}','')='')
+		   and ((isnull('${goodsName}','')<>'' and B_GI_ViewGoodsName like '%' + isnull('${goodsName}','') + '%') or isnull('${goodsName}','')='')
+		   and (('${bgispecjj}' <> '' and B_GoodsInfo.B_GI_Spec='${bgispecjj}') or ('${bgispecjj}' = ''))  --型号
+	and (('${bgicolorjj}' <> '' and B_GoodsInfo.B_GI_Color='${bgicolorjj}') or ('${bgicolorjj}' = ''))  --色号
+	and (('${bgiframesizejj}' <> '' and B_GoodsInfo.B_GI_FrameSize='${bgiframesizejj}') or ('${bgiframesizejj}' = ''))  --尺寸 
+	and (('${bgieyeglassmaterialtypejp}' <> '' and B_GoodsInfo.B_GI_EyeGlassMaterialType='${bgieyeglassmaterialtypejp}') or ('${bgieyeglassmaterialtypejp}' = '')) --镜片材料分类
+	and (('${bgirefractivejp}' <> '' and B_GoodsInfo.B_GI_Refractive='${bgirefractivejp}') or ('${bgirefractivejp}' = ''))  --镜片折射率
+	and (('${bgiismutiluminosityjp}' <> '' and B_GoodsInfo.B_GI_isMutiLuminosity='${bgiismutiluminosityjp}') or ('${bgiismutiluminosityjp}' = ''))   --镜片光度分类
+	and (('${minSphjp}' <> '' and B_GoodsInfo.B_GI_Sph >= cast( '${minSphjp}' as float)) or ('${minSphjp}' = ''))   --镜片球镜范围
+	and (('${maxSphjp}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphjp}' = ''))   --镜片球镜范围
+	and (('${minCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCyljp}' = ''))   --镜片柱镜范围
+	and (('${maxCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl <= cast( '${maxCyljp}' as float)) or ('${maxCyljp}' = ''))   --镜片柱镜范围
+	and (('${bgiusetypeyj}' <> '' and B_GoodsInfo.B_GI_UseType='${bgiusetypeyj}') or ('${bgiusetypeyj}' = ''))   --隐形使用类型
+	and (('${bgistealthclassyj}' <> '' and B_GoodsInfo.B_GI_StealthClass='${bgistealthclassyj}') or ('${bgistealthclassyj}' = ''))   --抛弃型分类
+	and (('${minSphyj}' <> '' and B_GoodsInfo.B_GI_Sph >= cast('${minSphjp}' as float)) or ('${minSphyj}' = ''))   --隐形球镜范围
+	and (('${maxSphyj}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphyj}' = ''))   --隐形球镜范围
+	and (('${minCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCylyj}' = ''))   --隐形柱镜范围
+	and (('${maxCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl  <= cast( '${maxCyljp}' as float)) or ('${maxCylyj}' = ''))   --隐形柱镜范围
+    AND ( ( '${minSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph >= CAST('${minSphlh}' AS FLOAT) ) OR ( '${minSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${maxSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph <= CAST('${maxSphlh}' AS FLOAT) ) OR ( '${maxSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${bgiothergoodsbigclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsBigClass = '${bgiothergoodsbigclass}' )  OR ( '${bgiothergoodsbigclass}' = '' ) ) --其他大类
+    AND ( ( '${bgiothergoodssmallclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsSmallClass = '${bgiothergoodssmallclass}' ) OR ( '${bgiothergoodssmallclass}' = '' ) ) --其他小类
+	AND ( ( '${bgnretailamount}' <> '' AND S_SE_SD_Sprice >= CAST('${bgnretailamount}' AS FLOAT) ) OR ( '${bgnretailamount}' = '' ) )
+    AND ( ( '${endretailamount}' <> '' AND S_SE_SD_Sprice <= CAST('${endretailamount}' AS FLOAT) ) OR ( '${endretailamount}' = '' ) )
+AND ( ( '${isCustomize}' <> '' AND B_GoodsInfo.B_GI_isCustomize = '${isCustomize}' ) OR ( '${isCustomize}' = '' ) ) --定做标识
+
+	  group by  S_SE_SD_SalesItemID,
+				B_GI_ViewGoodsName,
+				B_BD_ID,
+				S_SE_SD_CommoditiesFlag,
+				S_SE_SB_ShopCode,
+				B_SP_ID,
+				B_SP_SupplierName,
+				B_BD_brandName
+	)temp
+	  group by CategoryID,ShopCode,SupplierID,SupplierName,brandid,brandName,goodsid,goodsname
+
+	)temp
+	left join B_Departments on B_DP_DepartmentID = ShopCode
+	left join B_GoodsCategory on CategoryID = B_GC_ID
+	group by CategoryID,B_GC_GoodsCategoryName,ShopCode,B_DP_DepartmentName
+end
+
+end
+else
+begin
+
+	select  CategoryID as goodsid,
+			B_GC_GoodsCategoryName as goodsname,
+			ShopCode,
+			B_DP_DepartmentName as ShopCodeName,
+			sum(xsNum) as xsNum,
+			sum(thNum) as thNum,
+		    sum(thje) as thje,
+			sum(xsje) as xsje,
+			sum(bhsje) as bhsje 
+	from (
+	select  CategoryID,
+			ShopCode,
+			SupplierID as SupplierID,
+			SupplierName as SupplierName,
+			brandid as brandid,
+		    brandName as brandName,
+			goodsid as goodsid,
+			goodsname as goodsname,
+			sum(xsNum) as xsNum,
+			sum(thNum) as thNum,
+		    sum(thje) as thje,
+			sum(xsje) as xsje,
+			sum(bhsje) as bhsje 
+	from (
+	select  S_SE_SB_ShopCode as ShopCode,
+			S_SE_SD_CommoditiesFlag as CategoryID,
+			B_SP_ID as SupplierID,
+			B_SP_SupplierName as SupplierName,
+			B_BD_ID as brandid,
+		    B_BD_brandName as brandName,
+			S_SE_SD_SalesItemID as GoodsID,
+			B_GI_ViewGoodsName as goodsname,
+		    isnull(sum(isnull(S_SE_SD_Number,0)),0) as xsNum,
+			0 as thNum,
+			0 as thje,
+		    isnull(sum(isnull(S_SE_SD_SalesValue,0)),0) as xsje,(CASE 
+                                        WHEN ISNULL('${salesCost}', '') = '1' THEN Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0) 
+                                        WHEN ISNULL('${salesCost}', '') = '2' THEN Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0) 
+                                        WHEN ISNULL('${salesCost}', '') = '3' THEN Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                      ELSE Isnull(SUM(Isnull(S_SE_SD_SalesValue, 0)), 0)  END )AS bhsje
+
+	  from S_SE_SalesBasic_Today inner join S_SE_SalesDetail_Today on S_SE_SB_SalesID=S_SE_SD_SalesID
+		   left join B_GoodsInfo on S_SE_SD_SalesItemID=B_GI_GoodsID
+		   left join B_Brand on B_BD_ID=B_GI_BrandID and B_GI_SupplierID=B_BD_SupplierID
+		   left join B_Supplier on B_GI_SupplierID=B_SP_ID
+	  where S_SE_SB_ValueFlag='1' 
+		   and ((isnull('${shopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #salesDepartments)) or isnull('${shopCode}','')='')
+		   and ((isnull('${bgnDate}','')<>'' and convert(varchar(10),S_SE_SB_PosDatetime,120)>='${bgnDate}') or isnull('${bgnDate}','')='')
+		   and ((isnull('${endDate}','')<>'' and convert(varchar(10),S_SE_SB_PosDatetime,120)<='${endDate}') or isnull('${endDate}','')='')
+		   and ((isnull('${goodsCategoryID}','')<>'' and B_GI_GoodsCategoryID=isnull('${goodsCategoryID}','')) or isnull('${goodsCategoryID}','')='')
+		   and ((isnull('${supplierID}','')<>'' and B_GI_SupplierID=isnull('${supplierID}','')) or isnull('${supplierID}','')='')
+		   and ((isnull('${bandID}','')<>'' and B_GI_BrandID=isnull('${bandID}','')) or isnull('${bandID}','')='')
+		   and ((isnull('${goodsID}','')<>'' and S_SE_SD_SalesItemID like '%' + isnull('${goodsID}','') + '%') or isnull('${goodsID}','')='')
+		   and ((isnull('${goodsName}','')<>'' and B_GI_ViewGoodsName like '%' + isnull('${goodsName}','') + '%') or isnull('${goodsName}','')='')
+		   and (('${bgispecjj}' <> '' and B_GoodsInfo.B_GI_Spec='${bgispecjj}') or ('${bgispecjj}' = ''))  --型号
+	and (('${bgicolorjj}' <> '' and B_GoodsInfo.B_GI_Color='${bgicolorjj}') or ('${bgicolorjj}' = ''))  --色号
+	and (('${bgiframesizejj}' <> '' and B_GoodsInfo.B_GI_FrameSize='${bgiframesizejj}') or ('${bgiframesizejj}' = ''))  --尺寸 
+	and (('${bgieyeglassmaterialtypejp}' <> '' and B_GoodsInfo.B_GI_EyeGlassMaterialType='${bgieyeglassmaterialtypejp}') or ('${bgieyeglassmaterialtypejp}' = '')) --镜片材料分类
+	and (('${bgirefractivejp}' <> '' and B_GoodsInfo.B_GI_Refractive='${bgirefractivejp}') or ('${bgirefractivejp}' = ''))  --镜片折射率
+	and (('${bgiismutiluminosityjp}' <> '' and B_GoodsInfo.B_GI_isMutiLuminosity='${bgiismutiluminosityjp}') or ('${bgiismutiluminosityjp}' = ''))   --镜片光度分类
+	and (('${minSphjp}' <> '' and B_GoodsInfo.B_GI_Sph >= cast( '${minSphjp}' as float)) or ('${minSphjp}' = ''))   --镜片球镜范围
+	and (('${maxSphjp}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphjp}' = ''))   --镜片球镜范围
+	and (('${minCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCyljp}' = ''))   --镜片柱镜范围
+	and (('${maxCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl <= cast( '${maxCyljp}' as float)) or ('${maxCyljp}' = ''))   --镜片柱镜范围
+	and (('${bgiusetypeyj}' <> '' and B_GoodsInfo.B_GI_UseType='${bgiusetypeyj}') or ('${bgiusetypeyj}' = ''))   --隐形使用类型
+	and (('${bgistealthclassyj}' <> '' and B_GoodsInfo.B_GI_StealthClass='${bgistealthclassyj}') or ('${bgistealthclassyj}' = ''))   --抛弃型分类
+	and (('${minSphyj}' <> '' and B_GoodsInfo.B_GI_Sph >= cast('${minSphjp}' as float)) or ('${minSphyj}' = ''))   --隐形球镜范围
+	and (('${maxSphyj}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphyj}' = ''))   --隐形球镜范围
+	and (('${minCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCylyj}' = ''))   --隐形柱镜范围
+	and (('${maxCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl  <= cast( '${maxCyljp}' as float)) or ('${maxCylyj}' = ''))   --隐形柱镜范围
+    AND ( ( '${minSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph >= CAST('${minSphlh}' AS FLOAT) ) OR ( '${minSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${maxSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph <= CAST('${maxSphlh}' AS FLOAT) ) OR ( '${maxSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${bgiothergoodsbigclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsBigClass = '${bgiothergoodsbigclass}' )  OR ( '${bgiothergoodsbigclass}' = '' ) ) --其他大类
+    AND ( ( '${bgiothergoodssmallclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsSmallClass = '${bgiothergoodssmallclass}' ) OR ( '${bgiothergoodssmallclass}' = '' ) ) --其他小类
+	AND ( ( '${bgnretailamount}' <> '' AND S_SE_SD_Sprice >= CAST('${bgnretailamount}' AS FLOAT) ) OR ( '${bgnretailamount}' = '' ) )
+    AND ( ( '${endretailamount}' <> '' AND S_SE_SD_Sprice <= CAST('${endretailamount}' AS FLOAT) ) OR ( '${endretailamount}' = '' ) )
+AND ( ( '${isCustomize}' <> '' AND B_GoodsInfo.B_GI_isCustomize = '${isCustomize}' ) OR ( '${isCustomize}' = '' ) ) --定做标识
+
+	  group by  S_SE_SD_SalesItemID,
+				B_GI_ViewGoodsName,
+				B_BD_ID,
+				S_SE_SD_CommoditiesFlag,
+				S_SE_SB_ShopCode,
+				B_SP_ID,
+				B_SP_SupplierName,
+				B_BD_brandName
+	union all
+	select S_SE_SB_ShopCode as ShopCode,
+			S_SE_SD_CommoditiesFlag as CategoryID,
+			B_SP_ID as SupplierID,
+			B_SP_SupplierName as SupplierName,
+			B_BD_ID as brandid,
+		    B_BD_brandName as brandName,
+			S_SE_SD_SalesItemID as GoodsID,
+			B_GI_ViewGoodsName as goodsname,
+		    0 as xsNum,
+			-isnull(sum(isnull(S_SE_SD_Number,0)),0) as thNum,
+			-isnull(sum(isnull(S_SE_SD_SalesValue,0)),0) as thje,
+		    0 as xsje,(CASE 
+                                        WHEN ISNULL('${salesCost}', '') = '1' THEN -Isnull(SUM(Isnull(S_SE_SD_CostsPrive * S_SE_SD_Number, 0)), 0) 
+                                        WHEN ISNULL('${salesCost}', '') = '2' THEN -Isnull(SUM(Isnull(S_SE_SD_UnitPrice * S_SE_SD_Number, 0)), 0) 
+                                        WHEN ISNULL('${salesCost}', '') = '3' THEN -Isnull(SUM(Isnull(dbo.ufn_getGoodsInfoByCompany('',S_SE_SB_ShopCode,S_SE_SD_SalesItemID) * S_SE_SD_Number, 0)), 0)
+                                      ELSE -Isnull(SUM(Isnull(S_SE_SD_SalesValue, 0)), 0)  END )AS bhsje
+
+	  from S_SE_SalesBasic_Today inner join S_SE_SalesDetail_Today on S_SE_SB_SalesID=S_SE_SD_SalesID
+		   left join B_GoodsInfo on S_SE_SD_SalesItemID=B_GI_GoodsID
+		   left join B_Brand on B_BD_ID=B_GI_BrandID and B_GI_SupplierID=B_BD_SupplierID
+		   left join B_Supplier on B_GI_SupplierID=B_SP_ID
+	  where S_SE_SB_ValueFlag='1' and S_SE_SB_WithdrawFlag='1'
+		   and ((isnull('${shopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #salesDepartments)) or isnull('${shopCode}','')='')
+		   and ((isnull('${bgnDate}','')<>'' and convert(varchar(10),S_SE_SB_WithdrawDate,120)>='${bgnDate}') or isnull('${bgnDate}','')='')
+		   and ((isnull('${endDate}','')<>'' and convert(varchar(10),S_SE_SB_WithdrawDate,120)<='${endDate}') or isnull('${endDate}','')='')
+		   and ((isnull('${goodsCategoryID}','')<>'' and B_GI_GoodsCategoryID=isnull('${goodsCategoryID}','')) or isnull('${goodsCategoryID}','')='')
+		   and ((isnull('${supplierID}','')<>'' and B_GI_SupplierID=isnull('${supplierID}','')) or isnull('${supplierID}','')='')
+		   and ((isnull('${bandID}','')<>'' and B_GI_BrandID=isnull('${bandID}','')) or isnull('${bandID}','')='')
+		   and ((isnull('${goodsID}','')<>'' and S_SE_SD_SalesItemID like '%' + isnull('${goodsID}','') + '%') or isnull('${goodsID}','')='')
+		   and ((isnull('${goodsName}','')<>'' and B_GI_ViewGoodsName like '%' + isnull('${goodsName}','') + '%') or isnull('${goodsName}','')='')
+		   and (('${bgispecjj}' <> '' and B_GoodsInfo.B_GI_Spec='${bgispecjj}') or ('${bgispecjj}' = ''))  --型号
+	and (('${bgicolorjj}' <> '' and B_GoodsInfo.B_GI_Color='${bgicolorjj}') or ('${bgicolorjj}' = ''))  --色号
+	and (('${bgiframesizejj}' <> '' and B_GoodsInfo.B_GI_FrameSize='${bgiframesizejj}') or ('${bgiframesizejj}' = ''))  --尺寸 
+	and (('${bgieyeglassmaterialtypejp}' <> '' and B_GoodsInfo.B_GI_EyeGlassMaterialType='${bgieyeglassmaterialtypejp}') or ('${bgieyeglassmaterialtypejp}' = '')) --镜片材料分类
+	and (('${bgirefractivejp}' <> '' and B_GoodsInfo.B_GI_Refractive='${bgirefractivejp}') or ('${bgirefractivejp}' = ''))  --镜片折射率
+	and (('${bgiismutiluminosityjp}' <> '' and B_GoodsInfo.B_GI_isMutiLuminosity='${bgiismutiluminosityjp}') or ('${bgiismutiluminosityjp}' = ''))   --镜片光度分类
+	and (('${minSphjp}' <> '' and B_GoodsInfo.B_GI_Sph >= cast( '${minSphjp}' as float)) or ('${minSphjp}' = ''))   --镜片球镜范围
+	and (('${maxSphjp}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphjp}' = ''))   --镜片球镜范围
+	and (('${minCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCyljp}' = ''))   --镜片柱镜范围
+	and (('${maxCyljp}' <> '' and B_GoodsInfo.B_GI_Cyl <= cast( '${maxCyljp}' as float)) or ('${maxCyljp}' = ''))   --镜片柱镜范围
+	and (('${bgiusetypeyj}' <> '' and B_GoodsInfo.B_GI_UseType='${bgiusetypeyj}') or ('${bgiusetypeyj}' = ''))   --隐形使用类型
+	and (('${bgistealthclassyj}' <> '' and B_GoodsInfo.B_GI_StealthClass='${bgistealthclassyj}') or ('${bgistealthclassyj}' = ''))   --抛弃型分类
+	and (('${minSphyj}' <> '' and B_GoodsInfo.B_GI_Sph >= cast('${minSphjp}' as float)) or ('${minSphyj}' = ''))   --隐形球镜范围
+	and (('${maxSphyj}' <> '' and B_GoodsInfo.B_GI_Sph <= cast('${maxSphjp}' as float)) or ('${maxSphyj}' = ''))   --隐形球镜范围
+	and (('${minCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl >= cast( '${minCyljp}' as float)) or ('${minCylyj}' = ''))   --隐形柱镜范围
+	and (('${maxCylyj}' <> '' and B_GoodsInfo.B_GI_Cyl  <= cast( '${maxCyljp}' as float)) or ('${maxCylyj}' = ''))   --隐形柱镜范围
+    AND ( ( '${minSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph >= CAST('${minSphlh}' AS FLOAT) ) OR ( '${minSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${maxSphlh}' <> '' AND B_GoodsInfo.B_GI_Sph <= CAST('${maxSphlh}' AS FLOAT) ) OR ( '${maxSphlh}' = '' ) ) --老花球镜范围
+    AND ( ( '${bgiothergoodsbigclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsBigClass = '${bgiothergoodsbigclass}' )  OR ( '${bgiothergoodsbigclass}' = '' ) ) --其他大类
+    AND ( ( '${bgiothergoodssmallclass}' <> '' AND B_GoodsInfo.B_GI_OtherGoodsSmallClass = '${bgiothergoodssmallclass}' ) OR ( '${bgiothergoodssmallclass}' = '' ) ) --其他小类
+	AND ( ( '${bgnretailamount}' <> '' AND S_SE_SD_Sprice >= CAST('${bgnretailamount}' AS FLOAT) ) OR ( '${bgnretailamount}' = '' ) )
+    AND ( ( '${endretailamount}' <> '' AND S_SE_SD_Sprice <= CAST('${endretailamount}' AS FLOAT) ) OR ( '${endretailamount}' = '' ) )
+AND ( ( '${isCustomize}' <> '' AND B_GoodsInfo.B_GI_isCustomize = '${isCustomize}' ) OR ( '${isCustomize}' = '' ) ) --定做标识
+
+	  group by  S_SE_SD_SalesItemID,
+				B_GI_ViewGoodsName,
+				B_BD_ID,
+				S_SE_SD_CommoditiesFlag,
+				S_SE_SB_ShopCode,
+				B_SP_ID,
+				B_SP_SupplierName,
+				B_BD_brandName
+	)temp
+	  group by CategoryID,ShopCode,SupplierID,SupplierName,BrandID,brandName,goodsid,goodsname
+
+	)temp
+	left join B_Departments on B_DP_DepartmentID = ShopCode
+	left join B_GoodsCategory on CategoryID = B_GC_ID
+	group by CategoryID,B_GC_GoodsCategoryName,ShopCode,B_DP_DepartmentName
+
+end
+
+drop table #salesDepartments]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="ShopCodeName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[declare @ShopCodeName varchar(1000)
+set @ShopCodeName='${ShopCodeName}']]></Query>
+</TableData>
+<TableData name="ds4" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select departmentID into #shopCode from sales_createShopCodeTab('${shopCode}')
+select '附加费用' as fjname,
+sum(sNumber) as sNumber,
+sum(samount) as samount,
+sum(tNumber) as tNumber,
+sum(tamount) as tamount,
+sum(sNumber)+sum(tNumber) as hNumber,
+sum(samount)+sum(tamount) as hamount
+ from
+(
+    select
+         isnull(S_SE_Number,0) as sNumber
+        ,cast(isnull(S_SE_AdditionalCDetail.S_SE_Amount*S_SE_Number,'0.0')as decimal(18, 2)) as samount,
+        0 as tNumber,
+        0.00 as tamount,
+     S_se_SalesBasic.S_SE_SB_ShopCode as ShopCode
+    from
+        S_se_SalesBasic
+    left join
+        S_SE_AdditionalCDetail
+    on S_SE_AdditionalCDetail.S_SE_SalesID  = S_se_SalesBasic.s_se_sb_salesid
+    where 1=1
+ and ((isnull('${shopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${shopCode}','')=''))
+ 
+    and S_se_SalesBasic.s_se_sb_ValueFlag = '1'
+    and convert(varchar(10),s_se_sb_PosDatetime,23) >= '${bgnDate}'
+    and convert(varchar(10),s_se_sb_PosDatetime,23) <= '${endDate}'
+    Union All
+    select
+        0 as sNumber,
+        0.00 as samount,
+        -cast(isnull(S_SE_Number,0) as decimal(18, 2)) as tNumber,
+        -cast(cast(isnull(S_SE_AdditionalCDetail.S_SE_Amount*S_SE_Number,'0.0') as varchar(32)) as decimal(18, 2))  as tamount,        
+        S_se_SalesBasic.S_SE_SB_ShopCode
+	 from 
+        S_se_SalesBasic
+    left join 
+        S_SE_AdditionalCDetail
+	on S_SE_AdditionalCDetail.S_SE_SalesID = S_se_SalesBasic.s_se_sb_salesid
+	where 1=1
+   and ((isnull('${shopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${shopCode}','')=''))
+ 
+    and S_se_SalesBasic.s_se_sb_ValueFlag = '1'
+    and convert(varchar(10), S_SE_SB_WithdrawDate, 23) >=  '${bgnDate}'
+	and convert(varchar(10), S_SE_SB_WithdrawDate, 23) <='${endDate}'
+	and s_se_sb_withdrawflag = 1
+union all
+
+    select
+         isnull(S_SE_Number,0) as sNumber
+        ,cast(isnull(S_SE_AdditionalCDetail.S_SE_Amount*S_SE_Number,'0.0')as decimal(18, 2)) as samount,
+        0 as tNumber,
+        0.00 as tamount,
+     S_SE_SB_ShopCode as ShopCode
+    from
+        S_SE_SalesBasic_Finished
+    left join
+        S_SE_AdditionalCDetail
+    on S_SE_AdditionalCDetail.S_SE_SalesID  = s_se_sb_salesid
+    where 1=1
+ and ((isnull('${shopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${shopCode}','')=''))
+ 
+    and s_se_sb_ValueFlag = '1'
+    and convert(varchar(10),s_se_sb_PosDatetime,23) >= '${bgnDate}'
+    and convert(varchar(10),s_se_sb_PosDatetime,23) <= '${endDate}'
+    Union All
+    select
+        0 as sNumber,
+        0.00 as samount,
+        -cast(isnull(S_SE_Number,0) as decimal(18, 2)) as tNumber,
+        -cast(cast(isnull(S_SE_AdditionalCDetail.S_SE_Amount*S_SE_Number,'0.0') as varchar(32)) as decimal(18, 2))  as tamount,        
+        S_SE_SB_ShopCode
+	 from 
+        S_SE_SalesBasic_Finished
+    left join 
+        S_SE_AdditionalCDetail
+	on S_SE_AdditionalCDetail.S_SE_SalesID = s_se_sb_salesid
+	where 1=1
+   and ((isnull('${shopCode}','')<>'' and S_SE_SB_ShopCode in (select departmentID from #shopCode )) or (isnull('${shopCode}','')=''))
+ 
+    and s_se_sb_ValueFlag = '1'
+    and convert(varchar(10), S_SE_SB_WithdrawDate, 23) >=  '${bgnDate}'
+	and convert(varchar(10), S_SE_SB_WithdrawDate, 23) <='${endDate}'
+	and s_se_sb_withdrawflag = 1
+
+)temp
+DROP TABLE #shopCode]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="7"/>
+<FR/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[914400,144000,914400,144000,914400,914400,144000,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,432000,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,914400,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[576000,3600000,3600000,3600000,3600000,3600000,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="1" r="0" cs="4" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="0" s="1">
+<Expand/>
+</C>
+<C c="1" r="1" s="2">
+<Expand/>
+</C>
+<C c="3" r="1" s="2">
+<Expand/>
+</C>
+<C c="4" r="1" s="1">
+<Expand/>
+</C>
+<C c="5" r="1" s="1">
+<Expand/>
+</C>
+<C c="1" r="2" cs="5" s="3">
+<O>
+<![CDATA[商品销售分析表（类别）]]></O>
+<Expand/>
+</C>
+<C c="1" r="3" s="2">
+<Expand/>
+</C>
+<C c="3" r="3" s="2">
+<Expand/>
+</C>
+<C c="4" r="3" s="1">
+<Expand/>
+</C>
+<C c="5" r="3" s="1">
+<Expand/>
+</C>
+<C c="1" r="4" cs="3" s="4">
+<O>
+<![CDATA[查询时间：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="4" cs="2" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$bgnDate + " 至 " + $endDate]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="1" r="5" cs="3" s="4">
+<O>
+<![CDATA[销售门店：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="5" cs="2" s="4">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentNames]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="6" s="2">
+<Expand/>
+</C>
+<C c="3" r="6" s="2">
+<Expand/>
+</C>
+<C c="4" r="6" s="1">
+<Expand/>
+</C>
+<C c="5" r="6" s="1">
+<Expand/>
+</C>
+<C c="1" r="7" cs="3" s="5">
+<O>
+<![CDATA[名称\\类别]]></O>
+<Expand/>
+</C>
+<C c="4" r="7" s="5">
+<O>
+<![CDATA[小计]]></O>
+<Expand/>
+</C>
+<C c="5" r="7" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="1"/>
+</C>
+<C c="1" r="8" rs="12" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="ShopCodeName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="8" rs="4" s="6">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="3" r="8" s="6">
+<O>
+<![CDATA[销售]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$salesnumcol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="8" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F9)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="8" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="xsNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="3" r="9" s="6">
+<O>
+<![CDATA[退货]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$salesnumcol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="9" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F10)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="9" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="thNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="3" r="10" s="6">
+<O>
+<![CDATA[实售]]></O>
+<Expand/>
+</C>
+<C c="4" r="10" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F11)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="10" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=F9 + F10]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="11" s="6">
+<O>
+<![CDATA[占比]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$moneyratecol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="11" s="7">
+<Expand/>
+</C>
+<C c="5" r="11" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((F11 / E11) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="12" rs="4" s="6">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="3" r="12" s="6">
+<O>
+<![CDATA[销售]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$salesmoneycol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="12" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F13))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="12" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="xsje"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="3" r="13" s="6">
+<O>
+<![CDATA[退货]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$salesmoneycol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="13" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F14))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="13" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="thje"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="3" r="14" s="6">
+<O>
+<![CDATA[实售]]></O>
+<Expand/>
+</C>
+<C c="4" r="14" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F15))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="14" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(F13 + F14)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="15" s="6">
+<O>
+<![CDATA[占比]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$moneyratecol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="15" s="7">
+<Expand/>
+</C>
+<C c="5" r="15" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((F15 / E15) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="16" rs="2" s="6">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="3" r="16" s="6">
+<O>
+<![CDATA[金额]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$costmoneycol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="16" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F17))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="16" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="bhsje"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+<C c="3" r="17" s="6">
+<O>
+<![CDATA[占比]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$costmoneyratecol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="17" s="7">
+<Expand/>
+</C>
+<C c="5" r="17" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((F17 / E17) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="18" rs="2" s="6">
+<O>
+<![CDATA[毛利]]></O>
+<Expand/>
+</C>
+<C c="3" r="18" s="6">
+<O>
+<![CDATA[金额]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$zmoneycol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="18" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F19))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="18" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(F15 - F17)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="19" s="6">
+<O>
+<![CDATA[销售毛利率]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$zmoneyratecol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="19" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((E19 / E15) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="19" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((F19 / F15) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="1" r="20" cs="5">
+<Expand dir="0" upParentDefault="false" up="D20"/>
+</C>
+<C c="1" r="21" rs="12" s="6">
+<O>
+<![CDATA[各店总合计]]></O>
+<Expand/>
+</C>
+<C c="2" r="21" rs="4" s="6">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="3" r="21" s="6">
+<O>
+<![CDATA[销售]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$salesnumcol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="21" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F22)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="21" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F9)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="22" s="6">
+<O>
+<![CDATA[退货]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$salesnumcol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="22" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F23)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="22" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F10)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="23" s="6">
+<O>
+<![CDATA[实售]]></O>
+<Expand/>
+</C>
+<C c="4" r="23" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F24)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="23" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(F11)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="24" s="6">
+<O>
+<![CDATA[占比]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$moneyratecol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="24" s="7">
+<Expand/>
+</C>
+<C c="5" r="24" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((F24 / E24) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="25" rs="4" s="6">
+<O>
+<![CDATA[金额]]></O>
+<Expand/>
+</C>
+<C c="3" r="25" s="6">
+<O>
+<![CDATA[销售]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$salesmoneycol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="25" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F26))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="25" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F13))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="26" s="6">
+<O>
+<![CDATA[退货]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$salesmoneycol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="26" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F27))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="26" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F14))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="27" s="6">
+<O>
+<![CDATA[实售]]></O>
+<Expand/>
+</C>
+<C c="4" r="27" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F28))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="27" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F15))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="28" s="6">
+<O>
+<![CDATA[占比]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$moneyratecol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="28" s="7">
+<Expand/>
+</C>
+<C c="5" r="28" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((F28 / E28) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="29" rs="2" s="6">
+<O>
+<![CDATA[成本]]></O>
+<Expand/>
+</C>
+<C c="3" r="29" s="6">
+<O>
+<![CDATA[金额]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$costmoneycol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="29" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F30))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="29" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F17))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="30" s="6">
+<O>
+<![CDATA[占比]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$costmoneyratecol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="30" s="7">
+<Expand/>
+</C>
+<C c="5" r="30" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((F30 / E30) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="31" rs="2" s="6">
+<O>
+<![CDATA[毛利]]></O>
+<Expand/>
+</C>
+<C c="3" r="31" s="6">
+<O>
+<![CDATA[金额]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$zmoneycol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="31" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F32))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="31" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(F19))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="32" s="6">
+<O>
+<![CDATA[销售毛利率]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$zmoneyratecol != "1"]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="32" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((E32 / E28) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="32" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne((F32 / F28) * 100) + "%"]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="1" r="33" cs="3" s="9">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="fjname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="33" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds4" columnName="hamount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="5" r="33" s="7">
+<Expand/>
+</C>
+<C c="1" r="34" cs="3" s="9">
+<O>
+<![CDATA[总合计：]]></O>
+<Expand/>
+</C>
+<C c="4" r="34" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(E28 + E34)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="5" r="34" s="10">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80" foreground="-13421773"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

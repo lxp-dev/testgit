@@ -1,0 +1,1177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="category"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="brandid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="shopcode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="isCustomize"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="supplier"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select departmentID into #shopCode from sales_createShopCodeTab('${shopcode}')
+select
+'${begindate}' +'～'+ '${enddate}' as printdate,
+R_SD_DSE_ShopCode as shopcode,
+B_DP_DepartmentName as shopname,
+R_RC_DSE_GoodsCategoryID as categoryid,
+R_RC_DSE_GoodsCategoryName as categoryname,
+R_RC_DSE_SupplierID as supplierid,
+R_RC_DSE_SupplierName as suppliername,
+R_RC_DSE_BandID as brandid,
+R_RC_DSE_BandName as brandname,
+R_RC_DSE_GoodsID as goodsid,
+R_RC_DSE_GoodsName as goodsname,
+isnull(sum(R_SD_DSE_GoodsNum),0) as num,
+isnull(sum(R_SD_DSE_GoodsAmount),0.00) as amount,
+isnull(sum(R_SD_DSE_GoodsPriceAmount),0.00) as priceamount,
+isnull(sum(R_SD_DSE_GoodsDiscountAmount),0.00) as discountamount,
+isnull(sum(R_SD_DSE_GoodsRateAmount),0.00) as rateamount,
+isnull(sum(R_SD_DSE_GoodsAvgAmount),0.00) as avgamount,
+isnull(sum(R_SD_DSE_GoodsNotRateAmount),0.00) as notrateamount,
+B_GI_RetailPrice as retailPrice
+from R_RC_DaySalesEntry inner join B_Departments on R_SD_DSE_ShopCode=B_DP_DepartmentID
+left join B_GoodsInfo on R_RC_DSE_GoodsID = B_GI_GoodsID
+where 1=1
+and ((R_SD_DSE_ShopCode in (select departmentID from #shopCode) and isnull('${shopcode}','')<>'') or isnull('${shopcode}','')='')
+and (R_RC_DSE_GoodsCategoryID = '${category}' or isnull('${category}','') = '')
+and (R_RC_DSE_SupplierID = '${supplier}' or isnull('${supplier}','') = '')
+and (R_RC_DSE_BandID = '${brandid}' or isnull('${brandid}','') = '')
+and convert(varchar(10),R_SD_DSE_Date,23) >= '${begindate}'
+and convert(varchar(10),R_SD_DSE_Date,23) <= '${enddate}'
+and (isnull('${isCustomize}','') = '' or B_GI_isCustomize = '${isCustomize}')
+group by
+R_SD_DSE_ShopCode,
+B_DP_DepartmentName,
+R_RC_DSE_GoodsCategoryID,
+R_RC_DSE_GoodsCategoryName,
+R_RC_DSE_SupplierID,
+R_RC_DSE_SupplierName,
+R_RC_DSE_BandID,
+R_RC_DSE_BandName,
+R_RC_DSE_GoodsID,
+R_RC_DSE_GoodsName,
+B_GI_RetailPrice
+order by R_RC_DSE_GoodsName
+drop table #shopCode
+]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+</TableDataMap>
+<ReportExportAttr>
+<ExcelExportAttr hideColumn="false" hideRow="false"/>
+<PDFExportAttr/>
+<HTMLExportAttr/>
+</ReportExportAttr>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="11"/>
+<FR/>
+<HC F="4" T="4"/>
+<FC/>
+<UPFCR COLUMN="true" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1219200,1295400,864000,864000,864000,864000,864000,864000,864000,723900,914400,914400,914400,914400,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[0,0,38100,2743200,3048000,7124700,1943100,2324100,2743200,2743200,2743200,1905000,2628900,2781300,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0">
+<O t="CC">
+<LayoutAttr selectedIndex="0"/>
+<Chart name="Default">
+<Chart class="com.fr.chart.Chart">
+<GI>
+<AttrBackground>
+<Background name="NullBackground"/>
+</AttrBackground>
+<AttrBorder>
+<Attr lineStyle="0" isRoundBorder="false"/>
+<newColor borderColor="-6908266"/>
+</AttrBorder>
+<AttrAlpha>
+<Attr alpha="1.0"/>
+</AttrAlpha>
+</GI>
+<ChartAttr isJSDraw="true"/>
+<Title>
+<GI>
+<AttrBackground>
+<Background name="NullBackground"/>
+</AttrBackground>
+<AttrBorder>
+<Attr lineStyle="0" isRoundBorder="false"/>
+<newColor borderColor="-6908266"/>
+</AttrBorder>
+<AttrAlpha>
+<Attr alpha="1.0"/>
+</AttrAlpha>
+</GI>
+<O>
+<![CDATA[]]></O>
+<TextAttr>
+<Attr alignText="0">
+<FRFont name="微软雅黑" style="0" size="88"/>
+</Attr>
+</TextAttr>
+<TitleVisible value="true" position="0"/>
+</Title>
+<Plot class="com.fr.chart.plot.Pie3DPlot">
+<Plot>
+<Plot>
+<GI>
+<AttrBackground>
+<Background name="NullBackground"/>
+</AttrBackground>
+<AttrBorder>
+<Attr lineStyle="0" isRoundBorder="false"/>
+<newColor/>
+</AttrBorder>
+<AttrAlpha>
+<Attr alpha="1.0"/>
+</AttrAlpha>
+</GI>
+<Attr isNullValueBreak="true" isHighChart="false" interactiveBorder="true" interactiveHighlight="false" interactiveOuterlight="true" autoRefreshPerSecond="0"/>
+<newHotTooltipStyle>
+<AttrContents>
+<Attr showLine="false" position="1" seriesLabel="${SERIES}${BR}${CATEGORY}${BR}${VALUE}"/>
+<Format class="java.text.DecimalFormat">
+<![CDATA[#0.00]]></Format>
+<PercentFormat>
+<Format class="java.text.DecimalFormat">
+<![CDATA[#0.00%]]></Format>
+</PercentFormat>
+</AttrContents>
+</newHotTooltipStyle>
+<ConditionCollection>
+<DefaultAttr class="com.fr.chart.condition.ConditionAttr">
+<ConditionAttr name="">
+<AttrList>
+<Attr class="com.fr.chart.condition.AttrBorder">
+<AttrBorder>
+<Attr lineStyle="1" isRoundBorder="false"/>
+<newColor borderColor="-1"/>
+</AttrBorder>
+</Attr>
+</AttrList>
+</ConditionAttr>
+</DefaultAttr>
+</ConditionCollection>
+<Legend>
+<GI>
+<AttrBackground>
+<Background name="NullBackground"/>
+</AttrBackground>
+<AttrBorder>
+<Attr lineStyle="0" isRoundBorder="false"/>
+<newColor borderColor="-6908266"/>
+</AttrBorder>
+<AttrAlpha>
+<Attr alpha="1.0"/>
+</AttrAlpha>
+</GI>
+<Attr position="4" visible="true"/>
+<FRFont name="微软雅黑" style="0" size="72"/>
+</Legend>
+<DataSheet>
+<GI>
+<AttrBackground>
+<Background name="NullBackground"/>
+</AttrBackground>
+<AttrBorder>
+<Attr lineStyle="1" isRoundBorder="false"/>
+<newColor borderColor="-16777216"/>
+</AttrBorder>
+<AttrAlpha>
+<Attr alpha="1.0"/>
+</AttrAlpha>
+</GI>
+<Attr isVisible="false" isLegendVisible="true"/>
+</DataSheet>
+<OuterLight>
+<Attr outerSize="0" outerAlpha="0.0"/>
+</OuterLight>
+<Shadow>
+<Attr shadowSize="4" shadowAlpha="0.0"/>
+</Shadow>
+<newPlotFillStyle>
+<AttrFillStyle>
+<Attr/>
+</AttrFillStyle>
+</newPlotFillStyle>
+<PieAttr subType="1" smallPercent="0.05" startAngle="90" isSeparateOut="true"/>
+</Plot>
+<Depth value="20"/>
+<Projection mode="2" elevation="25" rotation="0" focus="800"/>
+</Plot>
+</Plot>
+</Chart>
+</Chart>
+<NormalReportDataDefinition>
+<Series>
+<SeriesDefinition>
+<SeriesName>
+<O>
+<![CDATA[数量]]></O>
+</SeriesName>
+<SeriesValue>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=L14]]></Attributes>
+</O>
+</SeriesValue>
+</SeriesDefinition>
+</Series>
+<Category>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=L11]]></Attributes>
+</O>
+</Category>
+<Top topCate="-1" topValue="-1" isDiscardOtherCate="false" isDiscardOtherSeries="false" isDiscardNullCate="false" isDiscardNullSeries="false"/>
+</NormalReportDataDefinition>
+</O>
+<Expand/>
+</C>
+<C c="4" r="0" cs="11" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="1" cs="11" s="1">
+<O>
+<![CDATA[商品销售统计表（商品）]]></O>
+<Expand/>
+</C>
+<C c="3" r="2" s="2">
+<O>
+<![CDATA[部门名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowc = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="2" cs="9" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(trim($departmentname) = "", "全部门店", $departmentname)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="3" s="2">
+<O>
+<![CDATA[ 日    期：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowc = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="3" cs="2" s="3">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="printdate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="3" s="3">
+<Expand/>
+</C>
+<C c="7" r="3" s="3">
+<Expand/>
+</C>
+<C c="8" r="3" s="3">
+<Expand/>
+</C>
+<C c="9" r="3" s="3">
+<Expand/>
+</C>
+<C c="10" r="3" s="3">
+<Expand/>
+</C>
+<C c="11" r="3" s="3">
+<Expand/>
+</C>
+<C c="12" r="3" s="3">
+<Expand/>
+</C>
+<C c="3" r="4" s="2">
+<O>
+<![CDATA[商品类别：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowc = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="4" cs="2" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(trim($goodscategoryname) = "", "所有类别", $goodscategoryname)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="4" s="3">
+<Expand/>
+</C>
+<C c="7" r="4" s="3">
+<Expand/>
+</C>
+<C c="8" r="4" s="3">
+<Expand/>
+</C>
+<C c="9" r="4" s="3">
+<Expand/>
+</C>
+<C c="10" r="4" s="3">
+<Expand/>
+</C>
+<C c="11" r="4" s="3">
+<Expand/>
+</C>
+<C c="12" r="4" s="3">
+<Expand/>
+</C>
+<C c="3" r="5" s="2">
+<O>
+<![CDATA[供 应 商：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowc = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="5" cs="2" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$supplierName]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="5" s="3">
+<Expand/>
+</C>
+<C c="7" r="5" s="3">
+<Expand/>
+</C>
+<C c="8" r="5" s="3">
+<Expand/>
+</C>
+<C c="9" r="5" s="3">
+<Expand/>
+</C>
+<C c="10" r="5" s="3">
+<Expand/>
+</C>
+<C c="11" r="5" s="3">
+<Expand/>
+</C>
+<C c="12" r="5" s="3">
+<Expand/>
+</C>
+<C c="3" r="6" s="2">
+<O>
+<![CDATA[品    牌：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowc = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="6" cs="2" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$brandName]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="6" s="3">
+<Expand/>
+</C>
+<C c="7" r="6" s="3">
+<Expand/>
+</C>
+<C c="8" r="6" s="3">
+<Expand/>
+</C>
+<C c="9" r="6" s="3">
+<Expand/>
+</C>
+<C c="10" r="6" s="3">
+<Expand/>
+</C>
+<C c="11" r="6" s="3">
+<Expand/>
+</C>
+<C c="12" r="6" s="3">
+<Expand/>
+</C>
+<C c="3" r="7" s="2">
+<O>
+<![CDATA[商品名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowc = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="7" cs="2" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$GoodsName]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="7" s="3">
+<Expand/>
+</C>
+<C c="7" r="7" s="3">
+<Expand/>
+</C>
+<C c="8" r="7" s="3">
+<Expand/>
+</C>
+<C c="9" r="7" s="3">
+<Expand/>
+</C>
+<C c="10" r="7" s="3">
+<Expand/>
+</C>
+<C c="11" r="7" s="3">
+<Expand/>
+</C>
+<C c="12" r="7" s="3">
+<Expand/>
+</C>
+<C c="0" r="8">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="8">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="8">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="8" s="2">
+<O>
+<![CDATA[查询分类：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShowc = 1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="8" cs="2" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$searchtypename]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="6" r="8" s="3">
+<Expand/>
+</C>
+<C c="7" r="8" s="3">
+<Expand/>
+</C>
+<C c="8" r="8" s="3">
+<Expand/>
+</C>
+<C c="9" r="8" s="3">
+<Expand/>
+</C>
+<C c="10" r="8" s="3">
+<Expand/>
+</C>
+<C c="11" r="8" s="3">
+<Expand/>
+</C>
+<C c="12" r="8" s="3">
+<Expand/>
+</C>
+<C c="3" r="10" cs="2" rs="2" s="4">
+<O>
+<![CDATA[商品代码]]></O>
+<Expand/>
+</C>
+<C c="5" r="10" rs="2" s="4">
+<O>
+<![CDATA[商品名称]]></O>
+<Expand/>
+</C>
+<C c="6" r="10" rs="2" s="4">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="7" r="10" rs="2" s="4">
+<O>
+<![CDATA[零售价]]></O>
+<Expand/>
+</C>
+<C c="8" r="10" rs="2" s="4">
+<O>
+<![CDATA[销售金额]]></O>
+<Expand/>
+</C>
+<C c="9" r="10" rs="2" s="4">
+<O>
+<![CDATA[成本]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="10" r="10" rs="2" s="4">
+<O>
+<![CDATA[毛利率]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="11" r="10" cs="4" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="shopname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="1"/>
+</C>
+<C c="11" r="11" s="4">
+<O>
+<![CDATA[数量]]></O>
+<Expand/>
+</C>
+<C c="12" r="11" s="4">
+<O>
+<![CDATA[销售金额]]></O>
+<Expand/>
+</C>
+<C c="13" r="11" s="4">
+<O>
+<![CDATA[成本(含税)]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="14" r="11" s="4">
+<O>
+<![CDATA[毛利率]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ColWidthHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="12">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="categoryid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="12">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="supplierid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="12">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="brandid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="12" cs="2" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsid"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[(ROW() - 6) % 30 = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.PageHighlightAction">
+<P i="1"/>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0" order="1">
+<SortFormula>
+<![CDATA[if($order = "1", G13, -G13)]]></SortFormula>
+</Expand>
+</C>
+<C c="5" r="12" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="goodsname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="12" s="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(L13)]]></Attributes>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="categoryid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$categoryID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="category"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=A13]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="begindate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$begindate]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="enddate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$enddate]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="shopcode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="departmentID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$departmentID]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="supplierid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B13]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="brandID"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C13]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isCustomize"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isCustomize]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="goodsid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=E13]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$logincompanyid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/pengsheng-checkform.js]]></JSImport>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[
+var DataURL = "report.action?reportlet=sales_salesCountByCategoryChildForSales.cpt&isShow="+isShow+"&categoryid="+categoryid+"&category="+category+"&begindate="+begindate+"&enddate="+enddate+"&shopcode="+shopcode+"&departmentID="+departmentID+"&supplierid="+supplierid+"&brandID="+brandID+"&isCustomize="+isCustomize+"&goodsid="+goodsid+"&logincompanyid="+logincompanyid;  
+
+openWindowForReport(DataURL);
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand/>
+</C>
+<C c="7" r="12" s="5">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="retailPrice"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[FuncOne($$$)]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="12" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(M13))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="12" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(N13))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="12" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(I13 = 0, "--", FuncOne((I13 - J13) / I13 * 100) + "%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="12" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="num"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="12" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="amount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="13" r="12" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="rateamount"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="12" s="7">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(N13 = 0, "--", FuncOne((M13 - N13) / M13 * 100) + "%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="13" s="8">
+<Expand/>
+</C>
+<C c="1" r="13" s="8">
+<Expand/>
+</C>
+<C c="2" r="13" s="8">
+<Expand/>
+</C>
+<C c="3" r="13" cs="3" s="9">
+<O>
+<![CDATA[合  计：]]></O>
+<Expand/>
+</C>
+<C c="6" r="13" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(G13)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="13" s="11">
+<Expand/>
+</C>
+<C c="8" r="13" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(I13))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="9" r="13" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(J13))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="10" r="13" s="10">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(I14 = 0, "--", FuncOne((I14 - J14) / I14 * 100) + "%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="11" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(L13)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="12" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(M13))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="13" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=FuncOne(sum(N13))]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="14" r="13" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(N14 = 0, "--", FuncOne((M14 - N14) / M14 * 100) + "%")]]></Attributes>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="2743200" bottom="986400" right="2743200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="false" delayPlaying="true" windowPosition="1" align="1"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+</ReportParameterAttr>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="黑体" style="1" size="100"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="108"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72" foreground="-16776961" underline="1"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	<!-- 门店区域配置 moyongsheng  begin-->
+		<bean id="regionalConfigurationDao" class="com.pengsheng.eims.basic.dao.impl.RegionalConfigurationDaoImpl" />
+	<!-- 门店区域配置 moyongsheng  end-->
+	
+	<!-- 开关配置 liujing  begin-->
+		<bean id="openCloseConfigurationDao" class="com.pengsheng.eims.basic.dao.impl.OpenCloseConfigurationDaoImpl" />
+	<!-- 开关配置 liujing  end-->
+	
+	<!-- 日志查询   begin-->
+		<bean id="logDao" class="com.pengsheng.eims.basic.dao.impl.LogDaoImpl" />
+	<!-- 日志查询  end-->
+	
+	<!-- 修改商品属性  begin-->
+		<bean id="updateGoodsAttributeDao" class="com.pengsheng.eims.basic.dao.impl.UpdateGoodsAttributeDaoImpl" />
+	<!-- 修改商品属性  end-->
+	
+	<!-- 修改商品属性（爱尔）  begin  sxh-->
+		<bean id="updateGoodsAttributeARDao" class="com.pengsheng.eims.basic.dao.impl.UpdateGoodsAttributeARDaoImpl" />
+	<!-- 修改商品属性（爱尔）  end    sxh-->
+	
+	<!-- 仓位维护 moyongsheng  begin-->
+	<bean id="warehouseDao" class="com.pengsheng.eims.basic.dao.impl.WarehouseDaoImpl" />
+	<!-- 仓位维护 moyongsheng  end-->
+	<!-- 计量单位维护 moyongsheng  begin-->
+	<bean id="unitDao" class="com.pengsheng.eims.basic.dao.impl.UnitDaoImpl" />
+	<!-- 计量单位维护 moyongsheng  end-->
+	<!-- 客户维护 moyongsheng  begin-->
+	<bean id="customerDao" class="com.pengsheng.eims.basic.dao.impl.CustomerDaoImpl" />
+	<!-- 客户维护 moyongsheng  end-->
+	
+	<!-- 制造商管理 Add by du-->
+	    <bean id="supplierDao" class="com.pengsheng.eims.basic.dao.impl.SupplierDaoImpl" />
+	<!-- 制造商管理 End by du-->
+	
+	<!-- 制造商合同管理 Add by zjy-->
+		<bean id="contractDao" class="com.pengsheng.eims.basic.dao.impl.ContractDaoImpl" />
+	<!-- 制造商合同管理 End by zjy-->
+	
+	<!-- 制造商管理 Add by du-->
+	    <bean id="supplierAgentDao" class="com.pengsheng.eims.basic.dao.impl.SupplierAgentDaoImpl" />
+	<!-- 制造商管理 End by du-->
+	
+	<!-- 品种维护 Liuqian begin -->
+	<bean id="brandDao" class="com.pengsheng.eims.basic.dao.impl.BrandDaoImpl"/>	  	
+	<!-- 品种维护 Liuqian end -->	
+	
+	<!-- 品种维护 Liuqian begin -->
+	<bean id="varietyDao" class="com.pengsheng.eims.basic.dao.impl.VarietyDaoImpl"/>
+	<!-- 品种维护 Liuqian end -->	
+	<!-- 门店出仓配置 Add by du-->
+		<bean id="warehouseConfigurationDao" class="com.pengsheng.eims.basic.dao.impl.WarehouseConfigurationDaoImpl" />
+	<!-- 门店出仓配置 End by du-->
+	
+	<!-- 镜架类维护 Add by du-->
+		<bean id="glassesFrameDao" class="com.pengsheng.eims.basic.dao.impl.GlassesFrameDaoImpl" />
+	<!-- 镜架类维护 End by du-->
+	
+	<!--配件类维护 Add by du-->
+		<bean id="glassesAccessoriesDao" class="com.pengsheng.eims.basic.dao.impl.GlassesAccessoriesDaoImpl" />
+	<!-- 配件类维护 End by du-->
+	
+	<!-- 隐形辅料类维护 Add by du-->
+        <bean id="stealthAccessoriesDao" class="com.pengsheng.eims.basic.dao.impl.StealthAccessoriesDaoImpl" />
+	<!-- 隐形辅料类维护 End by du-->
+	
+	<!-- 老花镜类维护 Add by moyongsheng-->
+		<bean id="presbyopicGlassesDao" class="com.pengsheng.eims.basic.dao.impl.PresbyopicGlassesDaoImpl" />
+	<!-- 老花类维护 End by moyongsheng-->
+	
+	<!-- 太阳镜类维护 Add by moyongsheng-->
+		<bean id="glassesFinishDao" class="com.pengsheng.eims.basic.dao.impl.GlassesFinishDaoImpl" />
+	<!-- 太阳镜类维护 End by moyongsheng-->
+
+	<!-- 隐形订做镜片类维护 Add by moyongsheng-->
+	<bean id="stealthCustomLensesDao" class="com.pengsheng.eims.basic.dao.impl.StealthCustomLensesDaoImpl" />
+	<!-- 隐形订做镜片类维护 End by moyongsheng-->	
+	
+	<!-- 软性接触镜订制维护 Add by sxh-->
+	<bean id="stealthCustomLensesDDao" class="com.pengsheng.eims.basic.dao.impl.StealthCustomLensesDDaoImpl" />
+	<!-- 软性接触镜订制维护 End by sxh-->
+	
+	<!-- 耗材类维护 Add by moyongsheng-->
+	<bean id="otherGoodsDao" class="com.pengsheng.eims.basic.dao.impl.OtherGoodsDaoImpl" />
+	<!-- 耗材类维护 End by moyongsheng-->
+	
+	<!-- 视光类维护 Add by moyongsheng-->
+	<bean id="visualOpticsDao" class="com.pengsheng.eims.basic.dao.impl.VisualOpticsDaoImpl" />
+	<!-- 视光类维护 End by moyongsheng-->
+	
+	<!-- 隐形成品片类维护 Add by du-->
+	<bean id="stealthFinishedDao" class="com.pengsheng.eims.basic.dao.impl.StealthFinishedDaoImpl" />
+	<!-- 隐形成品片类维护 End by du-->	
+	
+	<!-- 成品镜片类维护 Add by liuqian-->
+		<bean id="lensFinishedDao" class="com.pengsheng.eims.basic.dao.impl.LensFinishedDaoImpl" />
+	<!-- 成品镜片类维护 End by liuqian-->
+	
+	<!-- 订做镜片类维护 Add by liuqian-->
+	<bean id="lensCustomDao" class="com.pengsheng.eims.basic.dao.impl.LensCustomDaoImpl" />
+	<!-- 订做镜片类维护 End by liuqian-->
+	
+	<!-- 不合格品现象维护 Add by moyongsheng-->
+		<bean id="nonconformingProductDao" class="com.pengsheng.eims.basic.dao.impl.NonconformingProductDaoImpl" />
+	<!-- 不合格品现象维护 End by moyongsheng-->
+	
+	<!-- 系统模块维护  Add by liujing-->
+		<bean id="systemModuleDao" class="com.pengsheng.eims.basic.dao.impl.SystemModuleDaoImpl" />
+	<!-- 系统模块维护 End by liujing-->
+	
+	<!-- 赠品维护 Add by sb-->
+		<bean id="giftsDao" class="com.pengsheng.eims.basic.dao.impl.GiftsDaoImpl" />
+	<!-- 赠品维护 End by sb-->
+	
+	<!-- 储值卡 Add by-->
+		<bean id="chuzhikaDao" class="com.pengsheng.eims.basic.dao.impl.ChuzhikaDaoImpl" />
+	<!-- 储值卡 End by-->
+
+	<!-- 系统期初  Add by-->
+		<bean id="initSystemDao" class="com.pengsheng.eims.basic.dao.impl.InitSystemDaoImpl" />
+	<!-- 系统期初  End by-->
+	
+	<!-- 公告管理  Add by sxh-->
+		<bean id="noticeDao" class="com.pengsheng.eims.basic.dao.impl.NoticeDaoImpl" />
+	<!-- 公告管理  End by sxh-->
+	
+	<!-- 基础信息 Begin Add by sxh -->
+		
+	<!-- 误期提醒 Begin Add by sxh -->
+	<bean id="delayWarningDao" class="com.pengsheng.eims.basic.dao.impl.DelayWarningDaoImpl" />
+	<!-- 误期提醒 End   Add by sxh -->
+		
+	<!-- 基础信息 End   Add by sxh -->
+	
+	<!-- VIP卡  Add by sxh -->
+		<bean id="vipCardDao" class="com.pengsheng.eims.basic.dao.impl.VIPCardDaoImpl" scope="prototype"/>
+	<!-- VIP卡  End by sxh -->
+	
+	<!-- 会员来源维护  Add by sxh -->
+		<bean id="memberOriginDao" class="com.pengsheng.eims.basic.dao.impl.MemberOriginDaoImpl" scope="prototype"/>
+	<!-- 会员来源维护  End by sxh -->
+	
+	<!-- 价格区间维护 sxh begin -->
+		<bean id="salesAreaDao" class="com.pengsheng.eims.basic.dao.impl.SalesAreaDaoImpl" scope="prototype"/>
+	<!-- 价格区间维护 sxh end -->
+	
+	<!-- 顾客年龄区间维护 sxh begin -->
+		<bean id="customerAgeGroupDao" class="com.pengsheng.eims.basic.dao.impl.CustomerAgeGroupDaoImpl" scope="prototype"/>
+	<!-- 顾客年龄区间维护 sxh end -->
+	
+	<!-- 报表样式维护  begin -->
+		<bean id="fittingTemplateDao" class="com.pengsheng.eims.basic.dao.impl.FittingTemplateDaoImpl" scope="prototype"/>
+	<!-- 报表样式维护  begin -->
+
+	<!-- 报表类型维护  begin -->
+		<bean id="fittingTemplateTypeDao" class="com.pengsheng.eims.basic.dao.impl.FittingTemplateTypeDaoImpl" scope="prototype"/>
+	<!-- 报表类型维护  begin -->
+		
+	<!-- 纠错系统维护  begin -->
+		<bean id="correctingErrorsDao" class="com.pengsheng.eims.basic.dao.impl.CorrectingErrorsDaoImpl" scope="prototype"/>
+	<!-- 纠错系统维护  begin -->
+		
+	<!-- 商品颜色维护  begin-->
+	<bean id="colorDao" class="com.pengsheng.eims.basic.dao.impl.ColorDaoImpl" />
+	<!-- 商品颜色维护  end-->
+	
+	<!-- 焦度计取值设置  Add by sxh-->
+	<bean id="getMachineValuesDao" class="com.pengsheng.eims.basic.dao.impl.GetMachineValuesDaoImpl" />
+	<!-- 焦度计取值设置 End by sxh-->
+	
+	<!-- 加班 Add by du-->
+        <bean id="jbtiaoDao" class="com.pengsheng.eims.basic.dao.impl.JbtiaoDaoImpl" />	
+    <!-- 加班 Add by du-->
+    
+    <!-- 请假出差 Add by du-->
+        <bean id="qjccDao" class="com.pengsheng.eims.basic.dao.impl.QjccDaoImpl" />	
+    <!-- 请假出差 Add by du-->    
+	
+	<!-- 下拉值维护 Add by moyongsheng-->
+		<bean id="optionParamDao" class="com.pengsheng.eims.basic.dao.impl.OptionParamDaoImpl" />
+	<!-- 下拉值维护 End by moyongsheng-->    
+    
+    <!-- 邮寄单管理  begin -->
+        <bean id="mailingListDao" class="com.pengsheng.eims.basic.dao.impl.MailingListDaoImpl" />	
+	<!-- 邮寄单管理    end -->	
+	
+	<!-- 商品级别设置  Add by sxh-->
+	    <bean id="goodsLevelDao" class="com.pengsheng.eims.basic.dao.impl.GoodsLevelDaoImpl" />
+	<!-- 商品级别设置 End by sxh-->
+	
+	<!-- 课程培训 Add by sb-->
+		<bean id="trainingCoursesDao" class="com.pengsheng.eims.basic.dao.impl.TrainingCoursesDaoImpl" />
+	<!-- 课程培训 End by sb-->
+	
+	<!-- 选商品留言  begin -->
+        <bean id="goodsImgLeaveMsgDao" class="com.pengsheng.eims.basic.dao.impl.GoodsImgLeaveMsgDaoImpl" />	
+	<!-- 选商品留言    end -->	
+	
+	<!-- 省、市、区/县、镇 Add by moyongsheng-->
+		<bean id="areaDao" class="com.pengsheng.eims.basic.dao.impl.AreaDaoImpl" />
+	<!-- 省、市、区/县、镇 Add by moyongsheng--> 	
+	
+	<!-- 提醒窗口管理 Add by moyongsheng-->
+		<bean id="reminderWindowDao" class="com.pengsheng.eims.basic.dao.impl.ReminderWindowDaoImpl" />
+	<!-- 提醒窗口管理 Add by moyongsheng-->	
+	
+	<!-- 部门类型 Add by moyongsheng-->
+		<bean id="departmentTypeDao" class="com.pengsheng.eims.basic.dao.impl.DepartmentTypeDaoImpl" />
+	<!-- 部门类型 Add by moyongsheng-->	
+	
+	<!-- 镜架批量新增 Add by sxh-->
+		<bean id="glassesFrameManyDao" class="com.pengsheng.eims.basic.dao.impl.GlassesFrameManyDaoImpl" />
+	<!-- 镜架批量新增 Add by sxh-->	
+	
+	<!-- 双眼视功能参数设置 Add by sxh-->
+		<bean id="doubleEyeFunMendDao" class="com.pengsheng.eims.basic.dao.impl.DoubleEyeFunMendDaoImpl" />
+	<!-- 双眼视功能参数设置 Add by sxh-->	
+	
+	<!-- 期初入库  Add by szk-->
+		<bean id="qcInStorageDao" class="com.pengsheng.eims.basic.dao.impl.QcInStorageDaoImpl" />
+	<!-- 期初入库  Add by szk-->	
+	
+	<!-- 区域设置下载  Add by sxh -->
+		<bean id="downloadRegionDao" class="com.pengsheng.eims.basic.dao.impl.DownloadRegionDaoImpl" />
+	<!-- 区域设置下载  Add by sxh -->	
+	
+	<!-- 医院HIS系统维护  Add by sxh -->
+		<bean id="hisInfoDao" class="com.pengsheng.eims.basic.dao.impl.HisInfoDaoImpl" />
+	<!-- 医院HIS系统维护  Add by sxh -->	
+	
+</beans>

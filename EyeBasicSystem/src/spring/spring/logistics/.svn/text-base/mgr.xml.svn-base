@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	
+	<!-- 发票管理  begin-->
+	<bean id="invoiceMgr" class="com.pengsheng.eims.logistics.mgr.impl.InvoiceMgrImpl" />
+	<!-- 发票管理  end-->
+
+	
+	<!-- 发票单据选择开窗 wanglei begin-->
+	<bean id="invoiceSelectBillMgrImpl" class="com.pengsheng.eims.logistics.mgr.impl.InvoiceSelectBillMgrImpl" />
+	<bean id="invoiceSelectBillMgr" parent="baseTransactionProxy">
+		<property name="target" ref="invoiceSelectBillMgrImpl" />
+	</bean>
+	<!-- 发票单据选择开窗 wanglei end-->	
+	
+	<!-- 凭证单据选择开窗 wanglei begin-->
+	<bean id="proofSelectBillMgrImpl" class="com.pengsheng.eims.logistics.mgr.impl.ProofSelectBillMgrImpl" />
+	<bean id="proofSelectBillMgr" parent="baseTransactionProxy">
+		<property name="target" ref="proofSelectBillMgrImpl" />
+	</bean>
+	<!-- 凭证单据选择开窗 wanglei end-->	
+
+	<!-- 凭证管理  Add by SZK -->
+	<bean id="voucherMgrImpl" class="com.pengsheng.eims.logistics.mgr.impl.VoucherMgrImpl" />
+	<bean id="voucherMgr" parent="baseTransactionProxy">
+		<property name="target" ref="voucherMgrImpl" />
+	</bean>
+	<bean id="voucherTallyMgrImpl" class="com.pengsheng.eims.logistics.mgr.impl.VoucherTallyMgrImpl" />
+	<bean id="voucherTallyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="voucherTallyMgrImpl" />
+	</bean>
+	<!-- 凭证管理 End by SZK -->
+
+	<!-- 成本计算  begin-->
+	<bean id="calMgr" class="com.pengsheng.eims.logistics.mgr.impl.CalMgrImpl" />
+	<!-- 成本计算  end-->
+	
+	<!-- 日志SZK begin-->
+	<bean id="logisticsLogMgrImpl" class="com.pengsheng.eims.logistics.mgr.impl.LogisticsLogMgrImpl" />
+	<bean id="logisticsLogMgr" parent="baseTransactionProxy">
+	    <property name="target" ref="logisticsLogMgrImpl" />
+	</bean>
+	<!-- 日志SZK end-->
+
+	<!-- 付款单SZK begin-->
+	<bean id="payMentBillMgrImpl" class="com.pengsheng.eims.logistics.mgr.impl.PayMentBillMgrImpl" />
+	<bean id="payMentBillMgr" parent="baseTransactionProxy">
+	    <property name="target" ref="payMentBillMgrImpl" />
+	</bean>
+	<!-- 付款单 SZK end-->
+
+	<!-- 凭证模板 SZK begin-->
+	<bean id="voucherTemplateMgrImpl" class="com.pengsheng.eims.logistics.mgr.impl.VoucherTemplateMgrImpl" />
+	<bean id="voucherTemplateMgr" parent="baseTransactionProxy">
+	    <property name="target" ref="voucherTemplateMgrImpl" />
+	</bean>
+	<!-- 凭证模板 SZK end-->
+	
+	<!-- 收款单SZK begin-->
+	<bean id="receiptMentBillMgrImpl" class="com.pengsheng.eims.logistics.mgr.impl.ReceiptMentBillMgrImpl" />
+	<bean id="receiptMentBillMgr" parent="baseTransactionProxy">
+	    <property name="target" ref="receiptMentBillMgrImpl" />
+	</bean>
+	<!-- 收款单 SZK end-->
+	
+</beans>

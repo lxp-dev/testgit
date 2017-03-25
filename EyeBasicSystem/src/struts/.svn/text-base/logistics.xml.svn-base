@@ -1,0 +1,966 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+    
+<struts>	
+	<package name="logistics" namespace="/" extends="struts-default">
+	<!-- 
+		<global-results>	        
+		   <result name="error">/error.jsp</result>
+		</global-results>	
+	    <global-exception-mappings>   
+	       <exception-mapping exception="java.lang.Exception" result="error"></exception-mapping>   
+	    </global-exception-mappings> 
+	  -->
+	     
+<!-- 发票管理  Add by SZK-->
+
+	<!-- 初始化发票查询 -->
+    <action name="initInvoiceSel" class="invoiceAction" method="initInvoiceSel">
+		<result name="success">/WEB-INF/pages/logistics/invoice/invoice_select.jsp</result>
+        <result name="selInvoice" type="redirectAction">selInvoice?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+        <interceptor-ref name="defaultStack"></interceptor-ref>			
+	</action>
+	
+	<!-- 根据查询条件查询发票 -->
+	<action name="selInvoice" class="invoiceAction" method="selInvoice">
+		<result name="success">/WEB-INF/pages/logistics/invoice/invoice_select.jsp</result>
+	</action>
+	
+	<!-- 初始化单据查询 -->
+	<action name="initInvoiceSelectBill" class="invoiceAction" method="initInvoiceSelectBill">
+		<result name="success">/WEB-INF/pages/logistics/invoice/invoiceSelectBill.jsp</result>
+	</action>
+	
+	<!-- 单据查询 -->
+	<action name="invoiceSelectBill" class="invoiceAction" method="invoiceSelectBill">
+		<result name="success">/WEB-INF/pages/logistics/invoice/invoiceSelectBill.jsp</result>
+	</action>
+	
+	<!-- 初始化新增发票页面选择商品开窗 -->
+	<action name="initInvoiceSelectGoods" class="invoiceSelectBillAction" method="initInvoiceSelectGoods">
+		<result name="success">/WEB-INF/pages/logistics/invoice/invoice_goods.jsp</result>
+	</action>
+	
+	<!-- 新增发票页面选择商品开窗 -->
+	<action name="invoiceSelectGoods" class="invoiceSelectBillAction" method="invoiceSelectGoods">
+		<result name="success">/WEB-INF/pages/logistics/invoice/invoice_goods.jsp</result>
+	</action>
+	
+	<!-- 单据查询中查看单据 -->
+	<action name="initBillInfoSel" class="invoiceSelectBillAction" method="initBillInfoSel">
+		<result name="success">/WEB-INF/pages/logistics/invoiceSelectBill/invoiceSelectBill_details.jsp</result>
+	</action>
+	
+	<!-- 初始化新增发票页面 -->
+	<action name="initInvoiceInsert" class="invoiceAction" method="initInvoiceInsert">
+		<result name="success">/WEB-INF/pages/logistics/invoice/invoice_insert.jsp</result>
+	</action>
+	    
+	<!-- 新增发票查询需核销的单据开窗 -->	
+	<action name="initSelectBillSel" class="invoiceSelectBillAction" method="initSelectBillSel">
+		<result name="success">/WEB-INF/pages/logistics/invoiceSelectBill/invoiceSelectBill_select.jsp</result>
+	</action>
+	
+	<!-- 新增发票时查询需核销的单据 -->	
+	<action name="selectSelectBill" class="invoiceSelectBillAction" method="selectSelectBill">
+		<result name="success">/WEB-INF/pages/logistics/invoiceSelectBill/invoiceSelectBill_select.jsp</result>
+	</action>	       
+
+	<action name="selBills" class="invoiceAction" method="selBills">
+		<result name="success">/WEB-INF/pages/logistics/invoice/invoice_insert.jsp</result>
+	</action>
+			   	    
+	    <action name="invoiceInsert" class="invoiceAction" method="invoiceInsert">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+
+	   
+	    <action name="initInvoiceDetail" class="invoiceAction" method="initInvoiceDetail">
+			<result name="success">/WEB-INF/pages/logistics/invoice/invoice_detail.jsp</result>
+	    </action>
+	    
+	    <action name="initInvoiceDelete" class="invoiceAction" method="initInvoiceDelete">
+			<result name="success">/WEB-INF/pages/logistics/invoice/invoice_delete.jsp</result>
+	    </action>	    
+	     <action name="invoiceDelete" class="invoiceAction" method="invoiceDelete">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initInvoiceUpdate" class="invoiceAction" method="initInvoiceUpdate">
+			<result name="success">/WEB-INF/pages/logistics/invoice/invoice_update.jsp</result>
+	    </action>
+	     <action name="invoiceUpdate" class="invoiceAction" method="invoiceUpdate">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initInvoicePrint" class="invoiceAction" method="initInvoicePrint">
+			<result name="success">/WEB-INF/pages/logistics/invoice/invoice_print.jsp</result>
+	    </action>
+
+
+	    <action name="initAllAuditOrUnAuditInvoice" class="invoiceAction" method="initAllAuditOrUnAuditInvoice">
+			<result name="success">/WEB-INF/pages/logistics/invoice/invoice_audit.jsp</result>
+	    </action>
+	    <action name="allAuditOrUnAuditInvoice" class="invoiceAction" method="allAuditOrUnAuditInvoice">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initPartAuditOrUnAuditInvoice" class="invoiceAction" method="initPartAuditOrUnAuditInvoice">
+			<result name="success">/WEB-INF/pages/logistics/invoice/invoice_partaudit.jsp</result>
+	    </action>
+	    <action name="partAuditOrUnAuditInvoice" class="invoiceAction" method="partAuditOrUnAuditInvoice">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	<!-- 发票管理 End by SZK-->
+	
+	
+	<!-- 发票管理选择单据开窗 wanglei start -->
+        <!-- 
+	    <action name="selectInventoryEntry" class="invoiceAction" method="selectInventoryEntry">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	   
+	     --> 
+	<!-- 发票管理选择单据开窗 wanglei end -->
+	
+	<!-- 凭证管理选择单据开窗 wanglei start -->
+		<action name="initSelectBillSels" class="proofSelectBillAction" method="initSelectBillSels">
+			<!-- 单据D -->
+			<result name="success">/WEB-INF/pages/logistics/proofSelectBill/proofSelectBill_select.jsp</result>
+			
+			<!-- 发票F -->
+			<result name="error">/WEB-INF/pages/logistics/proofSelectBill/proofInvoiceSelectBill_select.jsp</result>
+			
+			<!-- 冲回C -->
+			<result name="input">/WEB-INF/pages/logistics/proofSelectBill/proofReversalSelectBill_select.jsp</result>
+			
+			<!-- 盘点P -->
+			<result name="none">/WEB-INF/pages/logistics/proofSelectBill/proofCheckStorage_select.jsp</result>
+	    </action>
+	    
+	    <!-- 单据D -->
+	    <action name="selectSelectBills" class="proofSelectBillAction" method="selectSelectBills">
+			<result name="success">/WEB-INF/pages/logistics/proofSelectBill/proofSelectBill_select.jsp</result>
+	    </action>
+	    
+	    <!-- 发票F -->
+	    <action name="selectSelectInvoice" class="proofSelectBillAction" method="selectSelectInvoice">
+			<result name="success">/WEB-INF/pages/logistics/proofSelectBill/proofInvoiceSelectBill_select.jsp</result>
+	    </action>
+	    
+	    <!-- 冲回C -->
+	    <action name="selectSelectReversal" class="proofSelectBillAction" method="selectSelectReversal">
+			<result name="success">/WEB-INF/pages/logistics/proofSelectBill/proofReversalSelectBill_select.jsp</result>
+	    </action>
+	    
+	     <!-- 盘点P -->
+	    <action name="selectCheckStorageSum" class="proofSelectBillAction" method="selectCheckStorageSum">
+			<result name="success">/WEB-INF/pages/logistics/proofSelectBill/proofCheckStorage_select.jsp</result>
+	    </action>
+	    
+	    <!-- 详细 -->
+	    <action name="initBillInfoSels" class="proofSelectBillAction" method="initBillInfoSels">
+			<result name="success">/WEB-INF/pages/logistics/proofSelectBill/proofSelectBill_details.jsp</result>
+	    </action>
+	    
+	    <action name="initInvoiceInfoSel" class="proofSelectBillAction" method="initInvoiceInfoSel">
+			<result name="success">/WEB-INF/pages/logistics/proofSelectBill/proofInvoiceSelectBill_details.jsp</result>
+	    </action>
+	    
+	    <action name="initReversalInfoSel" class="proofSelectBillAction" method="initReversalInfoSel">
+			<result name="success">/WEB-INF/pages/logistics/proofSelectBill/proofReversalSelectBill_details.jsp</result>
+	    </action>
+	    
+	    <action name="initCheckStorageSumDetails" class="proofSelectBillAction" method="initCheckStorageSumDetails">
+			<result name="success">/WEB-INF/pages/logistics/proofSelectBill/proofCheckStorage_details.jsp</result>
+	    </action>
+	    
+	    <!-- 传输 -->
+	    <action name="selectProofGoods" class="proofSelectBillAction" method="selectProofGoods">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="selectInvoiceGoods" class="proofSelectBillAction" method="selectInvoiceGoods">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="selectReversalGoods" class="proofSelectBillAction" method="selectReversalGoods">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 凭证管理选择单据开窗 wanglei end -->
+
+ <!--  凭证管理  Add by SZK  --> 
+  <action name="initVoucherSel" class="voucherAction" method="initVoucherSel">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_select.jsp</result> 
+    <result name="selVoucher" type="redirectAction">selVoucher?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+    <interceptor-ref name="defaultStack"></interceptor-ref>	  
+  </action>
+  <action name="initVoucherTypeByParentID" class="voucherAction" method="initVoucherTypeByParentID" /> 
+  <action name="selVoucher" class="voucherAction" method="selVoucher">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_select.jsp</result> 
+  </action>
+  <action name="selVoucherDetail" class="voucherAction" method="selVoucherDetail">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_detail.jsp</result> 
+  </action>
+  <action name="selReversalDetail" class="voucherAction" method="selReversalDetail">
+    <result name="success">/WEB-INF/pages/logistics/voucher/reversal_v_detail.jsp</result> 
+  </action>
+  <action name="initVoucherUpdate" class="voucherAction" method="initVoucherUpdate">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_update.jsp</result>
+  </action>
+  <action name="updateVoucher" class="voucherAction" method="updateVoucher">
+    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+  </action>
+  <action name="initVoucherDelete" class="voucherAction" method="initVoucherDelete">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_delete.jsp</result> 
+  </action>
+  <action name="deleteVoucher" class="voucherAction" method="deleteVoucher">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_delete.jsp</result> 
+    <result name="success">/WEB-INF/pages/refresh.jsp</result> 
+  </action>
+  <action name="initVoucherInsert" class="voucherAction" method="initVoucherInsert">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_insert.jsp</result> 
+  </action>
+  <action name="insertVoucher" class="voucherAction" method="insertVoucher">
+    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+  </action>
+  <action name="selSupplierOpen" class="windowsAction" method="selSupplierOpen">
+    <result name="success">/WEB-INF/pages/components/supplier/supplier_open.jsp</result> 
+  </action>
+  <action name="selectBillGoodsUpdate" class="voucherAction" method="selectBillGoodsUpdate">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_update.jsp</result> 
+  </action>
+  <action name="initSelectBillUpdate" class="voucherAction" method="initSelectBillUpdate">
+    <result name="success">/WEB-INF/pages/logistics/proofSelectBill/proofSelectBill_select.jsp</result> 
+  </action>
+  <action name="selectBillGoodsInsert" class="voucherAction" method="selectBillGoodsUpdate">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_insert.jsp</result> 
+  </action>
+  <action name="selVoucherTally" class="voucherTallyAction" method="selVoucherTally">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_create.jsp</result> 
+  </action>
+  <action name="editVoucherTally" class="voucherTallyAction" method="editVoucherTally">
+    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+  </action>
+  <action name="initInvoiceVoucherInsert" class="voucherAction" method="selectBillGoodsUpdate">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_insert.jsp</result>
+  </action>
+  <action name="initReversalVoucherInsert" class="voucherAction" method="selectBillGoodsUpdate">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_insert.jsp</result>
+  </action>
+  <action name="selSubjectOpen" class="voucherTallyAction" method="selSubjectOpen">
+    <result name="success">/WEB-INF/pages/logistics/voucher/open_subject.jsp</result>
+  </action>
+  <action name="selSubject" class="voucherTallyAction" method="selSubject">
+    <result name="success">/WEB-INF/pages/logistics/voucher/open_subject.jsp</result>
+  </action>
+  <action name="initVoucherPosting" class="voucherAction" method="initVoucherPosting">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_posting.jsp</result>
+  </action>
+  <action name="selVoucherPosting" class="voucherAction" method="selVoucherPosting">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_posting.jsp</result>
+  </action>
+  <action name="voucherPosting" class="voucherAction" method="voucherPosting">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_posting.jsp</result>
+  </action>
+  <action name="initSelBill" class="voucherAction" method="initSelBill">
+    <result name="success">/WEB-INF/pages/logistics/voucher/selBill.jsp</result>
+  </action>
+  <action name="selBill" class="voucherAction" method="selBill">
+    <result name="success">/WEB-INF/pages/logistics/voucher/selBill.jsp</result>
+  </action>
+  <action name="initSelInvoiceAndReversal" class="voucherAction" method="initSelInvoiceAndReversal">
+    <result name="success">/WEB-INF/pages/logistics/voucher/selInvoiceAndReversal.jsp</result>
+  </action>
+  <action name="selInvoiceAndReversal" class="voucherAction" method="selInvoiceAndReversal">
+    <result name="success">/WEB-INF/pages/logistics/voucher/selInvoiceAndReversal.jsp</result>
+  </action>
+  <action name="initOutStrogeVoucherSel" class="outStrogeVoucherAction" method="initOutStrogeVoucherSel">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_seloutstroge.jsp</result>
+	<result name="selOutStrogeVoucher" type="redirectAction">selOutStrogeVoucher?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+    <interceptor-ref name="defaultStack"></interceptor-ref>	    
+  </action>
+  <action name="initOutStrogeVoucherInsert" class="outStrogeVoucherAction" method="initOutStrogeVoucherInsert">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_insertoutstroge.jsp</result>
+  </action>
+  <action name="selSalesBills" class="outStrogeVoucherAction" method="selSalesBills">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_insertoutstroge.jsp</result>
+  </action>
+  
+  <action name="insertOutStrogeVoucher" class="outStrogeVoucherAction" method="insertOutStrogeVoucher">
+    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+  </action>
+  <action name="selOutStrogeVoucher" class="outStrogeVoucherAction" method="selOutStrogeVoucher">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_seloutstroge.jsp</result>
+  </action>
+  <action name="selOutStrogeVoucherDetail" class="outStrogeVoucherAction" method="selOutStrogeVoucherDetail">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_seloutstrogedetail.jsp</result>
+  </action>
+  
+  <action name="initOutStrogeVoucherUpdate" class="outStrogeVoucherAction" method="initOutStrogeVoucherUpdate">
+    <result name="success">/WEB-INF/pages/logistics/voucher/voucher_updateoutstroge.jsp</result>
+  </action>
+  <action name="updateOutStrogeVoucher" class="outStrogeVoucherAction" method="updateOutStrogeVoucher">
+    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+  </action>
+  <action name="selSubjectOpenTree" class="voucherTallyAction" method="selSubject">
+    <result name="success">/WEB-INF/pages/logistics/voucher/subjectopen_index.jsp</result>
+  </action>
+  <action name="subjectOpenTree" class="voucherTemplateAction" method="subjectTree">
+    <result name="success">/WEB-INF/pages/logistics/voucher/subjectopen_tree.jsp</result>
+  </action>	
+ <!--  凭证管理 End by SZK  --> 
+	
+ <!-- 月末wanglei start -->
+		<action name="initCalSel" class="calAction" method="initCalSel">
+			<result name="success">/WEB-INF/pages/logistics/cal/cal_select.jsp</result>
+	    </action>
+	    
+	    <action name="realCalStorage" class="calAction" method="realCalStorage">
+			<result name="success">/WEB-INF/pages/logistics/cal/cal_select.jsp</result>
+	    </action>
+	     <action name="moniCalRetrun" class="calAction" method="moniCalRetrun">
+			<result name="success">/WEB-INF/pages/logistics/cal/cal_select.jsp</result>
+	    </action>
+	     <action name="realCalReturn" class="calAction" method="realCalReturn">
+			<result name="success">/WEB-INF/pages/logistics/cal/cal_select.jsp</result>
+	    </action>
+	     <action name="moniSelect" class="calAction" method="moniSelect">
+			<result name="success">/WEB-INF/pages/logistics/cal/calResult_select.jsp</result>
+	    </action>
+	      <action name="initMoniSelect" class="calAction" method="initMoniSelect">
+			<result name="success">/WEB-INF/pages/logistics/cal/calResult_select.jsp</result>
+			<result name="moniSelect" type="redirectAction">moniSelect?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		    <interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    <action name="initCalBillSel" class="calAction" method="initCalBillSel">
+			<result name="success">/WEB-INF/pages/logistics/cal/cal_bill_select.jsp</result>
+			<result name="calBillSel" type="redirectAction">calBillSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		    <interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	      <action name="calBillSel" class="calAction" method="calBillSel">
+			<result name="success">/WEB-INF/pages/logistics/cal/cal_bill_select.jsp</result>
+	    </action>
+	    <action name="initSwitchAmount" class="voucherAction" method="initSwitchAmount">
+			<result name="success">/WEB-INF/pages/logistics/cal/switchAmount_select.jsp</result>
+	    </action>
+	    <action name="initSwitchAmountInsert" class="voucherAction" method="initSwitchAmountInsert">
+			<result name="success">/WEB-INF/pages/logistics/cal/switchAmount_update.jsp</result>
+	    </action>
+	    <action name="insertSwitchAmount" class="voucherAction" method="insertSwitchAmount">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initBillWhetherSettleAccountsSel" class="voucherAction" method="initBillWhetherSettleAccountsSel">
+			<result name="success">/WEB-INF/pages/logistics/cal/whetherBillSettle_select.jsp</result>
+			<result name="selBillWhetherSettleAccounts" type="redirectAction">selBillWhetherSettleAccounts?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		    <interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    <action name="selBillWhetherSettleAccounts" class="voucherAction" method="selBillWhetherSettleAccounts">
+			<result name="success">/WEB-INF/pages/logistics/cal/whetherBillSettle_select.jsp</result>
+	    </action>
+	    <action name="initWeightingCal" class="calAction" method="initWeightingCal">
+			<result name="success">/WEB-INF/pages/logistics/cal/cal_select.jsp</result>
+	    </action>
+	    <action name="initAutoCostAccount" class="calAction" method="initAutoCostAccount">
+			<result name="success">/WEB-INF/pages/logistics/cal/cal_select_auto.jsp</result>
+	    </action>
+	    <action name="insertAutoCostAccount" class="calAction" method="insertAutoCostAccount">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initCostAccountNotBill" class="calAction" method="initCostAccountNotBill">
+			<result name="success">/WEB-INF/pages/logistics/cal/cal_select_NotBill.jsp</result>
+	    </action>	    
+	    <action name="insertCostAccountNotBill" class="calAction" method="insertCostAccountNotBill">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initCostAccountBill" class="calAction" method="initCostAccountBill">
+			<result name="success">/WEB-INF/pages/logistics/cal/cal_select_Bill.jsp</result>
+	    </action>	    
+	    <action name="insertCostAccountBill" class="calAction" method="insertCostAccountBill">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initAccountPeriodSet" class="calAction" method="initAccountPeriodSet">
+			<result name="success">/WEB-INF/pages/logistics/cal/cal_initap.jsp</result>
+	    </action>
+	    
+	    <action name="updateAccountPeriodSet" class="calAction" method="updateAccountPeriodSet">
+			<result name="success">/WEB-INF/pages/logistics/cal/cal_initap.jsp</result>
+	    </action>
+	    
+	<!-- 月末 wanglei end -->
+	
+<!-- 物流日志   SZK start -->
+    <action name="initLogisticsLog" class="logisticsLogAction" method="initLogisticsLog">
+		<result name="success">/WEB-INF/pages/logistics/log/logisticsLog_select.jsp</result>
+		<result name="selLogisticsLog" type="redirectAction">selLogisticsLog?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>			
+	</action>
+	<action name="selLogisticsLog" class="logisticsLogAction" method="selLogisticsLog">
+		<result name="success">/WEB-INF/pages/logistics/log/logisticsLog_select.jsp</result>
+	</action>
+<!-- 物流日志   SZK end -->
+	
+	<!-- 初始化查询单据的核销日期 -->	
+	<action name="initInvoiceBillSel" class="invoiceAction" method="initInvoiceBillSel">
+		<result name="success">/WEB-INF/pages/logistics/invoice/invoiceBill_select.jsp</result>
+		<result name="invoiceBillSel" type="redirectAction">invoiceBillSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>		
+	</action>
+	
+	<!-- 查询单据的核销日期 -->	
+	<action name="invoiceBillSel" class="invoiceAction" method="invoiceBillSel">
+		<result name="success">/WEB-INF/pages/logistics/invoice/invoiceBill_select.jsp</result>
+	</action>
+	
+   <!-- 付款单 -->	
+    <action name="initPayMentBillSel" class="payMentBillAction" method="initPayMentBillSel">
+		<result name="success">/WEB-INF/pages/logistics/paymentbill/paymentbill_select.jsp</result>
+		<result name="selPayMentBill" type="redirectAction">selPayMentBill?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>				
+	</action>
+    <action name="selPayMentBill" class="payMentBillAction" method="selPayMentBill">
+		<result name="success">/WEB-INF/pages/logistics/paymentbill/paymentbill_select.jsp</result>
+	</action>
+	
+	<action name="initPayMentBillInsert" class="payMentBillAction" method="initPayMentBillInsert">
+		<result name="success">/WEB-INF/pages/logistics/paymentbill/paymentbill_insert.jsp</result>
+	</action>
+    <action name="insertPayMentBill" class="payMentBillAction" method="insertPayMentBill">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initPayMentBillUpdate" class="payMentBillAction" method="initPayMentBillUpdate">
+		<result name="success">/WEB-INF/pages/logistics/paymentbill/paymentbill_update.jsp</result>
+	</action>
+    <action name="updatePayMentBill" class="payMentBillAction" method="updatePayMentBill">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initPayMentBillDelete" class="payMentBillAction" method="initPayMentBillDelete">
+		<result name="success">/WEB-INF/pages/logistics/paymentbill/paymentbill_delete.jsp</result>
+	</action>
+    <action name="deletePayMentBill" class="payMentBillAction" method="deletePayMentBill">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="selPayMentBillDetail" class="payMentBillAction" method="selPayMentBillDetail">
+		<result name="success">/WEB-INF/pages/logistics/paymentbill/paymentbill_detail.jsp</result>
+	</action>
+	
+	<action name="initInvoiceOpenSel" class="payMentBillAction" method="initInvoiceOpenSel">
+		<result name="success">/WEB-INF/pages/logistics/paymentbill/invoice_open.jsp</result>
+	</action>
+    <action name="selInvoiceOpen" class="payMentBillAction" method="selInvoiceOpen">
+		<result name="success">/WEB-INF/pages/logistics/paymentbill/invoice_open.jsp</result>
+	</action>
+	
+	<action name="initAuditUnPayMentBill" class="payMentBillAction" method="initAuditUnPayMentBill">
+		<result name="success">/WEB-INF/pages/logistics/paymentbill/paymentbill_audit.jsp</result>
+	</action>
+    <action name="auditUnPayMentBill" class="payMentBillAction" method="auditUnPayMentBill">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initInvoiceQueryOpen" class="invoiceAction" method="initInvoiceSel">
+		<result name="success">/WEB-INF/pages/logistics/paymentbill/invoice_select.jsp</result>
+	</action>
+    <action name="invoiceQueryOpen" class="invoiceAction" method="selInvoice">
+		<result name="success">/WEB-INF/pages/logistics/paymentbill/invoice_select.jsp</result>
+	</action>
+	
+	<action name="initPartAuditPayMentBill" class="payMentBillAction" method="initPartAuditPayMentBill">
+		<result name="success">/WEB-INF/pages/logistics/paymentbill/paymentbill_partaudit.jsp</result>
+	</action>
+    <action name="partAuditPayMentBill" class="payMentBillAction" method="partAuditPayMentBill">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+    <!-- 付款单 -->
+    
+    <!-- 科目 -->	
+    <action name="initSubjectSel" class="voucherTemplateAction" method="initSubjectSel">
+		<result name="success">/WEB-INF/pages/logistics/accountingsubject/subject_select.jsp</result>
+		<result name="selSubjectSet" type="redirectAction">selSubjectSet?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+	</action>
+    <action name="selSubjectSet" class="voucherTemplateAction" method="selSubjectSet">
+		<result name="success">/WEB-INF/pages/logistics/accountingsubject/subject_select.jsp</result>
+	</action>
+	
+	<action name="initSubjectInsert" class="voucherTemplateAction" method="initSubjectInsert">
+		<result name="success">/WEB-INF/pages/logistics/accountingsubject/subject_insert.jsp</result>
+	</action>
+    <action name="insertSubject" class="voucherTemplateAction" method="insertSubject">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initSubjectUpdate" class="voucherTemplateAction" method="initSubjectUpdate">
+		<result name="success">/WEB-INF/pages/logistics/accountingsubject/subject_update.jsp</result>
+	</action>
+    <action name="updateSubject" class="voucherTemplateAction" method="updateSubject">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initSubjectDelete" class="voucherTemplateAction" method="initSubjectDelete">
+		<result name="success">/WEB-INF/pages/logistics/accountingsubject/subject_delete.jsp</result>
+	</action>
+    <action name="deleteSubject" class="voucherTemplateAction" method="deleteSubject">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initBatchInsertSubject" class="voucherTemplateAction" method="initBatchInsertSubject">
+		<result name="success">/WEB-INF/pages/logistics/accountingsubject/subject_batchinsert.jsp</result>
+	</action>
+    <action name="batchInsertSubject" class="voucherTemplateAction" method="batchInsertSubject">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+		<param name="savePath">/upload</param>
+	</action>
+    <!-- 科目 -->		
+	
+	<!-- 付款单凭证 -->	
+    <action name="initPayMentVoucherSel" class="payMentBillAction" method="initPayMentVoucherSel">
+		<result name="success">/WEB-INF/pages/logistics/paymentvoucher/voucher_selpayment.jsp</result>
+		<result name="selPayMentVoucher" type="redirectAction">selPayMentVoucher?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>			
+	</action>
+    <action name="selPayMentVoucher" class="payMentBillAction" method="selPayMentVoucher">
+		<result name="success">/WEB-INF/pages/logistics/paymentvoucher/voucher_selpayment.jsp</result>
+	</action>
+	
+	<action name="initPayMentVoucherInsert" class="payMentBillAction" method="initPayMentVoucherInsert">
+		<result name="success">/WEB-INF/pages/logistics/paymentvoucher/voucher_insertpayment.jsp</result>
+	</action>
+    <action name="insertPayMentVoucher" class="payMentBillAction" method="insertPayMentVoucher">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initPayMentVoucherUpdate" class="payMentBillAction" method="initPayMentVoucherUpdate">
+		<result name="success">/WEB-INF/pages/logistics/paymentvoucher/voucher_updatepayment.jsp</result>
+	</action>
+    <action name="updatePayMentVoucher" class="payMentBillAction" method="updatePayMentVoucher">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initPayMentVoucherDelete" class="payMentBillAction" method="initPayMentVoucherDelete">
+		<result name="success">/WEB-INF/pages/logistics/paymentvoucher/voucher_deletepayment.jsp</result>
+	</action>
+    <action name="deletePayMentVoucher" class="payMentBillAction" method="deletePayMentVoucher">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="selPayMentVoucherDetail" class="payMentBillAction" method="selPayMentVoucherDetail">
+		<result name="success">/WEB-INF/pages/logistics/paymentvoucher/voucher_selpaymentdetail.jsp</result>
+	</action>
+	
+	<action name="initPayMentBillOpenSel" class="payMentBillAction" method="initPayMentBillOpenSel">
+		<result name="success">/WEB-INF/pages/logistics/paymentvoucher/paymentbill_open.jsp</result>
+	</action>
+    <action name="selPayMentBillOpen" class="payMentBillAction" method="selPayMentBillOpen">
+		<result name="success">/WEB-INF/pages/logistics/paymentvoucher/paymentbill_open.jsp</result>
+	</action>
+	
+	<action name="selReceiptMentBillOpen" class="receiptMentBillAction" method="selReceiptMentBill">
+		<result name="success">/WEB-INF/pages/logistics/paymentvoucher/receiptbill_open.jsp</result>
+	</action>
+    <!-- 付款单凭证-->
+	
+	<!--向用友传输凭证  -->
+	<action name="initYYVoucherPosting" class="voucherAction" method="initYYVoucherPosting">
+      <result name="success">/WEB-INF/pages/logistics/voucher/voucher_yy_posting.jsp</result>
+    </action>
+    <action name="yy_VoucherPosting" class="voucherAction" method="yy_VoucherPosting">
+      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+	<!--向用友传输凭证  -->
+	
+	<!--财务商品期初  -->
+   	<action name="initImportAmountFile" class="voucherTemplateAction" method="initImportAmountFile">
+		<result name="success">/WEB-INF/pages/logistics/init/goodsAmount_import.jsp</result>
+    </action>
+    
+    <action name="importAmountFile" class="voucherTemplateAction" method="importAmountFile">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    <param name="savePath">/upload</param>
+	    <param name="fileTemplet">/sample/qc.xlsx</param>
+    </action>
+    
+    <action name="initExportAmountFile" class="voucherTemplateAction" method="initExportAmountFile">
+           <result name="success">/WEB-INF/pages/logistics/init/goodsAmount_export.jsp</result>
+    </action>
+    
+    <action name="exportAmountFile" class="voucherTemplateAction" method="exportAmountFile">
+	   <result name="success" type="stream">
+              <param name="contentType">application/vnd.ms-excel</param>
+              <param name="inputName">inputStream</param>
+              <param name="contentDisposition">attachment;filename="${fileName}"</param>
+              <param name="bufferSize">20480</param>               
+          </result>
+          <param name="savePath">/sample</param>
+    </action>    
+	<!--财务商品期初  -->
+	
+	<!--收支类型 --> 
+	<action name="initInorOutComeType" class="payMentBillAction" method="initInorOutComeType">
+		<result name="success">/WEB-INF/pages/logistics/inoroutcometype/inoroutcometype_select.jsp</result>
+		<result name="inorOutComeTypeSel" type="redirectAction">inorOutComeTypeSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>			
+	</action>
+    <action name="inorOutComeTypeSel" class="payMentBillAction" method="inorOutComeTypeSel">
+		<result name="success">/WEB-INF/pages/logistics/inoroutcometype/inoroutcometype_select.jsp</result>
+	</action>
+	
+	<action name="initInorOutComeTypeInsert" class="payMentBillAction" method="initInorOutComeTypeInsert">
+		<result name="success">/WEB-INF/pages/logistics/inoroutcometype/inoroutcometype_insert.jsp</result>
+	</action>
+    <action name="inorOutComeTypeInsert" class="payMentBillAction" method="inorOutComeTypeInsert">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initInorOutComeTypeUpdate" class="payMentBillAction" method="initInorOutComeTypeUpdate">
+		<result name="success">/WEB-INF/pages/logistics/inoroutcometype/inoroutcometype_update.jsp</result>
+	</action>
+    <action name="inorOutComeTypeUpdate" class="payMentBillAction" method="inorOutComeTypeUpdate">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initInorOutComeTypeDelete" class="payMentBillAction" method="initInorOutComeTypeDelete">
+		<result name="success">/WEB-INF/pages/logistics/inoroutcometype/inoroutcometype_delete.jsp</result>
+	</action>
+    <action name="inorOutComeTypeDelete" class="payMentBillAction" method="inorOutComeTypeDelete">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<!--收支类型  -->
+	
+	<!--其他付款单 --> 
+    <action name="initPayMentBillOther" class="payMentBillAction" method="initPayMentBillOther">
+		<result name="success">/WEB-INF/pages/logistics/peymentbillother/paymentbillother_select.jsp</result>
+		<result name="selPayMentBillOther" type="redirectAction">selPayMentBillOther?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>			
+	</action>
+    <action name="selPayMentBillOther" class="payMentBillAction" method="selPayMentBillOther">
+		<result name="success">/WEB-INF/pages/logistics/peymentbillother/paymentbillother_select.jsp</result>
+	</action>
+	
+	<action name="initPayMentBillOtherInsert" class="payMentBillAction" method="initPayMentBillOtherInsert">
+		<result name="success">/WEB-INF/pages/logistics/peymentbillother/paymentbillother_insert.jsp</result>
+	</action>
+    <action name="insertPayMentBillOther" class="payMentBillAction" method="insertPayMentBillOther">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initPayMentBillOtherUpdate" class="payMentBillAction" method="initPayMentBillOtherUpdate">
+		<result name="success">/WEB-INF/pages/logistics/peymentbillother/paymentbillother_update.jsp</result>
+	</action>
+    <action name="updatePayMentBillOther" class="payMentBillAction" method="updatePayMentBillOther">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initPayMentBillOtherDelete" class="payMentBillAction" method="initPayMentBillOtherDelete">
+		<result name="success">/WEB-INF/pages/logistics/peymentbillother/paymentbillother_delete.jsp</result>
+	</action>
+    <action name="deletePayMentBillOther" class="payMentBillAction" method="deletePayMentBillOther">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="selPayMentBillOtherDetail" class="payMentBillAction" method="selPayMentBillOtherDetail">
+		<result name="success">/WEB-INF/pages/logistics/peymentbillother/paymentbillother_detail.jsp</result>
+	</action>
+	<action name="initAuditUnPayMentBillOther" class="payMentBillAction" method="initAuditUnPayMentBillOther">
+		<result name="success">/WEB-INF/pages/logistics/peymentbillother/paymentbillother_audit.jsp</result>
+	</action>
+    <action name="auditUnPayMentBillOther" class="payMentBillAction" method="auditUnPayMentBillOther">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initInOrOutComeTypeOpen" class="payMentBillAction" method="initInOrOutComeTypeOpen">
+		<result name="success">/WEB-INF/pages/logistics/peymentbillother/inoroutcometype_open.jsp</result>
+	</action>
+	<action name="selInorOutComeTypeOpen" class="payMentBillAction" method="selInorOutComeTypeOpen">
+		<result name="success">/WEB-INF/pages/logistics/peymentbillother/inoroutcometype_open.jsp</result>
+	</action>
+	<!--其他付款单  -->
+	
+	<!--制造商往来账查询 -->
+	<action name="initSupplierCurrentAccountSel" class="payMentBillAction" method="initSupplierCurrentAccountSel">
+		<result name="success">/WEB-INF/pages/logistics/currentaccount/currentaccount_select.jsp</result>
+		<result name="supplierCurrentAccountSel" type="redirectAction">supplierCurrentAccountSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>			
+	</action>
+    <action name="supplierCurrentAccountSel" class="payMentBillAction" method="supplierCurrentAccountSel">
+		<result name="success">/WEB-INF/pages/logistics/currentaccount/currentaccount_select.jsp</result>
+	</action>	
+	<action name="supplierCurrentAccountDetail" class="payMentBillAction" method="supplierCurrentAccountDetail">
+		<result name="success">/WEB-INF/pages/logistics/currentaccount/currentaccount_detail.jsp</result>
+	</action>
+	<action name="supplierCurrentAccountDetailByReport" class="payMentBillAction" method="supplierCurrentAccountDetailByReport">
+		<result name="success">/WEB-INF/pages/logistics/currentaccount/currentaccount_report.jsp</result>
+	</action>
+	<action name="payMentBillDetailByReport" class="payMentBillAction" method="payMentBillDetailByReport">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<!--制造商往来账查询  -->
+	
+	<!--付款单(简) --> 
+	<action name="initPayMentBillSimple" class="payMentBillAction" method="initPayMentBillSimple">
+		<result name="success">/WEB-INF/pages/logistics/paymentbillsimplel/paymentbillsimple_select.jsp</result>
+		<result name="selPayMentBillSimple" type="redirectAction">selPayMentBillSimple?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>		
+	</action>
+    <action name="selPayMentBillSimple" class="payMentBillAction" method="selPayMentBillSimple">
+		<result name="success">/WEB-INF/pages/logistics/paymentbillsimplel/paymentbillsimple_select.jsp</result>
+	</action>
+	
+	<action name="initPayMentBillSimpleInsert" class="payMentBillAction" method="initPayMentBillSimpleInsert">
+		<result name="success">/WEB-INF/pages/logistics/paymentbillsimplel/paymentbillsimple_insert.jsp</result>
+	</action>
+    <action name="insertPayMentBillSimple" class="payMentBillAction" method="insertPayMentBillSimple">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initPayMentBillSimpleUpdate" class="payMentBillAction" method="initPayMentBillSimpleUpdate">
+		<result name="success">/WEB-INF/pages/logistics/paymentbillsimplel/paymentbillsimple_update.jsp</result>
+	</action>
+    <action name="updatePayMentBillSimple" class="payMentBillAction" method="updatePayMentBillSimple">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initPayMentBillSimpleDelete" class="payMentBillAction" method="initPayMentBillSimpleDelete">
+		<result name="success">/WEB-INF/pages/logistics/paymentbillsimplel/paymentbillsimple_delete.jsp</result>
+	</action>
+    <action name="deletePayMentBillSimple" class="payMentBillAction" method="deletePayMentBillSimple">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="selPayMentBillSimpleDetail" class="payMentBillAction" method="selPayMentBillSimpleDetail">
+		<result name="success">/WEB-INF/pages/logistics/paymentbillsimplel/paymentbillsimple_detail.jsp</result>
+	</action>
+	<action name="initAuditUnPayMentBillSimple" class="payMentBillAction" method="initAuditUnPayMentBillSimple">
+		<result name="success">/WEB-INF/pages/logistics/paymentbillsimplel/paymentbillsimple_audit.jsp</result>
+	</action>
+    <action name="auditUnPayMentBillSimple" class="payMentBillAction" method="auditUnPayMentBillSimple">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initProcurementBillOpen" class="payMentBillAction" method="initProcurementBillOpen">
+		<result name="success">/WEB-INF/pages/logistics/paymentbillsimplel/bill_open.jsp</result>
+	</action>
+	<action name="selProcurementBillOpen" class="payMentBillAction" method="selProcurementBillOpen">
+		<result name="success">/WEB-INF/pages/logistics/paymentbillsimplel/bill_open.jsp</result>
+	</action>
+	
+	<action name="initAdvancePayMentBillOpenSel" class="payMentBillAction" method="initAdvancePayMentBillOpenSel">
+		<result name="success">/WEB-INF/pages/logistics/paymentbillsimplel/paymentbill_open.jsp</result>
+	</action>
+    <action name="selAdvancePayMentBillOpen" class="payMentBillAction" method="selAdvancePayMentBillOpen">
+		<result name="success">/WEB-INF/pages/logistics/paymentbillsimplel/paymentbill_open.jsp</result>
+	</action>
+	<!--付款单(简)  -->
+	
+	<!--会计凭证 -->
+	<action name="initVoucherTally" class="voucherAction" method="initVoucherTally">
+		<result name="success">/WEB-INF/pages/logistics/vouchertally/vouchertally_select.jsp</result>
+		<result name="voucherTallySel" type="redirectAction">voucherTallySel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+	</action>
+    <action name="voucherTallySel" class="voucherAction" method="voucherTallySel">
+		<result name="success">/WEB-INF/pages/logistics/vouchertally/vouchertally_select.jsp</result>
+	</action>
+	
+	<action name="initVoucherTallyInsert" class="voucherAction" method="initVoucherTallyInsert">
+		<result name="success">/WEB-INF/pages/logistics/vouchertally/vouchertally_insert.jsp</result>
+	</action>
+    <action name="voucherTallyInsert" class="voucherAction" method="voucherTallyInsert">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initVoucherTallyUpdate" class="voucherAction" method="initVoucherTallyUpdate">
+		<result name="success">/WEB-INF/pages/logistics/vouchertally/vouchertally_update.jsp</result>
+	</action>
+	<action name="selVoucherTallyDetail" class="voucherAction" method="selVoucherTallyDetail">
+		<result name="success">/WEB-INF/pages/logistics/vouchertally/vouchertally_detail.jsp</result>
+	</action>
+    <action name="voucherTallyUpdate" class="voucherAction" method="voucherTallyUpdate">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+
+	<action name="initAuditUnVoucherTally" class="voucherAction" method="initAuditUnVoucherTally">
+		<result name="success">/WEB-INF/pages/logistics/voucher/voucher_audit.jsp</result>
+	</action>
+    <action name="auditUnVoucherTally" class="voucherAction" method="auditUnVoucherTally">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<!--会计凭证  -->
+	
+	<!--收款单 -->	
+    <action name="initReceiptMentBillSel" class="receiptMentBillAction" method="initReceiptMentBillSel">
+		<result name="success">/WEB-INF/pages/logistics/receiptmentbill/receiptmentbill_select.jsp</result>
+		<result name="selReceiptMentBill" type="redirectAction">selReceiptMentBill?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>				
+	</action>
+    <action name="selReceiptMentBill" class="receiptMentBillAction" method="selReceiptMentBill">
+		<result name="success">/WEB-INF/pages/logistics/receiptmentbill/receiptmentbill_select.jsp</result>
+	</action>
+	
+	<action name="initReceiptMentBillInsert" class="receiptMentBillAction" method="initReceiptMentBillInsert">
+		<result name="success">/WEB-INF/pages/logistics/receiptmentbill/receiptmentbill_insert.jsp</result>
+	</action>
+    <action name="insertReceiptMentBill" class="receiptMentBillAction" method="insertReceiptMentBill">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initReceiptMentBillUpdate" class="receiptMentBillAction" method="initReceiptMentBillUpdate">
+		<result name="success">/WEB-INF/pages/logistics/receiptmentbill/receiptmentbill_update.jsp</result>
+	</action>
+    <action name="updateReceiptMentBill" class="receiptMentBillAction" method="updateReceiptMentBill">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initReceiptMentBillDelete" class="receiptMentBillAction" method="initReceiptMentBillDelete">
+		<result name="success">/WEB-INF/pages/logistics/receiptmentbill/receiptmentbill_delete.jsp</result>
+	</action>
+    <action name="deleteReceiptMentBill" class="receiptMentBillAction" method="deleteReceiptMentBill">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="selReceiptMentBillDetail" class="receiptMentBillAction" method="selReceiptMentBillDetail">
+		<result name="success">/WEB-INF/pages/logistics/receiptmentbill/receiptmentbill_detail.jsp</result>
+	</action>
+	
+	<action name="initFranchiseeOpenSel" class="receiptMentBillAction" method="initFranchiseeOpenSel">
+		<result name="success">/WEB-INF/pages/logistics/receiptmentbill/franchisee_open.jsp</result>
+	</action>
+    <action name="selFranchiseeOpen" class="receiptMentBillAction" method="selFranchiseeOpen">
+		<result name="success">/WEB-INF/pages/logistics/receiptmentbill/franchisee_open.jsp</result>
+	</action>
+	
+	<action name="initUnAuditReceiptMentBill" class="receiptMentBillAction" method="initUnAuditReceiptMentBill">
+		<result name="success">/WEB-INF/pages/logistics/receiptmentbill/receiptmentbill_unaudit.jsp</result>
+	</action>
+    <action name="unAuditReceiptMentBill" class="receiptMentBillAction" method="unAuditReceiptMentBill">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initAuditReceiptMentBill" class="receiptMentBillAction" method="initAuditReceiptMentBill">
+		<result name="success">/WEB-INF/pages/logistics/receiptmentbill/receiptmentbill_audit.jsp</result>
+	</action>
+    <action name="auditReceiptMentBill" class="receiptMentBillAction" method="auditReceiptMentBill">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initFranchiseeCurrentAccountSel" class="receiptMentBillAction" method="initFranchiseeCurrentAccountSel">
+		<result name="success">/WEB-INF/pages/logistics/currentaccount/franchiseereceipt_select.jsp</result>
+		<result name="franchiseeCurrentAccountSel" type="redirectAction">franchiseeCurrentAccountSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>				
+	</action>
+    <action name="franchiseeCurrentAccountSel" class="receiptMentBillAction" method="franchiseeCurrentAccountSel">
+		<result name="success">/WEB-INF/pages/logistics/currentaccount/franchiseereceipt_select.jsp</result>
+	</action>
+	
+	<action name="franchiseeCurrentAccountDetail" class="receiptMentBillAction" method="franchiseeCurrentAccountDetail">
+		<result name="success">/WEB-INF/pages/logistics/currentaccount/franchiseereceipt_detail.jsp</result>
+	</action>
+	
+    <!-- 收款单 -->
+    
+    <!-- 根据单据创建发票  begin-->    
+    <action name="initInvoiceSwitchSel" class="invoiceAction" method="initInvoiceSwitchSel">
+        <result name="selInvoice" type="redirectAction">initInvoiceSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+        <result name="selInvoiceByBill" type="redirectAction">initInvoiceByBillSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+        <result name="selInvoiceBySalesInvoice" type="redirectAction">initInvoiceBySalesInvoiceSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+        <interceptor-ref name="defaultStack"></interceptor-ref>			
+	</action>
+	
+	<action name="initPayMentBillSwitchSel" class="payMentBillAction" method="initPayMentBillSwitchSel">
+        <result name="initPayMentBillSimple" type="redirectAction">initPayMentBillSimple?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+        <result name="initPayMentBillSel" type="redirectAction">initPayMentBillSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+        <interceptor-ref name="defaultStack"></interceptor-ref>			
+	</action>
+	
+    <action name="initInvoiceByBillSel" class="invoiceAction" method="initInvoiceByBillSel">
+		<result name="success">/WEB-INF/pages/logistics/invoicebill/invoice_select.jsp</result>
+        <result name="selInvoiceByBill" type="redirectAction">selInvoiceByBill?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+        <interceptor-ref name="defaultStack"></interceptor-ref>			
+	</action>
+	<action name="selInvoiceByBill" class="invoiceAction" method="selInvoiceByBill">
+		<result name="success">/WEB-INF/pages/logistics/invoicebill/invoice_select.jsp</result>
+	</action>
+	<action name="initInvoiceByBillInsert" class="invoiceAction" method="initInvoiceByBillInsert">
+		<result name="success">/WEB-INF/pages/logistics/invoicebill/invoice_insert.jsp</result>
+	</action>			   	    
+    <action name="invoiceByBillInsert" class="invoiceAction" method="invoiceByBillInsert">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>    	   
+    <action name="initInvoiceByBillDetail" class="invoiceAction" method="initInvoiceByBillDetail">
+		<result name="success">/WEB-INF/pages/logistics/invoicebill/invoice_detail.jsp</result>
+    </action>    
+    <action name="initInvoiceByBillDelete" class="invoiceAction" method="initInvoiceByBillDelete">
+		<result name="success">/WEB-INF/pages/logistics/invoicebill/invoice_delete.jsp</result>
+    </action>	    
+     <action name="invoiceByBillDelete" class="invoiceAction" method="invoiceByBillDelete">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>    
+    <action name="initInvoiceByBillUpdate" class="invoiceAction" method="initInvoiceByBillUpdate">
+		<result name="success">/WEB-INF/pages/logistics/invoicebill/invoice_update.jsp</result>
+    </action>
+     <action name="invoiceByBillUpdate" class="invoiceAction" method="invoiceByBillUpdate">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>
+    <action name="initDealingBillByInvoiceOpenSel" class="invoiceAction" method="initDealingBillByInvoiceOpenSel">
+		<result name="success">/WEB-INF/pages/logistics/invoicebill/invoicebill_select.jsp</result>
+	</action>
+	<action name="dealingBillByInvoiceOpenSel" class="invoiceAction" method="dealingBillByInvoiceOpenSel">
+		<result name="success">/WEB-INF/pages/logistics/invoicebill/invoicebill_select.jsp</result>
+	</action>
+	
+    <!-- 根据单据创建发票  end-->
+    
+    <!-- 根据销售发票创建发票  begin-->
+    <action name="initInvoiceBySalesInvoiceSel" class="invoiceAction" method="initInvoiceBySalesInvoiceSel">
+		<result name="success">/WEB-INF/pages/logistics/invoicebysalesinvoice/invoice_select.jsp</result>
+        <result name="selInvoiceBySalesInvoice" type="redirectAction">selInvoiceBySalesInvoice?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+        <interceptor-ref name="defaultStack"></interceptor-ref>			
+	</action>
+	<action name="selInvoiceBySalesInvoice" class="invoiceAction" method="selInvoiceBySalesInvoice">
+		<result name="success">/WEB-INF/pages/logistics/invoicebysalesinvoice/invoice_select.jsp</result>
+	</action>
+	<action name="initInvoiceBySalesInvoiceInsert" class="invoiceAction" method="initInvoiceBySalesInvoiceInsert">
+		<result name="success">/WEB-INF/pages/logistics/invoicebysalesinvoice/invoice_insert.jsp</result>
+	</action>			   	    
+    <action name="invoiceBySalesInvoiceInsert" class="invoiceAction" method="invoiceBySalesInvoiceInsert">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>    	   
+    <action name="initInvoiceBySalesInvoiceDetail" class="invoiceAction" method="initInvoiceBySalesInvoiceDetail">
+		<result name="success">/WEB-INF/pages/logistics/invoicebysalesinvoice/invoice_detail.jsp</result>
+    </action>    
+    <action name="initInvoiceBySalesInvoiceDelete" class="invoiceAction" method="initInvoiceBySalesInvoiceDelete">
+		<result name="success">/WEB-INF/pages/logistics/invoicebysalesinvoice/invoice_delete.jsp</result>
+    </action>	    
+     <action name="invoiceBySalesInvoiceDelete" class="invoiceAction" method="invoiceBySalesInvoiceDelete">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>    
+    <action name="initInvoiceBySalesInvoiceUpdate" class="invoiceAction" method="initInvoiceBySalesInvoiceUpdate">
+		<result name="success">/WEB-INF/pages/logistics/invoicebysalesinvoice/invoice_update.jsp</result>
+    </action>
+     <action name="invoiceBySalesInvoiceUpdate" class="invoiceAction" method="invoiceBySalesInvoiceUpdate">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>    
+    <!-- 根据销售发票创建发票  end-->
+    
+    <!-- 凭证模板维护  begin-->
+    <action name="initVoucherTempletSel" class="voucherTemplateAction" method="initVoucherTempletSel">
+		<result name="success">/WEB-INF/pages/logistics/vouchertemplet/vouchertemplet_select.jsp</result>
+    </action>    
+    <action name="initVoucherTempletInsert" class="voucherTemplateAction" method="initVoucherTempletInsert">
+		<result name="success">/WEB-INF/pages/logistics/vouchertemplet/vouchertemplet_insert.jsp</result>
+    </action>
+     <action name="voucherTempletInsert" class="voucherTemplateAction" method="voucherTempletInsert">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>         
+    <!-- 凭证模板维护  end-->
+    
+	</package>
+</struts>

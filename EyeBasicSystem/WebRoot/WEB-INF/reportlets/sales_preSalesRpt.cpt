@@ -1,0 +1,1028 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="minScale"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="depIds"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="planId"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="maxScale"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[DECLARE @depIds VARCHAR(1000)
+DECLARE @planId VARCHAR(1000)
+DECLARE @minScale VARCHAR(100)
+DECLARE @maxScale VARCHAR(100)
+
+SET @depIds = '${depIds}';
+SET @planId = '${planId}';
+SET @minScale = '${minScale}';
+SET @maxScale = '${maxScale}';
+
+select departmentID into #salesDepartments from sales_createShopCodeTab(@depIds)
+
+SELECT * FROM (
+SELECT S_SE_PlanId,
+       S_SE_PlanName,
+       S_SE_DepId,
+       B_DP_DepartmentName,
+       S_SE_SupplierAndBrandId,
+       S_SE_SupplierId,
+       B_SP_SupplierName,
+       S_SE_BrandId,
+       B_BD_brandName,
+       S_SE_PreSalesQuantity,
+       SUM(S_SE_SD_Number)     AS S_SE_SD_Number,
+       SUM(S_SE_SD_PriceSum)   AS S_SE_SD_PriceSum,
+       SUM(S_SE_SD_SalesValue) AS S_SE_SD_SalesValue,
+       S_SE_StartDate + ' 至 ' + S_SE_endDate AS salesDate,
+       S_SE_StartDate,
+       S_SE_endDate,
+	   CONVERT(VARCHAR(100), (S_SE_SD_Number/S_SE_PreSalesQuantity)) AS finsh,
+       S_SE_Overdue
+FROM   (SELECT S_SE_PrePlans.S_SE_PlanId,
+               S_SE_PrePlans.S_SE_PlanName,
+               S_SE_PreDep.S_SE_DepId,
+               B_Departments.B_DP_DepartmentName,
+               S_SE_PlanBrand.S_SE_SupplierAndBrandId,
+               S_SE_PlanBrand.S_SE_SupplierId,
+               B_Supplier.B_SP_SupplierName,
+               S_SE_PlanBrand.S_SE_BrandId,
+               B_Brand.B_BD_brandName,
+               S_SE_PlanBrand.S_SE_PreSalesQuantity,
+               Isnull(S_SE_SD_Number, 0)                              AS S_SE_SD_Number,
+               Isnull(S_SE_SD_PriceSum, 0.00)                         AS S_SE_SD_PriceSum,
+               Isnull(S_SE_SD_SalesValue, 0.00)                       AS S_SE_SD_SalesValue,
+               CONVERT(VARCHAR(10), S_SE_PrePlans.S_SE_StartDate, 23) AS S_SE_StartDate,
+               CONVERT(VARCHAR(10), S_SE_PrePlans.S_SE_endDate, 23)   AS S_SE_endDate,
+               S_SE_PrePlans.S_SE_Overdue
+        FROM   S_SE_PrePlans
+               INNER JOIN S_SE_PreDep
+                 ON S_SE_PrePlans.S_SE_PlanId = S_SE_PreDep.S_SE_PlanId
+               INNER JOIN S_SE_PlanBrand
+                 ON S_SE_PreDep.S_SE_PlanDepId = S_SE_PlanBrand.S_SE_PlanDepId
+               INNER JOIN B_Departments
+                 ON S_SE_PreDep.S_SE_DepId = B_Departments.B_DP_DepartmentID
+               INNER JOIN B_Brand
+                 ON S_SE_PlanBrand.S_SE_BrandId = B_Brand.B_BD_ID
+                    AND S_SE_PlanBrand.S_SE_SupplierId = B_Brand.B_BD_SupplierID
+               INNER JOIN B_Supplier
+                 ON S_SE_PlanBrand.S_SE_SupplierId = B_Supplier.B_SP_ID
+               LEFT JOIN (SELECT S_SE_SB_SalesID,
+                                 S_SE_SB_ShopCode,
+                                 Substring(S_SE_SD_SalesItemID, 1, 7)          AS S_SE_SD_SalesItemID,
+                                 S_SE_SD_Number,
+                                 CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) AS S_SE_SB_PosDatetime,
+                                 S_SE_SD_PriceSum,
+                                 S_SE_SD_SalesValue
+                          FROM   S_SE_SalesBasic
+                                 INNER JOIN S_SE_SalesDetail
+                                   ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                          WHERE  S_SE_SB_WithdrawFlag <> '1'
+                                 AND Isnull(S_SE_SB_PosDatetime, '') <> ''
+                          UNION ALL
+                          SELECT S_SE_SB_SalesID,
+                                 S_SE_SB_ShopCode,
+                                 Substring(S_SE_SD_SalesItemID, 1, 7)          AS S_SE_SD_SalesItemID,
+                                 -S_SE_SD_Number,
+                                 CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 23) AS S_SE_SB_PosDatetime,
+                                 -S_SE_SD_PriceSum,
+                                 -S_SE_SD_SalesValue
+                          FROM   S_SE_SalesBasic
+                                 INNER JOIN S_SE_SalesDetail
+                                   ON S_SE_SD_SalesID = S_SE_SB_SalesID
+                          WHERE  S_SE_SB_WithdrawFlag = '1'
+                                 AND Isnull(S_SE_SB_PosDatetime, '') <> '') AS t
+                 ON t.S_SE_SB_ShopCode = S_SE_PreDep.S_SE_DepId
+                    AND t.S_SE_SD_SalesItemID = S_SE_PlanBrand.S_SE_SupplierAndBrandId
+                    AND t.S_SE_SB_PosDatetime >= CONVERT(VARCHAR(10), S_SE_PrePlans.S_SE_StartDate, 23)
+                    AND t.S_SE_SB_PosDatetime <= CONVERT(VARCHAR(10), S_SE_PrePlans.S_SE_endDate, 23)
+        WHERE  S_SE_PrePlans.S_SE_Overdue = '0') AS t1
+GROUP  BY S_SE_PlanId,
+          S_SE_PlanName,
+          S_SE_DepId,
+          B_DP_DepartmentName,
+          S_SE_SupplierAndBrandId,
+          S_SE_SupplierId,
+          B_SP_SupplierName,
+          S_SE_BrandId,
+          B_BD_brandName,
+          S_SE_PreSalesQuantity,
+          S_SE_StartDate,
+          S_SE_endDate,
+		  S_SE_SD_Number,
+          S_SE_Overdue 
+) AS t2
+WHERE 
+	(ISNULL(@planId, '') <> '' AND S_SE_PlanId = ISNULL(@planId, S_SE_PlanId) OR ISNULL(@planId, '') = '')
+	AND (ISNULL(@depIds, '') <> '' AND S_SE_DepId IN (SELECT departmentID FROM #salesDepartments ) OR ISNULL(@depIds, '') ='')
+	AND CAST(finsh AS FLOAT) >= ISNULL(@minScale, 0)
+	AND CAST(finsh AS FLOAT) <= ISNULL(@maxScale, 100)
+
+DROP TABLE #salesDepartments]]></Query>
+</TableData>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds3" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="planName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="depNames"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[DECLARE @planName VARCHAR(1000)
+DECLARE @depNames VARCHAR(1000)
+
+SET @planName = '${planName}'
+SET @depNames = '${depNames}']]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR F="0" T="4"/>
+<FR/>
+<HC/>
+<FC/>
+<UPFCR COLUMN="false" ROW="true"/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1296000,1296000,900000,900000,1524000,914400,914400,914400,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[0,0,0,0,3619500,3657600,6781800,4762500,4838700,3581400,6324600,2667000,2438400,3924300,3162300,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="4" r="0" cs="8" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="1" cs="11" s="1">
+<O>
+<![CDATA[门店计划销售完成额度统计表]]></O>
+<Expand/>
+</C>
+<C c="0" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="2" s="2">
+<O>
+<![CDATA[计划名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand leftParentDefault="false" upParentDefault="false"/>
+</C>
+<C c="5" r="2" cs="2" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$planName]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="7" r="2" s="4">
+<O>
+<![CDATA[完成百分比：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="8" r="2" cs="2" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=IF($minScale==0,0, $minScale) + " 至 " + IF($maxScale==0, 100, $maxScale)]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="10" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="11" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="12" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="13" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="14" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="3">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="3">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="3">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="3" r="3">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="4" r="3" s="2">
+<O>
+<![CDATA[销售门店名称：]]></O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="5" r="3" cs="10" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$depNames]]></Attributes>
+</O>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow==1]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand leftParentDefault="false" upParentDefault="false"/>
+</C>
+<C c="4" r="4" cs="2" s="5">
+<O>
+<![CDATA[计划销售名称]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" upParentDefault="false"/>
+</C>
+<C c="6" r="4" s="5">
+<O>
+<![CDATA[计划销售日期]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" upParentDefault="false"/>
+</C>
+<C c="7" r="4" s="5">
+<O>
+<![CDATA[销售门店]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" upParentDefault="false"/>
+</C>
+<C c="8" r="4" s="5">
+<O>
+<![CDATA[制造商名称]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" upParentDefault="false"/>
+</C>
+<C c="9" r="4" s="5">
+<O>
+<![CDATA[品种代码]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" upParentDefault="false"/>
+</C>
+<C c="10" r="4" s="5">
+<O>
+<![CDATA[品种名称]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" upParentDefault="false"/>
+</C>
+<C c="11" r="4" s="5">
+<O>
+<![CDATA[计划销售数量]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" upParentDefault="false"/>
+</C>
+<C c="12" r="4" s="5">
+<O>
+<![CDATA[实际销售数量]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" upParentDefault="false"/>
+</C>
+<C c="13" r="4" s="5">
+<O>
+<![CDATA[实际销售金额]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" upParentDefault="false"/>
+</C>
+<C c="14" r="4" s="5">
+<O>
+<![CDATA[完成百分比]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" upParentDefault="false"/>
+</C>
+<C c="0" r="5" rs="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_PlanId"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="1" r="5" rs="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_DepId"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="5" rs="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_StartDate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="3" r="5" rs="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_endDate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="4" r="5" cs="2" rs="2" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_PlanName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="6" r="5" rs="2" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="salesDate"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="7" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_DP_DepartmentName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="8" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_SP_SupplierName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="9" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_SupplierAndBrandId"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="10" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="B_BD_brandName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="11" r="5" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_PreSalesQuantity"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="12" r="5" s="7">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_SD_Number"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<NameJavaScriptGroup>
+<NameJavaScript name="JavaScript2">
+<JavaScript class="com.fr.base.js.JavaScriptImpl">
+<Parameters>
+<Parameter>
+<Attributes name="startDate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=C6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="shoCode"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=B6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="branIds"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=J6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=D6]]></Attributes>
+</O>
+</Parameter>
+<Parameter>
+<Attributes name="isShow"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$isShow]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<JSImport>
+<![CDATA[js/windowOpen.js]]></JSImport>
+<Content>
+<![CDATA[
+var DataURL = "report.action?reportlet=sales_preSalesRpt_SubRpt.cpt&isShow="+isShow+"&startDate="+startDate+"&shoCode="+shoCode+"&branIds="+branIds+"&endDate="+endDate;
+
+openWindowForReport(DataURL);
+]]></Content>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
+<Expand dir="0"/>
+</C>
+<C c="13" r="5" s="8">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="S_SE_SD_SalesValue"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="14" r="5" s="9">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=M6 / L6]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="7" r="6" cs="4" s="10">
+<O>
+<![CDATA[销售门店小计：]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" left="H6"/>
+</C>
+<C c="11" r="6" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(L6)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" left="H6"/>
+</C>
+<C c="12" r="6" s="11">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(M6)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" left="H6"/>
+</C>
+<C c="13" r="6" s="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(N6)]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" left="H6"/>
+</C>
+<C c="14" r="6" s="13">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=M7 / L7]]></Attributes>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand leftParentDefault="false" left="H6"/>
+</C>
+<C c="4" r="7" cs="7" s="14">
+<O>
+<![CDATA[合计：]]></O>
+<Expand leftParentDefault="false" left="A6"/>
+</C>
+<C c="11" r="7" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(L7)]]></Attributes>
+</O>
+<Expand leftParentDefault="false" left="A6"/>
+</C>
+<C c="12" r="7" s="15">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(M7)]]></Attributes>
+</O>
+<Expand leftParentDefault="false" left="A6"/>
+</C>
+<C c="13" r="7" s="16">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=SUM(N7)]]></Attributes>
+</O>
+<Expand leftParentDefault="false" left="A6"/>
+</C>
+<C c="14" r="7" s="17">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=M8/L8]]></Attributes>
+</O>
+<Expand leftParentDefault="false" left="A6"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<PaperSize width="30240000" height="47520000"/>
+<Margin top="0" left="0" bottom="0" right="0"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="80"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72" foreground="-16776961" underline="1"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<Format class="com.fr.base.CoreDecimalFormat">
+<![CDATA[###0.00]]></Format>
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<Format class="com.fr.base.CoreDecimalFormat">
+<![CDATA[#0.00%]]></Format>
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<Format class="com.fr.base.CoreDecimalFormat">
+<![CDATA[###0.00]]></Format>
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<Format class="com.fr.base.CoreDecimalFormat">
+<![CDATA[#0.00%]]></Format>
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<Format class="com.fr.base.CoreDecimalFormat">
+<![CDATA[###0.00]]></Format>
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<Format class="com.fr.base.CoreDecimalFormat">
+<![CDATA[#0.00%]]></Format>
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

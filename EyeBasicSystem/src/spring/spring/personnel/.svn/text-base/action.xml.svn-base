@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false" default-dependency-check="none">
+	<!-- 职务维护   lvhz 2012 11 08 begin-->
+		<bean id="postAction" class="com.pengsheng.eims.personnel.action.PostAction" scope="prototype"/>
+	<!-- 职务维护   lvhz 2012 11 08 end  -->
+	<!-- 培训等级维护   -->
+		<bean id="trainLevelAction" class="com.pengsheng.eims.personnel.action.TrainLevelAction" scope="prototype"/>
+	
+	<!-- 培训内容维护   lvhz -->
+		<bean id="trainContentAction" class="com.pengsheng.eims.personnel.action.TrainContentAction" scope="prototype"/>
+	
+	<!-- 班次维护   lvhz -->
+		<bean id="shiftMaintainAction" class="com.pengsheng.eims.personnel.action.ShiftMaintainAction" scope="prototype"/>
+	<!-- 员工档案   lvhz -->
+		<bean id="mpersonInfoAction" class="com.pengsheng.eims.personnel.action.MPersonInfoAction" scope="prototype"/>
+	<!-- 员工薪酬维护   lvhz -->
+		<bean id="compensationTemplateAction" class="com.pengsheng.eims.personnel.action.CompensationTemplateAction" scope="prototype"/>
+	<!-- 排班维护   lvhz -->
+		<bean id="schedulingAction" class="com.pengsheng.eims.personnel.action.SchedulingAction" scope="prototype"/>
+		
+	<!-- 考勤维护   lvhz -->
+		<bean id="attendanceManageAction" class="com.pengsheng.eims.personnel.action.AttendanceManageAction" scope="prototype"/>
+	
+	<!-- 员工奖惩   sxh -->
+		<bean id="rewardsAndPenaltiesAction" class="com.pengsheng.eims.personnel.action.RewardsAndPenaltiesAction" scope="prototype"/>
+		
+	<!-- 培训信息   sxh -->
+		<bean id="trainAction" class="com.pengsheng.eims.personnel.action.TrainAction" scope="prototype"/>
+		
+	<!-- 学历  -->
+		<bean id="educationAction" class="com.pengsheng.eims.personnel.action.EducationAction" scope="prototype"/>
+		
+	<!-- 工龄  -->
+		<bean id="workageAction" class="com.pengsheng.eims.personnel.action.WorkageAction" scope="prototype"/>
+
+	<!-- 工资管理 -->
+		<bean id="salaryAction" class="com.pengsheng.eims.personnel.action.SalaryAction" scope="prototype"/>	
+</beans>

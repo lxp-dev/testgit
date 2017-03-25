@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="logincompanyid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select 
+*
+from F_CompanyName
+where F_CN_ID = '${logincompanyid}']]></Query>
+</TableData>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="shopCode"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="bgnDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="endDate"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[									
+
+
+SELECT departmentID
+INTO   #salesDepartments
+FROM   Sales_createshopcodetab('${shopCode}')
+
+
+select 
+	temp.ShopCode				as ShopCode,
+	B_DP_DepartmentName			as ShopCodename,
+	isnull(temp.czname,'--')	as czname,
+	sum(temp.xsNum)				as xsNum
+from(
+									SELECT R_SD_DSE_ShopCode               AS ShopCode,
+                                           R_RC_DSE_GoodsCategoryID        AS CategoryID,
+                                           R_RC_DSE_SupplierID             AS SupplierID,
+                                           R_RC_DSE_SupplierName           AS SupplierName,
+                                           R_RC_DSE_BandID                 AS brandid,
+                                           R_RC_DSE_BandName               AS BrandName,
+                                           R_RC_DSE_GoodsID                AS GoodsID,
+                                           B_GI_ViewGoodsName              AS goodsname,
+										   B_FM_Name					   as czname,
+										   Isnull(R_SD_DSE_GoodsNum, 0)    AS xsNum,
+                                           Isnull(R_SD_DSE_GoodsAmount, 0) AS xsje
+                                    FROM   R_RC_DaySalesEntry
+                                           LEFT JOIN B_GoodsInfo
+                                             ON B_GI_GoodsID = R_RC_DSE_GoodsID
+										   LEFT join B_FrameMaterial on B_FM_ID = B_GI_FrameMaterialType
+                                    WHERE  R_SD_DSE_SalesType = '1' and B_GI_GoodsCategoryID = '1'
+                                           AND ( ( Isnull('${shopCode}', '') <> ''
+                                                   AND R_SD_DSE_ShopCode IN (SELECT departmentID
+                                                                             FROM   #salesDepartments) )
+                                                  OR Isnull('${shopCode}', '') = '' )
+                                           AND ( ( Isnull('${bgnDate}', '') <> ''
+                                                   AND CONVERT(VARCHAR(10), R_SD_DSE_Date, 120) >= '${bgnDate}' )
+                                                  OR Isnull('${bgnDate}', '') = '' )
+                                           AND ( ( Isnull('${endDate}', '') <> ''
+                                                   AND CONVERT(VARCHAR(10), R_SD_DSE_Date, 120) <= CONVERT(CHAR(10), Dateadd(DAY, -1, '${endDate}'), 120) )
+                                                  OR Isnull('${endDate}', '') = '' )
+                                    UNION ALL
+                                    SELECT R_SD_DSE_ShopCode               AS ShopCode,
+                                           R_RC_DSE_GoodsCategoryID        AS CategoryID,
+                                           R_RC_DSE_SupplierID             AS SupplierID,
+                                           R_RC_DSE_SupplierName           AS SupplierName,
+                                           R_RC_DSE_BandID                 AS brandid,
+                                           R_RC_DSE_BandName               AS BrandName,
+                                           R_RC_DSE_GoodsID                AS GoodsID,
+                                           B_GI_ViewGoodsName              AS goodsname,
+										   B_FM_Name					   as czname,
+										   -Isnull(R_SD_DSE_GoodsNum, 0)   AS xsNum,
+                                           -Isnull(R_SD_DSE_GoodsAmount, 0)AS xsje
+                                    FROM   R_RC_DaySalesEntry
+                                           LEFT JOIN B_GoodsInfo
+                                             ON B_GI_GoodsID = R_RC_DSE_GoodsID
+										   LEFT join B_FrameMaterial on B_FM_ID = B_GI_FrameMaterialType
+                                    WHERE  R_SD_DSE_SalesType = '2' and B_GI_GoodsCategoryID = '1'
+                                           AND ( ( Isnull('${shopCode}', '') <> ''
+                                                   AND R_SD_DSE_ShopCode IN (SELECT departmentID
+                                                                             FROM   #salesDepartments) )
+                                                  OR Isnull('${shopCode}', '') = '' )
+                                           AND ( ( Isnull('${bgnDate}', '') <> ''
+                                                   AND CONVERT(VARCHAR(10), R_SD_DSE_Date, 120) >= '${bgnDate}' )
+                                                  OR Isnull('${bgnDate}', '') = '' )
+                                           AND ( ( Isnull('${endDate}', '') <> ''
+                                                   AND CONVERT(VARCHAR(10), R_SD_DSE_Date, 120) <= CONVERT(CHAR(10), Dateadd(DAY, -1, '${endDate}'), 120) )
+                                                  OR Isnull('${endDate}', '') = '' )
+									union all
+									SELECT S_SE_SB_ShopCode                              AS ShopCode,
+                                           S_SE_SD_CommoditiesFlag                       AS CategoryID,
+                                           B_SP_ID                                       AS SupplierID,
+                                           B_SP_SupplierName                             AS SupplierName,
+                                           B_BD_ID                                       AS brandid,
+                                           B_BD_brandName                                AS brandName,
+                                           S_SE_SD_SalesItemID                           AS GoodsID,
+                                           B_GI_ViewGoodsName                            AS goodsname,
+										   B_FM_Name									 as czname,
+                                           Isnull(SUM(Isnull(S_SE_SD_Number, 0)), 0)     AS xsNum,
+                                           Isnull(SUM(Isnull(S_SE_SD_SalesValue, 0)), 0) AS xsje
+                                    FROM   S_SE_SalesBasic
+                                           INNER JOIN S_SE_SalesDetail
+                                             ON S_SE_SB_SalesID = S_SE_SD_SalesID
+                                           LEFT JOIN B_GoodsInfo
+                                             ON S_SE_SD_SalesItemID = B_GI_GoodsID
+                                           LEFT JOIN B_Brand
+                                             ON B_BD_ID = B_GI_BrandID
+                                                AND B_GI_SupplierID = B_BD_SupplierID
+                                           LEFT JOIN B_Supplier
+                                             ON B_GI_SupplierID = B_SP_ID
+										   LEFT join B_FrameMaterial on B_FM_ID = B_GI_FrameMaterialType
+                                    WHERE  S_SE_SB_ValueFlag = '1' and B_GI_GoodsCategoryID = '1'
+                                           AND ( ( Isnull('${shopCode}', '') <> ''
+                                                   AND S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                            FROM   #salesDepartments) )
+                                                  OR Isnull('${shopCode}', '') = '' )
+                                           AND ( ( Isnull('${bgnDate}', '') <> ''
+												   AND CONVERT(VARCHAR(10), Getdate(), 23) >= CONVERT(VARCHAR(10), '${bgnDate}', 120)
+                                                   AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) >= CONVERT(VARCHAR(10), Getdate(), 23) )
+                                                  OR Isnull('${bgnDate}', '') = '' )
+                                           AND ( ( Isnull('${endDate}', '') <> ''
+												   AND CONVERT(VARCHAR(10), Getdate(), 23) <= CONVERT(VARCHAR(10), '${endDate}', 120)
+                                                   AND CONVERT(VARCHAR(10), S_SE_SB_PosDatetime, 120) <= CONVERT(VARCHAR(10), Getdate(), 23) )
+                                                  OR Isnull('${endDate}', '') = '' )
+                                    GROUP  BY S_SE_SD_SalesItemID,
+                                              B_GI_ViewGoodsName,
+                                              B_BD_ID,
+                                              S_SE_SD_CommoditiesFlag,
+                                              S_SE_SB_ShopCode,
+                                              B_SP_ID,
+                                              B_SP_SupplierName,
+                                              B_BD_brandName,
+											  B_FM_Name
+                                    UNION ALL
+                                    SELECT S_SE_SB_ShopCode                               AS ShopCode,
+                                           S_SE_SD_CommoditiesFlag                        AS CategoryID,
+                                           B_SP_ID                                        AS SupplierID,
+                                           B_SP_SupplierName                              AS SupplierName,
+                                           B_BD_ID                                        AS brandid,
+                                           B_BD_brandName                                 AS brandName,
+                                           S_SE_SD_SalesItemID                            AS GoodsID,
+                                           B_GI_ViewGoodsName                             AS goodsname,
+										   B_FM_Name									  as czname,
+                                           -Isnull(SUM(Isnull(S_SE_SD_Number, 0)), 0)     AS xsNum,
+                                           -Isnull(SUM(Isnull(S_SE_SD_SalesValue, 0)), 0) AS xsje
+                                    FROM   S_SE_SalesBasic
+                                           INNER JOIN S_SE_SalesDetail
+                                             ON S_SE_SB_SalesID = S_SE_SD_SalesID
+                                           LEFT JOIN B_GoodsInfo
+                                             ON S_SE_SD_SalesItemID = B_GI_GoodsID
+                                           LEFT JOIN B_Brand
+                                             ON B_BD_ID = B_GI_BrandID
+                                                AND B_GI_SupplierID = B_BD_SupplierID
+                                           LEFT JOIN B_Supplier
+                                             ON B_GI_SupplierID = B_SP_ID
+										   LEFT join B_FrameMaterial on B_FM_ID = B_GI_FrameMaterialType
+                                    WHERE  S_SE_SB_ValueFlag = '1' and B_GI_GoodsCategoryID = '1'
+                                           AND S_SE_SB_WithdrawFlag = '1'
+                                           AND ( ( Isnull('${shopCode}', '') <> ''
+                                                   AND S_SE_SB_ShopCode IN (SELECT departmentID
+                                                                            FROM   #salesDepartments) )
+                                                  OR Isnull('${shopCode}', '') = '' )
+                                           AND ( ( Isnull('${bgnDate}', '') <> '' 
+												   AND CONVERT(VARCHAR(10), Getdate(), 23) >= CONVERT(VARCHAR(10), '${bgnDate}', 120)
+                                                   AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) >= CONVERT(VARCHAR(10), Getdate(), 23) )
+                                                  OR Isnull('${bgnDate}', '') = '' )
+                                           AND ( ( Isnull('${endDate}', '') <> ''
+												   AND CONVERT(VARCHAR(10), Getdate(), 23) <= CONVERT(VARCHAR(10), '${endDate}', 120)
+                                                   AND CONVERT(VARCHAR(10), S_SE_SB_WithdrawDate, 120) <= CONVERT(VARCHAR(10), Getdate(), 23) )
+                                                  OR Isnull('${endDate}', '') = '' )
+                                    GROUP  BY S_SE_SD_SalesItemID,
+                                              B_GI_ViewGoodsName,
+                                              B_BD_ID,
+                                              S_SE_SD_CommoditiesFlag,
+                                              S_SE_SB_ShopCode,
+                                              B_SP_ID,
+                                              B_SP_SupplierName,
+                                              B_BD_brandName,
+											  B_FM_Name
+)temp
+inner join B_Departments on temp.ShopCode = B_DP_DepartmentID
+group by 
+	temp.ShopCode,
+	temp.czname,
+	B_DP_DepartmentName
+
+
+
+DROP TABLE #salesDepartments]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[1333500,1409700,685800,1008000,1008000,1008000,723900,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[2743200,2743200,2743200,2743200,2743200,2743200,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="4" s="0">
+<O t="DSColumn">
+<Attributes dsName="ds2" columnName="F_CN_ReportShowName"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="1" cs="4" s="1">
+<O>
+<![CDATA[镜架销售材质统计表]]></O>
+<Expand/>
+</C>
+<C c="0" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="1" r="2">
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[$isShow = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.RowHeightHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="2" r="2">
+<Expand/>
+</C>
+<C c="0" r="3" cs="2" s="2">
+<O>
+<![CDATA[销售门店]]></O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand/>
+</C>
+<C c="2" r="3" s="3">
+<O>
+<![CDATA[小计]]></O>
+<Expand/>
+</C>
+<C c="3" r="3" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="czname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<CellGUIAttr printBackground="false" showAsDefault="true"/>
+<CellPageAttr/>
+<CellInsertPolicy/>
+<Expand dir="1"/>
+</C>
+<C c="0" r="4" cs="2" s="4">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="ShopCodename"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="4" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(d5)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="xsNum"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="0" r="5" cs="2" s="7">
+<O>
+<![CDATA[合计：]]></O>
+<Expand/>
+</C>
+<C c="2" r="5" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(c5)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="3" r="5" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=sum(d5)]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="0" r="6" cs="2" s="8">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="打印日期: " + TODAY()]]></Attributes>
+</O>
+<Expand/>
+</C>
+<C c="2" r="6">
+<Expand/>
+</C>
+<C c="3" r="6">
+<Expand/>
+</C>
+<C c="2" r="7">
+<Expand/>
+</C>
+<C c="1" r="8">
+<Expand/>
+</C>
+<C c="2" r="8">
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="104"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="128"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="宋体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-65536"/>
+<Background name="ColorBackground" color="-4144960"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="2" imageLayout="1">
+<FRFont name="黑体" style="1" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+</WorkBook>

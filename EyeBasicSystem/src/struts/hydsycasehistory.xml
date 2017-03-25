@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+    
+<struts>	
+	<package name="hydsycasehistory" namespace="/" extends="struts-default">
+	<!-- 眼肌检查  begin-->
+		<action name="initYJCheckSel" class="yjCheckHydsyAction" method="initYJCheckSel">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/yjCheckN/yjCheck_select.jsp</result>
+		  <result name="yjCheckSel" type="redirectAction">yjCheckSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+		</action>	
+		<action name="yjCheckSel" class="yjCheckHydsyAction" method="yjCheckSel">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/yjCheckN/yjCheck_select.jsp</result>
+		</action>
+		<action name="initYjCheckInsert" class="yjCheckHydsyAction" method="initYjCheckInsert">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/yjCheckN/yjCheck_insert.jsp</result>
+		</action>
+		<action name="selYjCheckForCustomer" class="yjCheckHydsyAction" method="selYjCheckForCustomer">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/yjCheckN/yjCheck_insert.jsp</result>
+		</action>	
+		<action name="insertYjCheck" class="yjCheckHydsyAction" method="insertYjCheck">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>	
+		<action name="initDeleteYjCheck" class="yjCheckHydsyAction" method="initDeleteYjCheck">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/yjCheckN/yjCheck_delete.jsp</result>
+		</action>		
+		<action name="deleteYjCheck" class="yjCheckHydsyAction" method="deleteYjCheck">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>		
+		<action name="detailYjCheck" class="yjCheckHydsyAction" method="detailYjCheck">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/yjCheckN/yjCheck_detail.jsp</result>
+		</action>
+		<action name="selectYjCheckEyesCheck" class="yjCheckHydsyAction" method="selectYjCheckEyesCheck">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/eyesCheckN/eyesCheck_yjCheck_insert.jsp</result>
+		</action>	
+		<action name="insertEyeCheckYjCheck" class="yjCheckHydsyAction" method="insertEyeCheckYjCheck">
+		  <result name="yjcheckSel" type="redirectAction">selectYjCheckEyesCheck?moduleID=${#request.moduleID}&amp;smecimemberid=${#request.smecimemberid}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>			
+		</action>	
+	<!-- 眼肌 检查begin-->		
+	
+	<!-- 眼部健康检查 (新)sxh begin-->	
+		<action name="initEyesCheckSelHydsy" class="eyesCheckHydsyAction" method="initEyesCheckSelN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/eyesCheckN/eyesCheck_select.jsp</result>
+		  <result name="eyescSel" type="redirectAction">selEyesCheckHydsy?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+		</action>	
+		<action name="selEyesCheckHydsy" class="eyesCheckHydsyAction" method="selEyesCheckN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/eyesCheckN/eyesCheck_select.jsp</result>
+		</action>
+		<action name="initEyesCheckInsertHydsy" class="eyesCheckHydsyAction" method="initEyesCheckInsertN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/eyesCheckN/eyesCheck_insert.jsp</result>
+		</action>
+		<action name="selEyesCheckForCustomerHydsy" class="eyesCheckHydsyAction" method="selEyesCheckForCustomerN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/eyesCheckN/eyesCheck_insert.jsp</result>
+		</action>	
+		<action name="insertEyesCheckHydsy" class="eyesCheckHydsyAction" method="insertEyesCheckN">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>	
+		<action name="detailEyesCheckHydsy" class="eyesCheckHydsyAction" method="detailEyesCheckN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/eyesCheckN/eyesCheck_detail.jsp</result>
+		</action>
+	<!-- 眼部健康检查(新) sxh end--> 
+	
+	<!-- 验光基表(新) sxh begin -->
+		<action name="initOptometryBasicSelHydsy" class="optometryBasicHydsyAction" method="initOptometryBasicSelN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/optometryBasicN/optometryBasic_select.jsp</result>
+		</action>
+		
+		<action name="initOptometryBasicDeleteHydsy" class="optometryBasicHydsyAction" method="initOptometryBasicDeleteN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/optometryBasicN/optometryBasic_delete.jsp</result>
+		</action>
+		
+		<action name="deleteOptometryBasicHydsy" class="optometryBasicHydsyAction" method="deleteOptometryBasicN">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+	<!-- 验光基表(新) sxh end-->
+	
+	<!-- 屈光检查(新) sxh  begin-->
+		<action name="initRefractiveInsertHydsy" class="refractiveHydsyAction" method="initRefractiveInsertN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/refractiveN/refractive_insert.jsp</result>
+		 
+		</action>
+		
+		<action name="refractiveInsertHydsy" class="refractiveHydsyAction" method="refractiveInsertN">
+		  <result name="success" type="chain">initRefractiveUpdateHydsy</result>
+		  <param name="refractivePo"></param>
+		  <param name="customerInfoPo"></param>
+		  <result name="RuleSubmit">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="initRefractiveUpdateHydsy" class="refractiveHydsyAction" method="initRefractiveUpdateN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/refractiveN/refractive_update.jsp</result>
+		  <result name="insert">/WEB-INF/pages/hydsycasehistory/refractiveN/refractive_insert.jsp</result>
+		</action>
+		<action name="refractiveUpdateHydsy" class="refractiveHydsyAction" method="refractiveUpdateN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/refractiveN/refractive_update.jsp</result>
+		</action>
+		
+		<action name="refractiveCopyHydsy" class="refractiveHydsyAction" method="refractiveCopyN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/refractiveN/refractive_copy.jsp</result>
+		</action>
+		
+		<action name="initRefractiveSelectHydsy" class="refractiveHydsyAction" method="initRefractiveSelectN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/refractiveN/refractive_select.jsp</result>
+		</action>
+	
+		<action name="refractiveToolHydsy" class="refractiveHydsyAction" method="refractiveToolN">
+		  <result name="refractivei" type="chain">initRefractiveInsertHydsy</result>
+		  <result name="refractiveu" type="chain">initRefractiveUpdateHydsy</result>
+		  <result name="refractivecopy" type="chain">refractiveCopyHydsy</result>
+		  <param name="refractivePo"></param>
+		  <param name="optometryPo"></param>
+		  <param name="customerInfoPo"></param>
+		</action>
+	<!-- 屈光检查(新) sxh end-->
+	
+	<!-- 双眼视功能检查(新) sxh  begin-->
+		<action name="initDoubleEyeFunSelHydsy" class="doubleEyeFunHydsyAction" method="initDoubleEyeFunSelN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/doubleEyeFunN/doubleEyeFun_insert.jsp</result>
+		</action>
+		<action name="insertDoubleEyeFunHydsy" class="doubleEyeFunHydsyAction" method="insertDoubleEyeFunN">
+		  <result name="success" type="chain">initDoubleEyeFunUpdateHydsy</result>
+		  <param name="optometryPo"></param>
+		</action>
+		<action name="initDoubleEyeFunUpdateHydsy" class="doubleEyeFunHydsyAction" method="initDoubleEyeFunUpdateN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/doubleEyeFunN/doubleEyeFun_update.jsp</result>
+		</action>
+		<action name="updateDoubleEyeFunHydsy" class="doubleEyeFunHydsyAction" method="updateDoubleEyeFunN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/doubleEyeFunN/doubleEyeFun_update.jsp</result>
+		</action>
+		<action name="selectDoubleEyeFunHydsy" class="doubleEyeFunHydsyAction" method="selectDoubleEyeFunN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/doubleEyeFunN/doubleEyeFun_select.jsp</result>
+		</action>
+		<action name="doubleEyeFunToolHydsy" class="doubleEyeFunHydsyAction" method="doubleEyeFunToolN">
+		  <result name="doubleeyefuni" type="chain">initDoubleEyeFunSelHydsy</result>
+		  <result name="doubleeyefunu" type="chain">initDoubleEyeFunUpdateHydsy</result>
+		   <param name="optometryPo"></param>
+		</action>
+	<!-- 双眼视功能检查(新) sxh  end-->
+	
+	<!-- 特殊功能检查 (新) sxh  begin-->
+		<action name="initSpecialCheckInsertHydsy" class="specialCheckHydsyAction" method="initSpecialCheckInsertN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/specialCheckN/specialCheck_insert.jsp</result>
+		</action>
+		
+		<action name="insertSpecialCheckHydsy" class="specialCheckHydsyAction" method="insertSpecialCheckN">
+		  <result name="success" type="chain">initSpecialCheckUpdateHydsy</result>
+		  <param name="optometryPo"></param>
+		  <param name="customerInfoPo"></param>
+		</action>
+		
+		<action name="selectSpecialCheckHydsy" class="specialCheckHydsyAction" method="selectSpecialCheckN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/specialCheckN/specialCheck_select.jsp</result>
+		</action>
+		
+		<action name="initSpecialCheckUpdateHydsy" class="specialCheckHydsyAction" method="initSpecialCheckUpdateN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/specialCheckN/specialCheck_update.jsp</result>
+		</action>
+
+		<action name="initSpecialCheckUpdateHydsy2" class="specialCheckHydsyAction" method="initSpecialCheckUpdateN2">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/specialCheckN/specialCheck_update2.jsp</result>
+		  <param name="inspectionPo"></param>
+		  <param name="optometryPo"></param>
+		  <param name="customerInfoPo"></param>
+		</action>
+				
+		<action name="updateSpecialCheckHydsy" class="specialCheckHydsyAction" method="updateSpecialCheckN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/specialCheckN/specialCheck_update.jsp</result>
+		</action>
+		
+		<action name="updateSpecialCheckHydsy2" class="specialCheckHydsyAction" method="updateSpecialCheckN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/specialCheckN/specialCheck_update2.jsp</result>
+		</action>
+		
+		<action name="specialCheckToolHydsy" class="specialCheckHydsyAction" method="specialCheckToolN">
+		  <result name="specialchecki" type="chain">initSpecialCheckInsertHydsy</result>
+		  <result name="specialchecku" type="chain">initSpecialCheckUpdateHydsy</result>
+		  <param name="inspectionPo"></param>
+		  <param name="optometryPo"></param>
+		  <param name="customerInfoPo"></param>
+		</action>
+		
+	<!-- 特殊功能检查 (新) sxh end-->
+	
+	<!-- 戴镜史 (新) sxh  begin-->
+		<action name="selectGlassesHistoryHydsy" class="glassesHistoryHydsyAction" method="selectGlassesHistoryN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/glassesHistoryN/glassesHistory_update.jsp</result>
+		</action>
+		
+		<action name="updateGlassesHistoryHydsy" class="glassesHistoryHydsyAction" method="updateGlassesHistoryN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/glassesHistoryN/glassesHistory_update.jsp</result>
+		</action>
+		
+		<action name="selectGlassesHistoryEyesCheck" class="glassesHistoryHydsyAction" method="selectGlassesHistoryEyesCheck">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/eyesCheckN/glassesHistory_update.jsp</result>
+		</action>			
+		<action name="updateGlassesHistoryEyesCheck" class="glassesHistoryHydsyAction" method="updateGlassesHistoryEyesCheck">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/eyesCheckN/glassesHistory_update.jsp</result>
+		</action>		
+	<!-- 戴镜史 (新) sxh  end-->
+	
+	<!-- 检查结论(新) sxh begin-->
+		<action name="initInspectionInsertHydsy" class="inspectionHydsyAction" method="initInspectionInsertN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/inspectionN/inspection_insert.jsp</result>		 
+		</action>		
+		<action name="inspectionInsertHydsy" class="inspectionHydsyAction" method="inspectionInsertN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/inspectionN/inspectionDetailsOpen_insert.jsp</result>
+		</action>
+		<action name="initInspectionUpdateHydsy" class="inspectionHydsyAction" method="initInspectionUpdateN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/inspectionN/inspection_update.jsp</result>
+		</action>
+		
+		<action name="inspectionInsertDetailsOpenHydsy" class="inspectionHydsyAction" method="inspectionInsertDetailsOpenN">
+		  <result name="success" type="chain">initInspectionUpdateN</result>
+		  <param name="inspectionPo"></param>
+		  <param name="customerInfoPo"></param>
+		  <result name="RuleSubmit">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="inspectionUpdateHydsy" class="inspectionHydsyAction" method="inspectionUpdateN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/inspectionN/inspectionDetailsOpen_insert.jsp</result>
+		</action>
+		
+		<action name="inspectionCopyHydsy" class="inspectionHydsyAction" method="inspectionCopyN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/inspectionN/inspection_copy.jsp</result>
+		</action>
+		
+		<action name="inspectionDeleteHydsy" class="inspectionHydsyAction" method="inspectionDeleteN">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="initInspectionSelectHydsy" class="inspectionHydsyAction" method="initInspectionSelectN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/inspectionN/inspection_select.jsp</result>
+		</action>
+		
+		
+		<action name="inspectionToolHydsy" class="inspectionHydsyAction" method="inspectionToolN">
+		  <result name="inspectioni" type="chain">initInspectionInsertHydsy</result>
+		  <result name="inspectionu" type="chain">initInspectionUpdateHydsy</result>
+		  <result name="inspectioncopy" type="chain">inspectionCopyHydsy</result>
+		  <param name="inspectionPo"></param>
+		  <param name="optometryPo"></param>
+		  <param name="customerInfoPo"></param>
+		</action>
+		
+		<action name="inspectionPrintHydsy" class="inspectionHydsyAction" method="inspectionPrintN">
+
+		</action>
+	<!-- 检查结论(新) sxh end-->
+	
+	<!-- 接触镜评估(新) sxh begin-->
+		<action name="initContactGlassInsertHydsy" class="contactGlassHydsyAction" method="initContactGlassInsertN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/contactGlassN/contactGlass_insert.jsp</result>
+		 
+		</action>
+		
+		<action name="contactGlassInsertHydsy" class="contactGlassHydsyAction" method="contactGlassInsertN">
+		  <result name="success" type="chain">initContactGlassUpdateHydsy</result>
+		  <result name="RuleSubmit">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="initContactGlassUpdateHydsy" class="contactGlassHydsyAction" method="initContactGlassUpdateN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/contactGlassN/contactGlass_update.jsp</result>
+		</action>
+		
+		<action name="contactGlassInsertDetailsOpenHydsy" class="contactGlassHydsyAction" method="contactGlassInsertDetailsOpenN">
+		  <result name="success" type="chain">initContactGlassUpdateHydsy</result>
+		  <param name="inspectionPo"></param>
+		  <param name="customerInfoPo"></param>
+		  <result name="RuleSubmit">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="contactGlassUpdateHydsy" class="contactGlassHydsyAction" method="contactGlassUpdateN">		 
+		  <result name="success" type="chain">initContactGlassUpdateHydsy</result>
+		  <result name="RuleSubmit">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="contactGlassCopyHydsy" class="contactGlassHydsyAction" method="contactGlassCopyN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/contactGlassN/contactGlass_copy.jsp</result>
+		</action>
+		
+		<action name="contactGlassDeleteHydsy" class="contactGlassHydsyAction" method="contactGlassDeleteN">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="initContactGlassSelectHydsy" class="contactGlassHydsyAction" method="initContactGlassSelectN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/contactGlassN/contactGlass_select.jsp</result>
+		</action>
+		
+		
+		<action name="contactGlassToolHydsy" class="contactGlassHydsyAction" method="contactGlassToolN">
+		  <result name="contactGlassioui" type="chain">initContactGlassInsertHydsy</result>
+		  <result name="contactGlassiouu" type="chain">initContactGlassUpdateHydsy</result>	  
+		  <param name="contactGlassPo"></param>
+		  <param name="optometryPo"></param>
+		  <param name="customerInfoPo"></param>
+		</action>
+	<!-- 接触镜评估(新) sxh end-->
+	
+	<!-- 角膜接触镜复查(新) sxh begin-->
+		<action name="initCornealContactlLensInsertHydsy" class="cornealContactlLensHydsyAction" method="initCornealContactlLensInsertN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/cornealContactlLensN/cornealContactlLens_insert.jsp</result>
+		</action>
+		
+		<action name="cornealContactlLensInsertHydsy" class="cornealContactlLensHydsyAction" method="cornealContactlLensInsertN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/cornealContactlLensN/cornealContactlLens_update.jsp</result>
+		</action>
+		<action name="initCornealContactlLensUpdateHydsy" class="cornealContactlLensHydsyAction" method="initCornealContactlLensUpdateN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/cornealContactlLensN/cornealContactlLens_update.jsp</result>
+		</action>
+		
+		<action name="cornealContactlLensInsertDetailsOpenHydsy" class="cornealContactlLensHydsyAction" method="cornealContactlLensInsertDetailsOpenN">
+		  <result name="success" type="chain">initCornealContactlLensUpdateHydsy</result>
+		  <param name="cornealContactlLensPo"></param>
+		  <param name="customerInfoPo"></param>
+		  <result name="RuleSubmit">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="cornealContactlLensUpdateHydsy" class="cornealContactlLensHydsyAction" method="cornealContactlLensUpdateN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/cornealContactlLensN/cornealContactlLens_update.jsp</result>
+		</action>
+		
+		<action name="cornealContactlLensCopyHydsy" class="cornealContactlLensHydsyAction" method="cornealContactlLensCopyN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/cornealContactlLensN/cornealContactlLens_copy.jsp</result>
+		</action>
+		
+		<action name="cornealContactlLensDeleteHydsy" class="cornealContactlLensHydsyAction" method="cornealContactlLensDeleteN">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		
+		<action name="initCornealContactlLensSelectHydsy" class="cornealContactlLensHydsyAction" method="initCornealContactlLensSelectN">
+		  <result name="success">/WEB-INF/pages/hydsycasehistory/cornealContactlLensN/cornealContactlLens_select.jsp</result>
+		</action>
+		
+		<action name="cornealContactlLensToolHydsy" class="cornealContactlLensHydsyAction" method="cornealContactlLensToolN">
+		  <result name="cornealContactlLensi" type="chain">initCornealContactlLensInsertHydsy</result>
+		  <result name="cornealContactlLensu" type="chain">initCornealContactlLensUpdateHydsy</result>
+		  <result name="cornealContactlLenscopy" type="chain">cornealContactlLensCopyHydsy</result>
+		  <param name="cornealContactlLensPo"></param>
+		  <param name="optometryPo"></param>
+		  <param name="customerInfoPo"></param>
+		</action>
+		
+		<action name="cornealContactlLensPrintHydsy" class="cornealContactlLensHydsyAction" method="cornealContactlLensPrintN">
+
+		</action>
+	<!-- 角膜接触镜复查(新) sxh end-->
+	
+	<!-- 验光病例查询(新) sxh begin -->
+	<action name="initOptometryCaseSelHydsy" class="optometryCaseHydsyAction" method="initOptometryCaseSelN">
+	  <result name="success">/WEB-INF/pages/hydsycasehistory/optometryCase/optometryCase_select.jsp</result>
+	  <result name="optomeSel" type="redirectAction">optometryCaseSelHydsy?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	</action>
+	<action name="optometryCaseSelHydsy" class="optometryCaseHydsyAction" method="optometryCaseSelN">
+	  <result name="success">/WEB-INF/pages/hydsycasehistory/optometryCase/optometryCase_select.jsp</result>
+	</action>
+	<!-- 验光病例查询(新) sxh end -->
+	
+    <!-- 顾客验光新2014 Add by mysflying -->
+    <action name="initCustomerOptometryTitleHydsy" class="customerOptometryHydsyAction" method="initCustomerOptometryTitleN">
+      <result name="success">/WEB-INF/pages/hydsycasehistory/optometryBasic_titleHydsy.jsp</result>
+    </action>
+    <!-- 顾客验光 Add by mysflying -->		
+	</package>
+</struts>

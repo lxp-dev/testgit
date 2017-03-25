@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">	 
+
+    <!-- 登陆 Start -->
+    <bean id="loginMgrImpl" class="com.pengsheng.eims.frame.mgr.impl.LoginMgrImpl"/>
+	<bean id="loginMgr" parent="baseTransactionProxy">
+		<property name="target" ref="loginMgrImpl"/>
+	</bean>  
+	<!-- 登陆 Start -->
+	
+	<!-- 左侧模块视图 End -->
+	<bean id="roleModuleTreeViewMgrImpl" class="com.pengsheng.eims.frame.mgr.impl.RoleModuleTreeViewMgrImpl"/>
+	<bean id="roleModuleTreeViewMgr" parent="baseTransactionProxy">
+		<property name="target" ref="roleModuleTreeViewMgrImpl"/>
+	</bean>
+	<!-- 左侧模块视图 End -->
+</beans>

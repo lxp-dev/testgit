@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false"
+	default-dependency-check="none">
+	
+	<!-- 散瞳检查 du begin-->
+	<bean id="mydriasisHydsyMgrImpl"
+		class="com.pengsheng.eims.hydsycasehistory.mgr.impl.MydriasisHydsyMgrImpl" />
+	<bean id="mydriasisHydsyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="mydriasisHydsyMgrImpl" />
+	</bean>
+	<!-- 散瞳检查 du end-->
+		
+	<!-- 眼部健康检查(新)sxh begin-->
+	<bean id="eyesCheckHydsyMgrImpl"
+		class="com.pengsheng.eims.hydsycasehistory.mgr.impl.EyesCheckHydsyMgrImpl" />
+	<bean id="eyesCheckHydsyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="eyesCheckHydsyMgrImpl" />
+	</bean>
+	<!-- 眼部健康检查(新)sxh end-->
+	
+	<!-- 屈光检查(新)sxh   begin -->
+	<bean id="refractiveHydsyMgrImpl"
+		class="com.pengsheng.eims.hydsycasehistory.mgr.impl.RefractiveHydsyMgrImpl" />
+	<bean id="refractiveHydsyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="refractiveHydsyMgrImpl" />
+	</bean>
+	<!-- 屈光检查(新)sxh   end  -->
+	
+	<!-- 双眼视功能检查(新)sxh  begin-->
+	<bean id="doubleEyeFunHydsyMgrIpml"
+		class="com.pengsheng.eims.hydsycasehistory.mgr.impl.DoubleEyeFunHydsyMgrIpml" />
+	<bean id="doubleEyeFunHydsyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="doubleEyeFunHydsyMgrIpml" />
+	</bean>
+	<!-- 双眼视功能检查(新)sxh  end-->
+	
+	<!-- 验光基表(新)sxh  begin-->
+	<bean id="optometryBasicHydsyMgrImpl" 
+		class="com.pengsheng.eims.hydsycasehistory.mgr.impl.OptometryBasicHydsyMgrImpl" />
+	<bean id="optometryBasicHydsyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="optometryBasicHydsyMgrImpl" />
+	</bean>
+	<!-- 验光基表(新)sxh  end-->
+	
+	<!-- 特殊功能检查(新)sxh  begin-->
+	<bean id="specialCheckHydsyMgrImpl"
+		class="com.pengsheng.eims.hydsycasehistory.mgr.impl.SpecialCheckHydsyMgrImpl" />
+	<bean id="specialCheckHydsyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="specialCheckHydsyMgrImpl" />
+	</bean>
+	<!-- 特殊功能检查(新)sxh  end-->
+	
+	<!-- 检查结论(新)sxh  begin-->
+	<bean id="inspectionHydsyMgrImpl"
+		class="com.pengsheng.eims.hydsycasehistory.mgr.impl.InspectionHydsyMrgImpl" />
+	<bean id="inspectionHydsyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="inspectionHydsyMgrImpl" />
+	</bean>
+	<!-- 检查结论(新)sxh  end-->
+	
+	<!-- 接触镜评估(新)sxh  begin-->
+	<bean id="contactGlassHydsyMgrImpl"
+		class="com.pengsheng.eims.hydsycasehistory.mgr.impl.ContactGlassHydsyMgrImpl"/>
+	<bean id="contactGlassHydsyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="contactGlassHydsyMgrImpl" />
+	</bean>
+	<!-- 接触镜评估(新)sxh  end-->
+	
+	<!-- 角膜接触镜检查(新)sxh  begin-->
+	<bean id="cornealContactlLensHydsyMgrImpl"
+		class="com.pengsheng.eims.hydsycasehistory.mgr.impl.CornealContactlLensHydsyMgrImpl" />
+	<bean id="cornealContactlLensHydsyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="cornealContactlLensHydsyMgrImpl" />
+	</bean>
+	<!-- 角膜接触镜检查(新)sxh  end-->
+	
+	<!-- 验光病例查询(新)sxh  begin -->
+	<bean id="optometryCaseHydsyMgrImpl"
+		class="com.pengsheng.eims.hydsycasehistory.mgr.impl.OptometryCaseHydsyMgrImpl" />
+	<bean id="optometryCaseHydsyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="optometryCaseHydsyMgrImpl" />
+	</bean>
+	<!-- 验光病例查询(新)sxh  end -->
+	
+	<!-- 戴镜史(新)sxh  begin-->
+	<bean id="glassesHistoryHydsyMgrImpl"
+		class="com.pengsheng.eims.hydsycasehistory.mgr.impl.GlassesHistoryHydsyMgrImpl" />
+	<bean id="glassesHistoryHydsyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="glassesHistoryHydsyMgrImpl" />
+	</bean>
+	<!-- 戴镜史(新)sxh  end-->
+	
+	<!-- 顾客验光新2014 哈医大四院 Add by mysflying -->
+	<bean id="customerOptometryHydsyMgrImpl" class="com.pengsheng.eims.hydsycasehistory.mgr.impl.CustomerOptometryHydsyMgrImpl" />
+	<bean id="customerOptometryHydsyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="customerOptometryHydsyMgrImpl" />
+	</bean>
+	
+	<!-- 眼肌 检查begin-->
+	<bean id="yjCheckHydsyMgrImpl"
+		class="com.pengsheng.eims.hydsycasehistory.mgr.impl.YjCheckHydsyMgrImpl" />
+	<bean id="yjCheckHydsyMgr" parent="baseTransactionProxy">
+		<property name="target" ref="yjCheckHydsyMgrImpl" />
+	</bean>
+	<!-- 眼肌 检查begin-->	
+</beans>

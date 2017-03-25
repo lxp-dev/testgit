@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20120529" releaseVersion="7.0.0">
+<TableDataMap>
+<TableData name="ds1" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="departmentid"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="personNumber"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="month"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="year"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="personName"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[datasource]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[DECLARE @departmentid  VARCHAR(4000),
+        @personNumber  VARCHAR(50),
+        @personName VARCHAR(50),
+        @month  VARCHAR(10),
+        @year  VARCHAR(10)
+
+SET @departmentid='${departmentid}'
+SET @personNumber='${personNumber}'
+SET @personName='${personName}'
+SET @month='${month}'
+SET @year='${year}'
+select 	M_SP_UUID as mspuuid ,
+M_SchedulingMonth.M_SM_Month+'月'+M_SD_SchedulingDate+'日' as dat,
+M_SchedulingPersonDay.M_SPD_ShiftName as shif,
+ M_SP_Personid as  msppersonid ,
+SYS_PersonInfo.personName as	msppersonname
+
+from M_SchedulingPerson 
+left join SYS_PersonInfo on M_SchedulingPerson.M_SP_Personid=SYS_PersonInfo.id 	
+left join M_SchedulingMonth on M_SchedulingPerson.M_SP_SMUUID = M_SchedulingMonth.M_SM_UUID
+left join M_SchedulingDay on M_SchedulingMonth.M_SM_UUID=M_SchedulingDay.M_SD_SMUUID
+left join M_SchedulingPersonDay on M_SD_UUID=M_SPD_SDUUID and M_SP_UUID=M_SPD_SPUUID
+ where 1 = 1 
+and ( ( Isnull(@departmentid, '') <> '' AND M_SchedulingPerson.M_SP_Personid in(select distinct SYS_PersonDepartments.SYS_PD_PersonID from SYS_PersonDepartments where  SYS_PersonDepartments.SYS_PD_DepartmentID in (@departmentid)))
+ OR Isnull(@departmentid, '') = '' )
+
+and ( ( Isnull(@year, '') <> '' AND M_SchedulingMonth.M_SM_Year =@year) OR Isnull(@year, '') = '' )
+
+and ( ( Isnull(@month, '') <> '' AND M_SchedulingMonth.M_SM_Month =@month) OR Isnull(@month, '') = '' )
+
+and ( ( Isnull(@personNumber, '') <> '' AND M_SchedulingPerson.M_SP_Personid like  '%${personNumber}%' ) OR Isnull(@personNumber, '') = '' )
+
+and ( ( Isnull(@personName, '') <> '' AND SYS_PersonInfo.personName like '%${personName}%' ) OR Isnull(@personName, '') = '' )
+]]></Query>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<RowHeight defaultValue="723900">
+<![CDATA[723900,723900,723900,723900,723900,723900,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[1714500,3009900,2743200,2743200,2743200,2743200,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="1">
+<Expand/>
+</C>
+<C c="1" r="2" s="0">
+<Expand/>
+</C>
+<C c="2" r="2" s="1">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="dat"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="1"/>
+</C>
+<C c="1" r="3" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="msppersonname"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand dir="0"/>
+</C>
+<C c="2" r="3" s="2">
+<O t="DSColumn">
+<Attributes dsName="ds1" columnName="shif"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+</Report>
+<StyleList>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="ColorBackground" color="-8355712"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="ColorBackground" color="-8355712"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+</StyleList>
+</WorkBook>

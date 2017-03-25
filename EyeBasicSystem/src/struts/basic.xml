@@ -1,0 +1,3172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+    
+<struts>	
+	<package name="basic" namespace="/" extends="struts-default">
+	<!--
+		<global-results>	        
+		   <result name="error">/error.jsp</result>
+		</global-results>	
+	    <global-exception-mappings>   
+	       <exception-mapping exception="java.lang.Exception" result="error"></exception-mapping>   
+	    </global-exception-mappings> 
+	 -->
+	      
+	<!-- 开关配置 liujing  begin-->
+		<action name="initStatus" class="opencloseConfigurationAction" method="initStatus">
+		  <result name="success">/WEB-INF/pages/basic/opencloseConforming/opencloseConfiguration_select.jsp</result>
+		</action>
+		<action name="selinitStatuskai" class="opencloseConfigurationAction" method="selinitStatuskai">
+		  <result name="success">/WEB-INF/pages/basic/opencloseConforming/opencloseConfiguration_able.jsp</result>
+		</action>
+		<action name="updateStatuskai" class="opencloseConfigurationAction" method="updateStatuskai">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="selinitStatusguan" class="opencloseConfigurationAction" method="selinitStatusguan">
+		  <result name="success">/WEB-INF/pages/basic/opencloseConforming/opencloseConfiguration_disable.jsp</result>
+		</action>
+		<action name="updateStatusguan" class="opencloseConfigurationAction" method="updateStatusguan">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+	<!-- 开关配置 liujing  end-->	
+	
+	<!-- 日志查询  begin-->
+		<action name="initLog" class="logAction" method="initLog">
+		  <result name="success">/WEB-INF/pages/basic/log/log_select.jsp</result>
+		  <result name="selLog" type="redirectAction">selLog?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		<action name="selLog" class="logAction" method="selLog">
+		  <result name="success">/WEB-INF/pages/basic/log/log_select.jsp</result>
+		</action>				
+	<!-- 日志查询  end-->	
+	
+	<!-- 门店区域配置 moyongsheng  begin-->
+		<action name="initRegionalConfigurationSel" class="regionalConfigurationAction" method="initRegionalConfigurationSel">
+		  <result name="success">/WEB-INF/pages/basic/regionalConfiguration/regionalConfiguration_select.jsp</result>
+		  <result name="selRegionalConfiguration" type="redirectAction">selRegionalConfiguration?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		<action name="selRegionalConfiguration" class="regionalConfigurationAction" method="selRegionalConfiguration">
+		  <result name="success">/WEB-INF/pages/basic/regionalConfiguration/regionalConfiguration_select.jsp</result>
+		</action>
+		<action name="initUpdateRegionalConfiguration" class="regionalConfigurationAction" method="initUpdateRegionalConfiguration">
+		  <result name="success">/WEB-INF/pages/basic/regionalConfiguration/regionalConfiguration_config.jsp</result>
+		</action>	
+		<action name="updateRegionalConfiguration" class="regionalConfigurationAction" method="updateRegionalConfiguration">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>			
+	<!-- 门店区域配置 moyongsheng  end-->
+	
+	<!-- 仓位维护 moyongsheng  begin-->
+		<action name="initWarehouseSel" class="warehouseAction" method="initWarehouseSel">
+		  <result name="success">/WEB-INF/pages/basic/warehouse/warehouse_select.jsp</result>
+		  <result name="selWarehouse" type="redirectAction">selWarehouse?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		<action name="selWarehouse" class="warehouseAction" method="selWarehouse">
+		  <result name="success">/WEB-INF/pages/basic/warehouse/warehouse_select.jsp</result>
+		</action>
+		<action name="initInsertWarehouse" class="warehouseAction" method="initInsertWarehouse">
+		  <result name="success">/WEB-INF/pages/basic/warehouse/warehouse_insert.jsp</result>
+		</action>
+		<action name="insertWarehouse" class="warehouseAction" method="insertWarehouse">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  <result name="error">/WEB-INF/pages/basic/warehouse/warehouse_insert.jsp</result>
+		</action>
+		<action name="initUpdateWarehouse" class="warehouseAction" method="initUpdateWarehouse">
+		  <result name="success">/WEB-INF/pages/basic/warehouse/warehouse_update.jsp</result>
+		</action>
+		<action name="updateWarehouse" class="warehouseAction" method="updateWarehouse">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result> 
+		  <result name="error">/WEB-INF/pages/basic/warehouse/warehouse_update.jsp</result>
+		</action>	
+		<action name="initDeleteWarehouse" class="warehouseAction" method="initDeleteWarehouse">
+		  <result name="success">/WEB-INF/pages/basic/warehouse/warehouse_delete.jsp</result>
+		</action>
+		<action name="deleteWarehouse" class="warehouseAction" method="deleteWarehouse">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>		
+		<action name="initWarehouseAble" class="warehouseAction" method="initWarehouseAble">
+		  <result name="success">/WEB-INF/pages/basic/warehouse/warehouse_able.jsp</result>
+		</action>
+		<action name="updateWarehouseAble" class="warehouseAction" method="updateWarehouseAble">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>	
+					
+	<!-- 仓位维护 moyongsheng  end-->
+	
+	<!-- 计量单位维护 moyongsheng  begin-->
+		<action name="selUnit" class="unitAction" method="selUnit">
+		  <result name="success">/WEB-INF/pages/basic/unit/unit_select.jsp</result>
+		</action>
+		<action name="initInsertUnit" class="unitAction" method="initInsertUnit">
+		  <result name="success">/WEB-INF/pages/basic/unit/unit_insert.jsp</result>
+		</action>
+		<action name="insertUnit" class="unitAction" method="insertUnit">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  <result name="NoRepeat">/WEB-INF/pages/basic/unit/unit_insert.jsp</result>	  
+		</action>
+		<action name="initUpdateUnit" class="unitAction" method="initUpdateUnit">
+		  <result name="success">/WEB-INF/pages/basic/unit/unit_update.jsp</result>
+		</action>
+		<action name="updateUnit" class="unitAction" method="updateUnit">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>	 
+		   <result name="NoRepeat">/WEB-INF/pages/basic/unit/unit_update.jsp</result> 
+		</action>	
+		<action name="initDeleteUnit" class="unitAction" method="initDeleteUnit">
+		  <result name="success">/WEB-INF/pages/basic/unit/unit_delete.jsp</result>
+		</action>
+		<action name="deleteUnit" class="unitAction" method="deleteUnit">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		   <result name="dataUsed">/WEB-INF/pages/basic/unit/unit_delete.jsp</result>
+		  
+		</action>					
+	<!-- 计量单位维护 moyongsheng  end-->
+	
+	<!-- 客户维护 moyongsheng  begin-->
+		<action name="initCustomerSel" class="customerAction" method="initCustomerSel">
+		  <result name="success">/WEB-INF/pages/basic/customer/customer_select.jsp</result>
+		  <result name="selCustomer" type="redirectAction">selCustomer?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		<action name="selCustomer" class="customerAction" method="selCustomer">
+		  <result name="success">/WEB-INF/pages/basic/customer/customer_select.jsp</result>
+		</action>
+		<action name="initInsertCustomer" class="customerAction" method="initInsertCustomer">
+		  <result name="success">/WEB-INF/pages/basic/customer/customer_insert.jsp</result>
+		</action>
+		<action name="insertCustomer" class="customerAction" method="insertCustomer">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  <result name="NoRepeat">/WEB-INF/pages/basic/customer/customer_insert.jsp</result>	  
+		</action>
+		<action name="initUpdateCustomer" class="customerAction" method="initUpdateCustomer">
+		  <result name="success">/WEB-INF/pages/basic/customer/customer_update.jsp</result>
+		</action>
+		<action name="updateCustomer" class="customerAction" method="updateCustomer">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>	
+		  <result name="NoRepeat">/WEB-INF/pages/basic/customer/customer_update.jsp</result>  
+		</action>	
+		<action name="initDeleteCustomer" class="customerAction" method="initDeleteCustomer">
+		  <result name="success">/WEB-INF/pages/basic/customer/customer_delete.jsp</result>
+		</action>
+		<action name="deleteCustomer" class="customerAction" method="deleteCustomer">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>	
+	<!-- 客户维护 moyongsheng  end-->	
+
+	<!-- 赠品管理  SB-->
+		<action name="initGiftsSel" class="giftsAction" method="initGiftsSel">
+	      <result name="success">/WEB-INF/pages/basic/gifts/gifts_select.jsp</result>
+	      <result name="giftsSel" type="redirectAction">giftsSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="giftsSel" class="giftsAction" method="giftsSel">
+	      <result name="success">/WEB-INF/pages/basic/gifts/gifts_select.jsp</result>
+	    </action>
+	    <action name="initGiftsInsert" class="giftsAction" method="initGiftsInsert">
+	      <result name="success">/WEB-INF/pages/basic/gifts/gifts_insert.jsp</result>
+	    </action>
+	    <action name="giftsInsert" class="giftsAction" method="giftsInsert">
+	    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	      <result name="NoRepeat">/WEB-INF/pages/basic/gifts/gifts_insert.jsp</result>
+	    </action>
+	      <action name="initGiftsUpdate" class="giftsAction" method="initGiftsUpdate">
+	      <result name="success">/WEB-INF/pages/basic/gifts/gifts_update.jsp</result>
+	    </action>
+	     <action name="giftsUpdate" class="giftsAction" method="giftsUpdate">
+	      <result name="NoReapet">/WEB-INF/pages/basic/gifts/gifts_update.jsp</result>
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGiftsDelete" class="giftsAction" method="initGiftsDelete">
+	    <result name="success">/WEB-INF/pages/basic/gifts/gifts_delete.jsp</result>
+	    </action>
+	     <action name="giftsDelete" class="giftsAction" method="giftsDelete">
+	    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	     <result name="NoRepeat">/WEB-INF/pages/basic/gifts/gifts_delete.jsp</result>
+	    </action>
+	    <action name="initGiftsAble" class="giftsAction" method="initGiftsAble">
+	    <result name="success">/WEB-INF/pages/basic/gifts/gifts_able.jsp</result>
+	    </action>
+	     <action name="giftsAble" class="giftsAction" method="giftsAble">
+	    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	     <result name="NoRepeat">/WEB-INF/pages/basic/gifts/gifts_able.jsp</result>
+	    </action>
+	     <action name="initGiftsDisable" class="giftsAction" method="initGiftsDisable">
+	    <result name="success">/WEB-INF/pages/basic/gifts/gifts_disable.jsp</result>
+	    </action>
+	     <action name="giftsDisable" class="giftsAction" method="giftsDisable">
+	    <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	     <result name="NoRepeat">/WEB-INF/pages/basic/gifts/gifts_disable.jsp</result>
+	    </action>	    
+	    <action name="initGiftsAudit" class="giftsAction" method="initGiftsUpdate">
+	       <result name="success">/WEB-INF/pages/basic/gifts/gifts_audit.jsp</result>
+	    </action>
+	    <action name="giftsAudit" class="giftsAction" method="giftsAudit">
+	       <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGiftsUpdateDpt" class="giftsAction" method="initGiftsUpdate">
+	       <result name="success">/WEB-INF/pages/basic/gifts/gifts_update2.jsp</result>
+	    </action>
+	    <action name="giftsUpdateDpt" class="giftsAction" method="giftsUpdateDpt">
+	       <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	<!-- 赠品管理 SB  end-->	
+	
+	<!-- 制造商管理 Add by du-->
+	    <action name="initSupplierSel" class="supplierAction" method="initSupplierSel">
+	      <result name="success">/WEB-INF/pages/basic/supplier/supplier_select.jsp</result>
+	      <result name="selSupplier" type="redirectAction">selSupplier?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selSupplier" class="supplierAction" method="selSupplier">
+	      <result name="success">/WEB-INF/pages/basic/supplier/supplier_select.jsp</result>
+	    </action>
+	     <action name="selSupplierTree" class="supplierAction" method="selSupplierTree">
+	      <result name="success">/WEB-INF/pages/basic/supplier/supplierTree_select.jsp</result>
+	    </action>
+	    <action name="initSupplierInsert" class="supplierAction" method="initSupplierInsert">
+	      <result name="success">/WEB-INF/pages/basic/supplier/supplier_insert.jsp</result>
+	    </action>
+	    <action name="insertSupplier" class="supplierAction" method="insertSupplier">
+			<param name="savePath">/upload</param>
+	      	<result name="error">/WEB-INF/pages/basic/supplier/supplier_insert.jsp</result>
+	      	<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <!-- 制造商批量导入Excel -->
+		     <action name="initSupplierExcel" class="supplierAction" method="initSupplierExcel">
+		      <result name="success">/WEB-INF/pages/basic/supplier/supplier_excel.jsp</result>
+		    </action>
+		    <action name="insertSupplierExcel" class="supplierAction" method="insertSupplierExcel">
+		      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		    </action>
+		    
+	     <action name="updateProjectSummary" class="projectSummaryAction" method="updateSummary">
+	       <param name="savePath">/upload</param>
+		   <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		   <interceptor-ref name="defaultStack"></interceptor-ref>
+		   <interceptor-ref name="fileUpload">
+		   		<param name="maximumSize">100000000</param>
+		   </interceptor-ref>
+		   <result name="input">/WEB-INF/pages/tokenerr2.jsp</result>
+	    </action>
+	    
+		<!-- 查询某一制造商的详细信息 zjy begin -->
+		<action name="supplierDetail" class="supplierAction" method="supplierDetail">
+			<result name="success">/WEB-INF/pages/basic/supplier/supplier_detail.jsp</result>
+			<param name="savePath">/upload</param>
+		</action>
+		<!-- 查询某一制造商的详细信息 zjy end -->
+		
+    	<action name="downloadImage" class="supplierAction" method="downloadImage">
+        	<result name="success" type="stream">
+            	<param name="contentType">${contentType }</param>
+            	<param name="inputName">inputStream</param>
+            	<param name="contentDisposition">attachment;filename="${fileName}"</param>
+            	<param name="bufferSize">1024</param>
+        	</result>
+        	<param name="savePath">/upload</param>
+    	</action>
+    	
+	    <action name="initSupplierUpdate" class="supplierAction" method="initSupplierUpdate">
+	      <result name="success">/WEB-INF/pages/basic/supplier/supplier_update.jsp</result>
+	      <param name="savePath">/upload</param>
+	    </action>
+	    <action name="updateSupplier" class="supplierAction" method="updateSupplier">
+			<param name="savePath">/upload</param>
+	      	<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initSupplierDelete" class="supplierAction" method="initSupplierDelete">
+	      <result name="success">/WEB-INF/pages/basic/supplier/supplier_delete.jsp</result>
+	    </action>
+	    <action name="deleteSupplier" class="supplierAction" method="deleteSupplier">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initSupplierDisable" class="supplierAction" method="initSupplierDisable">
+	      <result name="success">/WEB-INF/pages/basic/supplier/supplier_disable.jsp</result>
+	    </action>
+	    <action name="disableSupplier" class="supplierAction" method="disableSupplier">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initSupplierAble" class="supplierAction" method="initSupplierAble">
+	      <result name="success">/WEB-INF/pages/basic/supplier/supplier_able.jsp</result>
+	    </action>
+	    <action name="ableSupplier" class="supplierAction" method="ableSupplier">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="selAccount" class="supplierAction" method="selAccount">
+	      <result name="success">/WEB-INF/pages/basic/supplier/supplier_account.jsp</result>
+	    </action>
+	    <action name="insertAccount" class="supplierAction" method="insertAccount">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initDownloadBrandSel" class="supplierAction" method="initDownloadBrandSel">
+	      <result name="success">/WEB-INF/pages/basic/supplier/supplierDownload_select.jsp</result>
+	      <result name="selDownloadBrand" type="redirectAction">selDownloadBrand?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selDownloadBrand" class="supplierAction" method="selDownloadBrand">
+	      <result name="success">/WEB-INF/pages/basic/supplier/supplierDownload_select.jsp</result>
+	    </action>
+	    <action name="initDownloadBrandSet" class="supplierAction" method="initDownloadBrandSet">
+	      <result name="success">/WEB-INF/pages/basic/supplier/supplierDownload_set.jsp</result>
+	      <param name="savePath">/upload</param>
+	    </action>
+	    <action name="setDownloadBrand" class="supplierAction" method="setDownloadBrand">
+			<param name="savePath">/upload</param>
+	      	<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initInsertDownloadGoodsinfo" class="supplierAction" method="initInsertDownloadGoodsinfo">
+	      <result name="success">/WEB-INF/pages/basic/supplier/supplierDownload_goods.jsp</result>
+	    </action>
+	    <action name="insertDownloadGoodsInfo" class="supplierAction" method="insertDownloadGoodsInfo">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	<!-- 制造商管理 End by du-->
+	
+	<!-- 制造商及供货商效期查询 Begin by sxh-->
+		<action name="initSupplierDateSel" class="supplierAction" method="initSupplierDateSel">
+	      <result name="success">/WEB-INF/pages/basic/supplierDate/supplierDate_select.jsp</result>
+	      <result name="selSupplierDate" type="redirectAction">selSupplierDate?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selSupplierDate" class="supplierAction" method="selSupplierDate">
+	      <result name="success">/WEB-INF/pages/basic/supplierDate/supplierDate_select.jsp</result>
+	    </action>
+	    
+	    <action name="initSupplierAgentDateSel" class="supplierAgentAction" method="initSupplierAgentDateSel">
+	      <result name="success">/WEB-INF/pages/basic/supplierDate/supplierAgentDate_select.jsp</result>
+	      <result name="selSupplierAgentDate" type="redirectAction">selSupplierAgentDate?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selSupplierAgentDate" class="supplierAgentAction" method="selSupplierAgentDate">
+	      <result name="success">/WEB-INF/pages/basic/supplierDate/supplierAgentDate_select.jsp</result>
+	    </action>
+	<!-- 制造商及供货商效期查询 End by sxh-->
+
+	<!-- 制造商合同管理 Add by zjy -->
+	    <action name="selContract" class="contractAction" method="selContract">
+	      <result name="success">/WEB-INF/pages/basic/contract/contract_select.jsp</result>
+	    </action>
+
+	    <action name="initContractInsert" class="contractAction" method="initContractInsert">
+	      <result name="success">/WEB-INF/pages/basic/contract/contract_insert.jsp</result>
+	    </action>
+	    <action name="insertContract" class="contractAction" method="insertContract">
+			<param name="savePath">/upload</param>
+	      	<result name="error">/WEB-INF/pages/basic/contract/contract_insert.jsp</result>
+	      	<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="contractDetail" class="contractAction" method="contractDetail">
+	      <result name="success">/WEB-INF/pages/basic/contract/contract_detail.jsp</result>
+	      <param name="savePath">/upload</param>
+	    </action>
+	    
+    	<action name="downloadDoc" class="contractAction" method="downloadDoc">
+        	<result name="success" type="stream">
+            	<param name="contentType">${contentType }</param>
+            	<param name="inputName">inputStream</param>
+            	<param name="contentDisposition">attachment;filename="${fileName}"</param>
+            	<param name="bufferSize">1024</param>
+        	</result>
+        	<param name="savePath">/upload</param>
+    	</action>
+    	
+	    <action name="initContractUpdate" class="contractAction" method="initContractUpdate">
+	      <result name="success">/WEB-INF/pages/basic/contract/contract_update.jsp</result>
+	    </action>
+	    <action name="updateContract" class="contractAction" method="updateContract">
+			<param name="savePath">/upload</param>
+	      	<result name="error">/WEB-INF/pages/basic/contract/contract_update.jsp</result>
+	      	<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initContractDelete" class="contractAction" method="initContractDelete">
+	      <result name="success">/WEB-INF/pages/basic/contract/contract_delete.jsp</result>
+	    </action>
+	    <action name="deleteContract" class="contractAction" method="deleteContract">
+	      <result name="error">/WEB-INF/pages/basic/contract/contract_delete.jsp</result>
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 制造商合同管理 End by zjy -->
+	
+	<!-- 制造商管理 Add by du-->
+	    <action name="initSupplierAgentSel" class="supplierAgentAction" method="initSupplierAgentSel">
+	      <result name="success">/WEB-INF/pages/basic/supplierAgent/supplier_select.jsp</result>
+	      <result name="selSupplierAgent" type="redirectAction">selSupplierAgent?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		  <interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selSupplierAgent" class="supplierAgentAction" method="selSupplierAgent">
+	      <result name="success">/WEB-INF/pages/basic/supplierAgent/supplier_select.jsp</result>
+	    </action>
+	     <action name="selSupplierAgentTree" class="supplierAgentAction" method="selSupplierAgentTree">
+	      <result name="success">/WEB-INF/pages/basic/supplierAgent/supplierTree_select.jsp</result>
+	    </action>
+	    <action name="initSupplierAgentInsert" class="supplierAgentAction" method="initSupplierAgentInsert">
+	      <result name="success">/WEB-INF/pages/basic/supplierAgent/supplier_insert.jsp</result>
+	    </action>
+	    <action name="insertSupplierAgent" class="supplierAgentAction" method="insertSupplierAgent">
+			<param name="savePath">/upload</param>
+	      	<result name="error">/WEB-INF/pages/basic/supplierAgent/supplier_insert.jsp</result>
+	      	<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initSupplierAgentExcel" class="supplierAgentAction" method="initSupplierAgentExcel">
+	      <result name="success">/WEB-INF/pages/basic/supplierAgent/supplier_excel.jsp</result>
+	    </action>
+	    <action name="insertSupplierAgentExcel" class="supplierAgentAction" method="insertSupplierAgentExcel">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+		    
+		<action name="supplierAgentDetail" class="supplierAgentAction" method="supplierAgentDetail">
+			<result name="success">/WEB-INF/pages/basic/supplierAgent/supplier_detail.jsp</result>
+			<param name="savePath">/upload</param>
+		</action>
+		
+	    <action name="initSupplierAgentUpdate" class="supplierAgentAction" method="initSupplierAgentUpdate">
+	      <result name="success">/WEB-INF/pages/basic/supplierAgent/supplier_update.jsp</result>
+	      <param name="savePath">/upload</param>
+	    </action>
+	    <action name="updateSupplierAgent" class="supplierAgentAction" method="updateSupplierAgent">
+			<param name="savePath">/upload</param>
+	      	<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initSupplierAgentDelete" class="supplierAgentAction" method="initSupplierAgentDelete">
+	      <result name="success">/WEB-INF/pages/basic/supplierAgent/supplier_delete.jsp</result>
+	    </action>
+	    <action name="deleteSupplierAgent" class="supplierAgentAction" method="deleteSupplierAgent">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initSupplierAgentDisable" class="supplierAgentAction" method="initSupplierAgentDisable">
+	      <result name="success">/WEB-INF/pages/basic/supplierAgent/supplier_disable.jsp</result>
+	    </action>
+	    <action name="disableSupplierAgent" class="supplierAgentAction" method="disableSupplierAgent">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initSupplierAgentAble" class="supplierAgentAction" method="initSupplierAgentAble">
+	      <result name="success">/WEB-INF/pages/basic/supplierAgent/supplier_able.jsp</result>
+	    </action>
+	    <action name="ableSupplierAgent" class="supplierAgentAction" method="ableSupplierAgent">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 制造商管理 End by du-->
+
+	<!-- 门店出仓配置 Add by du-->
+		<action name="selWarehouseConfiguration" class="warehouseConfigurationAction" method="selWarehouseConfiguration">
+	      <result name="success">/WEB-INF/pages/basic/warehouseConfiguration/warehouseConfiguration_select.jsp</result>
+	    </action>
+	    <action name="initWarehouseConfigurationUpdate" class="warehouseConfigurationAction" method="initWarehouseConfigurationUpdate">
+	      <result name="success">/WEB-INF/pages/basic/warehouseConfiguration/warehouseConfiguration_config.jsp</result>
+	    </action>
+	    <action name="updateWarehouseConfiguration" class="warehouseConfigurationAction" method="updateWarehouseConfiguration">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 门店出仓配置 End by du-->	
+	
+	<!-- 品种维护 Liuqian begin-->
+	<action name="initBrandSel" class="brandAction" method="initBrandSel">
+		<result name="success">/WEB-INF/pages/basic/brand/brand_select.jsp</result>
+		<result name="selBrand" type="redirectAction">selBrand?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+	</action>
+	
+	<action name="selBrand" class="brandAction" method="selBrand">
+		<result name="success">/WEB-INF/pages/basic/brand/brand_select.jsp</result>
+	</action>
+	<action name="selBrandTree" class="brandAction" method="selBrandTree">
+		<result name="success">/WEB-INF/pages/basic/brand/brandTree_select.jsp</result>
+	</action>
+	
+	<action name="initBrandInsert" class="brandAction" method="initBrandInsert">
+		<result name="success">/WEB-INF/pages/basic/brand/brand_insert.jsp</result>
+	</action>
+	
+	<action name="insertBrand" class="brandAction" method="insertBrand">
+		<param name="savePath">/upload</param>
+		<result name="success" >/WEB-INF/pages/refresh.jsp</result>
+		<result name="NoRepeat">/WEB-INF/pages/basic/brand/brand_insert.jsp</result>
+	</action>	
+	
+	<action name="brandDetail" class="brandAction" method="brandDetail">
+		<result name="success">/WEB-INF/pages/basic/brand/brand_detail.jsp</result>
+		<param name="savePath">/upload</param>
+	</action>
+	
+    <action name="downloadFile" class="brandAction" method="downloadFile">
+        <result name="success" type="stream">
+            <param name="contentType">${contentType }</param>
+            <param name="inputName">inputStream</param>
+            <param name="contentDisposition">attachment;filename="${fileName}"</param>
+            <param name="bufferSize">1024</param>
+        </result>
+        <param name="savePath">/upload</param>
+    </action>
+    
+	<action name="initBrandUpdate" class="brandAction" method="initBrandUpdate">
+		<result name="success">/WEB-INF/pages/basic/brand/brand_update.jsp</result>
+		<param name="savePath">/upload</param>
+	</action>
+	
+	<action name="updateBrand" class="brandAction" method="updateBrand">
+		<param name="savePath">/upload</param>
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+		<result name="NoRepeat">/WEB-INF/pages/basic/brand/brand_insert.jsp</result>
+	</action>
+	
+	<action name="initBrandDelete" class="brandAction" method="initBrandDelete">
+		<result name="success">/WEB-INF/pages/basic/brand/brand_delete.jsp</result>
+	</action>
+			
+	<action name="brandDelete" class="brandAction" method="brandDelete">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+		<result name="dataUsed">/WEB-INF/pages/basic/brand/brand_delete.jsp</result>
+	</action>
+	
+	<action name="initBrandEnbled" class="brandAction" method="initBrandEnbled">
+		<result name="success">/WEB-INF/pages/basic/brand/brand_enbled.jsp</result>
+	</action>
+	
+	<action name="brandEnbledUpdate" class="brandAction" method="brandEnbledUpdate">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<!-- 品种批量导入 王磊 start -->
+	<action name="initBrandExcelInsert" class="brandAction" method="initBrandExcelInsert">
+		<result name="success">/WEB-INF/pages/basic/brand/brand_excel.jsp</result>
+	</action>
+	
+	<action name="insertBrandExcel" class="brandAction" method="insertBrandExcel">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			
+			<interceptor-ref name="defaultStack"/>
+			<interceptor-ref name="fileUpload">
+				<param name="maximumSize">100000000</param>
+			</interceptor-ref>
+		</action>
+		
+	<!-- 品种批量导入 王磊 end -->
+	<!-- 品种维护 Liuqian end -->
+	
+	<!-- 品种维护 Liuqian Start -->
+	
+	<action name="initVarietySel" class="varietyAction" method="initVarietySel">
+		<result name="success">/WEB-INF/pages/basic/variety/variety_select.jsp</result>
+	</action>
+	
+	<action name="selVariety" class="varietyAction" method="selVariety">
+		<result name="success">/WEB-INF/pages/basic/variety/variety_select.jsp</result>
+	</action>
+	
+	<action name="initVarietyInsert" class="varietyAction" method="initVarietyInsert">
+		<result name="success">/WEB-INF/pages/basic/variety/variety_insert.jsp</result>
+	</action>
+	
+	<action name="insertVariety" class="varietyAction" method="insertVariety">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+		<result name="NoRepeat">/WEB-INF/pages/basic/variety/variety_insert.jsp</result>
+	</action>
+	
+	<action name="initVarietyUpdate" class="varietyAction" method="initVarietyUpdate">
+		<result name="success">/WEB-INF/pages/basic/variety/variety_update.jsp</result>
+	</action>
+	
+	<action name="updateVariety" class="varietyAction" method="updateVariety">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	
+	<action name="initVarietyDelete" class="varietyAction" method="initVarietyDelete">
+		<result name="success">/WEB-INF/pages/basic/variety/variety_delete.jsp</result>
+	</action>
+	
+	<action name="varietyDelete" class="varietyAction" method="varietyDelete">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+		<result name="dataUsed">/WEB-INF/pages/basic/variety/variety_delete.jsp</result>
+	</action>
+	
+	<!-- 品种维护 Liuqian end -->
+	
+	
+	<!-- 镜架类维护 Add by du-->
+		<action name="initGlassesFrameSel" class="glassesFrameAction" method="initGlassesFrameSel">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFrame_select.jsp</result>
+	      <result name="selGlassesFrame" type="redirectAction">selGlassesFrame?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selGlassesFrame" class="glassesFrameAction" method="selGlassesFrame">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFrame_select.jsp</result>
+	    </action>
+	    <action name="initGlassesFrameInsert" class="glassesFrameAction" method="initGlassesFrameInsert">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFrame_insert.jsp</result>
+	    </action>
+	    <action name="insertGlassesFrame" class="glassesFrameAction" method="insertGlassesFrame">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFrame_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFrameUpdate" class="glassesFrameAction" method="initGlassesFrameUpdate">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFrame_update.jsp</result>
+	    </action>
+	    <action name="initGlassesFrameDetails" class="glassesFrameAction" method="initGlassesFrameDetails">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFrame_details.jsp</result>
+	    </action>
+	    <action name="updateGlassesFrame" class="glassesFrameAction" method="updateGlassesFrame">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFrameDelete" class="glassesFrameAction" method="initGlassesFrameDelete">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFrame_delete.jsp</result>
+	    </action>
+	    <action name="deleteGlassesFrame" class="glassesFrameAction" method="deleteGlassesFrame">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFrameDisable" class="glassesFrameAction" method="initGlassesFrameDisable">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFrame_disable.jsp</result>
+	    </action>
+	    <action name="disableGlassesFrame" class="glassesFrameAction" method="disableGlassesFrame">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFrameAble" class="glassesFrameAction" method="initGlassesFrameAble">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFrame_able.jsp</result>
+	    </action>
+	    <action name="ableGlassesFrame" class="glassesFrameAction" method="ableGlassesFrame">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFramePhotoUpdate" class="glassesFrameAction" method="initGlassesFramePhotoUpdate">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFramePhoto_update.jsp</result>
+	    </action>
+	     <action name="updateGlassesFramePhoto" class="glassesFrameAction" method="updateGlassesFramePhoto">
+	     <param name="savePath">/GlassesFramePhotos</param>
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFramePhotoDelete" class="glassesFrameAction" method="initGlassesFramePhotoDelete">
+	      <result name="success">/WEB-INF/pages/delete.jsp</result>
+	    </action>
+	     <action name="deleteGlassesFramePhoto" class="glassesFrameAction" method="deleteGlassesFramePhoto">
+	      <param name="savePath">/GlassesFramePhotos</param>
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initGlassesFramePhotoDetail" class="glassesFrameAction" method="initGlassesFramePhotoDetail">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFramePhoto_Detail.jsp</result>
+	    </action>
+	    
+	    <action name="initDisableAllWhole" class="glassesFrameAction" method="initDisableAllWhole">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/allWhole_disable.jsp</result>
+	    </action>
+	    <action name="disableAllWhole" class="glassesFrameAction" method="disableAllWhole">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initAbleAllWhole" class="glassesFrameAction" method="initAbleAllWhole">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/allWhole_able.jsp</result>
+	    </action>
+	    <action name="ableAllWhole" class="glassesFrameAction" method="ableAllWhole">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 镜架类维护 End by du-->
+	
+	<!-- 镜架类维护（爱尔） Add by sxh-->
+		<action name="initGlassesFrameSelAR" class="glassesFrameARAction" method="initGlassesFrameSelAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFrame_select.jsp</result>
+	      <result name="selGlassesFrameAR" type="redirectAction">selGlassesFrameAR?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selGlassesFrameAR" class="glassesFrameARAction" method="selGlassesFrameAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFrame_select.jsp</result>
+	    </action>
+	    <action name="initGlassesFrameInsertAR" class="glassesFrameARAction" method="initGlassesFrameInsertAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFrame_insert.jsp</result>
+	    </action>
+	    <action name="insertGlassesFrameAR" class="glassesFrameARAction" method="insertGlassesFrameAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFrame_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFrameUpdateAR" class="glassesFrameARAction" method="initGlassesFrameUpdateAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFrame_update.jsp</result>
+	    </action>
+	    <action name="initGlassesFrameDetailsAR" class="glassesFrameARAction" method="initGlassesFrameDetailsAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFrame_details.jsp</result>
+	    </action>
+	    <action name="updateGlassesFrameAR" class="glassesFrameARAction" method="updateGlassesFrameAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFrameDeleteAR" class="glassesFrameARAction" method="initGlassesFrameDeleteAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFrame_delete.jsp</result>
+	    </action>
+	    <action name="deleteGlassesFrameAR" class="glassesFrameARAction" method="deleteGlassesFrameAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFrameDisableAR" class="glassesFrameARAction" method="initGlassesFrameDisableAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFrame_disable.jsp</result>
+	    </action>
+	    <action name="disableGlassesFrameAR" class="glassesFrameARAction" method="disableGlassesFrameAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFrameAbleAR" class="glassesFrameARAction" method="initGlassesFrameAbleAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFrame_able.jsp</result>
+	    </action>
+	    <action name="ableGlassesFrameAR" class="glassesFrameARAction" method="ableGlassesFrameAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFramePhotoUpdateAR" class="glassesFrameARAction" method="initGlassesFramePhotoUpdateAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFramePhoto_update.jsp</result>
+	    </action>
+	     <action name="updateGlassesFramePhotoAR" class="glassesFrameARAction" method="updateGlassesFramePhotoAR">
+	     <param name="savePath">/GlassesFramePhotos</param>
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFramePhotoDeleteAR" class="glassesFrameARAction" method="initGlassesFramePhotoDeleteAR">
+	      <result name="success">/WEB-INF/pages/delete.jsp</result>
+	    </action>
+	     <action name="deleteGlassesFramePhotoAR" class="glassesFrameARAction" method="deleteGlassesFramePhotoAR">
+	      <param name="savePath">/GlassesFramePhotos</param>
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initGlassesFramePhotoDetailAR" class="glassesFrameARAction" method="initGlassesFramePhotoDetailAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFramePhoto_Detail.jsp</result>
+	    </action>
+	    
+	    <action name="initDisableAllWholeAR" class="glassesFrameARAction" method="initDisableAllWholeAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/allWhole_disable.jsp</result>
+	    </action>
+	    <action name="disableAllWholeAR" class="glassesFrameARAction" method="disableAllWholeAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initAbleAllWholeAR" class="glassesFrameARAction" method="initAbleAllWholeAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/allWhole_able.jsp</result>
+	    </action>
+	    <action name="ableAllWholeAR" class="glassesFrameARAction" method="ableAllWholeAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 镜架类维护（爱尔） End by sxh -->
+	
+	<!-- 镜架类批量新增 Add by sxh-->
+	    <action name="initGlassesFrameManyInsert" class="glassesFrameManyAction" method="initGlassesFrameManyInsert">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFrameMany_insert.jsp</result>
+	    </action>
+	    
+	    <action name="importGlassesFrameManyExcel" class="glassesFrameManyAction" method="importGlassesFrameManyExcel">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFrameMany_insert.jsp</result>
+	      <param name="savePath">/upload</param>
+	    </action>
+	    
+	    <action name="insertGlassesManyFrame" class="glassesFrameManyAction" method="insertGlassesManyFrame">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFrameMany_insert.jsp</result>
+	    </action>
+	<!-- 镜架类批量新增 End by sxh-->
+	
+	<!-- 镜架类批量新增（爱尔） Add by sxh-->
+	    <action name="initGlassesFrameManyInsertAR" class="glassesFrameManyARAction" method="initGlassesFrameManyInsertAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFrameMany_insert.jsp</result>
+	    </action>
+	    
+	    <action name="importGlassesFrameManyExcelAR" class="glassesFrameManyARAction" method="importGlassesFrameManyExcelAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFrameMany_insert.jsp</result>
+	      <param name="savePath">/upload</param>
+	    </action>
+	    
+	    <action name="insertGlassesManyFrameAR" class="glassesFrameManyARAction" method="insertGlassesManyFrameAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFrameAR/glassesFrameMany_insert.jsp</result>
+	    </action>
+	<!-- 镜架类批量新增（爱尔） End by sxh-->
+	
+	<!-- 太阳镜类批量新增 Add by sxh-->
+	    <action name="initGlassesFinishManyInsert" class="glassesFrameManyAction" method="initGlassesFinishManyInsert">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinish/glassesFinishMany_insert.jsp</result>
+	    </action>
+	    
+	    <action name="importGlassesFinishManyExcel" class="glassesFrameManyAction" method="importGlassesFinishManyExcel">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinish/glassesFinishMany_insert.jsp</result>
+	      <param name="savePath">/upload</param>
+	    </action>
+	    
+	    <action name="insertGlassesManyFinish" class="glassesFrameManyAction" method="insertGlassesManyFinish">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinish/glassesFinishMany_insert.jsp</result>
+	    </action>
+	<!-- 太阳镜类批量新增 End by sxh-->
+	
+	<!-- 太阳镜类批量新增（爱尔） Add by sxh-->
+	    <action name="initGlassesFinishManyInsertAR" class="glassesFrameManyARAction" method="initGlassesFinishManyInsertAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinishAR/glassesFinishMany_insert.jsp</result>
+	    </action>
+	    
+	    <action name="importGlassesFinishManyExcelAR" class="glassesFrameManyARAction" method="importGlassesFinishManyExcelAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinishAR/glassesFinishMany_insert.jsp</result>
+	      <param name="savePath">/upload</param>
+	    </action>
+	    
+	    <action name="insertGlassesManyFinishAR" class="glassesFrameManyARAction" method="insertGlassesManyFinishAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinishAR/glassesFinishMany_insert.jsp</result>
+	    </action>
+	<!-- 太阳镜类批量新增（爱尔） End by sxh-->
+	
+	<!-- 老花镜类批量新增 Add by sxh-->
+	    <action name="initGlassesPresbyopicManyInsert" class="glassesFrameManyAction" method="initGlassesPresbyopicManyInsert">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlasses/glassesPresbyopicMany_insert.jsp</result>
+	    </action>
+	    
+	    <action name="importGlassesPresbyopicManyExcel" class="glassesFrameManyAction" method="importGlassesPresbyopicManyExcel">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlasses/glassesPresbyopicMany_insert.jsp</result>
+	      <param name="savePath">/upload</param>
+	    </action>
+	    
+	    <action name="insertGlassesManyPresbyopic" class="glassesFrameManyAction" method="insertGlassesManyPresbyopic">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlasses/glassesPresbyopicMany_insert.jsp</result>
+	    </action>
+	<!-- 老花镜类批量新增 End by sxh-->
+	
+	<!-- 老花镜类批量新增（爱尔） Add by sxh-->
+	    <action name="initGlassesPresbyopicManyInsertAR" class="glassesFrameManyARAction" method="initGlassesPresbyopicManyInsertAR">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlassesAR/glassesPresbyopicMany_insert.jsp</result>
+	    </action>
+	    
+	    <action name="importGlassesPresbyopicManyExcelAR" class="glassesFrameManyARAction" method="importGlassesPresbyopicManyExcelAR">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlassesAR/glassesPresbyopicMany_insert.jsp</result>
+	      <param name="savePath">/upload</param>
+	    </action>
+	    
+	    <action name="insertGlassesManyPresbyopicAR" class="glassesFrameManyARAction" method="insertGlassesManyPresbyopicAR">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlassesAR/glassesPresbyopicMany_insert.jsp</result>
+	    </action>
+	<!-- 老花镜类批量新增（爱尔） End by sxh-->
+	
+	<!-- 太阳镜维护 Add by moyongsheng-->
+		<action name="initGlassesFinishSel" class="glassesFinishAction" method="initGlassesFinishSel">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinish/glassesFinish_select.jsp</result>
+	       <result name="selGlassesFinish" type="redirectAction">selGlassesFinish?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selGlassesFinish" class="glassesFinishAction" method="selGlassesFinish">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinish/glassesFinish_select.jsp</result>
+	    </action>
+	    <action name="initGlassesFinishInsert" class="glassesFinishAction" method="initGlassesFinishInsert">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinish/glassesFinish_insert.jsp</result>
+	    </action>
+	    <action name="insertGlassesFinish" class="glassesFinishAction" method="insertGlassesFinish">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinish/glassesFinish_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFinishUpdate" class="glassesFinishAction" method="initGlassesFinishUpdate">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinish/glassesFinish_update.jsp</result>
+	    </action>
+	     <action name="initGlassesFinishDetails" class="glassesFinishAction" method="initGlassesFinishDetails">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinish/glassesFinish_details.jsp</result>
+	    </action>
+	    <action name="updateGlassesFinish" class="glassesFinishAction" method="updateGlassesFinish">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFinishDelete" class="glassesFinishAction" method="initGlassesFinishDelete">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinish/glassesFinish_delete.jsp</result>
+	    </action>
+	    <action name="deleteGlassesFinish" class="glassesFinishAction" method="deleteGlassesFinish">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFinishDisable" class="glassesFinishAction" method="initGlassesFinishDisable">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinish/glassesFinish_disable.jsp</result>
+	    </action>
+	    <action name="disableGlassesFinish" class="glassesFinishAction" method="disableGlassesFinish">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFinishAble" class="glassesFinishAction" method="initGlassesFinishAble">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinish/glassesFinish_able.jsp</result>
+	    </action>
+	    <action name="ableGlassesFinish" class="glassesFinishAction" method="ableGlassesFinish">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 太阳镜维护 End by moyongsheng-->
+	
+	<!-- 太阳镜维护（爱尔） Add by sxh-->
+		<action name="initGlassesFinishSelAR" class="glassesFinishARAction" method="initGlassesFinishSelAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinishAR/glassesFinish_select.jsp</result>
+	       <result name="selGlassesFinishAR" type="redirectAction">selGlassesFinishAR?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selGlassesFinishAR" class="glassesFinishARAction" method="selGlassesFinishAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinishAR/glassesFinish_select.jsp</result>
+	    </action>
+	    <action name="initGlassesFinishInsertAR" class="glassesFinishARAction" method="initGlassesFinishInsertAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinishAR/glassesFinish_insert.jsp</result>
+	    </action>
+	    <action name="insertGlassesFinishAR" class="glassesFinishARAction" method="insertGlassesFinishAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinishAR/glassesFinish_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFinishUpdateAR" class="glassesFinishARAction" method="initGlassesFinishUpdateAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinishAR/glassesFinish_update.jsp</result>
+	    </action>
+	     <action name="initGlassesFinishDetailsAR" class="glassesFinishARAction" method="initGlassesFinishDetailsAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinishAR/glassesFinish_details.jsp</result>
+	    </action>
+	    <action name="updateGlassesFinishAR" class="glassesFinishARAction" method="updateGlassesFinishAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFinishDeleteAR" class="glassesFinishARAction" method="initGlassesFinishDeleteAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinishAR/glassesFinish_delete.jsp</result>
+	    </action>
+	    <action name="deleteGlassesFinishAR" class="glassesFinishARAction" method="deleteGlassesFinishAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFinishDisableAR" class="glassesFinishARAction" method="initGlassesFinishDisableAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinishAR/glassesFinish_disable.jsp</result>
+	    </action>
+	    <action name="disableGlassesFinishAR" class="glassesFinishARAction" method="disableGlassesFinishAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesFinishAbleAR" class="glassesFinishARAction" method="initGlassesFinishAbleAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesFinishAR/glassesFinish_able.jsp</result>
+	    </action>
+	    <action name="ableGlassesFinishAR" class="glassesFinishARAction" method="ableGlassesFinishAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 太阳镜维护（爱尔） End by sxh-->
+	
+	<!-- 老花镜维护 Add by moyongsheng-->
+		<action name="initPresbyopicGlassesSel" class="presbyopicGlassesAction" method="initPresbyopicGlassesSel">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlasses/presbyopicGlasses_select.jsp</result>
+	      <result name="selPresbyopicGlasses" type="redirectAction">selPresbyopicGlasses?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selPresbyopicGlasses" class="presbyopicGlassesAction" method="selPresbyopicGlasses">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlasses/presbyopicGlasses_select.jsp</result>
+	    </action>
+	    <action name="initPresbyopicGlassesInsert" class="presbyopicGlassesAction" method="initPresbyopicGlassesInsert">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlasses/presbyopicGlasses_insert.jsp</result>
+	    </action>
+	    <action name="insertPresbyopicGlasses" class="presbyopicGlassesAction" method="insertPresbyopicGlasses">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlasses/presbyopicGlasses_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initPresbyopicGlassesUpdate" class="presbyopicGlassesAction" method="initPresbyopicGlassesUpdate">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlasses/presbyopicGlasses_update.jsp</result>
+	    </action>
+	     <action name="initPresbyopicGlassesDetails" class="presbyopicGlassesAction" method="initPresbyopicGlassesDetails">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlasses/presbyopicGlasses_details.jsp</result>
+	    </action>
+	    <action name="updatePresbyopicGlasses" class="presbyopicGlassesAction" method="updatePresbyopicGlasses">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initPresbyopicGlassesDelete" class="presbyopicGlassesAction" method="initPresbyopicGlassesDelete">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlasses/presbyopicGlasses_delete.jsp</result>
+	    </action>
+	    <action name="deletePresbyopicGlasses" class="presbyopicGlassesAction" method="deletePresbyopicGlasses">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initPresbyopicGlassesDisable" class="presbyopicGlassesAction" method="initPresbyopicGlassesDisable">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlasses/presbyopicGlasses_disable.jsp</result>
+	    </action>
+	    <action name="disablePresbyopicGlasses" class="presbyopicGlassesAction" method="disablePresbyopicGlasses">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initPresbyopicGlassesAble" class="presbyopicGlassesAction" method="initPresbyopicGlassesAble">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlasses/presbyopicGlasses_able.jsp</result>
+	    </action>
+	    <action name="ablePresbyopicGlasses" class="presbyopicGlassesAction" method="ablePresbyopicGlasses">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 老花镜维护 End by moyongsheng-->
+	
+	<!-- 老花镜维护 （爱尔）Add by sxh -->
+		<action name="initPresbyopicGlassesSelAR" class="presbyopicGlassesARAction" method="initPresbyopicGlassesSelAR">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlassesAR/presbyopicGlasses_select.jsp</result>
+	      <result name="selPresbyopicGlassesAR" type="redirectAction">selPresbyopicGlassesAR?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selPresbyopicGlassesAR" class="presbyopicGlassesARAction" method="selPresbyopicGlassesAR">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlassesAR/presbyopicGlasses_select.jsp</result>
+	    </action>
+	    <action name="initPresbyopicGlassesInsertAR" class="presbyopicGlassesARAction" method="initPresbyopicGlassesInsertAR">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlassesAR/presbyopicGlasses_insert.jsp</result>
+	    </action>
+	    <action name="insertPresbyopicGlassesAR" class="presbyopicGlassesARAction" method="insertPresbyopicGlassesAR">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlassesAR/presbyopicGlasses_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initPresbyopicGlassesUpdateAR" class="presbyopicGlassesARAction" method="initPresbyopicGlassesUpdateAR">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlassesAR/presbyopicGlasses_update.jsp</result>
+	    </action>
+	     <action name="initPresbyopicGlassesDetailsAR" class="presbyopicGlassesARAction" method="initPresbyopicGlassesDetailsAR">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlassesAR/presbyopicGlasses_details.jsp</result>
+	    </action>
+	    <action name="updatePresbyopicGlassesAR" class="presbyopicGlassesARAction" method="updatePresbyopicGlassesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initPresbyopicGlassesDeleteAR" class="presbyopicGlassesARAction" method="initPresbyopicGlassesDeleteAR">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlassesAR/presbyopicGlasses_delete.jsp</result>
+	    </action>
+	    <action name="deletePresbyopicGlassesAR" class="presbyopicGlassesARAction" method="deletePresbyopicGlassesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initPresbyopicGlassesDisableAR" class="presbyopicGlassesARAction" method="initPresbyopicGlassesDisableAR">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlassesAR/presbyopicGlasses_disable.jsp</result>
+	    </action>
+	    <action name="disablePresbyopicGlassesAR" class="presbyopicGlassesARAction" method="disablePresbyopicGlassesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initPresbyopicGlassesAbleAR" class="presbyopicGlassesARAction" method="initPresbyopicGlassesAbleAR">
+	      <result name="success">/WEB-INF/pages/basic/presbyopicGlassesAR/presbyopicGlasses_able.jsp</result>
+	    </action>
+	    <action name="ablePresbyopicGlassesAR" class="presbyopicGlassesARAction" method="ablePresbyopicGlassesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 老花镜维护 （爱尔）End by sxh -->
+	
+	<!--配件类维护 Add by du-->
+	    <action name="initGlassesAccessoriesSel" class="glassesAccessoriesAction" method="initGlassesAccessoriesSel">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessories/glassesAccessories_select.jsp</result>
+	       <result name="selGlassesAccessories" type="redirectAction">selGlassesAccessories?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selGlassesAccessories" class="glassesAccessoriesAction" method="selGlassesAccessories">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessories/glassesAccessories_select.jsp</result>
+	    </action>
+	    <action name="initGlassesAccessoriesInsert" class="glassesAccessoriesAction" method="initGlassesAccessoriesInsert">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessories/glassesAccessories_insert.jsp</result>
+	    </action>
+	    <action name="insertGlassesAccessories" class="glassesAccessoriesAction" method="insertGlassesAccessories">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessories/glassesAccessories_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesAccessoriesUpdate" class="glassesAccessoriesAction" method="initGlassesAccessoriesUpdate">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessories/glassesAccessories_update.jsp</result>
+	    </action>
+	      <action name="initGlassesAccessoriesDetails" class="glassesAccessoriesAction" method="initGlassesAccessoriesDetails">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessories/glassesAccessories_details.jsp</result>
+	    </action>
+	    <action name="updateGlassesAccessories" class="glassesAccessoriesAction" method="updateGlassesAccessories">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesAccessoriesDelete" class="glassesAccessoriesAction" method="initGlassesAccessoriesDelete">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessories/glassesAccessories_delete.jsp</result>
+	    </action>
+	    <action name="deleteGlassesAccessories" class="glassesAccessoriesAction" method="deleteGlassesAccessories">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesAccessoriesDisable" class="glassesAccessoriesAction" method="initGlassesAccessoriesDisable">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessories/glassesAccessories_disable.jsp</result>
+	    </action>
+	    <action name="disableGlassesAccessories" class="glassesAccessoriesAction" method="disableGlassesAccessories">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesAccessoriesAble" class="glassesAccessoriesAction" method="initGlassesAccessoriesAble">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessories/glassesAccessories_able.jsp</result>
+	    </action>
+	    <action name="ableGlassesAccessories" class="glassesAccessoriesAction" method="ableGlassesAccessories">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 配件类维护 End by du-->	
+	
+	<!--配件类维护  （爱尔）Add by sxh-->
+	    <action name="initGlassesAccessoriesSelAR" class="glassesAccessoriesARAction" method="initGlassesAccessoriesSelAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessoriesAR/glassesAccessories_select.jsp</result>
+	       <result name="selGlassesAccessoriesAR" type="redirectAction">selGlassesAccessoriesAR?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selGlassesAccessoriesAR" class="glassesAccessoriesARAction" method="selGlassesAccessoriesAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessoriesAR/glassesAccessories_select.jsp</result>
+	    </action>
+	    <action name="initGlassesAccessoriesInsertAR" class="glassesAccessoriesARAction" method="initGlassesAccessoriesInsertAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessoriesAR/glassesAccessories_insert.jsp</result>
+	    </action>
+	    <action name="insertGlassesAccessoriesAR" class="glassesAccessoriesARAction" method="insertGlassesAccessoriesAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessoriesAR/glassesAccessories_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesAccessoriesUpdateAR" class="glassesAccessoriesARAction" method="initGlassesAccessoriesUpdateAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessoriesAR/glassesAccessories_update.jsp</result>
+	    </action>
+	      <action name="initGlassesAccessoriesDetailsAR" class="glassesAccessoriesARAction" method="initGlassesAccessoriesDetailsAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessoriesAR/glassesAccessories_details.jsp</result>
+	    </action>
+	    <action name="updateGlassesAccessoriesAR" class="glassesAccessoriesARAction" method="updateGlassesAccessoriesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesAccessoriesDeleteAR" class="glassesAccessoriesARAction" method="initGlassesAccessoriesDeleteAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessoriesAR/glassesAccessories_delete.jsp</result>
+	    </action>
+	    <action name="deleteGlassesAccessoriesAR" class="glassesAccessoriesARAction" method="deleteGlassesAccessoriesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesAccessoriesDisableAR" class="glassesAccessoriesARAction" method="initGlassesAccessoriesDisableAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessoriesAR/glassesAccessories_disable.jsp</result>
+	    </action>
+	    <action name="disableGlassesAccessoriesAR" class="glassesAccessoriesARAction" method="disableGlassesAccessoriesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGlassesAccessoriesAbleAR" class="glassesAccessoriesARAction" method="initGlassesAccessoriesAbleAR">
+	      <result name="success">/WEB-INF/pages/basic/glassesAccessoriesAR/glassesAccessories_able.jsp</result>
+	    </action>
+	    <action name="ableGlassesAccessoriesAR" class="glassesAccessoriesARAction" method="ableGlassesAccessoriesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 配件类维护  （爱尔）End by sxh-->	
+	
+	<!-- 隐形订做镜片类维护 Add by moyongsheng-->
+  		<action name="initStealthCustomLensesSel" class="stealthCustomLensesAction" method="initStealthCustomLensesSel">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLenses/stealthCustomLenses_select.jsp</result>
+	      <result name="selStealthCustomLenses" type="redirectAction">selStealthCustomLenses?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selStealthCustomLenses" class="stealthCustomLensesAction" method="selStealthCustomLenses">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLenses/stealthCustomLenses_select.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesInsert" class="stealthCustomLensesAction" method="initStealthCustomLensesInsert">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLenses/stealthCustomLenses_insert.jsp</result>
+	    </action>
+	    <action name="insertStealthCustomLenses" class="stealthCustomLensesAction" method="insertStealthCustomLenses">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLenses/stealthCustomLenses_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesUpdate" class="stealthCustomLensesAction" method="initStealthCustomLensesUpdate">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLenses/stealthCustomLenses_update.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesDetails" class="stealthCustomLensesAction" method="initStealthCustomLensesDetails">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLenses/stealthCustomLenses_details.jsp</result>
+	    </action>
+	    <action name="updateStealthCustomLenses" class="stealthCustomLensesAction" method="updateStealthCustomLenses">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesDelete" class="stealthCustomLensesAction" method="initStealthCustomLensesDelete">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLenses/stealthCustomLenses_delete.jsp</result>
+	    </action>
+	    <action name="deleteStealthCustomLenses" class="stealthCustomLensesAction" method="deleteStealthCustomLenses">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesDisable" class="stealthCustomLensesAction" method="initStealthCustomLensesDisable">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLenses/stealthCustomLenses_disable.jsp</result>
+	    </action>
+	    <action name="disableStealthCustomLenses" class="stealthCustomLensesAction" method="disableStealthCustomLenses">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesAble" class="stealthCustomLensesAction" method="initStealthCustomLensesAble">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLenses/stealthCustomLenses_able.jsp</result>
+	    </action>
+	    <action name="ableStealthCustomLenses" class="stealthCustomLensesAction" method="ableStealthCustomLenses">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 隐形订做镜片类维护 End by moyongsheng-->	
+	
+	<!-- 隐形订做镜片类维护（爱尔） Add by sxh -->
+  		<action name="initStealthCustomLensesSelAR" class="stealthCustomLensesARAction" method="initStealthCustomLensesSelAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesAR/stealthCustomLenses_select.jsp</result>
+	      <result name="selStealthCustomLensesAR" type="redirectAction">selStealthCustomLensesAR?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selStealthCustomLensesAR" class="stealthCustomLensesARAction" method="selStealthCustomLensesAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesAR/stealthCustomLenses_select.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesInsertAR" class="stealthCustomLensesARAction" method="initStealthCustomLensesInsertAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesAR/stealthCustomLenses_insert.jsp</result>
+	    </action>
+	    <action name="insertStealthCustomLensesAR" class="stealthCustomLensesARAction" method="insertStealthCustomLensesAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesAR/stealthCustomLenses_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesUpdateAR" class="stealthCustomLensesARAction" method="initStealthCustomLensesUpdateAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesAR/stealthCustomLenses_update.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesDetailsAR" class="stealthCustomLensesARAction" method="initStealthCustomLensesDetailsAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesAR/stealthCustomLenses_details.jsp</result>
+	    </action>
+	    <action name="updateStealthCustomLensesAR" class="stealthCustomLensesARAction" method="updateStealthCustomLensesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesDeleteAR" class="stealthCustomLensesARAction" method="initStealthCustomLensesDeleteAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesAR/stealthCustomLenses_delete.jsp</result>
+	    </action>
+	    <action name="deleteStealthCustomLensesAR" class="stealthCustomLensesARAction" method="deleteStealthCustomLensesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesDisableAR" class="stealthCustomLensesARAction" method="initStealthCustomLensesDisableAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesAR/stealthCustomLenses_disable.jsp</result>
+	    </action>
+	    <action name="disableStealthCustomLensesAR" class="stealthCustomLensesARAction" method="disableStealthCustomLensesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesAbleAR" class="stealthCustomLensesARAction" method="initStealthCustomLensesAbleAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesAR/stealthCustomLenses_able.jsp</result>
+	    </action>
+	    <action name="ableStealthCustomLensesAR" class="stealthCustomLensesARAction" method="ableStealthCustomLensesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 隐形订做镜片类维护（爱尔） End by sxh -->
+	
+	<!-- 软性接触镜订制维护（爱尔）  Add by sxh -->
+  		<action name="initStealthCustomLensesSelDAR" class="stealthCustomLensesDARAction" method="initStealthCustomLensesSelDAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesDAR/stealthCustomLensesD_select.jsp</result>
+	      <result name="selStealthCustomLensesDAR" type="redirectAction">selStealthCustomLensesDAR?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selStealthCustomLensesDAR" class="stealthCustomLensesDARAction" method="selStealthCustomLensesDAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesDAR/stealthCustomLensesD_select.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesInsertDAR" class="stealthCustomLensesDARAction" method="initStealthCustomLensesInsertDAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesDAR/stealthCustomLensesD_insert.jsp</result>
+	    </action>
+	    <action name="insertStealthCustomLensesDAR" class="stealthCustomLensesDARAction" method="insertStealthCustomLensesDAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesDAR/stealthCustomLensesD_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesUpdateDAR" class="stealthCustomLensesDARAction" method="initStealthCustomLensesUpdateDAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesDAR/stealthCustomLensesD_update.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesDetailsDAR" class="stealthCustomLensesDARAction" method="initStealthCustomLensesDetailsDAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesDAR/stealthCustomLensesD_details.jsp</result>
+	    </action>
+	    <action name="updateStealthCustomLensesDAR" class="stealthCustomLensesDARAction" method="updateStealthCustomLensesDAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesDeleteDAR" class="stealthCustomLensesDARAction" method="initStealthCustomLensesDeleteDAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesDAR/stealthCustomLensesD_delete.jsp</result>
+	    </action>
+	    <action name="deleteStealthCustomLensesDAR" class="stealthCustomLensesDARAction" method="deleteStealthCustomLensesDAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesDisableDAR" class="stealthCustomLensesDARAction" method="initStealthCustomLensesDisableDAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesDAR/stealthCustomLensesD_disable.jsp</result>
+	    </action>
+	    <action name="disableStealthCustomLensesDAR" class="stealthCustomLensesDARAction" method="disableStealthCustomLensesDAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthCustomLensesAbleDAR" class="stealthCustomLensesDARAction" method="initStealthCustomLensesAbleDAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthCustomLensesDAR/stealthCustomLensesD_able.jsp</result>
+	    </action>
+	    <action name="ableStealthCustomLensesDAR" class="stealthCustomLensesDARAction" method="ableStealthCustomLensesDAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 软性接触镜订制维护（爱尔） End by sxh -->
+		
+	<!-- 耗材类维护 Add by moyongsheng-->
+		<action name="initOtherGoodsSel" class="otherGoodsAction" method="initOtherGoodsSel">
+	      <result name="success">/WEB-INF/pages/basic/otherGoods/otherGoods_select.jsp</result>
+	      <result name="selOtherGoods" type="redirectAction">selOtherGoods?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selOtherGoods" class="otherGoodsAction" method="selOtherGoods">
+	      <result name="success">/WEB-INF/pages/basic/otherGoods/otherGoods_select.jsp</result>
+	    </action>
+	    <action name="initOtherGoodsInsert" class="otherGoodsAction" method="initOtherGoodsInsert">
+	      <result name="success">/WEB-INF/pages/basic/otherGoods/otherGoods_insert.jsp</result>
+	    </action>
+	    <action name="insertOtherGoods" class="otherGoodsAction" method="insertOtherGoods">
+	      <result name="success">/WEB-INF/pages/basic/otherGoods/otherGoods_insert.jsp</result>	      
+		  <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initOtherGoodsUpdate" class="otherGoodsAction" method="initOtherGoodsUpdate">
+	      <result name="success">/WEB-INF/pages/basic/otherGoods/otherGoods_update.jsp</result>
+	    </action>
+	    <action name="initOtherGoodsDetails" class="otherGoodsAction" method="initOtherGoodsDetails">
+	      <result name="success">/WEB-INF/pages/basic/otherGoods/otherGoods_details.jsp</result>
+	    </action>
+	    <action name="updateOtherGoods" class="otherGoodsAction" method="updateOtherGoods">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initOtherGoodsDelete" class="otherGoodsAction" method="initOtherGoodsDelete">
+	      <result name="success">/WEB-INF/pages/basic/otherGoods/otherGoods_delete.jsp</result>
+	    </action>
+	    <action name="deleteOtherGoods" class="otherGoodsAction" method="deleteOtherGoods">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initOtherGoodsDisable" class="otherGoodsAction" method="initOtherGoodsDisable">
+	      <result name="success">/WEB-INF/pages/basic/otherGoods/otherGoods_disable.jsp</result>
+	    </action>
+	    <action name="disableOtherGoods" class="otherGoodsAction" method="disableOtherGoods">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initOtherGoodsAble" class="otherGoodsAction" method="initOtherGoodsAble">
+	      <result name="success">/WEB-INF/pages/basic/otherGoods/otherGoods_able.jsp</result>
+	    </action>
+	    <action name="ableOtherGoods" class="otherGoodsAction" method="ableOtherGoods">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 耗材类维护 End by moyongsheng-->
+	
+	<!-- 耗材类维护（爱尔） Add by sxh -->
+		<action name="initOtherGoodsSelAR" class="otherGoodsARAction" method="initOtherGoodsSelAR">
+	      <result name="success">/WEB-INF/pages/basic/otherGoodsAR/otherGoods_select.jsp</result>
+	      <result name="selOtherGoodsAR" type="redirectAction">selOtherGoodsAR?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selOtherGoodsAR" class="otherGoodsARAction" method="selOtherGoodsAR">
+	      <result name="success">/WEB-INF/pages/basic/otherGoodsAR/otherGoods_select.jsp</result>
+	    </action>
+	    <action name="initOtherGoodsInsertAR" class="otherGoodsARAction" method="initOtherGoodsInsertAR">
+	      <result name="success">/WEB-INF/pages/basic/otherGoodsAR/otherGoods_insert.jsp</result>
+	    </action>
+	    <action name="insertOtherGoodsAR" class="otherGoodsARAction" method="insertOtherGoodsAR">
+	      <result name="success">/WEB-INF/pages/basic/otherGoodsAR/otherGoods_insert.jsp</result>	      
+		  <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initOtherGoodsUpdateAR" class="otherGoodsARAction" method="initOtherGoodsUpdateAR">
+	      <result name="success">/WEB-INF/pages/basic/otherGoodsAR/otherGoods_update.jsp</result>
+	    </action>
+	    <action name="initOtherGoodsDetailsAR" class="otherGoodsARAction" method="initOtherGoodsDetailsAR">
+	      <result name="success">/WEB-INF/pages/basic/otherGoodsAR/otherGoods_details.jsp</result>
+	    </action>
+	    <action name="updateOtherGoodsAR" class="otherGoodsARAction" method="updateOtherGoodsAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initOtherGoodsDeleteAR" class="otherGoodsARAction" method="initOtherGoodsDeleteAR">
+	      <result name="success">/WEB-INF/pages/basic/otherGoodsAR/otherGoods_delete.jsp</result>
+	    </action>
+	    <action name="deleteOtherGoodsAR" class="otherGoodsARAction" method="deleteOtherGoodsAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initOtherGoodsDisableAR" class="otherGoodsARAction" method="initOtherGoodsDisableAR">
+	      <result name="success">/WEB-INF/pages/basic/otherGoodsAR/otherGoods_disable.jsp</result>
+	    </action>
+	    <action name="disableOtherGoodsAR" class="otherGoodsARAction" method="disableOtherGoodsAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initOtherGoodsAbleAR" class="otherGoodsARAction" method="initOtherGoodsAbleAR">
+	      <result name="success">/WEB-INF/pages/basic/otherGoodsAR/otherGoods_able.jsp</result>
+	    </action>
+	    <action name="ableOtherGoodsAR" class="otherGoodsARAction" method="ableOtherGoodsAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 耗材类维护（爱尔） End by sxh -->
+	
+	<!-- 视光类维护 Add by liujing-->
+		<action name="initVisualOpticsSel" class="visualOpticsAction" method="initVisualOpticsSel">
+	      <result name="success">/WEB-INF/pages/basic/visualOptics/visualOptics_select.jsp</result>
+	      <result name="selVisualOptics" type="redirectAction">selVisualOptics?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selVisualOptics" class="visualOpticsAction" method="selVisualOptics">
+	      <result name="success">/WEB-INF/pages/basic/visualOptics/visualOptics_select.jsp</result>
+	    </action>
+	    <action name="initVisualOpticsInsert" class="visualOpticsAction" method="initVisualOpticsInsert">
+	      <result name="success">/WEB-INF/pages/basic/visualOptics/visualOptics_insert.jsp</result>
+	    </action>
+	    <action name="insertVisualOptics" class="visualOpticsAction" method="insertVisualOptics">
+	      <result name="success">/WEB-INF/pages/basic/visualOptics/visualOptics_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initVisualOpticsUpdate" class="visualOpticsAction" method="initVisualOpticsUpdate">
+	      <result name="success">/WEB-INF/pages/basic/visualOptics/visualOptics_update.jsp</result>
+	    </action>
+		<action name="initVisualOpticsDetails" class="visualOpticsAction" method="initVisualOpticsDetails">
+	      <result name="success">/WEB-INF/pages/basic/visualOptics/visualOptics_details.jsp</result>
+	    </action>
+	    <action name="updateVisualOptics" class="visualOpticsAction" method="updateVisualOptics">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initVisualOpticsDelete" class="visualOpticsAction" method="initVisualOpticsDelete">
+	      <result name="success">/WEB-INF/pages/basic/visualOptics/visualOptics_delete.jsp</result>
+	    </action>
+	    <action name="deleteVisualOptics" class="visualOpticsAction" method="deleteVisualOptics">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initVisualOpticsDisable" class="visualOpticsAction" method="initVisualOpticsDisable">
+	      <result name="success">/WEB-INF/pages/basic/visualOptics/visualOptics_disable.jsp</result>
+	    </action>
+	    <action name="disableVisualOptics" class="visualOpticsAction" method="disableVisualOptics">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initVisualOpticsAble" class="visualOpticsAction" method="initVisualOpticsAble">
+	      <result name="success">/WEB-INF/pages/basic/visualOptics/visualOptics_able.jsp</result>
+	    </action>
+	    <action name="ableVisualOptics" class="visualOpticsAction" method="ableVisualOptics">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 视光类维护 End by liujing-->
+	
+	<!-- 视光类维护（爱尔） Add by sxh-->
+		<action name="initVisualOpticsSelAR" class="visualOpticsARAction" method="initVisualOpticsSelAR">
+	      <result name="success">/WEB-INF/pages/basic/visualOpticsAR/visualOptics_select.jsp</result>
+	      <result name="selVisualOpticsAR" type="redirectAction">selVisualOpticsAR?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selVisualOpticsAR" class="visualOpticsARAction" method="selVisualOpticsAR">
+	      <result name="success">/WEB-INF/pages/basic/visualOpticsAR/visualOptics_select.jsp</result>
+	    </action>
+	    <action name="initVisualOpticsInsertAR" class="visualOpticsARAction" method="initVisualOpticsInsertAR">
+	      <result name="success">/WEB-INF/pages/basic/visualOpticsAR/visualOptics_insert.jsp</result>
+	    </action>
+	    <action name="insertVisualOpticsAR" class="visualOpticsARAction" method="insertVisualOpticsAR">
+	      <result name="success">/WEB-INF/pages/basic/visualOpticsAR/visualOptics_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initVisualOpticsUpdateAR" class="visualOpticsARAction" method="initVisualOpticsUpdateAR">
+	      <result name="success">/WEB-INF/pages/basic/visualOpticsAR/visualOptics_update.jsp</result>
+	    </action>
+		<action name="initVisualOpticsDetailsAR" class="visualOpticsARAction" method="initVisualOpticsDetailsAR">
+	      <result name="success">/WEB-INF/pages/basic/visualOpticsAR/visualOptics_details.jsp</result>
+	    </action>
+	    <action name="updateVisualOpticsAR" class="visualOpticsARAction" method="updateVisualOpticsAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initVisualOpticsDeleteAR" class="visualOpticsARAction" method="initVisualOpticsDeleteAR">
+	      <result name="success">/WEB-INF/pages/basic/visualOpticsAR/visualOptics_delete.jsp</result>
+	    </action>
+	    <action name="deleteVisualOpticsAR" class="visualOpticsARAction" method="deleteVisualOpticsAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initVisualOpticsDisableAR" class="visualOpticsARAction" method="initVisualOpticsDisableAR">
+	      <result name="success">/WEB-INF/pages/basic/visualOpticsAR/visualOptics_disable.jsp</result>
+	    </action>
+	    <action name="disableVisualOpticsAR" class="visualOpticsARAction" method="disableVisualOpticsAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initVisualOpticsAbleAR" class="visualOpticsARAction" method="initVisualOpticsAbleAR">
+	      <result name="success">/WEB-INF/pages/basic/visualOpticsAR/visualOptics_able.jsp</result>
+	    </action>
+	    <action name="ableVisualOpticsAR" class="visualOpticsARAction" method="ableVisualOpticsAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 视光类维护（爱尔） End by sxh-->	
+	
+	<!-- 隐形辅料类维护 Add by du-->
+	    <action name="initStealthAccessoriesSel" class="stealthAccessoriesAction" method="initStealthAccessoriesSel">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessories/stealthAccessories_select.jsp</result>
+	       <result name="selStealthAccessories" type="redirectAction">selStealthAccessories?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selStealthAccessories" class="stealthAccessoriesAction" method="selStealthAccessories">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessories/stealthAccessories_select.jsp</result>
+	    </action>
+	    <action name="initStealthAccessoriesInsert" class="stealthAccessoriesAction" method="initStealthAccessoriesInsert">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessories/stealthAccessories_insert.jsp</result>
+	    </action>
+	    <action name="insertStealthAccessories" class="stealthAccessoriesAction" method="insertStealthAccessories">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessories/stealthAccessories_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthAccessoriesUpdate" class="stealthAccessoriesAction" method="initStealthAccessoriesUpdate">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessories/stealthAccessories_update.jsp</result>
+	    </action>
+	      <action name="initStealthAccessoriesDetails" class="stealthAccessoriesAction" method="initStealthAccessoriesDetails">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessories/stealthAccessories_details.jsp</result>
+	    </action>
+	    <action name="updateStealthAccessories" class="stealthAccessoriesAction" method="updateStealthAccessories">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthAccessoriesDelete" class="stealthAccessoriesAction" method="initStealthAccessoriesDelete">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessories/stealthAccessories_delete.jsp</result>
+	    </action>
+	    <action name="deleteStealthAccessories" class="stealthAccessoriesAction" method="deleteStealthAccessories">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthAccessoriesDisable" class="stealthAccessoriesAction" method="initStealthAccessoriesDisable">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessories/stealthAccessories_disable.jsp</result>
+	    </action>
+	    <action name="disableStealthAccessories" class="stealthAccessoriesAction" method="disableStealthAccessories">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthAccessoriesAble" class="stealthAccessoriesAction" method="initStealthAccessoriesAble">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessories/stealthAccessories_able.jsp</result>
+	    </action>
+	    <action name="ableStealthAccessories" class="stealthAccessoriesAction" method="ableStealthAccessories">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 隐形辅料类维护 End by du-->
+	
+	<!-- 隐形辅料类维护（爱尔） Add by sxh -->
+	    <action name="initStealthAccessoriesSelAR" class="stealthAccessoriesARAction" method="initStealthAccessoriesSelAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessoriesAR/stealthAccessories_select.jsp</result>
+	       <result name="selStealthAccessoriesAR" type="redirectAction">selStealthAccessoriesAR?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selStealthAccessoriesAR" class="stealthAccessoriesARAction" method="selStealthAccessoriesAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessoriesAR/stealthAccessories_select.jsp</result>
+	    </action>
+	    <action name="initStealthAccessoriesInsertAR" class="stealthAccessoriesARAction" method="initStealthAccessoriesInsertAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessoriesAR/stealthAccessories_insert.jsp</result>
+	    </action>
+	    <action name="insertStealthAccessoriesAR" class="stealthAccessoriesARAction" method="insertStealthAccessoriesAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessoriesAR/stealthAccessories_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthAccessoriesUpdateAR" class="stealthAccessoriesARAction" method="initStealthAccessoriesUpdateAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessoriesAR/stealthAccessories_update.jsp</result>
+	    </action>
+	      <action name="initStealthAccessoriesDetailsAR" class="stealthAccessoriesARAction" method="initStealthAccessoriesDetailsAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessoriesAR/stealthAccessories_details.jsp</result>
+	    </action>
+	    <action name="updateStealthAccessoriesAR" class="stealthAccessoriesARAction" method="updateStealthAccessoriesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthAccessoriesDeleteAR" class="stealthAccessoriesARAction" method="initStealthAccessoriesDeleteAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessoriesAR/stealthAccessories_delete.jsp</result>
+	    </action>
+	    <action name="deleteStealthAccessoriesAR" class="stealthAccessoriesARAction" method="deleteStealthAccessoriesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthAccessoriesDisableAR" class="stealthAccessoriesARAction" method="initStealthAccessoriesDisableAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessoriesAR/stealthAccessories_disable.jsp</result>
+	    </action>
+	    <action name="disableStealthAccessoriesAR" class="stealthAccessoriesARAction" method="disableStealthAccessoriesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthAccessoriesAbleAR" class="stealthAccessoriesARAction" method="initStealthAccessoriesAbleAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthAccessoriesAR/stealthAccessories_able.jsp</result>
+	    </action>
+	    <action name="ableStealthAccessoriesAR" class="stealthAccessoriesARAction" method="ableStealthAccessoriesAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 隐形辅料类维护（爱尔） End by sxh -->
+
+	<!-- 隐形成品片类维护 Add by du-->
+		<action name="initStealthFinishedSel" class="stealthFinishedAction" method="initStealthFinishedSel">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinished/stealthFinished_select.jsp</result>
+	      <result name="selStealthFinished" type="redirectAction">selStealthFinished?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selStealthFinished" class="stealthFinishedAction" method="selStealthFinished">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinished/stealthFinished_select.jsp</result>
+	    </action>
+	    <action name="initStealthFinishedInsert" class="stealthFinishedAction" method="initStealthFinishedInsert">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinished/stealthFinished_insert.jsp</result>
+	    </action>
+	    <action name="insertStealthFinished" class="stealthFinishedAction" method="insertStealthFinished">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinished/stealthFinished_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthFinishedInsertBulk" class="stealthFinishedAction" method="initStealthFinishedInsertBulk">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinished/stealthFinished_insertBulk.jsp</result>
+	    </action>
+	    <action name="insertBulkStealthFinished" class="stealthFinishedAction" method="insertBulkStealthFinished">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinished/stealthFinished_insertBulk.jsp</result>
+	    </action>
+	    <action name="initStealthFinishedUpdate" class="stealthFinishedAction" method="initStealthFinishedUpdate">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinished/stealthFinished_update.jsp</result>
+	    </action>
+	     <action name="initStealthFinishedDetails" class="stealthFinishedAction" method="initStealthFinishedDetails">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinished/stealthFinished_details.jsp</result>
+	    </action>
+	    <action name="updateStealthFinished" class="stealthFinishedAction" method="updateStealthFinished">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthFinishedDelete" class="stealthFinishedAction" method="initStealthFinishedDelete">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinished/stealthFinished_delete.jsp</result>
+	    </action>
+	    <action name="deleteStealthFinished" class="stealthFinishedAction" method="deleteStealthFinished">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthFinishedDisable" class="stealthFinishedAction" method="initStealthFinishedDisable">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinished/stealthFinished_disable.jsp</result>
+	    </action>
+	    <action name="disableStealthFinished" class="stealthFinishedAction" method="disableStealthFinished">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthFinishedAble" class="stealthFinishedAction" method="initStealthFinishedAble">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinished/stealthFinished_able.jsp</result>
+	    </action>
+	    <action name="ableStealthFinished" class="stealthFinishedAction" method="ableStealthFinished">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 隐形成品片类维护 End by du-->
+	
+	<!-- 隐形成品片类维护（爱尔）Add by sxh -->
+		<action name="initStealthFinishedSelAR" class="stealthFinishedARAction" method="initStealthFinishedSelAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinishedAR/stealthFinished_select.jsp</result>
+	      <result name="selStealthFinishedAR" type="redirectAction">selStealthFinishedAR?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selStealthFinishedAR" class="stealthFinishedARAction" method="selStealthFinishedAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinishedAR/stealthFinished_select.jsp</result>
+	    </action>
+	    <action name="initStealthFinishedInsertAR" class="stealthFinishedARAction" method="initStealthFinishedInsertAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinishedAR/stealthFinished_insert.jsp</result>
+	    </action>
+	    <action name="insertStealthFinishedAR" class="stealthFinishedARAction" method="insertStealthFinishedAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinishedAR/stealthFinished_insert.jsp</result>
+	      <result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthFinishedInsertBulkAR" class="stealthFinishedARAction" method="initStealthFinishedInsertBulkAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinishedAR/stealthFinished_insertBulk.jsp</result>
+	    </action>
+	    <action name="insertBulkStealthFinishedAR" class="stealthFinishedARAction" method="insertBulkStealthFinishedAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinishedAR/stealthFinished_insertBulk.jsp</result>
+	    </action>
+	    <action name="initStealthFinishedUpdateAR" class="stealthFinishedARAction" method="initStealthFinishedUpdateAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinishedAR/stealthFinished_update.jsp</result>
+	    </action>
+	     <action name="initStealthFinishedDetailsAR" class="stealthFinishedARAction" method="initStealthFinishedDetailsAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinishedAR/stealthFinished_details.jsp</result>
+	    </action>
+	    <action name="updateStealthFinishedAR" class="stealthFinishedARAction" method="updateStealthFinishedAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthFinishedDeleteAR" class="stealthFinishedARAction" method="initStealthFinishedDeleteAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinishedAR/stealthFinished_delete.jsp</result>
+	    </action>
+	    <action name="deleteStealthFinishedAR" class="stealthFinishedARAction" method="deleteStealthFinishedAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthFinishedDisableAR" class="stealthFinishedARAction" method="initStealthFinishedDisableAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinishedAR/stealthFinished_disable.jsp</result>
+	    </action>
+	    <action name="disableStealthFinishedAR" class="stealthFinishedARAction" method="disableStealthFinishedAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initStealthFinishedAbleAR" class="stealthFinishedARAction" method="initStealthFinishedAbleAR">
+	      <result name="success">/WEB-INF/pages/basic/stealthFinishedAR/stealthFinished_able.jsp</result>
+	    </action>
+	    <action name="ableStealthFinishedAR" class="stealthFinishedARAction" method="ableStealthFinishedAR">
+	      <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 隐形成品片类维护（爱尔） End by sxh -->
+	
+	<!-- 成品镜片类维护 Add by liuqian-->
+		<action name="initLensFinishedSel" class="lensFinishedAction" method="initLensFinishedSel">
+			<result name="success">/WEB-INF/pages/basic/lensFinished/lensFinished_select.jsp</result>
+			 <result name="selLensFinished" type="redirectAction">selLensFinished?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selLensFinished" class="lensFinishedAction" method="selLensFinished">
+			<result name="success">/WEB-INF/pages/basic/lensFinished/lensFinished_select.jsp</result>
+	    </action>
+	    <action name="initLensFinishedInsert" class="lensFinishedAction" method="initLensFinishedInsert">
+			<result name="success">/WEB-INF/pages/basic/lensFinished/lensFinished_insert.jsp</result>
+	    </action>
+	    <action name="initLensFinished2DInsert" class="lensFinishedAction" method="initLensFinished2DInsert">
+			<result name="success">/WEB-INF/pages/basic/lensFinished/lensFinished2D_insert.jsp</result>
+	    </action>
+	    <action name="insertLensFinished" class="lensFinishedAction" method="insertLensFinished">
+			<result name="success">/WEB-INF/pages/basic/lensFinished/lensFinished_insert.jsp</result>
+			<result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="insertLensFinished2D" class="lensFinishedAction" method="insertLensFinished2D">
+			<result name="success">/WEB-INF/pages/basic/lensFinished/lensFinished2D_insert.jsp</result>
+			<result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initLensFinishedUpdate" class="lensFinishedAction" method="initLensFinishedUpdate">
+			<result name="success">/WEB-INF/pages/basic/lensFinished/lensFinished_update.jsp</result>
+	    </action>   
+	     <action name="initLensFinishedDetails" class="lensFinishedAction" method="initLensFinishedDetails">
+			<result name="success">/WEB-INF/pages/basic/lensFinished/lensFinished_details.jsp</result>
+	    </action>    
+	    <action name="updateLensFinished" class="lensFinishedAction" method="updateLensFinished">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initLensFinishedDelete" class="lensFinishedAction" method="initLensFinishedDelete">
+			<result name="success">/WEB-INF/pages/basic/lensFinished/lensFinished_delete.jsp</result>
+	    </action>    
+	    <action name="deleteLensFinished" class="lensFinishedAction" method="deleteLensFinished">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initLensFinishedDisable" class="lensFinishedAction" method="initLensFinishedDisable">
+			<result name="success">/WEB-INF/pages/basic/lensFinished/lensFinished_disable.jsp</result>
+	    </action>    
+	    <action name="disableLensFinished" class="lensFinishedAction" method="disableLensFinished">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initLensFinishedAble" class="lensFinishedAction" method="initLensFinishedAble">
+			<result name="success">/WEB-INF/pages/basic/lensFinished/lensFinished_able.jsp</result>
+	    </action>    
+	    <action name="ableLensFinished" class="lensFinishedAction" method="ableLensFinished">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initLensFinishedInsertBulk" class="lensFinishedAction" method="initLensFinishedInsertBulk">
+	      <result name="success">/WEB-INF/pages/basic/lensFinished/lensFinished_insertBulk.jsp</result>
+	    </action>       
+	    <action name="insertBulkLensFinished" class="lensFinishedAction" method="insertBulkLensFinished">
+			<result name="success">/WEB-INF/pages/basic/lensFinished/lensFinished_insertBulk.jsp</result>
+	    </action>
+	<!-- 成品镜片类维护 End by liuqian-->
+	
+	<!-- 成品镜片类维护（爱尔） Add by sxh-->
+		<action name="initLensFinishedSelAR" class="lensFinishedARAction" method="initLensFinishedSelAR">
+			<result name="success">/WEB-INF/pages/basic/lensFinishedAR/lensFinished_select.jsp</result>
+			 <result name="selLensFinishedAR" type="redirectAction">selLensFinishedAR?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selLensFinishedAR" class="lensFinishedARAction" method="selLensFinishedAR">
+			<result name="success">/WEB-INF/pages/basic/lensFinishedAR/lensFinished_select.jsp</result>
+	    </action>
+	    <action name="initLensFinished2DInsertAR" class="lensFinishedARAction" method="initLensFinished2DInsertAR">
+			<result name="success">/WEB-INF/pages/basic/lensFinishedAR/lensFinished2D_insert.jsp</result>
+	    </action>
+	    <action name="insertLensFinished2DAR" class="lensFinishedARAction" method="insertLensFinished2DAR">
+			<result name="success">/WEB-INF/pages/basic/lensFinishedAR/lensFinished2D_insert.jsp</result>
+			<result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	
+	    <action name="initLensFinishedInsertAR" class="lensFinishedARAction" method="initLensFinishedInsertAR">
+			<result name="success">/WEB-INF/pages/basic/lensFinishedAR/lensFinished_insert.jsp</result>
+	    </action>
+	    <action name="insertLensFinishedAR" class="lensFinishedARAction" method="insertLensFinishedAR">
+			<result name="success">/WEB-INF/pages/basic/lensFinishedAR/lensFinished_insert.jsp</result>
+			<result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initLensFinishedUpdateAR" class="lensFinishedARAction" method="initLensFinishedUpdateAR">
+			<result name="success">/WEB-INF/pages/basic/lensFinishedAR/lensFinished_update.jsp</result>
+	    </action>   
+	     <action name="initLensFinishedDetailsAR" class="lensFinishedARAction" method="initLensFinishedDetailsAR">
+			<result name="success">/WEB-INF/pages/basic/lensFinishedAR/lensFinished_details.jsp</result>
+	    </action>    
+	    <action name="updateLensFinishedAR" class="lensFinishedARAction" method="updateLensFinishedAR">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initLensFinishedDeleteAR" class="lensFinishedARAction" method="initLensFinishedDeleteAR">
+			<result name="success">/WEB-INF/pages/basic/lensFinishedAR/lensFinished_delete.jsp</result>
+	    </action>    
+	    <action name="deleteLensFinishedAR" class="lensFinishedARAction" method="deleteLensFinishedAR">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initLensFinishedDisableAR" class="lensFinishedARAction" method="initLensFinishedDisableAR">
+			<result name="success">/WEB-INF/pages/basic/lensFinishedAR/lensFinished_disable.jsp</result>
+	    </action>    
+	    <action name="disableLensFinishedAR" class="lensFinishedARAction" method="disableLensFinishedAR">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initLensFinishedAbleAR" class="lensFinishedARAction" method="initLensFinishedAbleAR">
+			<result name="success">/WEB-INF/pages/basic/lensFinishedAR/lensFinished_able.jsp</result>
+	    </action>    
+	    <action name="ableLensFinishedAR" class="lensFinishedARAction" method="ableLensFinishedAR">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initLensFinishedInsertBulkAR" class="lensFinishedARAction" method="initLensFinishedInsertBulkAR">
+	      <result name="success">/WEB-INF/pages/basic/lensFinishedAR/lensFinished_insertBulk.jsp</result>
+	    </action>       
+	    <action name="insertBulkLensFinishedAR" class="lensFinishedARAction" method="insertBulkLensFinishedAR">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 成品镜片类维护 （爱尔）End by sxh-->
+	
+	<!-- 订做镜片类维护 Add by liuqian-->
+		<action name="initLensCustomSel" class="lensCustomAction" method="initLensCustomSel">
+			<result name="success">/WEB-INF/pages/basic/lensCustom/lensCustom_select.jsp</result>
+			<result name="selLensCustom" type="redirectAction">selLensCustom?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selLensCustom" class="lensCustomAction" method="selLensCustom">
+			<result name="success">/WEB-INF/pages/basic/lensCustom/lensCustom_select.jsp</result>
+	    </action>
+	    <action name="initLensCustomInsert" class="lensCustomAction" method="initLensCustomInsert">
+			<result name="success">/WEB-INF/pages/basic/lensCustom/lensCustom_insert.jsp</result>
+	    </action>
+	    <action name="insertLensCustom" class="lensCustomAction" method="insertLensCustom">
+			<result name="success">/WEB-INF/pages/basic/lensCustom/lensCustom_insert.jsp</result>
+			<result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initLensCustomUpdate" class="lensCustomAction" method="initLensCustomUpdate">
+			<result name="success">/WEB-INF/pages/basic/lensCustom/lensCustom_update.jsp</result>
+	    </action>    
+	      <action name="initLensCustomDetails" class="lensCustomAction" method="initLensCustomDetails">
+			<result name="success">/WEB-INF/pages/basic/lensCustom/lensCustom_details.jsp</result>
+	    </action>   
+	    <action name="updateLensCustom" class="lensCustomAction" method="updateLensCustom">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initLensCustomDelete" class="lensCustomAction" method="initLensCustomDelete">
+			<result name="success">/WEB-INF/pages/basic/lensCustom/lensCustom_delete.jsp</result>
+	    </action>    
+	    <action name="deleteLensCustom" class="lensCustomAction" method="deleteLensCustom">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initLensCustomDisable" class="lensCustomAction" method="initLensCustomDisable">
+			<result name="success">/WEB-INF/pages/basic/lensCustom/lensCustom_disable.jsp</result>
+	    </action>    
+	    <action name="disableLensCustom" class="lensCustomAction" method="disableLensCustom">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initLensCustomAble" class="lensCustomAction" method="initLensCustomAble">
+			<result name="success">/WEB-INF/pages/basic/lensCustom/lensCustom_able.jsp</result>
+	    </action>    
+	    <action name="ableLensCustom" class="lensCustomAction" method="ableLensCustom">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	<!-- 订做镜片类维护 End by liuqian-->
+	
+	<!-- 订做镜片类维护（爱尔） Add by sxh -->
+		<action name="initLensCustomSelAR" class="lensCustomARAction" method="initLensCustomSelAR">
+			<result name="success">/WEB-INF/pages/basic/lensCustomAR/lensCustom_select.jsp</result>
+			<result name="selLensCustomAR" type="redirectAction">selLensCustomAR?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}&amp;whichretail=1&amp;select_retail=1</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+	    </action>
+	    <action name="selLensCustomAR" class="lensCustomARAction" method="selLensCustomAR">
+			<result name="success">/WEB-INF/pages/basic/lensCustomAR/lensCustom_select.jsp</result>
+	    </action>
+	    <action name="initLensCustomInsertAR" class="lensCustomARAction" method="initLensCustomInsertAR">
+			<result name="success">/WEB-INF/pages/basic/lensCustomAR/lensCustom_insert.jsp</result>
+	    </action>
+	    <action name="insertLensCustomAR" class="lensCustomARAction" method="insertLensCustomAR">
+			<result name="success">/WEB-INF/pages/basic/lensCustomAR/lensCustom_insert.jsp</result>
+			<result name="rtree">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initLensCustomUpdateAR" class="lensCustomARAction" method="initLensCustomUpdateAR">
+			<result name="success">/WEB-INF/pages/basic/lensCustomAR/lensCustom_update.jsp</result>
+	    </action>    
+	      <action name="initLensCustomDetailsAR" class="lensCustomARAction" method="initLensCustomDetailsAR">
+			<result name="success">/WEB-INF/pages/basic/lensCustomAR/lensCustom_details.jsp</result>
+	    </action>   
+	    <action name="updateLensCustomAR" class="lensCustomARAction" method="updateLensCustomAR">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initLensCustomDeleteAR" class="lensCustomARAction" method="initLensCustomDeleteAR">
+			<result name="success">/WEB-INF/pages/basic/lensCustomAR/lensCustom_delete.jsp</result>
+	    </action>    
+	    <action name="deleteLensCustomAR" class="lensCustomARAction" method="deleteLensCustomAR">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initLensCustomDisableAR" class="lensCustomARAction" method="initLensCustomDisableAR">
+			<result name="success">/WEB-INF/pages/basic/lensCustomAR/lensCustom_disable.jsp</result>
+	    </action>    
+	    <action name="disableLensCustomAR" class="lensCustomARAction" method="disableLensCustomAR">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initLensCustomAbleAR" class="lensCustomARAction" method="initLensCustomAbleAR">
+			<result name="success">/WEB-INF/pages/basic/lensCustomAR/lensCustom_able.jsp</result>
+	    </action>    
+	    <action name="ableLensCustomAR" class="lensCustomARAction" method="ableLensCustomAR">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	<!-- 订做镜片类维护 （爱尔）End by sxh -->
+	
+	<!-- 不合格品现象维护 Add by moyongsheng-->
+		<action name="initNonconformingProductSel" class="nonconformingProductAction" method="initNonconformingProductSel">
+			<result name="success">/WEB-INF/pages/basic/nonconformingProduct/nonconformingProduct_select.jsp</result>
+	    </action>
+	    <action name="selNonconformingProduct" class="nonconformingProductAction" method="selNonconformingProduct">
+			<result name="success">/WEB-INF/pages/basic/nonconformingProduct/nonconformingProduct_select.jsp</result>
+	    </action>
+	    <action name="initNonconformingProductInsert" class="nonconformingProductAction" method="initNonconformingProductInsert">
+			<result name="success">/WEB-INF/pages/basic/nonconformingProduct/nonconformingProduct_insert.jsp</result>
+	    </action>
+	    <action name="insertNonconformingProduct" class="nonconformingProductAction" method="insertNonconformingProduct">
+			<result name="success">/WEB-INF/pages/basic/nonconformingProduct/nonconformingProduct_insert.jsp</result>
+			<result name="error">/WEB-INF/pages/basic/nonconformingProduct/nonconformingProduct_insert.jsp</result>
+	    </action>	    
+	    <action name="initNonconformingProductUpdate" class="nonconformingProductAction" method="initNonconformingProductUpdate">
+			<result name="success">/WEB-INF/pages/basic/nonconformingProduct/nonconformingProduct_update.jsp</result>
+	    </action>    
+	    <action name="updateNonconformingProduct" class="nonconformingProductAction" method="updateNonconformingProduct">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="error">/WEB-INF/pages/basic/nonconformingProduct/nonconformingProduct_update.jsp</result>
+	    </action>	    
+	    <action name="initNonconformingProductDelete" class="nonconformingProductAction" method="initNonconformingProductDelete">
+			<result name="success">/WEB-INF/pages/basic/nonconformingProduct/nonconformingProduct_delete.jsp</result>
+	    </action>    
+	    <action name="deleteNonconformingProduct" class="nonconformingProductAction" method="deleteNonconformingProduct">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 不合格品现象维护 End by moyongsheng-->
+	
+	
+	<!-- 系统模块设定  Add by liujing-->
+		<action name="initSystemModuleSel" class="systemModuleAction" method="initSystemModuleSel">
+			<result name="success">/WEB-INF/pages/basic/systemModule/systemModule_select.jsp</result>
+	    </action>
+	    <action name="selSystemModule" class="systemModuleAction" method="selSystemModule">
+			<result name="success">/WEB-INF/pages/basic/systemModule/systemModule_select.jsp</result>
+	    </action>
+	    <action name="initSystemModuleInsert" class="systemModuleAction" method="initSystemModuleInsert">
+			<result name="success">/WEB-INF/pages/basic/systemModule/systemModule_insert.jsp</result>
+	    </action>
+	    <action name="insertSystemModule" class="systemModuleAction" method="insertSystemModule">
+			<result name="success">/WEB-INF/pages/basic/systemModule/systemModule_insert.jsp</result>
+	    </action>
+	    <action name="initSystemModuleImport" class="systemModuleAction" method="initSystemModuleImport">
+			<result name="success">/WEB-INF/pages/basic/systemModule/systemModule_import.jsp</result>
+	    </action>
+	    <action name="importSystemModule" class="systemModuleAction" method="importSystemModule">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<param name="savePath">/upload</param>
+	    </action>	    
+	    <action name="initSystemModuleUpdate" class="systemModuleAction" method="initSystemModuleUpdate">
+			<result name="success">/WEB-INF/pages/basic/systemModule/systemModule_update.jsp</result>
+	    </action>    
+	    <action name="updateSystemModule" class="systemModuleAction" method="updateSystemModule">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+	    <action name="initSystemModuleDelete" class="systemModuleAction" method="initSystemModuleDelete">
+			<result name="success">/WEB-INF/pages/basic/systemModule/systemModule_delete.jsp</result>
+	    </action>    
+	    <action name="deleteSystemModule" class="systemModuleAction" method="deleteSystemModule">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initSystemModuleDisable" class="systemModuleAction" method="initSystemModuleDisable">
+			<result name="success">/WEB-INF/pages/basic/systemModule/systemModule_disable.jsp</result>
+	    </action>    
+	    <action name="disableSystemModule" class="systemModuleAction" method="disableSystemModule">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initSystemModuleAble" class="systemModuleAction" method="initSystemModuleAble">
+			<result name="success">/WEB-INF/pages/basic/systemModule/systemModule_able.jsp</result>
+	    </action>    
+	    <action name="ableSystemModule" class="systemModuleAction" method="ableSystemModule">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="getSystemModuleHelp" class="systemModuleAction" method="getSystemModuleHelp">
+			<result name="success">/WEB-INF/pages/basic/systemModule/systemModule_help.jsp</result>
+	    </action>	    
+	<!-- 系统模块设定 End by liujing-->
+	
+	<!-- 储值卡 Begin -->
+		<action name="initChuzhikaSel" class="chuzhikaAction" method="initChuzhikaSel">
+			<result name="success">/WEB-INF/pages/basic/chuzhika/chuzhika_select.jsp</result>
+			<result name="chuzhikas" type="redirectAction">chuzhikaSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    
+	    <action name="initChuzhikaInsert" class="chuzhikaAction" method="initChuzhikaInsert">
+			<result name="success">/WEB-INF/pages/basic/chuzhika/chuzhika_insert.jsp</result>
+	    </action>
+	    
+	    <action name="initChuzhikaInserts" class="chuzhikaAction" method="initChuzhikaInserts">
+			<result name="success">/WEB-INF/pages/basic/chuzhika/chuzhikas_insert.jsp</result>
+	    </action>
+	    
+	    <action name="chuzhikaInsert" class="chuzhikaAction" method="chuzhikaInsert">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="NoRepeat">/WEB-INF/pages/basic/chuzhika/chuzhika_insert.jsp</result>
+	    </action>
+	    
+	    <action name="chuzhikaInserts" class="chuzhikaAction" method="chuzhikaInserts">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="NoRepeat">/WEB-INF/pages/basic/chuzhika/chuzhikas_insert.jsp</result>
+	    </action>
+	    
+	    <action name="chuzhikaSel" class="chuzhikaAction" method="chuzhikaSel">
+			<result name="success">/WEB-INF/pages/basic/chuzhika/chuzhika_select.jsp</result>
+	    </action>
+	    
+	    <action name="initChuzhikaUpdate" class="chuzhikaAction" method="initChuzhikaUpdate">
+			<result name="success">/WEB-INF/pages/basic/chuzhika/chuzhika_update.jsp</result>
+	    </action>
+	    
+	    <action name="chuzhikaUpdate" class="chuzhikaAction" method="chuzhikaUpdate">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initChuzhikaUpdate2" class="chuzhikaAction" method="initChuzhikaUpdate2">
+			<result name="success">/WEB-INF/pages/basic/chuzhika/chuzhika_update2.jsp</result>
+	    </action>
+	    
+	    <action name="chuzhikaUpdate2" class="chuzhikaAction" method="chuzhikaUpdate2">
+	    	<result name="error">/WEB-INF/pages/basic/chuzhika/chuzhika_update2.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initChuzhikaUpdate3" class="chuzhikaAction" method="initChuzhikaUpdate3">
+			<result name="success">/WEB-INF/pages/basic/chuzhika/chuzhika_update3.jsp</result>
+	    </action>
+	    
+	    <action name="chuzhikaUpdate3" class="chuzhikaAction" method="chuzhikaUpdate3">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initChuzhikaDel" class="chuzhikaAction" method="initChuzhikaDel">
+			<result name="success">/WEB-INF/pages/basic/chuzhika/chuzhika_delete.jsp</result>
+	    </action>
+	    
+	    <action name="chuzhikaDel" class="chuzhikaAction" method="chuzhikaDel">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initChuzhikaDeleteBatch" class="chuzhikaAction" method="initChuzhikaDeleteBatch">
+			<result name="success">/WEB-INF/pages/basic/chuzhika/chuzhikabatch_delete.jsp</result>
+	    </action>
+	    <action name="deleteChuzhikaBatch" class="chuzhikaAction" method="deleteChuzhikaBatch">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	
+	        
+	    <action name="initChuzhikaDetails" class="chuzhikaAction" method="initChuzhikaDetails">
+			<result name="success">/WEB-INF/pages/basic/chuzhika/chuzhika_details.jsp</result>
+	    </action>
+	    
+	    <action name="initReplaceChuzhika" class="chuzhikaAction" method="initReplaceChuzhika">
+			<result name="success">/WEB-INF/pages/basic/chuzhika/chuzhika_replace.jsp</result>
+	    </action>
+	    
+	    <action name="replaceChuzhika" class="chuzhikaAction" method="replaceChuzhika">
+			<result name="error">/WEB-INF/pages/basic/chuzhika/chuzhika_replace.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="exportChuzhiCard" class="chuzhikaAction" method="exportChuzhiCard">
+		   <result name="success" type="stream">
+               <param name="contentType">application/vnd.ms-excel</param>
+               <param name="inputName">inputStream</param>
+               <param name="contentDisposition">attachment;filename="${fileName}"</param>
+               <param name="bufferSize">20480</param>               
+           </result>
+	    </action>
+	    
+	    <action name="initChuzhikaEnable" class="chuzhikaAction" method="initChuzhikaEnable">
+			<result name="success">/WEB-INF/pages/basic/chuzhika/chuzhika_enable.jsp</result>
+	    </action>
+	    
+	    <action name="updateChuzhikaEnable" class="chuzhikaAction" method="updateChuzhikaEnable">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    	    
+	<!-- 储值卡 End -->
+
+	<!-- 系统期初  Begin -->
+	<action name="initSystemBeginIndex" class="systemBeginIndexAction" method="initSystemBeginIndex">
+			<result name="success">/WEB-INF/pages/system/periodbegin/periodbegin_select.jsp</result>
+	    </action>
+	    
+	    <action name="initSystemBeginLeft" class="systemBeginIndexAction" method="initSystemBeginLeft">
+			<result name="success">/WEB-INF/pages/basic/initsystem/systembegin_left.jsp</result>
+	    </action>
+	    
+	    <action name="initSystemBeginRight" class="systemBeginIndexAction" method="initSystemBeginRight">
+			<result name="success">/WEB-INF/pages/basic/initsystem/systembegin_default.jsp</result>
+	    </action>
+	  
+		<action name="initImportFile" class="initSystemAction" method="initImportFile">
+			<result name="success">/WEB-INF/pages/basic/initsystem/import_goods.jsp</result>
+	    </action>
+	    
+	    <action name="importFile" class="initSystemAction" method="importFile">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+		    <param name="savePath">/upload</param>
+		    <param name="fileTemplet">/sample/qc.xlsx</param>
+	    </action>
+	    
+	    <action name="initExportFile" class="initSystemAction" method="initExportFile">
+            <result name="success">/WEB-INF/pages/basic/initsystem/export_goods.jsp</result>
+	    </action>
+	    
+	    <action name="exportFile" class="initSystemAction" method="exportFile">
+		   <result name="success" type="stream">
+               <param name="contentType">application/vnd.ms-excel</param>
+               <param name="inputName">inputStream</param>
+               <param name="contentDisposition">attachment;filename="${fileName}"</param>
+               <param name="bufferSize">20480</param>   
+           </result>
+           <param name="savePath">/sample</param>
+	    </action>
+	    
+	    <action name="initBarCodePrint" class="initSystemAction" method="initBarCodePrint">
+			<result name="success">/WEB-INF/pages/basic/initsystem/barcode_print.jsp</result>
+	    </action>
+	    
+	    <action name="barCodePrint" class="initSystemAction" method="barCodePrint">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="selWarehouseByDepartment" class="initSystemAction" method="selWarehouseByDepartment"/>
+	    
+	    <action name="initDefaultAverageCostSet" class="initSystemAction" method="initDefaultAverageCostSet">
+			<result name="success">/WEB-INF/pages/basic/initsystem/averagecost_set.jsp</result>
+	    </action>
+	    <action name="defaultAverageCostSet" class="initSystemAction" method="defaultAverageCostSet">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initPeriodBeginLogistics" class="initSystemAction" method="initPeriodBeginLogistics">
+			<result name="success">/WEB-INF/pages/system/periodbegin/periodbegin_logistics.jsp</result>
+	    </action>
+	    <action name="insertPeriodBeginLogistics" class="initSystemAction" method="insertPeriodBeginLogistics">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initPeriodBeginClearData" class="initSystemAction" method="initPeriodBeginClearData">
+			<result name="success">/WEB-INF/pages/system/periodbegin/periodbegin_cleardata.jsp</result>
+	    </action>
+	    <action name="insertPeriodBeginClearData" class="initSystemAction" method="insertPeriodBeginClearData">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initPeriodBeginClearDataLog" class="initSystemAction" method="initPeriodBeginClearDataLog">
+			<result name="success">/WEB-INF/pages/system/periodbegin/periodbegin_cleardata_log.jsp</result>
+	    </action>
+	    
+	    <action name="initPeriodBeginQccbSelect" class="initSystemAction" method="initPeriodBeginQccbSelect">
+            <result name="success">/WEB-INF/pages/system/periodbegin/periodbegin_qccb_select.jsp</result>
+	    </action>
+	    
+	    <action name="selectPeriodBeginQccb" class="initSystemAction" method="selectPeriodBeginQccb">
+            <result name="success">/WEB-INF/pages/system/periodbegin/periodbegin_qccb_select.jsp</result>
+	    </action>
+	    
+	    <action name="initPeriodBeginQccbUpdate" class="initSystemAction" method="initPeriodBeginQccbUpdate">
+            <result name="success">/WEB-INF/pages/system/periodbegin/periodbegin_qccb_update.jsp</result>
+	    </action>
+	    
+	    <action name="updatePeriodBeginQccb" class="initSystemAction" method="updatePeriodBeginQccb">
+            <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	<!-- 系统期初  End -->
+	
+	<!-- 公告管理  Begin Add By sxh -->
+		<action name="exportNoticeFile" class="noticeAction" method="exportNoticeFile">
+	        <result name="success" type="stream">
+	            <param name="contentType">${contentType }</param>
+	            <param name="inputName">inputStream</param>
+	            <param name="contentDisposition">attachment;filename="${fileName}"</param>
+	            <param name="bufferSize">20480</param>
+	        </result>
+	        <param name="savePath">/upload</param>
+	    </action>
+	    
+		<action name="initNoticeSel" class="noticeAction" method="initNoticeSel">
+			<result name="success">/WEB-INF/pages/basic/notice/notice_select.jsp</result>
+			<result name="selNotice" type="redirectAction">selNotice?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    
+	    <action name="selNotice" class="noticeAction" method="selNotice">
+			<result name="success">/WEB-INF/pages/basic/notice/notice_select.jsp</result>
+	    </action>
+	   
+	   	<action name="initNoticeFileDelete" class="noticeAction" method="initNoticeFileDelete">
+			<result name="success">/WEB-INF/pages/basic/notice/noticefile_delete.jsp</result>
+	    </action>
+	    <action name="deleteNoticeFile" class="noticeAction" method="deleteNoticeFile">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+		<action name="initAuditNotice" class="noticeAction" method="initAuditNotice">
+			<result name="success">/WEB-INF/pages/basic/notice/notice_audit.jsp</result>
+	    </action>
+	    <action name="auditNotice" class="noticeAction" method="auditNotice">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initEnableNotice" class="noticeAction" method="initEnableNotice">
+			<result name="success">/WEB-INF/pages/basic/notice/notice_able.jsp</result>
+	    </action>
+	    <action name="enableNotice" class="noticeAction" method="enableNotice">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action> 
+	    <action name="initUpdateNoticeDpt" class="noticeAction" method="initUpdateNotice">
+			<result name="success">/WEB-INF/pages/basic/notice/notice_update2.jsp</result>
+	    </action>	    
+	    <action name="updateNoticeDpt" class="noticeAction" method="updateNoticeDpt">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	       
+	    <action name="initInsertNotice" class="noticeAction" method="initInsertNotice">
+			<result name="success">/WEB-INF/pages/basic/notice/notice_insert.jsp</result>
+	    </action>
+	    
+	    <action name="insertNotice" class="noticeAction" method="insertNotice">
+	    	<param name="savePath">/upload</param>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initUpdateNotice" class="noticeAction" method="initUpdateNotice">
+			<result name="success">/WEB-INF/pages/basic/notice/notice_update.jsp</result>
+	    </action>
+	    
+	    <action name="updateNotice" class="noticeAction" method="updateNotice">
+	        <param name="savePath">/upload</param>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initDeleteNotice" class="noticeAction" method="initDeleteNotice">
+			<result name="success">/WEB-INF/pages/basic/notice/notice_delete.jsp</result>
+	    </action>
+	    
+	    <action name="deleteNotice" class="noticeAction" method="deleteNotice">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initDetailsNotice" class="noticeAction" method="initDetailsNotice">
+	        <param name="savePath">/upload</param>
+			<result name="success">/WEB-INF/pages/basic/notice/notice_details.jsp</result>
+	    </action>
+	    
+	    <action name="filedownload" class="noticeAction" method="filedownload">
+			<result name="success">/WEB-INF/pages/basic/notice/notice_update.jsp</result>
+	    </action>
+	    
+	    <action name="selNoticeStore" class="noticeAction" method="selNoticeStore">
+			<result name="success">/WEB-INF/pages/basic/notice/noticestore_select.jsp</result>
+	    </action>
+	    
+	    <action name="initDetailsNoticeStore" class="noticeAction" method="initDetailsNoticeStore">
+	        <param name="savePath">/upload</param>
+			<result name="success">/WEB-INF/pages/basic/notice/noticestore_details.jsp</result>
+	    </action>
+	    
+	    <action name="selNoticeMessage" class="noticeAction" method="selNoticeMessage">
+			<result name="success">/WEB-INF/pages/basic/notice/noticemessage_select.jsp</result>
+	    </action>
+	    
+	    <action name="initNoticeStore" class="noticeAction" method="initNoticeStore">
+			<result name="success">/WEB-INF/pages/basic/notice/allmessage_select.jsp</result>
+	    </action>
+	<!-- 公告管理  End   Add By sxh -->
+	
+	<!-- 基础信息维护  Begin Add By sxh -->
+		<action name="initBasicinformationindex" class="basicInformationIndexAction" method="initBasicinformationindex">
+			<result name="success">/WEB-INF/pages/basic/basicinformation/basicinformation_index.jsp</result>
+	    </action>
+	    
+	    <action name="initBasicinformationLeft" class="basicInformationIndexAction" method="initBasicinformationLeft">
+			<result name="success">/WEB-INF/pages/basic/basicinformation/basicinformation_left.jsp</result>
+	    </action>
+	    
+	    <action name="initBasicinformationRight" class="basicInformationIndexAction" method="initBasicinformationRight">
+			<result name="success">/WEB-INF/pages/basic/basicinformation/basicinformation_default.jsp</result>
+	    </action>
+	    
+	    <!-- 设置商品名称 Begin -->
+		<action name="initSetGoodsName" class="setGoodsNameAction" method="initSetGoodsName">
+		  <result name="success">/WEB-INF/pages/basic/setGoodsName/setGoodsName_select.jsp</result>
+		</action>
+		
+		<action name="insertSetGoodsName" class="setGoodsNameAction" method="insertSetGoodsName">
+		  <param name="savePath">/js</param>
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<!-- 设置商品名称 end -->
+		
+	    <!-- 委外预误期提醒设置 Begin Add by sxh -->
+	    	<action name="initDelayWarning" class="delayWarningAction" method="initDelayWarning">
+				<result name="success">/WEB-INF/pages/basic/basicinformation/delaywarning/delaywarning_select.jsp</result>
+		    </action>
+		    
+		    <action name="insertDelayWarning" class="delayWarningAction" method="insertDelayWarning">
+				<result name="success">/WEB-INF/pages/basic/basicinformation/delaywarning/delaywarning_select.jsp</result>
+		    </action>
+		    
+		    <action name="updateDelayWarning" class="delayWarningAction" method="updateDelayWarning">
+				<result name="success">/WEB-INF/pages/basic/basicinformation/delaywarning/delaywarning_select.jsp</result>
+		    </action>
+	    <!-- 委外预误期提醒设置  End   Add by sxh -->
+	    
+	    <!-- 委外预误期提醒查询  Begin Add by sxh -->
+	    	<action name="initSelectWillDelayWarning" class="delayWarningAction" method="initSelectWillDelayWarning">
+				<result name="success">/WEB-INF/pages/sales/delaynotice/delaynotice_select.jsp</result>
+				<result name="selectWillDelayWarning" type="redirectAction">selectWillDelayWarning?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			     <interceptor-ref name="defaultStack"></interceptor-ref>
+		    </action>
+		    
+		    <action name="selectWillDelayWarning" class="delayWarningAction" method="selectWillDelayWarning">
+				<result name="success">/WEB-INF/pages/sales/delaynotice/delaynotice_select.jsp</result>
+		    </action>
+		    
+		    <action name="initInsertDelayNotice" class="delayWarningAction" method="initInsertDelayNotice">
+				<result name="success">/WEB-INF/pages/sales/delaynotice/delaynotice_insert.jsp</result>
+		    </action>
+		    
+		    <action name="insertDelayNotice" class="delayWarningAction" method="insertDelayNotice">
+				<result name="success">/WEB-INF/pages/refresh.jsp</result>
+		    </action>
+		    
+		    <action name="initDelayNoticeDetails" class="delayWarningAction" method="initDelayNoticeDetails">
+				<result name="success">/WEB-INF/pages/sales/delaynotice/delaynotice_details.jsp</result>
+		    </action>
+	    <!-- 委外预误期提醒查询  End   Add by sxh -->
+	    
+	    <!-- 投诉类型维护 szk  begin-->
+		<action name="initComplaintsTypeSel" class="unitAction" method="initComplaintsTypeSel">
+		  <result name="success">/WEB-INF/pages/basic/complaintsType/complaintsType_select.jsp</result>
+		</action>
+		<action name="initComplaintsTypeInsert" class="unitAction" method="initComplaintsTypeInsert">
+		  <result name="success">/WEB-INF/pages/basic/complaintsType/complaintsType_insert.jsp</result>
+		</action>
+		<action name="complaintsTypeInsert" class="unitAction" method="complaintsTypeInsert">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  <result name="NoRepeat">/WEB-INF/pages/basic/complaintsType/complaintsType_insert.jsp</result>	  
+		</action>
+		<action name="initComplaintsTypeUpdate" class="unitAction" method="initComplaintsTypeUpdate">
+		  <result name="success">/WEB-INF/pages/basic/complaintsType/complaintsType_update.jsp</result>
+		</action>
+		<action name="complaintsTypeUpdate" class="unitAction" method="complaintsTypeUpdate">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		   <result name="NoRepeat">/WEB-INF/pages/basic/complaintsType/complaintsType_update.jsp</result>	  
+		</action>	
+		<action name="initComplaintsTypeDelete" class="unitAction" method="initComplaintsTypeDelete">
+		  <result name="success">/WEB-INF/pages/basic/complaintsType/complaintsType_delete.jsp</result>
+		</action>
+		<action name="complaintsTypeDelete" class="unitAction" method="complaintsTypeDelete">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  
+		</action>					
+	    <!-- 投诉类型维护 szk  end-->
+	    
+	    <!-- 折射率维护 szk  begin-->
+		<action name="initRefractiveSetSel" class="unitAction" method="initRefractiveSetSel">
+		  <result name="success">/WEB-INF/pages/basic/refractiveSet/refractiveSet_select.jsp</result>
+		</action>
+		<action name="initRefractiveSetInsert" class="unitAction" method="initRefractiveSetInsert">
+		  <result name="success">/WEB-INF/pages/basic/refractiveSet/refractiveSet_insert.jsp</result>
+		</action>
+		<action name="refractiveSetInsert" class="unitAction" method="refractiveSetInsert">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  <result name="NoRepeat">/WEB-INF/pages/basic/refractiveSet/refractiveSet_insert.jsp</result>	  
+		</action>
+		<action name="initRefractiveSetUpdate" class="unitAction" method="initRefractiveSetUpdate">
+		  <result name="success">/WEB-INF/pages/basic/refractiveSet/refractiveSet_update.jsp</result>
+		</action>
+		<action name="refractiveSetUpdate" class="unitAction" method="refractiveSetUpdate">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>	
+		  <result name="NoRepeat">/WEB-INF/pages/basic/refractiveSet/refractiveSet_update.jsp</result>  
+		</action>	
+		<action name="initRefractiveSetDelete" class="unitAction" method="initRefractiveSetDelete">
+		  <result name="success">/WEB-INF/pages/basic/refractiveSet/refractiveSet_delete.jsp</result>
+		</action>
+		<action name="refractiveSetDelete" class="unitAction" method="refractiveSetDelete">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  
+		</action>					
+	    <!-- 折射率维护 szk  end-->	
+
+	<!-- 外来处方维护 szk  begin-->
+		<action name="initForeignRecipelSel" class="unitAction" method="initForeignRecipelSel">
+		  <result name="success">/WEB-INF/pages/basic/foreignRecipel/foreignRecipel_select.jsp</result>
+		</action>
+		<action name="initForeignRecipelInsert" class="unitAction" method="initForeignRecipelInsert">
+		  <result name="success">/WEB-INF/pages/basic/foreignRecipel/foreignRecipel_insert.jsp</result>
+		</action>
+		<action name="foreignRecipelInsert" class="unitAction" method="foreignRecipelInsert">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  <result name="NoRepeat">/WEB-INF/pages/basic/foreignRecipel/foreignRecipel_insert.jsp</result>	  
+		</action>
+		<action name="initForeignRecipelUpdate" class="unitAction" method="initForeignRecipelUpdate">
+		  <result name="success">/WEB-INF/pages/basic/foreignRecipel/foreignRecipel_update.jsp</result>
+		</action>
+		<action name="foreignRecipelUpdate" class="unitAction" method="foreignRecipelUpdate">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>	
+		  <result name="NoRepeat">/WEB-INF/pages/basic/foreignRecipel/foreignRecipel_update.jsp</result>  
+		</action>	
+		<action name="initForeignRecipelDelete" class="unitAction" method="initForeignRecipelDelete">
+		  <result name="success">/WEB-INF/pages/basic/foreignRecipel/foreignRecipel_delete.jsp</result>
+		</action>
+		<action name="foreignRecipelDelete" class="unitAction" method="foreignRecipelDelete">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  
+		</action>					
+	<!-- 外来处方维护 szk  end-->
+
+	<!-- 短信模板维护 szk  begin-->
+		<action name="initNoteTemplateSel" class="unitAction" method="initNoteTemplateSel">
+		  <result name="success">/WEB-INF/pages/basic/noteTemplate/noteTemplate_select.jsp</result>
+		</action>
+		<action name="noteTemplateSel" class="unitAction" method="noteTemplateSel">
+		  <result name="success">/WEB-INF/pages/basic/noteTemplate/noteTemplate_select.jsp</result>
+		</action>
+		<action name="initNoteTemplateInsert" class="unitAction" method="initNoteTemplateInsert">
+		  <result name="success">/WEB-INF/pages/basic/noteTemplate/noteTemplate_insert.jsp</result>
+		</action>
+		<action name="noteTemplateInsert" class="unitAction" method="noteTemplateInsert">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>  
+		</action>
+		<action name="initNoteTemplateUpdate" class="unitAction" method="initNoteTemplateUpdate">
+		  <result name="success">/WEB-INF/pages/basic/noteTemplate/noteTemplate_update.jsp</result>
+		</action>
+		<action name="noteTemplateUpdate" class="unitAction" method="noteTemplateUpdate">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>	  
+		</action>	
+		<action name="initNoteTemplateDelete" class="unitAction" method="initNoteTemplateDelete">
+		  <result name="success">/WEB-INF/pages/basic/noteTemplate/noteTemplate_delete.jsp</result>
+		</action>
+		<action name="noteTemplateDelete" class="unitAction" method="noteTemplateDelete">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>		  
+		</action>
+		<action name="setNoteTemplateAutoSend" class="unitAction" method="setNoteTemplateAutoSend">
+		  <result name="success">/WEB-INF/pages/basic/noteTemplate/noteTemplate_select.jsp</result>		  
+		</action>
+		<action name="initNoteTemplatePreview" class="unitAction" method="initNoteTemplatePreview">
+		  <result name="success">/WEB-INF/pages/basic/noteTemplate/noteTemplate_preview.jsp</result>
+		</action>						
+	<!-- 短信模板维护 szk  end-->
+			    
+	<!-- 基础信息维护  End   Add By sxh -->
+	
+	<!-- VIP卡  Begin Add By sxh -->
+	    <action name="initSelectVIPCard" class="vipCardAction" method="initSelectVIPCard">
+			<result name="success">/WEB-INF/pages/basic/vipcard/vipcard_select.jsp</result>
+			<result name="selVIPCards" type="redirectAction">selectVIPCard?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>
+	    
+	    <action name="selectVIPCard" class="vipCardAction" method="selectVIPCard">
+			<result name="success">/WEB-INF/pages/basic/vipcard/vipcard_select.jsp</result>
+	    </action>
+	    
+	    <action name="initInsertVIPCard" class="vipCardAction" method="initInsertVIPCard">
+			<result name="success">/WEB-INF/pages/basic/vipcard/vipcard_insert.jsp</result>
+	    </action>
+	    
+	    <action name="initInsertVIPCards" class="vipCardAction" method="initInsertVIPCards">
+			<result name="success">/WEB-INF/pages/basic/vipcard/vipcards_insert.jsp</result>
+	    </action>
+	    
+	    <action name="insertVIPCard" class="vipCardAction" method="insertVIPCard">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="error">/WEB-INF/pages/basic/vipcard/vipcard_insert.jsp</result>
+	    </action>
+	    
+	    <action name="insertVIPCards" class="vipCardAction" method="insertVIPCards">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="error">/WEB-INF/pages/basic/vipcard/vipcards_insert.jsp</result>
+	    </action>
+	    
+	    <action name="initUpdateVIPCard" class="vipCardAction" method="initUpdateVIPCard">
+			<result name="success">/WEB-INF/pages/basic/vipcard/vipcard_update.jsp</result>
+	    </action>
+	    
+	    <action name="updateVIPCard" class="vipCardAction" method="updateVIPCard">
+	    	<result name="error">/WEB-INF/pages/basic/vipcard/vipcard_update.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initDeleteVIPCard" class="vipCardAction" method="initDeleteVIPCard">
+			<result name="success">/WEB-INF/pages/basic/vipcard/vipcard_delete.jsp</result>
+	    </action>
+	    
+	    <action name="deleteVIPCard" class="vipCardAction" method="deleteVIPCard">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initReplaceVIPCard" class="vipCardAction" method="initReplaceVIPCard">
+			<result name="success">/WEB-INF/pages/basic/vipcard/vipcard_replace.jsp</result>
+	    </action>
+	    
+	    <action name="replaceVIPCard" class="vipCardAction" method="replaceVIPCard">
+	    	<result name="error">/WEB-INF/pages/basic/vipcard/vipcard_replace.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="exportVipCard" class="vipCardAction" method="exportVipCard">
+		   <result name="success" type="stream">
+               <param name="contentType">application/vnd.ms-excel</param>
+               <param name="inputName">inputStream</param>
+               <param name="contentDisposition">attachment;filename="${fileName}"</param>
+               <param name="bufferSize">20480</param>               
+           </result>
+	    </action>
+	<!-- VIP卡  End Add By sxh -->
+	
+	<!-- 会员来源维护  Add by sxh -->
+		<action name="selectMemberOrigin" class="memberOriginAction" method="selectMemberOrigin">
+			<result name="success">/WEB-INF/pages/basic/memberorigin/memberorigin_select.jsp</result>
+	    </action>
+	    
+	    <action name="initInsertMemberOrigin" class="memberOriginAction" method="initInsertMemberOrigin">
+			<result name="success">/WEB-INF/pages/basic/memberorigin/memberorigin_insert.jsp</result>
+	    </action>
+		
+		<action name="insertMemberOrigin" class="memberOriginAction" method="insertMemberOrigin">
+			<result name="error">/WEB-INF/pages/basic/memberorigin/memberorigin_insert.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initUpdateMemberOrigin" class="memberOriginAction" method="initUpdateMemberOrigin">
+			<result name="success">/WEB-INF/pages/basic/memberorigin/memberorigin_update.jsp</result>
+	    </action>
+	    
+	    <action name="updateMemberOrigin" class="memberOriginAction" method="updateMemberOrigin">
+	   	 	<result name="error">/WEB-INF/pages/basic/memberorigin/memberorigin_update.jsp</result>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initDeleteMemberOrigin" class="memberOriginAction" method="initDeleteMemberOrigin">
+			<result name="success">/WEB-INF/pages/basic/memberorigin/memberorigin_delete.jsp</result>
+	    </action>
+	    
+	    <action name="deleteMemberOrigin" class="memberOriginAction" method="deleteMemberOrigin">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 会员来源维护  End by sxh -->
+	
+	<!-- 商品图片展示 liujing begin-->
+	<action name="initPictureShowSel" class="glassesFrameAction" method="initPictureShowSel">
+	  <result name="success">/WEB-INF/pages/sales/pictureShow/pictureShowSel.jsp</result>
+	</action>
+	<action name="selPictureShow" class="glassesFrameAction" method="selPictureShow">
+	  <result name="success">/WEB-INF/pages/sales/pictureShow/pictureShowDetails.jsp</result>
+	</action>
+
+	<!-- 商品图片展示  liujing end-->
+	<!-- 价格区间维护 sxh begin -->
+	<action name="selectSalesArea" class="salesAreaAction" method="selectSalesArea">
+	  <result name="success">/WEB-INF/pages/basic/SalesArea/salesArea_select.jsp</result>
+	</action>
+	<action name="initDeleteSalesArea" class="salesAreaAction" method="initDeleteSalesArea">
+	  <result name="success">/WEB-INF/pages/basic/SalesArea/salesArea_delete.jsp</result>
+	</action>
+	<action name="deleteSalesArea" class="salesAreaAction" method="deleteSalesArea">
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<action name="initInsertSalesArea" class="salesAreaAction" method="initInsertSalesArea">
+	  <result name="success">/WEB-INF/pages/basic/SalesArea/salesArea_insert.jsp</result>
+	</action>
+	<action name="insertSalesArea" class="salesAreaAction" method="insertSalesArea">
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<action name="initBatchDeleteSalesArea" class="salesAreaAction" method="initBatchDeleteSalesArea">
+	  <result name="success">/WEB-INF/pages/basic/SalesArea/salesArea_batchDelete.jsp</result>
+	</action>
+	<action name="bathDeleteSalesArea" class="salesAreaAction" method="bathDeleteSalesArea">
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<!-- 价格区间维护 sxh end -->
+	
+	<!-- 顾客年龄区间维护 sxh begin -->
+	<action name="selectCustomerAgeGroup" class="customerAgeGroupAction" method="selectCustomerAgeGroup">
+	  <result name="success">/WEB-INF/pages/basic/customerAgeGroup/customerAgeGroup_select.jsp</result>
+	</action>
+	<action name="initDeleteCustomerAgeGroupPo" class="customerAgeGroupAction" method="initDeleteCustomerAgeGroupPo">
+	  <result name="success">/WEB-INF/pages/basic/customerAgeGroup/customerAgeGroup_delete.jsp</result>
+	</action> 
+	<action name="deleteCustomerAgeGroupPo" class="customerAgeGroupAction" method="deleteCustomerAgeGroupPo">
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<action name="initInsertCustomerAgeGroupPo" class="customerAgeGroupAction" method="initInsertCustomerAgeGroupPo">
+	  <result name="success">/WEB-INF/pages/basic/customerAgeGroup/customerAgeGroup_insert.jsp</result>
+	</action>
+	<action name="insertCustomerAgeGroupPo" class="customerAgeGroupAction" method="insertCustomerAgeGroupPo">
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	  <result name="error">/WEB-INF/pages/basic/customerAgeGroup/customerAgeGroup_insert.jsp</result>
+	</action>
+	<action name="initUpdateCustomerAgeGroupPo" class="customerAgeGroupAction" method="initUpdateCustomerAgeGroupPo">
+	  <result name="success">/WEB-INF/pages/basic/customerAgeGroup/customerAgeGroup_update.jsp</result>
+	</action>
+	<action name="updateCustomerAgeGroupPo" class="customerAgeGroupAction" method="updateCustomerAgeGroupPo">
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<!-- 顾客年龄区间维护 sxh end -->
+	
+	<!-- 报表样式维护  begin -->
+	<action name="initPrintBillTemplateSel" class="fittingTemplateAction" method="initPrintBillTemplateSel">
+	  	<result name="success">/WEB-INF/pages/basic/printBillTemplate/printBillTemplate_select.jsp</result>
+		<result name="printBillTemplateSel" type="redirectAction">printBillTemplateSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>	
+	</action>
+	<action name="printBillTemplateSel" class="fittingTemplateAction" method="printBillTemplateSel">
+	  <result name="success">/WEB-INF/pages/basic/printBillTemplate/printBillTemplate_select.jsp</result>
+	</action>
+	<action name="initPrintBillTemplateUpdate" class="fittingTemplateAction" method="initPrintBillTemplateUpdate">
+	  <result name="success">/WEB-INF/pages/basic/printBillTemplate/printBillTemplate_update.jsp</result>
+	</action>
+	<action name="printBillTemplateUpdate" class="fittingTemplateAction" method="printBillTemplateUpdate">
+	  <param name="savePath">/img/logo</param>
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<action name="initPrintBillTemplateDelete" class="fittingTemplateAction" method="initPrintBillTemplateDelete">
+	  <result name="success">/WEB-INF/pages/basic/printBillTemplate/printBillTemplate_delete.jsp</result>
+	</action>
+	<action name="printBillTemplateDelete" class="fittingTemplateAction" method="printBillTemplateDelete">
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<action name="initPrintBillTemplateInsert" class="fittingTemplateAction" method="initPrintBillTemplateInsert">
+	  <result name="success">/WEB-INF/pages/basic/printBillTemplate/printBillTemplate_insert.jsp</result>
+	</action>
+	<action name="printBillTemplateInsert" class="fittingTemplateAction" method="printBillTemplateInsert">
+	  <param name="savePath">/img/logo</param>
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<action name="initPrintBillTemplateEnable" class="fittingTemplateAction" method="initPrintBillTemplateEnable">
+	  <result name="success">/WEB-INF/pages/basic/printBillTemplate/printBillTemplate_enable.jsp</result>
+	</action>
+	<action name="printBillTemplateEnable" class="fittingTemplateAction" method="printBillTemplateEnable">
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>	
+	<action name="initPrintBillTemplateDetail" class="fittingTemplateAction" method="initPrintBillTemplateDetail">
+	  <result name="success">/WEB-INF/pages/basic/printBillTemplate/printBillTemplate_detail.jsp</result>
+	</action>
+	<!-- 部门  begin -->
+	<action name="initBillTemplateDepartmentOpen" class="fittingTemplateAction" method="initBillTemplateOpen">
+	  	<result name="success">/WEB-INF/pages/basic/printBillTemplate/billTemplateDepartment_open.jsp</result>
+	</action>	
+	<action name="initBillTemplateOpen" class="fittingTemplateAction" method="initBillTemplateOpen">
+	  	<result name="success">/WEB-INF/pages/basic/printBillTemplate/billTemplate_open.jsp</result>
+	</action>
+	
+	<!-- 报表样式维护  begin -->
+	
+	<!-- 报表类型维护  begin -->
+	<action name="initFittingTemplateTypeSel" class="fittingTemplateTypeAction" method="initFittingTemplateTypeSel">
+	  	<result name="success">/WEB-INF/pages/basic/fittingTemplateType/fittingTemplateType_select.jsp</result>
+	</action>
+	<action name="updateFittingTemplateType" class="fittingTemplateTypeAction" method="updateFittingTemplateType">
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<action name="updateFittingTemplateTypeShowtype" class="fittingTemplateTypeAction" method="updateFittingTemplateTypeShowtype">
+		<result name="success" type="chain">initFittingTemplateTypeSel</result>
+	</action>	
+    <action name="getFittingTemplateTypeInfo" class="fittingTemplateTypeAction" method="getFittingTemplateTypeInfo">
+		<result name="success">/WEB-INF/pages/basic/fittingTemplateType/fittingTemplateType_detail.jsp</result>
+    </action>	
+	<!-- 报表类型维护  end -->
+	
+	<!-- 纠错模块维护  begin -->
+	<action name="initInventoryDifferenceSel" class="correctingErrorsAction" method="initInventoryDifferenceSel">
+	  	<result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_inventory_select.jsp</result>
+		<result name="inventoryDifferenceSel" type="redirectAction">inventoryDifferenceSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>	
+	</action>
+	<action name="inventoryDifferenceSel" class="correctingErrorsAction" method="inventoryDifferenceSel">
+	  <result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_inventory_select.jsp</result>
+	</action>
+	<action name="initBillDifferenceSel" class="correctingErrorsAction" method="initBillDifferenceSel">
+	  <result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_bill_select.jsp</result>
+	  <result name="billDifferenceSel" type="redirectAction">billDifferenceSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+	  <interceptor-ref name="defaultStack"></interceptor-ref>	
+	</action>
+	<action name="billDifferenceSel" class="correctingErrorsAction" method="billDifferenceSel">
+	  <result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_bill_select.jsp</result>
+	</action>
+	<action name="initBillDifferenceDetail" class="correctingErrorsAction" method="initBillDifferenceDetail">
+	  <result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_bill_detail.jsp</result>
+	</action>
+	<action name="initErrorsGoodsBarCodeSel" class="correctingErrorsAction" method="initErrorsGoodsBarCodeSel">
+		<result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_barcode_select.jsp</result>
+		<result name="errorsGoodsBarCodeSel" type="redirectAction">errorsGoodsBarCodeSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>	  
+	</action>
+	<action name="errorsGoodsBarCodeSel" class="correctingErrorsAction" method="errorsGoodsBarCodeSel">
+	  <result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_barcode_select.jsp</result>
+	</action>	
+	<action name="initGoodsTransitStorageSel" class="correctingErrorsAction" method="initGoodsTransitStorageSel">
+		<result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_zaitu_select.jsp</result>
+		<result name="goodsTransitStorageSel" type="redirectAction">goodsTransitStorageSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>	  
+	</action>
+	<action name="goodsTransitStorageSel" class="correctingErrorsAction" method="goodsTransitStorageSel">
+	  <result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_zaitu_select.jsp</result>
+	</action>	
+	<action name="initGoodsTransitStorageDelete" class="correctingErrorsAction" method="initGoodsTransitStorageDelete">
+	  <result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_zaitu_delete.jsp</result>
+	</action>
+	<action name="goodsTransitStorageDelete" class="correctingErrorsAction" method="goodsTransitStorageDelete">
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<action name="getGoodsInTransitDetail" class="correctingErrorsAction" method="getGoodsInTransitDetail">
+	  <result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_zaitu_open.jsp</result>
+	</action>
+	<action name="initNotAuditBillSel" class="correctingErrorsAction" method="initNotAuditBillSel">
+		<result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_notauditbill_select.jsp</result>
+		<result name="notAuditBillSel" type="redirectAction">notAuditBillSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>	  
+	</action>
+	<action name="notAuditBillSel" class="correctingErrorsAction" method="notAuditBillSel">
+	  <result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_notauditbill_select.jsp</result>
+	</action>	
+	<action name="initSalesBillInTransitUpdate" class="correctingErrorsAction" method="initSalesBillInTransitUpdate">
+	  <result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_notauditbill_zaitu.jsp</result>
+	</action>
+	<action name="updateSalesBillInTransit" class="correctingErrorsAction" method="updateSalesBillInTransit">
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<action name="initNotAuditBillDetele" class="correctingErrorsAction" method="initNotAuditBillDetele">
+	  <result name="success">/WEB-INF/pages/basic/correctingerrors/correctingerrors_notauditbill_delete.jsp</result>
+	</action>
+	<action name="deleteNotAuditBill" class="correctingErrorsAction" method="deleteNotAuditBill">
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<!-- 纠错模块维护  begin -->
+	
+	<!-- 公告类型  Begin Add By-->
+	<action name="initNoticeTypeSel" class="noticeAction" method="initNoticeTypeSel">
+		<result name="success">/WEB-INF/pages/basic/noticeType/noticetype_select.jsp</result>
+		<result name="noticeTypeSel" type="redirectAction">noticeTypeSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+		<interceptor-ref name="defaultStack"></interceptor-ref>	
+    </action>	    
+    <action name="noticeTypeSel" class="noticeAction" method="noticeTypeSel">
+		<result name="success">/WEB-INF/pages/basic/noticeType/noticetype_select.jsp</result>
+    </action>	   
+   	<action name="initNoticeTypeDelete" class="noticeAction" method="initNoticeTypeDelete">
+		<result name="success">/WEB-INF/pages/basic/noticeType/noticetype_delete.jsp</result>
+    </action>
+    <action name="noticeTypeDelete" class="noticeAction" method="noticeTypeDelete">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>	    
+	<action name="initNoticeTypeUpdate" class="noticeAction" method="initNoticeTypeUpdate">
+		<result name="success">/WEB-INF/pages/basic/noticeType/noticetype_update.jsp</result>
+    </action>
+    <action name="noticeTypeUpdate" class="noticeAction" method="noticeTypeUpdate">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+    </action>	    
+	<action name="initNoticeTypeInsert" class="noticeAction" method="initNoticeTypeInsert">
+		<result name="success">/WEB-INF/pages/basic/noticeType/noticetype_insert.jsp</result>
+    </action>
+    <action name="noticeTypeInsert" class="noticeAction" method="noticeTypeInsert">
+		<result name="success">/WEB-INF/pages/refresh.jsp</result>
+		<result name="error">/WEB-INF/pages/basic/noticeType/noticetype_insert.jsp</result>
+    </action>
+	<!-- 公告类型  End   Add By sxh -->
+	
+	<!-- 商品颜色维护  begin-->
+		<action name="selColor" class="colorAction" method="selColor">
+		  <result name="success">/WEB-INF/pages/basic/color/color_select.jsp</result>
+		</action>
+		<action name="initInsertColor" class="colorAction" method="initInsertColor">
+		  <result name="success">/WEB-INF/pages/basic/color/color_insert.jsp</result>
+		</action>
+		<action name="insertColor" class="colorAction" method="insertColor">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  <result name="NoRepeat">/WEB-INF/pages/basic/color/color_insert.jsp</result>	  
+		</action>
+		<action name="initUpdateColor" class="colorAction" method="initUpdateColor">
+		  <result name="success">/WEB-INF/pages/basic/color/color_update.jsp</result>
+		</action>
+		<action name="updateColor" class="colorAction" method="updateColor">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>	 
+		   <result name="NoRepeat">/WEB-INF/pages/basic/color/color_update.jsp</result> 
+		</action>	
+		<action name="initDeleteColor" class="colorAction" method="initDeleteColor">
+		  <result name="success">/WEB-INF/pages/basic/color/color_delete.jsp</result>
+		</action>
+		<action name="deleteColor" class="colorAction" method="deleteColor">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		  <result name="dataUsed">/WEB-INF/pages/basic/color/color_delete.jsp</result>
+		</action>					
+	<!-- 商品颜色维护  end-->
+	
+		<action name="initPricesAbout" class="priceAboutAction" method="initPricesAbout">
+			<result name="wholesale">/WEB-INF/pages/basic/goodsPriceAbout/priceAboutForWholesalePrice.jsp</result>
+			<result name="costprice">/WEB-INF/pages/basic/goodsPriceAbout/priceAboutForCostPrice.jsp</result>
+			<result name="retail">/WEB-INF/pages/basic/goodsPriceAbout/priceAboutForRetailPrice.jsp</result>
+		</action>
+		
+		<!-- 维修项维护  Begin Add By szk-->
+		<action name="initRepairsCostSetSel" class="noticeAction" method="initRepairsCostSetSel">
+			<result name="success">/WEB-INF/pages/basic/repairsCost/repairsCost_select.jsp</result>
+			<result name="repairsCostSetSel" type="redirectAction">repairsCostSetSel?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+	    </action>	    
+	    <action name="repairsCostSetSel" class="noticeAction" method="repairsCostSetSel">
+			<result name="success">/WEB-INF/pages/basic/repairsCost/repairsCost_select.jsp</result>
+	    </action>	   
+	   	<action name="initRepairsCostSetDelete" class="noticeAction" method="initRepairsCostSetDelete">
+			<result name="success">/WEB-INF/pages/basic/repairsCost/repairsCost_delete.jsp</result>
+	    </action>
+	    <action name="repairsCostSetDelete" class="noticeAction" method="repairsCostSetDelete">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+		<action name="initRepairsCostSetUpdate" class="noticeAction" method="initRepairsCostSetUpdate">
+			<result name="success">/WEB-INF/pages/basic/repairsCost/repairsCost_update.jsp</result>
+	    </action>
+	    <action name="repairsCostSetUpdate" class="noticeAction" method="repairsCostSetUpdate">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+		<action name="initRepairsCostSetInsert" class="noticeAction" method="initRepairsCostSetInsert">
+			<result name="success">/WEB-INF/pages/basic/repairsCost/repairsCost_insert.jsp</result>
+	    </action>
+	    <action name="repairsCostSetInsert" class="noticeAction" method="repairsCostSetInsert">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="error">/WEB-INF/pages/basic/repairsCost/repairsCost_insert.jsp</result>
+	    </action>
+		<!-- 维修项维护  End   Add By szk -->
+		
+		<!-- 商品信息维护批量操作  begin   Add By szk -->	
+	   	<action name="initGoodsSalesAbleBatch" class="glassesFrameAction" method="initGoodsSalesAbleBatch">
+			<result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFramebatch_gable.jsp</result>
+	    </action>
+	    <action name="updateGoodsSalesAbleBatch" class="glassesFrameAction" method="updateGoodsSalesAbleBatch">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGoodsWholePriceAbleBatch" class="glassesFrameAction" method="initGoodsWholePriceAbleBatch">
+			<result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFramebatch_wable.jsp</result>
+	    </action>
+	    <action name="updateGoodsWholePriceAbleBatch" class="glassesFrameAction" method="updateGoodsWholePriceAbleBatch">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	
+	    <action name="initGoodsInfoDeleteBatch" class="glassesFrameAction" method="initGoodsInfoDeleteBatch">
+			<result name="success">/WEB-INF/pages/basic/glassesFrame/glassesFramebatch_delete.jsp</result>
+	    </action>
+	    <action name="deleteGoodsInfoBatch" class="glassesFrameAction" method="deleteGoodsInfoBatch">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>		
+		<!-- 商品信息维护批量操作  End   Add By szk -->
+					
+		<!-- 商品信息维护批量操作属性  begin   Add  -->	
+		 <action name="initUpdateGoods" class="updateGoodsAttributeAction" method="initUpdateGoods">
+			<result name="success">/WEB-INF/pages/basic/updateGoodsAttribute/updateGoodsAttribute_update.jsp</result>
+	    </action>	
+	    <action name="updateGoodsAttribute" class="updateGoodsAttributeAction" method="updateGoodsAttribute">
+	    	<result name="success">/WEB-INF/pages/basic/updateGoodsAttribute/updateGoodsAttribute_update.jsp</result>
+	    </action>
+		<!-- 商品信息维护批量操作属性   end   Add -->
+		
+		<!-- 商品信息维护批量操作属性（爱尔）begin   Add sxh -->	
+		<action name="initUpdateGoodsAR" class="updateGoodsAttributeARAction" method="initUpdateGoodsAR">
+			<result name="success">/WEB-INF/pages/basic/updateGoodsAttributeAR/updateGoodsAttribute_update.jsp</result>
+	    </action>	
+	    <action name="updateGoodsAttributeAR" class="updateGoodsAttributeARAction" method="updateGoodsAttributeAR">
+	    	<result name="success">/WEB-INF/pages/basic/updateGoodsAttributeAR/updateGoodsAttribute_update.jsp</result>
+	    </action>
+		<!-- 商品信息维护批量操作属性（爱尔）end   Add sxh -->	
+		
+		<!-- 焦度计取值维护  begin   Add  -->	
+		 <action name="initGetMachineValue" class="getMachineValueAction" method="initGetMachineValue">
+			<result name="success">/WEB-INF/pages/basic/getMachineValue/getMachineValue_insert.jsp</result>
+	    </action>	
+	    <action name="updateGetMachineValue" class="getMachineValueAction" method="updateGetMachineValue">
+	    	<result name="success">/WEB-INF/pages/basic/getMachineValue/getMachineValue_insert.jsp</result>
+	    </action>
+		<!-- 焦度计取值维护   end   Add -->	
+		
+		<!-- 销售页面显示处方数量  begin   Add  -->	
+		 <action name="initSalesRecipeNumView" class="basicInformationIndexAction" method="initSalesRecipeNumView">
+			<result name="success">/WEB-INF/pages/basic/salesrecipenumview/salesrecipenumview_insert.jsp</result>
+	    </action>	
+	    <action name="updateSalesRecipeNumView" class="basicInformationIndexAction" method="updateSalesRecipeNumView">
+	    	<result name="success">/WEB-INF/pages/basic/salesrecipenumview/salesrecipenumview_insert.jsp</result>
+	    </action>
+		<!-- 销售页面显示处方数量   end   Add -->	
+
+	<!-- 加班 Add by du-->
+		<action name="initJBTiaoSel" class="jbtiaoAction" method="initJBTiaoSel">
+			<result name="success">/WEB-INF/pages/attendance/jbtiao/jbtiao_select.jsp</result>
+	    </action>
+		<action name="selJBTiao" class="jbtiaoAction" method="selJBTiao">
+			<result name="success">/WEB-INF/pages/attendance/jbtiao/jbtiao_select.jsp</result>
+	    </action>
+		<action name="initJBTiaoInsert" class="jbtiaoAction" method="initJBTiaoInsert">
+			<result name="success">/WEB-INF/pages/attendance/jbtiao/jbtiao_insert.jsp</result>
+	    </action>
+	    <action name="insertJBTiao" class="jbtiaoAction" method="insertJBTiao">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initJBTiaoUpdate" class="jbtiaoAction" method="initJBTiaoUpdate">
+			<result name="success">/WEB-INF/pages/attendance/jbtiao/jbtiao_update.jsp</result>
+	    </action>
+	    <action name="updateJBTiao" class="jbtiaoAction" method="updateJBTiao">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initJBTiaoDelete" class="jbtiaoAction" method="initJBTiaoDelete">
+			<result name="success">/WEB-INF/pages/attendance/jbtiao/jbtiao_delete.jsp</result>
+	    </action>
+	    <action name="deleteJBTiao" class="jbtiaoAction" method="deleteJBTiao">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initJBTiaoDetail" class="jbtiaoAction" method="initJBTiaoDetail">
+			<result name="success">/WEB-INF/pages/attendance/jbtiao/jbtiao_detail.jsp</result>
+	    </action>
+	    <action name="initJBTiaoDetail" class="jbtiaoAction" method="initJBTiaoDetail">
+			<result name="success">/WEB-INF/pages/attendance/jbtiao/jbtiao_detail.jsp</result>
+	    </action>   	
+	<!-- 加班 Add by du-->
+
+
+	<!-- 请假出差 Add by du-->
+		<action name="initQjccSel" class="qjccAction" method="initQjccSel">
+			<result name="success">/WEB-INF/pages/attendance/qjcc/qjcc_select.jsp</result>
+	    </action>
+		<action name="selQjcc" class="qjccAction" method="selQjcc">
+			<result name="success">/WEB-INF/pages/attendance/qjcc/qjcc_select.jsp</result>
+	    </action>
+		<action name="initQjccInsert" class="qjccAction" method="initQjccInsert">
+			<result name="success">/WEB-INF/pages/attendance/qjcc/qjcc_insert.jsp</result>
+	    </action>
+	    <action name="insertQjcc" class="qjccAction" method="insertQjcc">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initQjccUpdate" class="qjccAction" method="initQjccUpdate">
+			<result name="success">/WEB-INF/pages/attendance/qjcc/qjcc_update.jsp</result>
+	    </action>
+	    <action name="updateQjcc" class="qjccAction" method="updateQjcc">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initQjccDelete" class="qjccAction" method="initQjccDelete">
+			<result name="success">/WEB-INF/pages/attendance/qjcc/qjcc_delete.jsp</result>
+	    </action>
+	    <action name="deleteQjcc" class="qjccAction" method="deleteQjcc">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initQjccDetail" class="qjccAction" method="initQjccDetail">
+			<result name="success">/WEB-INF/pages/attendance/qjcc/qjcc_detail.jsp</result>
+	    </action>
+	    <action name="getAjaxQjccDate" class="qjccAction" method="getAjaxQjccDate">
+	    </action>
+
+<!-- 请假出差 Add by du-->	
+
+	<!-- 邮寄单管理  begin -->
+	    <action name="selMailingList" class="mailingListAction" method="selMailingList">
+	        <result name="success">/WEB-INF/pages/basic/mailingList/mailingList_select.jsp</result>
+	    </action>
+		<action name="initMailingListInsert" class="mailingListAction" method="initMailingListInsert">
+			<result name="success">/WEB-INF/pages/basic/mailingList/mailingList_insert.jsp</result>
+	    </action>
+	    <action name="insertMailingList" class="mailingListAction" method="insertMailingList">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initMailingListUpdate" class="mailingListAction" method="initMailingListUpdate">
+			<result name="success">/WEB-INF/pages/basic/mailingList/mailingList_update.jsp</result>
+	    </action>
+	    <action name="updateMailingList" class="mailingListAction" method="updateMailingList">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initMailingListDelete" class="mailingListAction" method="initMailingListDelete">
+			<result name="success">/WEB-INF/pages/basic/mailingList/mailingList_delete.jsp</result>
+	    </action>
+	    <action name="deleteMailingList" class="mailingListAction" method="deleteMailingList">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initMailingListDetail" class="mailingListAction" method="initMailingListDetail">
+			<result name="success">/WEB-INF/pages/basic/mailingList/mailingList_detail.jsp</result>
+	    </action>
+	<!-- 邮寄单管理    end -->	
+					
+
+	<!-- 请假出差 Add by du-->	
+
+	<!-- 下拉值维护 Add by moyongsheng-->
+		<action name="initOptionParamSel" class="optionParamAction" method="initOptionParamSel">
+			<result name="success">/WEB-INF/pages/basic/optionParam/optionParam_select.jsp</result>
+	    </action>
+	    <action name="selOptionParam" class="optionParamAction" method="selOptionParam">
+			<result name="success">/WEB-INF/pages/basic/optionParam/optionParam_select.jsp</result>
+	    </action>
+	    <action name="initOptionParamInsert" class="optionParamAction" method="initOptionParamInsert">
+			<result name="success">/WEB-INF/pages/basic/optionParam/optionParam_insert.jsp</result>
+	    </action>
+	    <action name="insertOptionParam" class="optionParamAction" method="insertOptionParam">
+			<result name="success">/WEB-INF/pages/basic/optionParam/optionParam_insert.jsp</result>
+			<result name="error">/WEB-INF/pages/basic/optionParam/optionParam_insert.jsp</result>
+	    </action>	    
+	    <action name="initOptionParamUpdate" class="optionParamAction" method="initOptionParamUpdate">
+			<result name="success">/WEB-INF/pages/basic/optionParam/optionParam_update.jsp</result>
+	    </action>    
+	    <action name="updateOptionParam" class="optionParamAction" method="updateOptionParam">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="error">/WEB-INF/pages/basic/optionParam/optionParam_update.jsp</result>
+	    </action>	    
+	    <action name="initOptionParamDelete" class="optionParamAction" method="initOptionParamDelete">
+			<result name="success">/WEB-INF/pages/basic/optionParam/optionParam_delete.jsp</result>
+	    </action>    
+	    <action name="deleteOptionParam" class="optionParamAction" method="deleteOptionParam">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	<!-- 下拉值维护 End by moyongsheng-->	
+
+	<!-- 商品级别维护 -->
+			
+		<!-- 查询页面初始化 -->
+		<action name="initGoodsLevelList" class="goodsLevelAction" method="initGoodsLevelList">
+			<result name="success" >/WEB-INF/pages/system/GoodsLevel/GoodsLevel_select.jsp</result>
+		</action>
+		<!-- 新增级别 -->
+		<action name="initInsertGoodsLevel" class="goodsLevelAction" method="initInsertGoodsLevel">
+			<result name="success" >/WEB-INF/pages/system/GoodsLevel/GoodsLevel_insert.jsp</result>
+		</action>
+		<action name="insertGoodsLevel" class="goodsLevelAction" method="insertGoodsLevel">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="error" >/WEB-INF/pages/system/GoodsLevel/GoodsLevel_insert.jsp</result>
+		</action>				
+		<!-- 修改级别 -->
+		<action name="initUpdateGoodsLevel" class="goodsLevelAction" method="initUpdateGoodsLevel">
+			<result name="success" >/WEB-INF/pages/system/GoodsLevel/GoodsLevel_update.jsp</result>
+		</action>
+		<action name="updateGoodsLevel" class="goodsLevelAction" method="updateGoodsLevel">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+			<result name="error" >/WEB-INF/pages/system/GoodsLevel/GoodsLevel_update.jsp</result>
+		</action>
+		<!-- 删除级别 -->
+		<action name="initDeleteGoodsLevel" class="goodsLevelAction" method="initDeleteGoodsLevel">
+			<result name="success" >/WEB-INF/pages/system/GoodsLevel/GoodsLevel_delete.jsp</result>
+		</action>
+		<action name="deleteGoodsLevel" class="goodsLevelAction" method="deleteGoodsLevel">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>				
+	<!-- 商品级别维护 -->
+	
+    <!-- 选商品留言 -->
+		<action name="initGoodsImgLeaveMsgSel" class="goodsImgLeaveMsgAction" method="initGoodsImgLeaveMsgSel">
+			<result name="success">/WEB-INF/pages/basic/goodsImgLeaveMsg/goodsImgLeaveMsg_select.jsp</result>
+	    </action>
+		<action name="selGoodsImgLeaveMsg" class="goodsImgLeaveMsgAction" method="selGoodsImgLeaveMsg">
+			<result name="success">/WEB-INF/pages/basic/goodsImgLeaveMsg/goodsImgLeaveMsg_select.jsp</result>
+	    </action>
+		<action name="initGoodsImgLeaveMsgInsert" class="goodsImgLeaveMsgAction" method="initGoodsImgLeaveMsgInsert">
+			<result name="success">/WEB-INF/pages/basic/goodsImgLeaveMsg/goodsImgLeaveMsg_insert.jsp</result>
+	    </action>
+	    <action name="insertGoodsImgLeaveMsg" class="goodsImgLeaveMsgAction" method="insertGoodsImgLeaveMsg">
+	        <param name="savePath">/goodsimgleavemsg/img</param>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGoodsImgLeaveUpdate" class="goodsImgLeaveMsgAction" method="initGoodsImgLeaveUpdate">
+			<result name="success">/WEB-INF/pages/basic/goodsImgLeaveMsg/goodsImgLeaveMsg_update.jsp</result>
+	    </action>
+	    <action name="updateGoodsImgLeave" class="goodsImgLeaveMsgAction" method="updateGoodsImgLeave">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGoodsImgLeaveDelete" class="goodsImgLeaveMsgAction" method="initGoodsImgLeaveDelete">
+			<result name="success">/WEB-INF/pages/basic/goodsImgLeaveMsg/goodsImgLeaveMsg_delete.jsp</result>
+	    </action>
+	    <action name="deleteGoodsImgLeave" class="goodsImgLeaveMsgAction" method="deleteGoodsImgLeave">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="initGoodsImgLeaveDetail" class="goodsImgLeaveMsgAction" method="initGoodsImgLeaveDetail">
+			<result name="success">/WEB-INF/pages/basic/goodsImgLeaveMsg/goodsImgLeaveMsg_detail.jsp</result>
+	    </action>
+	    <action name="initGoodsImgLeaveMsgWord" class="goodsImgLeaveMsgAction" method="initGoodsImgLeaveMsgWord">
+			<result name="success">/WEB-INF/pages/basic/goodsImgLeaveMsg/goodsImgLeaveMsg_leavemsg.jsp</result>
+	    </action>
+	    <action name="insertGoodsImgLeaveMsgWord" class="goodsImgLeaveMsgAction" method="insertGoodsImgLeaveMsgWord">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>	    
+    <!-- 选商品留言 -->
+
+    <!-- 课程培训 Add by moyongsheng-->
+		<action name="initTrainingCoursesSel" class="trainingCoursesAction" method="initTrainingCoursesSel">
+			<result name="success">/WEB-INF/pages/basic/trainingcourses/trainingCourses_select.jsp</result>
+	    </action>
+		<action name="initTrainingCoursesSels" class="trainingCoursesAction" method="initTrainingCoursesSels">
+			<result name="success">/WEB-INF/pages/basic/trainingcourses/trainingCourses_select.jsp</result>
+	    </action>
+	    <action name="selectTrainingCourses" class="trainingCoursesAction" method="selectTrainingCourses">
+			<result name="success">/WEB-INF/pages/basic/trainingcourses/trainingCourses_select.jsp</result>
+	    </action>
+	    <action name="selectTrainingCoursess" class="trainingCoursesAction" method="selectTrainingCoursess">
+			<result name="success">/WEB-INF/pages/basic/trainingcourses/trainingCourses_select.jsp</result>
+	    </action>
+	    <action name="initTrainingCoursesInsert" class="trainingCoursesAction" method="initTrainingCoursesInsert">
+			<result name="success">/WEB-INF/pages/basic/trainingcourses/trainingCourses_insert.jsp</result>
+	    </action>
+	     <action name="insertTrainingCourses" class="trainingCoursesAction" method="insertTrainingCourses">
+	     <param name="savePath">/trainingCoursesTV/radio</param>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="exportNoticeFile2" class="trainingCoursesAction" method="exportNoticeFile">
+	        <result name="success" type="stream">
+	            <param name="contentType">${contentType }</param>
+	            <param name="inputName">inputStream</param>
+	            <param name="contentDisposition">attachment;filename="${fileName}"</param>
+	            <param name="bufferSize">20480</param>
+	        </result>
+	        <param name="savePath">/trainingCoursesTV/radio</param>
+	    </action>
+	     <action name="initDeleteTrainingCourses" class="trainingCoursesAction" method="initDeleteTrainingCourses">
+			<result name="success">/WEB-INF/pages/basic/trainingcourses/trainingCourses_delete.jsp</result>
+	    </action>
+	     <action name="deleteTrainingCourses" class="trainingCoursesAction" method="deleteTrainingCourses">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initTrainingCoursesUpdate" class="trainingCoursesAction" method="initTrainingCoursesUpdate">
+			<result name="success">/WEB-INF/pages/basic/trainingcourses/trainingCourses_update.jsp</result>
+	    </action>
+	    <action name="updateTrainingCourses" class="trainingCoursesAction" method="updateTrainingCourses">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="IsNoUplod" class="trainingCoursesAction" method="IsNoUplod" >
+	    	<param name="savePath">/trainingCoursesTV/radio</param>
+	    </action>
+	    
+	    <action name="selectPersonList" class="windowPersonDiscountAction" method="selectPersonList">
+		  <result name="success">/WEB-INF/pages/components/person/person_open.jsp</result>
+		</action>
+		
+		<action name="selectRoleList" class="windowPersonDiscountAction" method="selectRoleList">
+		  <result name="success">/WEB-INF/pages/components/Role/role_open.jsp</result>
+		</action>
+		
+	<!-- 课程培训 End by moyongsheng-->
+	
+	<!-- 价格表维护  Add by szk-->
+		<action name="initPriceListSel" class="trainingCoursesAction" method="initPriceListSel">
+			<result name="success">/WEB-INF/pages/basic/pricelist/pricelist_select.jsp</result>
+	    </action>
+		<action name="priceListSel" class="trainingCoursesAction" method="priceListSel">
+			<result name="success">/WEB-INF/pages/basic/pricelist/pricelist_select.jsp</result>
+	    </action>
+	    <action name="initPriceListInsert" class="trainingCoursesAction" method="initPriceListInsert">
+			<result name="success">/WEB-INF/pages/basic/pricelist/pricelist_insert.jsp</result>
+	    </action>
+	     <action name="insertPriceList" class="trainingCoursesAction" method="insertPriceList">
+	     <param name="savePath">/pricelist/img</param>
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="exportPriceListFile" class="trainingCoursesAction" method="exportPriceListFile">
+	        <result name="success" type="stream">
+	            <param name="contentType">${contentType }</param>
+	            <param name="inputName">inputStream</param>
+	            <param name="contentDisposition">attachment;filename="${fileName}"</param>
+	            <param name="bufferSize">20480</param>
+	        </result>
+	        <param name="savePath">/pricelist/img</param>
+	    </action>
+	     <action name="initPriceListDelete" class="trainingCoursesAction" method="initPriceListDelete">
+			<result name="success">/WEB-INF/pages/basic/pricelist/pricelist_delete.jsp</result>
+	    </action>
+	     <action name="deletePriceList" class="trainingCoursesAction" method="deletePriceList">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    
+	    <action name="initPriceListUpdate" class="trainingCoursesAction" method="initPriceListUpdate">
+			<result name="success">/WEB-INF/pages/basic/pricelist/pricelist_update.jsp</result>
+	    </action>
+	    <action name="updatePriceList" class="trainingCoursesAction" method="updatePriceList">
+			<result name="success">/WEB-INF/pages/refresh.jsp</result>
+	    </action>
+	    <action name="IsNoPriceListUplod" class="trainingCoursesAction" method="IsNoPriceListUplod" >
+	    	<param name="savePath">/pricelist/img</param>
+	    </action>
+	<!-- 价格表维护  End by szk-->
+	
+	<!-- 省、市、区/县、镇 AjaxSelect取值  Start by moyongsheng-->				
+		<action name="getAjaxArea" class="areaAction" method="getAjaxArea"></action>				
+	<!-- 省、市、区/县、镇 AjaxSelect取值  End by moyongsheng-->	
+
+	<!-- 提醒窗口管理 Add by moyongsheng-->
+	    <action name="initReminderWindowSel" class="reminderWindowAction" method="initReminderWindowSel">
+	    	<result name="success">/WEB-INF/pages/basic/ReminderWindow/reminderWindow_select.jsp</result>
+	    </action>
+	    <action name="updateReminderWindow" class="reminderWindowAction" method="updateReminderWindow">
+	    	<result name="success">/WEB-INF/pages/basic/ReminderWindow/reminderWindow_select.jsp</result>
+	    </action>
+	<!-- 提醒窗口管理 Add by moyongsheng-->	
+	
+	<!-- 双眼视功能参数设置 sxh begin -->
+	<action name="initDoubleEyeFunMend" class="doubleEyeFunMendAction" method="initDoubleEyeFunMend">
+	  <result name="success">/WEB-INF/pages/basic/doubleEyeFunMend/doubleEyeFunMend_insert.jsp</result>
+	</action>
+	<action name="mendDoubleEyeFun" class="doubleEyeFunMendAction" method="mendDoubleEyeFun">
+	  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+	</action>
+	<!-- 双眼视功能参数设置 sxh end -->
+	
+	<!-- 期初入库  begin-->
+		<action name="initQcInStorageSel" class="qcInStorageAction" method="initQcInStorageSel">
+			<result name="success">/WEB-INF/pages/basic/qcinstorage/qcinstorage_select.jsp</result>
+			<result name="selQcInStorage" type="redirectAction">selQcInStorage?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+		</action>
+		<action name="selQcInStorage" class="qcInStorageAction" method="selQcInStorage">
+		  <result name="success">/WEB-INF/pages/basic/qcinstorage/qcinstorage_select.jsp</result>
+		</action>
+		<action name="initQcInStorageInsert" class="qcInStorageAction" method="initQcInStorageInsert">
+		  <result name="success">/WEB-INF/pages/basic/qcinstorage/qcinstorage_insert.jsp</result>
+		</action>
+		<action name="insertQcInStorage" class="qcInStorageAction" method="insertQcInStorage">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>		
+		<action name="initQcInStorageYxInsert" class="qcInStorageAction" method="initQcInStorageYxInsert">
+		  <result name="success">/WEB-INF/pages/basic/qcinstorage/qcinstorage_yx_insert.jsp</result>
+		</action>
+		<action name="insertQcInStorageYx" class="qcInStorageAction" method="insertQcInStorageYx">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>		
+		<action name="initQcInStorageUpdate" class="qcInStorageAction" method="initQcInStorageUpdate">
+		   <result name="success">/WEB-INF/pages/basic/qcinstorage/qcinstorage_update.jsp</result> 
+		</action>	
+		<action name="updateQcInStorage" class="qcInStorageAction" method="updateQcInStorage">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>
+		<action name="addQcInStorageDimension" class="qcInStorageAction" method="addQcInStorageDimension">
+		<result name="i">/WEB-INF/pages/basic/qcinstorage/qcinstorage_insert.jsp</result>
+		<result name="u">/WEB-INF/pages/basic/qcinstorage/qcinstorage_yx_insert.jsp</result>
+    </action>
+	<!-- 期初入库  end-->
+			
+	<!-- 医院HIS系统维护 szk  begin-->
+		<action name="initHisInfoSel" class="hisInfoAction" method="initHisInfoSel">
+			<result name="success">/WEB-INF/pages/basic/hisinfo/hisinfo_select.jsp</result>
+			<result name="selectHisInfo" type="redirectAction">selectHisInfo?moduleID=${#request.moduleID}&amp;isFirstExec=${#request.isFirstExec}</result>
+			<interceptor-ref name="defaultStack"></interceptor-ref>	
+		</action>
+		<action name="selectHisInfo" class="hisInfoAction" method="selectHisInfo">
+		  <result name="success">/WEB-INF/pages/basic/hisinfo/hisinfo_select.jsp</result>
+		</action>		
+		<action name="initHisInfoInsert" class="hisInfoAction" method="initHisInfoInsert">
+		  <result name="success">/WEB-INF/pages/basic/hisinfo/hisinfo_insert.jsp</result>
+		</action>
+		<action name="insertHisInfo" class="hisInfoAction" method="insertHisInfo">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result> 
+		</action>
+		<action name="initHisInfoUpdate" class="hisInfoAction" method="initHisInfoUpdate">
+		  <result name="success">/WEB-INF/pages/basic/hisinfo/hisinfo_update.jsp</result>
+		</action>
+		<action name="updateHisInfo" class="hisInfoAction" method="updateHisInfo">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>
+		</action>	
+		<action name="initHisInfoDetele" class="hisInfoAction" method="initHisInfoDetele">
+		  <result name="success">/WEB-INF/pages/basic/hisinfo/hisinfo_delete.jsp</result>
+		</action>
+		<action name="deleteHisInfo" class="hisInfoAction" method="deleteHisInfo">
+		  <result name="success">/WEB-INF/pages/refresh.jsp</result>		  
+		</action>					
+	<!-- 医院HIS系统维护 szk  end-->
+				    
+	</package>
+</struts>
