@@ -1,40 +1,0 @@
-10
-
-dir
-15818
-svn://192.168.168.218/EyeBasicSystem/source/EyeBasicSystem/src/com/pengsheng/eims/frame
-svn://192.168.168.218/EyeBasicSystem
-
-
-
-2017-01-03T05:37:45.219500Z
-15813
-lxp
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-776c666b-7bce-7948-b771-2bd2a928235a
-
-dao
-dir
-
-persistence
-dir
-
-mgr
-dir
-
-action
-dir
-

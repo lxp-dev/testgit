@@ -1,91 +1,0 @@
-10
-
-dir
-15818
-svn://192.168.168.218/EyeBasicSystem/source/EyeBasicSystem/src/com/pengsheng/eims
-svn://192.168.168.218/EyeBasicSystem
-
-
-
-2017-01-03T09:14:15.953875Z
-15818
-lxp
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-776c666b-7bce-7948-b771-2bd2a928235a
-
-basic
-dir
-
-bjtrhistory
-dir
-
-his
-dir
-
-system
-dir
-
-components
-dir
-
-module
-dir
-
-quartz
-dir
-
-frame
-dir
-
-casehistory
-dir
-
-interceptor
-dir
-
-logistics
-dir
-
-sms
-dir
-
-aierhistory
-dir
-
-yklogistics
-dir
-
-storage
-dir
-
-personnel
-dir
-
-sales
-dir
-
-member
-dir
-
-report
-dir
-
-util
-dir
-
-hydsycasehistory
-dir
-

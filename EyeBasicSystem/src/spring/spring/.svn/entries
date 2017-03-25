@@ -1,193 +1,0 @@
-10
-
-dir
-15818
-svn://192.168.168.218/EyeBasicSystem/source/EyeBasicSystem/src/spring/spring
-svn://192.168.168.218/EyeBasicSystem
-
-
-
-2016-12-28T09:08:31.827500Z
-15790
-SZK
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-776c666b-7bce-7948-b771-2bd2a928235a
-
-basic
-dir
-
-bjtrhistory
-dir
-
-his
-dir
-
-system
-dir
-
-components
-dir
-
-mall
-dir
-
-module
-dir
-
-quartz
-dir
-
-frame
-dir
-
-casehistory
-dir
-
-plugin
-dir
-
-interceptor
-dir
-
-dataAccessContext-jdbc.xml
-file
-
-
-
-
-2016-12-28T07:13:56.050124Z
-3b55cf5a3192b084ad40f4555b1cc6fb
-2015-09-15T09:40:01.952875Z
-13924
-moyongsheng
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1820
-
-logistics
-dir
-
-weixin
-dir
-
-storage
-dir
-
-yklogistics
-dir
-
-personnel
-dir
-
-applicationContext-service.xml
-file
-
-
-
-
-2016-12-28T07:13:56.052124Z
-65e5d8094d24a859daeb14e4140f8a32
-2016-09-27T09:29:47.406250Z
-15287
-sxh
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1657
-
-member
-dir
-
-sales
-dir
-
-applicationContext.xml
-file
-
-
-
-
-2016-12-28T07:13:56.055125Z
-9dc150000c2f2563856abc3761b35a3b
-2016-03-14T02:18:48.250000Z
-14459
-moyongsheng
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-643
-
-report
-dir
-
-hydsycasehistory
-dir
-
